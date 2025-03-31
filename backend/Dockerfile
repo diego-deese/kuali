@@ -7,6 +7,9 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 
+RUN npm uninstall bcrypt
+RUN npm install bcrypt
+
 EXPOSE 3000
 
 CMD ["npm", "run", "dev"]

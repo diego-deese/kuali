@@ -30,8 +30,8 @@ model Users {
   institutional_email String @db.VarChar(255) @unique
   personal_email String? @db.VarChar(255) @unique
   curp String? @db.VarChar(18)
-  profile_photo Bytes @db.Blob
-  photo_mime_type String @db.VarChar(50)
+  profile_photo Bytes? @db.Blob
+  photo_mime_type String? @db.VarChar(50)
   identifier String @db.VarChar(255)
   password String @db.VarChar(255)
   creation_date DateTime @default(now())
@@ -89,11 +89,11 @@ model Activities {
   description String @db.Text
   event_date DateTime
   register_date_limit DateTime
-  poster_image Bytes @db.Blob
-  poster_mimetype String @db.VarChar(50)
+  poster_image Bytes? @db.Blob
+  poster_mimetype String? @db.VarChar(50)
   mandatory Boolean
-  creation_date DateTime
-  last_updated DateTime @updatedAt
+  creation_date DateTime @default(now())
+  last_updated DateTime? @updatedAt
   visible_students Boolean
   visible_researchers Boolean
   admin_creator_id Int @unique
@@ -112,7 +112,7 @@ model Requirements {
   requirement_id Int @id @default(autoincrement())
   name String @db.VarChar(100)
   description String @db.VarChar(100)
-  last_updated DateTime @default(now())
+  last_updated DateTime?
   activity_id Int
 
   activity Activities @relation(fields: [activity_id], references: [activity_id])
@@ -125,7 +125,7 @@ model ActivityAttachedFiles {
   file_content Bytes @db.LongBlob
   mimetype String @db.VarChar(50)
   upload_date DateTime @default(now())
-  last_updated DateTime @updatedAt
+  last_updated DateTime? @updatedAt
   activity_id Int
 
   activity Activities @relation(fields: [activity_id], references: [activity_id])
@@ -143,8 +143,8 @@ model UserDocuments {
   file_name String @db.VarChar(255)
   file_content Bytes @db.LongBlob
   mimetype String @db.VarChar(50)
-  upload_date DateTime
-  last_updated DateTime @updatedAt
+  upload_date DateTime @default(now())
+  last_updated DateTime? @updatedAt
   last_reviewed DateTime?
   revision_status_id Int
   registration_id Int
