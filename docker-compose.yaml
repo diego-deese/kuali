@@ -1,0 +1,36 @@
+services:
+  db:
+    container_name: kuali-db
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./backend/.env
+    volumes:
+      # - ./back-end/database/dump.sql:/docker-entrypoint-initdb.d/dump.sql
+      - kuali-data:/var/lib/mysql
+    networks:
+      - backend-network
+  backend:
+    container_name: misaet-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    env_file:
+      - ./backend/.env
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - backend-network
+
+volumes:
+  kuali-data:
+
+networks:
+  backend-network:
+    driver: bridge
