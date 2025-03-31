@@ -16,18 +16,8 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
+    <View>
       <LogIn />
-      <Text>aaaaa</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundWhite,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
