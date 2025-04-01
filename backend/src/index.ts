@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import userRoutes from './routes/user.routes'
 
 const app = express()
 
@@ -12,6 +13,9 @@ app.use(cors())
 app.get('/ping', (_req, res) => {
   res.send('<h1>OK!</h1>')
 })
+
+// Rutas
+app.use('/api/users', userRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)
