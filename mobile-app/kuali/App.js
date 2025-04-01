@@ -1,20 +1,23 @@
-import { StatusBar } from "expo-status-bar"
-import { StyleSheet, Text, View } from "react-native"
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, Text, View } from "react-native";
+import { useFonts } from "expo-font";
+import LogIn from "./pages/Login/login";
+import colors from "./constants/colors";
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  )
-}
+  const [fontsLoaded] = useFonts({
+    "monserratRegular": require("./assets/fonts/Montserrat-Regular.ttf"),
+    "monserratBold": require("./assets/fonts/Montserrat-SemiBold.ttf"),
+    "monserratItalic": require("./assets/fonts/Montserrat-Italic.ttf"),
+  });
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-})
+  if (!fontsLoaded) {
+    return <View><Text>Loading Fonts...</Text></View>;  
+  }
+
+  return (
+    <View>
+      <LogIn />
+    </View>
+  );
+}
