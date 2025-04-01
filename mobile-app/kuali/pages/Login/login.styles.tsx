@@ -5,8 +5,11 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
     },
+    imgContainer: {
+        paddingTop: 50
+    },
     titleContainer: {
-        padding: 30
+        paddingBottom: 5
     },
     title: {
         fontFamily: 'monserratRegular', 
@@ -14,12 +17,13 @@ const styles = StyleSheet.create({
         fontSize: 24
     }, 
     inputsContainer: {
-        display: 'flex'
+        display: 'flex', 
+        gap: 10,
+        padding: 30
     },
     inputLabels: {
         fontFamily: 'monserratRegular', 
-        textAlign: 'left', 
-        fontSize: 16, 
+        fontSize: 16 
     },
     inputText: {
         fontFamily: 'monserratRegular',
@@ -27,8 +31,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.solidWhite,
         borderRadius: 6,
         borderColor: colors.borderGray,
-        height: 40,
-        margin: 10,
+        height: 50,
         borderWidth: 1,
         padding: 10,
     }

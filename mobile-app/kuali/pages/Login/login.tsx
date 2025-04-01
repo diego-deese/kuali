@@ -7,8 +7,10 @@ import colors from '../../constants/colors'
 export default function LogIn() {
     return(
         <SafeAreaView style={styles.container}>
-            <View style={styles.titleContainer}>
+            <View style={styles.imgContainer}>
                 <Image source={require('../../assets/cicataLogo.png')}/>
+            </View>
+            <View style={styles.titleContainer}>
                 <Text style={styles.title}>Ingresa con tus</Text>
                 <Text style={styles.title}>credenciales</Text>
             </View>
@@ -18,7 +20,7 @@ export default function LogIn() {
                 <Text style={styles.inputLabels}>Contraseña</Text>
                 <TextInput placeholder='***************' placeholderTextColor={colors.placeholderGray} style={styles.inputText}/>
             </View>
-                <Button title='Iniciar sesión' />
+                <Button title='Iniciar sesión' color={colors.selectionBlue} />
             <View>
 
             </View>
