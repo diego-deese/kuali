@@ -1,5 +1,5 @@
 import prisma from '../src/lib/prisma'
-import hashPassword from '../src/utils/encryption'
+import { hashPassword } from '../src/utils/encryption'
 
 async function main (): Promise<void> {
   await prisma.roles.createMany({

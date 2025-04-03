@@ -12,7 +12,9 @@
     "docker:delete": "docker-compose down -v",
     "db:pull": "npx prisma db pull",
     "db:wait": "npx wait-on tcp:3306 -t 60000",
-    "db:migrate": "npx prisma migrate dev",
+    "db:seed": "ts-node prisma/seed.ts",
+    "db:migrate:dev": "npx primsa migrate dev",
+    "db:migrate": "npx prisma migrate deploy",
     "db:generate": "npx prisma generate",
     "db:init": "npm run db:wait && npm run db:migrate && npm run db:generate",
     "test": "echo \"Error: no test specified\" && exit 1"
