@@ -31,7 +31,7 @@ class UserController {
       if (!isNumber(id)) {
         res.status(400).json({
           message: 'Error al obtener el usuario',
-          errror: 'El id proporcionado es inválido'
+          error: 'El id proporcionado es inválido'
         })
       } else {
         const response = await userService.getUser(Number(id))
