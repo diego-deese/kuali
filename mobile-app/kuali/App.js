@@ -6,7 +6,6 @@ import colors from "./constants/colors"
 import ProfileId from "./pages/ProfileId/profileId"
 import ProfileInfo from "./pages/ProfileInfo/profileInfo"
 
-
 export default function App() {
   const [fontsLoaded] = useFonts({
     monserratRegular: require("./assets/fonts/Montserrat-Regular.ttf"),
@@ -24,7 +23,7 @@ export default function App() {
 
   return (
     <View>
-      <ProfileInfo />
+      <ProfileId />
     </View>
   )
 }

@@ -1,7 +1,7 @@
 import { StyleSheet } from "react-native"
 import colors from "../../constants/colors"
 
-const styles = StyleSheet.create({
+const styles2 = StyleSheet.create({
   container: {
     alignItems: "center",
   },
@@ -17,29 +17,29 @@ const styles = StyleSheet.create({
   },
   gradient: {
     height: 80,
-    width: '100%',
+    width: "100%",
   },
   info: {
     paddingVertical: 20,
     paddingHorizontal: 0,
-    alignItems: 'flex-start',
+    alignItems: "flex-start",
   },
   names: {
     fontSize: 20,
     fontFamily: "monserratSemiBold",
     marginBottom: 10,
-    textAlign: 'left',
-    color: '#333',
+    textAlign: "left",
+    color: "#333",
   },
   value: {
     fontSize: 16,
     marginBottom: 6,
-    color: '#555',
-    textAlign: 'left',
+    color: "#555",
+    textAlign: "left",
   },
   labelContainer: {
     marginBottom: 15,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
     paddingHorizontal: 20,
   },
   label: {
@@ -52,6 +52,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginBottom: 5,
   },
-});
+})
 
-export default styles;
+export default styles2

@@ -2,12 +2,11 @@ import React from "react"
 //import colors from "../../constants/colors"
 import { SafeAreaView, View, Image, Text } from "react-native"
 import styles from "./profileInfo.styles"
-import { LinearGradient } from "expo-linear-gradient"
 
 const colors = {
-  highlightCyan: '#00e0ff',
-  selectionBlue: '#0059ff',
-};
+  highlightCyan: "#00e0ff",
+  selectionBlue: "#0059ff",
+}
 
 const user = {
   name: "Jorge Luis",
@@ -17,18 +16,19 @@ const user = {
   institutionalEmail: "a01425452@tec.mx",
   personalEmail: "mucast8@gmail.com",
   //photo: require('../../assets/cicataLogo.png'),
-};
+}
 
 export default function ProfileInfo() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.card}>
         <View style={styles.info}>
-
           <View style={styles.labelContainer}>
             <Text style={styles.label}>Nombre completo</Text>
-            <Text style={styles.value}>{user.name} {user.paternal_lastname}</Text>
-         </View>
+            <Text style={styles.value}>
+              {user.name} {user.paternal_lastname}
+            </Text>
+          </View>
 
           <View style={styles.labelContainer}>
             <Text style={styles.label}>Programa Académico</Text>
@@ -52,5 +52,5 @@ export default function ProfileInfo() {
         </View>
       </View>
     </SafeAreaView>
-  );
-};
+  )
+}
