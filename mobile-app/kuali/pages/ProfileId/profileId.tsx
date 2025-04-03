@@ -34,6 +34,10 @@ export default function ProfileId() {
           <Text style={styles.program}>{user.program}</Text>
         </View>
       </View>
+      <View style={styles.navigationDots}>
+        <View style={styles.circle} />
+        <View style={styles.inactiveCircle} />
+      </View>
     </SafeAreaView>
   )
 }

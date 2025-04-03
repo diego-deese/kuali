@@ -73,6 +73,27 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
   },
+  navigationDots: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: "-25%",
+    alignSelf: "center",
+    justifyContent: "center",
+  },
+  circle: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: colors.highlightCyan,
+    marginHorizontal: 5,
+  },
+  inactiveCircle: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: "#CCCCCC",
+    marginHorizontal: 5,
+  },
 })
 
 export default styles
