@@ -33,7 +33,39 @@ class UserService {
         role_id: true
       },
       include: {
-        role: true
+        role: true,
+        inscriptionAsStudent: {
+          include: {
+            program: true,
+            researcher: {
+              select: {
+                user_id: true,
+                name: true,
+                second_name: true,
+                paternal_lastname: true,
+                maternal_lastname: true
+              }
+            }
+          },
+          omit: {
+            program_id: true,
+            researcher_id: true
+          },
+          where: {
+            active: true
+          }
+        },
+        inscriptionAsResearcher: {
+          include: {
+            program: true
+          },
+          omit: {
+            program_id: true
+          },
+          where: {
+            active: true
+          }
+        }
       }
     })
 

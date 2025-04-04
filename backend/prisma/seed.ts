@@ -116,6 +116,27 @@ async function main (): Promise<void> {
     ]
   })
 
+  await prisma.inscriptions.createMany({
+    data: [
+      {
+        start_date: new Date('2025-01-01'),
+        end_date: new Date('2025-07-30'),
+        active: true,
+        student_id: 1,
+        researcher_id: 3,
+        program_id: 1
+      },
+      {
+        start_date: new Date('2025-01-01'),
+        end_date: new Date('2025-07-30'),
+        active: true,
+        student_id: 2,
+        researcher_id: 4,
+        program_id: 2
+      }
+    ]
+  })
+
   console.log('Base de datos poblada correctamente')
 }
 

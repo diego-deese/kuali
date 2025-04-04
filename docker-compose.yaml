@@ -4,7 +4,7 @@ services:
     image: mysql
     restart: always
     ports:
-      - "3307:3306"
+      - "3306:3306"
     env_file:
       - ./backend/.env
     volumes:
@@ -18,6 +18,7 @@ services:
     ports:
       - "3001:3000"
     environment:
+    # Esta URL será usada por el cliente de prisma mantener el host en el nombre del contenedor y el puerto en el puerto por defecto de MYSQL
       - DATABASE_URL=mysql://root:root@kuali-db:3306/kuali
     build:
       context: ./backend
