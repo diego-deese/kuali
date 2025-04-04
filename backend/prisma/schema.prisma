@@ -39,8 +39,8 @@ model Users {
   role_id Int
 
   role Roles @relation(fields: [role_id], references: [role_id])
-  asStudent Inscriptions[] @relation("StudentInscription")
-  asResearcher Inscriptions[] @relation("ResearcherInscription")
+  inscriptionAsStudent Inscriptions[] @relation("StudentInscription")
+  inscriptionAsResearcher Inscriptions[] @relation("ResearcherInscription")
   activity Activities?
   activities Registrations[]
 }
