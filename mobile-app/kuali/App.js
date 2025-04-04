@@ -1,10 +1,6 @@
-import { StatusBar } from "expo-status-bar"
-import { StyleSheet, Text, View } from "react-native"
+import { Text, View } from "react-native"
 import { useFonts } from "expo-font"
-import LogIn from "./pages/Login/login"
-import colors from "./constants/colors"
 import ProfileId from "./pages/ProfileId/profileId"
-import ProfileInfo from "./pages/ProfileInfo/profileInfo"
 
 export default function App() {
   const [fontsLoaded] = useFonts({

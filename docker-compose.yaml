@@ -8,7 +8,7 @@ services:
     env_file:
       - ./backend/.env
     volumes:
-      - ./prisma/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - ./backend/prisma/init.sh:/docker-entrypoint-initdb.d/init.sh
       - kuali-data:/var/lib/mysql
     networks:
       - backend-network
