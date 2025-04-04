@@ -2,22 +2,20 @@ import { StyleSheet } from "react-native"
 import colors from "../../constants/colors"
 
 const styles = StyleSheet.create({
-  container: {
-    alignItems: "center",
-  },
+  // Estilos generales
+  container: { flex: 1 },
   card: {
     width: 343,
     height: 587,
     alignItems: "center",
-    top: "20%",
-    // left: "50%",
-    // right: "50%",
-    // justifyContent: "flex-start",
     borderWidth: 2,
     borderRadius: 15,
     borderColor: colors.highlightCyan,
     overflow: "hidden",
+    alignSelf: "center",
   },
+
+  // Estilos para la parte frontal
   gradient: {
     position: "absolute",
     top: 0,
@@ -47,6 +45,7 @@ const styles = StyleSheet.create({
   info: {
     alignItems: "center",
     marginTop: "70%",
+    width: "100%",
   },
   names: {
     fontFamily: "monserratSemiBold",
@@ -73,10 +72,41 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginTop: 10,
   },
+
+  // Estilos para parte trasera
+  backInfo: {
+    paddingVertical: 20,
+    paddingHorizontal: 0,
+    alignItems: "flex-start",
+    width: "100%",
+  },
+  labelContainer: {
+    marginBottom: 15,
+    alignSelf: "flex-start",
+    paddingHorizontal: 20,
+    width: "100%",
+  },
+  label: {
+    backgroundColor: colors.highlightCyan,
+    color: colors.solidWhite,
+    fontFamily: "monserratSemiBold",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 5,
+    fontSize: 12,
+    marginBottom: 5,
+  },
+  value: {
+    fontSize: 16,
+    marginBottom: 6,
+    color: "#555",
+    textAlign: "left",
+  },
+
+  // Navegación
   navigationDots: {
     flexDirection: "row",
-    position: "absolute",
-    bottom: "-25%",
+    marginTop: 30,
     alignSelf: "center",
     justifyContent: "center",
   },
@@ -93,6 +123,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: "#CCCCCC",
     marginHorizontal: 5,
+  },
+
+  // Contenedor para FlipCard
+  flipCardContainer: {
+    width: 343,
+    height: 587,
+    alignSelf: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    display: "flex",
   },
 })
 

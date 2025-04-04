@@ -1,10 +1,9 @@
-import React from "react"
+import React, { useState } from "react"
 import colors from "../../constants/colors"
 import { SafeAreaView, View, Image, Text } from "react-native"
 import styles from "./profileId.styles"
 import { LinearGradient } from "expo-linear-gradient"
 import FlipCard from "react-native-flip-card"
-import styles2 from "../ProfileInfo/profileInfo.styles"
 
 const user = {
   name: "Juan Pablo",
@@ -20,11 +19,20 @@ const user = {
 }
 
 export default function ProfileId() {
+  const [isFlipped, setIsFlipped] = useState(false)
+
   return (
     <SafeAreaView style={styles.container}>
-      <FlipCard>
-        //Vista frontal
-        <View /*style={styles.face}*/>
+      <View style={styles.flipCardContainer}>
+        <FlipCard
+          friction={6}
+          onFlipEnd={(isFlippedStatus) => {
+            if (isFlipped !== isFlippedStatus) {
+              setIsFlipped(isFlippedStatus)
+            }
+          }}
+        >
+          {/* Cara frontal */}
           <View style={styles.card}>
             <LinearGradient
               colors={[colors.highlightCyan, colors.selectionBlue]}
@@ -44,45 +52,46 @@ export default function ProfileId() {
               <Text style={styles.program}>{user.program}</Text>
             </View>
           </View>
-        </View>
-        <View /*style={styles.back}*/>
+
+          {/* Cara trasera */}
           <View style={styles.card}>
-            <View style={styles.info}>
-              <View style={styles2.labelContainer}>
-                <Text style={styles2.label}>Nombre completo</Text>
-                <Text style={styles2.value}>
-                  {user.name} {user.paternal_lastname}
+            <View style={styles.backInfo}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Nombre completo</Text>
+                <Text style={styles.value}>
+                  {user.name} {user.paternal_lastname} {user.maternal_lastname}
                 </Text>
               </View>
 
-              <View style={styles2.labelContainer}>
-                <Text style={styles2.label}>Programa Académico</Text>
-                <Text style={styles2.value}>{user.program}</Text>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Programa Académico</Text>
+                <Text style={styles.value}>{user.program}</Text>
               </View>
 
-              <View style={styles2.labelContainer}>
-                <Text style={styles2.label}>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>
                   Correo electrónico institucional
                 </Text>
-                <Text style={styles2.value}>{user.institutionalEmail}</Text>
+                <Text style={styles.value}>{user.institutionalEmail}</Text>
               </View>
 
-              <View style={styles2.labelContainer}>
-                <Text style={styles2.label}>Correo electrónico personal</Text>
-                <Text style={styles2.value}>{user.personalEmail}</Text>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>Correo electrónico personal</Text>
+                <Text style={styles.value}>{user.personalEmail}</Text>
               </View>
 
-              <View style={styles2.labelContainer}>
-                <Text style={styles2.label}>CURP</Text>
-                <Text style={styles2.value}>{user.curp}</Text>
+              <View style={styles.labelContainer}>
+                <Text style={styles.label}>CURP</Text>
+                <Text style={styles.value}>{user.curp}</Text>
               </View>
             </View>
           </View>
-        </View>
-      </FlipCard>
+        </FlipCard>
+      </View>
+
       <View style={styles.navigationDots}>
-        <View style={styles.circle} />
-        <View style={styles.inactiveCircle} />
+        <View style={isFlipped ? styles.inactiveCircle : styles.circle} />
+        <View style={isFlipped ? styles.circle : styles.inactiveCircle} />
       </View>
     </SafeAreaView>
   )
