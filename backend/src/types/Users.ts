@@ -1,6 +1,6 @@
 import { Users } from '../generated/client'
 
-export type SafeUser = Omit<Users, 'password' | 'role_id'>
+export type SafeUser = Omit<Users, 'password' | 'role_id' | 'profile_photo' | 'photo_mime_type'>
 
 export type NewUser = Omit<Users, 'user_id'>
 

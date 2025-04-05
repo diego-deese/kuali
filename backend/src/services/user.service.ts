@@ -9,10 +9,25 @@ class UserService {
     const users = await prisma.users.findMany({
       omit: {
         password: true,
-        role_id: true
+        role_id: true,
+        profile_photo: true,
+        photo_mime_type: true
       },
       include: {
-        role: true
+        role: true,
+        academic_programs_as_student: {
+          select: {
+            program: true
+          },
+          where: {
+            active: true
+          }
+        },
+        academic_programs_as_researcher: {
+          omit: {
+            researcher_id: true
+          }
+        }
       }
     })
 
@@ -30,40 +45,23 @@ class UserService {
       },
       omit: {
         password: true,
-        role_id: true
+        role_id: true,
+        profile_photo: true,
+        photo_mime_type: true
       },
       include: {
         role: true,
-        inscriptionAsStudent: {
-          include: {
-            program: true,
-            researcher: {
-              select: {
-                user_id: true,
-                name: true,
-                second_name: true,
-                paternal_lastname: true,
-                maternal_lastname: true
-              }
-            }
-          },
-          omit: {
-            program_id: true,
-            researcher_id: true
+        academic_programs_as_student: {
+          select: {
+            program: true
           },
           where: {
             active: true
           }
         },
-        inscriptionAsResearcher: {
-          include: {
-            program: true
-          },
+        academic_programs_as_researcher: {
           omit: {
-            program_id: true
-          },
-          where: {
-            active: true
+            researcher_id: true
           }
         }
       }
@@ -175,11 +173,15 @@ class UserService {
     await this.getUser(userId)
 
     await prisma.inscriptions.deleteMany({
+      where: { student_id: userId }
+    })
+
+    await prisma.academicPrograms.updateMany({
       where: {
-        OR: [
-          { student_id: userId },
-          { researcher_id: userId }
-        ]
+        researcher_id: userId
+      },
+      data: {
+        researcher_id: undefined
       }
     })
 

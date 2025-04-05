@@ -39,8 +39,8 @@ model Users {
   role_id Int
 
   role Roles @relation(fields: [role_id], references: [role_id])
-  inscriptions Inscriptions[]
-  academic_programs AcademicPrograms[]
+  academic_programs_as_student Inscriptions[]
+  academic_programs_as_researcher AcademicPrograms[]
   activity Activities?
   activities Registrations[]
 }
@@ -48,9 +48,9 @@ model Users {
 model AcademicPrograms {
   program_id Int @id @default(autoincrement())
   name String @db.VarChar(255)
-  researcher_id Int 
+  researcher_id Int?
 
-  researcher Users @relation(fields: [researcher_id], references: [user_id])
+  researcher Users? @relation(fields: [researcher_id], references: [user_id])
   students Inscriptions[]
 }
 
