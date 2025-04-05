@@ -31,7 +31,7 @@ model Users {
   institutional_email String @db.VarChar(255) @unique
   personal_email String? @db.VarChar(255) @unique
   curp String? @db.VarChar(18)
-  profile_photo Bytes? @db.Blob
+  profile_photo Bytes? @db.MediumBlob
   photo_mime_type String? @db.VarChar(50)
   identifier String @db.VarChar(255)
   password String @db.VarChar(255)
@@ -39,8 +39,8 @@ model Users {
   role_id Int
 
   role Roles @relation(fields: [role_id], references: [role_id])
-  inscriptionAsStudent Inscriptions[] @relation("StudentInscription")
-  inscriptionAsResearcher Inscriptions[] @relation("ResearcherInscription")
+  inscriptions Inscriptions[]
+  academic_programs AcademicPrograms[]
   activity Activities?
   activities Registrations[]
 }
@@ -48,8 +48,10 @@ model Users {
 model AcademicPrograms {
   program_id Int @id @default(autoincrement())
   name String @db.VarChar(255)
+  researcher_id Int 
 
-  users Inscriptions[]
+  researcher Users @relation(fields: [researcher_id], references: [user_id])
+  students Inscriptions[]
 }
 
 model Inscriptions {
@@ -58,16 +60,13 @@ model Inscriptions {
   end_date DateTime
   active Boolean
   student_id Int
-  researcher_id Int
   program_id Int
 
-  students Users @relation("StudentInscription", fields: [student_id], references: [user_id])
-  researcher Users @relation("ResearcherInscription", fields: [researcher_id], references: [user_id])
+  students Users @relation(fields: [student_id], references: [user_id])
   program AcademicPrograms @relation(fields: [program_id], references: [program_id])
 
   @@index([program_id])
   @@index([student_id])
-  @@index([researcher_id])
 }
 
 model Categories {
@@ -90,7 +89,7 @@ model Activities {
   description String @db.Text
   event_date DateTime
   register_date_limit DateTime
-  poster_image Bytes? @db.Blob
+  poster_image Bytes? @db.MediumBlob
   poster_mimetype String? @db.VarChar(50)
   mandatory Boolean
   creation_date DateTime @default(now())
