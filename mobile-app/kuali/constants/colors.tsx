@@ -7,5 +7,6 @@ export default {
   placeholderGray: "#B1B1B1",
   fontBlack: "#000000",
   highlightCyan: "#75BEA6",
-  warningRed: "CB2A47",
+  warningRed: "#CB2A47",
+  blueIcons: "#2A4A91",
 }
