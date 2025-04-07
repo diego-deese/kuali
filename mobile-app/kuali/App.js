@@ -1,6 +1,7 @@
 import { Text, View } from "react-native"
 import { useFonts } from "expo-font"
 import ProfileId from "./pages/ProfileId/profileId"
+import LogIn from "./pages/Login/login"
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -19,7 +20,7 @@ export default function App() {
 
   return (
     <View>
-      <ProfileId />
+      <LogIn />
     </View>
   )
 }
