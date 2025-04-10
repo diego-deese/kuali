@@ -41,7 +41,7 @@ model Users {
   role Roles @relation(fields: [role_id], references: [role_id])
   academic_programs_as_student Inscriptions[]
   academic_programs_as_researcher AcademicPrograms[]
-  activity Activities?
+  created_activities Activities[]
   activities Registrations[]
 }
 
@@ -96,12 +96,12 @@ model Activities {
   last_updated DateTime? @updatedAt
   visible_students Boolean
   visible_researchers Boolean
-  admin_creator_id Int @unique
+  admin_creator_id Int
   location_id Int
   category_id Int
 
   category Categories @relation(fields: [category_id], references: [category_id])
-  locations Locations @relation(fields: [location_id], references: [location_id])
+  location Locations @relation(fields: [location_id], references: [location_id])
   creator Users @relation(fields: [admin_creator_id], references: [user_id])
   requirements Requirements[]
   attachedFiles ActivityAttachedFiles[]
