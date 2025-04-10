@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react"
 import colors from "../../constants/colors"
-import { SafeAreaView, View, Image, Text, Dimensions } from "react-native"
+import { SafeAreaView, View, Image, Text } from "react-native"
 import styles from "./profileId.styles"
 import { LinearGradient } from "expo-linear-gradient"
 import FlipCard from "react-native-flip-card"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
+import { calculateDimensions } from "./profileIdutils"
 
 const user = {
   name: "Juan Pablo",
@@ -21,48 +22,10 @@ const user = {
 
 export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
-  const [cardDimensions, setCardDimensions] = useState({ width: 0, height: 0 })
   const insets = useSafeAreaInsets()
 
-  // Calcular las dimensiones
-  useEffect(() => {
-    const updateDimensions = () => {
-      const { width, height } = Dimensions.get("window")
-      const headerHeight = 60 + (insets.top > 0 ? insets.top : 10)
-      const tabBarHeight = 80
-
-      // Espacio disponible = altura total - (header + tabbar + espacio seguro)
-      const availableHeight =
-        height - headerHeight - tabBarHeight - insets.bottom - 40 // 40px de margen
-
-      setCardDimensions({
-        width: width * 0.85,
-        height: availableHeight * 0.85, // Ocupo el 85% del espacio que sobra
-      })
-    }
-
-    updateDimensions()
-
-    // Escuchar cambios de dimensiones (rotación de pantalla)
-    Dimensions.addEventListener("change", updateDimensions)
-
-    return () => {
-      // Limpiar listener cuando se desmonta el componente
-      const dimensionsHandler = Dimensions.addEventListener("change", () => {})
-      dimensionsHandler.remove()
-    }
-  }, [insets])
-
-  // Calcular tamaños responsivos para componentes internos
-  const imageSize = Math.min(cardDimensions.width * 0.35, 150)
-  const fontSize = {
-    name: Math.min(cardDimensions.width * 0.09, 32),
-    identifier: Math.min(cardDimensions.width * 0.06, 20),
-    role: Math.min(cardDimensions.width * 0.055, 20),
-    program: Math.min(cardDimensions.width * 0.055, 20),
-    label: Math.min(cardDimensions.width * 0.035, 12),
-    value: Math.min(cardDimensions.width * 0.045, 16),
-  }
+  // Calcular las dimensiones una vez al cargar el componente
+  const { cardDimensions, imageSize, fontSize } = calculateDimensions(insets)
 
   return (
     <SafeAreaView style={styles.container}>

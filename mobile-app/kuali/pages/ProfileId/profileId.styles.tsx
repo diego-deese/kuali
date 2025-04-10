@@ -1,5 +1,9 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet, Dimensions } from "react-native"
 import colors from "../../constants/colors"
+
+// Obtener las dimensiones para calcular valores base
+const { width } = Dimensions.get("window")
+const baseWidth = width * 0.85
 
 const styles = StyleSheet.create({
   // Estilos generales
