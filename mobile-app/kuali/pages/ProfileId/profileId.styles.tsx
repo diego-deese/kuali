@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
   },
 
   // Contenedor para FlipCard
+  
   flipCardContainer: {
     width: 343,
     height: 587,
@@ -133,7 +134,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     display: "flex",
+    
   },
+  
 })
 
 export default styles
