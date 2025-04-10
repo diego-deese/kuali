@@ -38,11 +38,23 @@ model Users {
   creation_date DateTime @default(now())
   role_id Int
 
+  refreshTokens RefreshToken[]
   role Roles @relation(fields: [role_id], references: [role_id])
   academic_programs_as_student Inscriptions[]
   academic_programs_as_researcher AcademicPrograms[]
   created_activities Activities[]
   activities Registrations[]
+}
+
+model RefreshToken {
+  id          String   @id @unique @default(uuid())
+  hashedToken String   @unique  
+  user_id     Int
+  User        Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  revoked     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  expireAt    DateTime 
 }
 
 model AcademicPrograms {
