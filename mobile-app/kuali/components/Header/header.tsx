@@ -1,7 +1,9 @@
 import React from "react"
-import { View, TouchableOpacity, StyleSheet, Image } from "react-native"
+import { View, TouchableOpacity, Image } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
-import colors from "../constants/colors"
+import { useSafeAreaInsets } from "react-native-safe-area-context"
+import styles from "./header_styles"
+import colors from "../../constants/colors"
 
 // Definimos la interfaz para las props que recibirá nuestro componente
 interface HeaderProps {
@@ -9,6 +11,9 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
+  // Obtenemos los insets para manejar el área segura
+  const insets = useSafeAreaInsets()
+
   // Función para manejar cuando se presiona un tab
   const handleTabPress = (tabName: string) => {
     onTabPress(tabName) // Llamamos a la función que pasamos por props
@@ -16,9 +21,19 @@ const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
 
   return (
     // Contenedor principal de la navbar
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          paddingTop: insets.top > 0 ? insets.top : 10,
+          height: 60 + (insets.top > 0 ? insets.top : 10),
+        },
+      ]}
+    >
+      {/* Logo CICATA */}
+      <Image source={require("../../assets/CICATALogoHeader.png")} />
+
       {/* Tab de Notification */}
-      <Image source={require("../assets/CICATALogoHeader.png")} />
       <TouchableOpacity
         style={styles.tabButton}
         onPress={() => handleTabPress("notificacion")}
@@ -32,22 +47,5 @@ const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
     </View>
   )
 }
-
-// Estilos header
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: "row",
-    height: 80, // CHECAR ALTURA
-    backgroundColor: "white",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-  },
-  tabButton: {
-    marginLeft: "auto",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-})
 
 export default Header

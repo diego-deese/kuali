@@ -1,9 +1,9 @@
-import { SafeAreaView, Text, View, StyleSheet } from "react-native"
+import React from "react"
+import { View, Text } from "react-native"
 import { useFonts } from "expo-font"
-import ProfileId from "./pages/ProfileId/profileId"
-import Navbar from "./components/navbar"
-import Header from "./components/header"
-import LogIn from "./pages/Login/login"
+import { NavigationContainer } from "@react-navigation/native"
+import TabNavigator from "./components/TabNavigator/tabnav"
+import { SafeAreaProvider } from "react-native-safe-area-context"
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -15,41 +15,16 @@ export default function App() {
   if (!fontsLoaded) {
     return (
       <View>
-        <Text>Loading Fonts...</Text>
+        <Text>Fonts Loading...</Text>
       </View>
     )
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Header onTabPress={(tabName) => console.log(tabName)} />
-      </View>
-      <View style={styles.content}>
-        <ProfileId />
-      </View>
-      <View style={styles.footer}>
-        <Navbar onTabPress={(tabName) => console.log(tabName)} />
-      </View>
-    </SafeAreaView>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <TabNavigator />
+      </NavigationContainer>
+    </SafeAreaProvider>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-  },
-  content: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  footer: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  header: {},
-})

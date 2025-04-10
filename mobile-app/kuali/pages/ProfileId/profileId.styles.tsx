@@ -1,12 +1,19 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet, Dimensions } from "react-native"
 import colors from "../../constants/colors"
+import Constants from "expo-constants"
+
+const { width, height } = Dimensions.get("window")
 
 const styles = StyleSheet.create({
   // Estilos generales
-  container: { flex: 1 },
+  container: {
+    flex: 1,
+    //paddingTop: Constants.statusBarHeight,
+    top: "10%",
+  },
   card: {
-    width: 343,
-    height: 587,
+    width: width * 0.8,
+    height: height * 0.6,
     alignItems: "center",
     borderWidth: 2,
     borderRadius: 15,
@@ -44,7 +51,7 @@ const styles = StyleSheet.create({
   },
   info: {
     alignItems: "center",
-    marginTop: "70%",
+    marginTop: height * 0.3,
     width: "100%",
   },
   names: {
@@ -127,8 +134,9 @@ const styles = StyleSheet.create({
 
   // Contenedor para FlipCard
   flipCardContainer: {
-    width: 343,
-    height: 587,
+    paddingTop: Constants.statusBarHeight,
+    width: width * 0.8,
+    height: height * 0.65,
     alignSelf: "center",
     alignItems: "center",
     justifyContent: "center",
