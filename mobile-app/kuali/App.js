@@ -4,6 +4,7 @@ import { useFonts } from "expo-font"
 import { NavigationContainer } from "@react-navigation/native"
 import TabNavigator from "./components/TabNavigator/tabnav"
 import { SafeAreaProvider } from "react-native-safe-area-context"
+import MyActivities from "./pages/MyActivities/myActivities"
 
 export default function App() {
   const [fontsLoaded] = useFonts({
