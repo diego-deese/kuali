@@ -2,7 +2,7 @@ import React from "react"
 import { View, TouchableOpacity, Image } from "react-native"
 import { Ionicons } from "@expo/vector-icons"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
-import styles from "./header_styles"
+import styles from "./Header.styles"
 import colors from "../../constants/colors"
 
 // Definimos la interfaz para las props que recibirá nuestro componente

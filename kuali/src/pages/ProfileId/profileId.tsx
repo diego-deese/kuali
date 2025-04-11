@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 import colors from "../../constants/colors"
 import { SafeAreaView, View, Image, Text } from "react-native"
 import styles from "./profileId.styles"
@@ -17,7 +17,7 @@ const user = {
   institutionalEmail: "a01425452@tec.mx",
   personalEmail: "mucast8@gmail.com",
   program: "ITC",
-  photo: require("../../assets/cicataLogo.png"),
+  photo: require("../../../assets/cicataLogo.png"),
 }
 
 export default function ProfileId() {
@@ -41,10 +41,8 @@ export default function ProfileId() {
       >
         <FlipCard
           friction={6}
-          onFlipEnd={(isFlippedStatus) => {
-            if (isFlipped !== isFlippedStatus) {
-              setIsFlipped(isFlippedStatus)
-            }
+          onFlipEnd={() => {
+            setIsFlipped((prevState) => !prevState)
           }}
         >
           {/* Cara frontal */}

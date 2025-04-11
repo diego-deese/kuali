@@ -1,27 +1,25 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from "react-native"
 import colors from "../../constants/colors"
-import  Constants  from "expo-constants";
 
 const styles = StyleSheet.create({
-  container: { 
-    //flex: 1,
-    paddingTop: Constants.statusBarHeight,
-    marginTop: 100
+  container: {
+    flex: 1,
+    marginTop: 8,
   },
   tabs: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginBottom: 10,
   },
-  
+
   inactiveTab: {
     fontSize: 16,
     paddingVertical: 8,
     color: "#666",
     borderBottomWidth: 2,
-    borderColor: "#666"
+    borderColor: "#666",
   },
-  
+
   activeTab: {
     fontSize: 16,
     paddingVertical: 8,
@@ -29,7 +27,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: "#3cb4ac",
   },
-  
+
   eventList: {
     marginTop: 10,
   },
@@ -39,7 +37,7 @@ const styles = StyleSheet.create({
     padding: 25,
     marginVertical: 8,
 
-    width: "85%", 
+    width: "85%",
     alignSelf: "center",
 
     //Shadows
@@ -58,6 +56,6 @@ const styles = StyleSheet.create({
     color: "#666",
     fontSize: 14,
   },
-});
+})
 
-export default styles;
+export default styles

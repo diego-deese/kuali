@@ -2,9 +2,9 @@ import React from "react"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
 import { MaterialIcons } from "@expo/vector-icons"
 import ProfileId from "../../pages/ProfileId/profileId"
-import MyEvents from "../../pages/MyEvents/myevents"
+import MyEvents from "../../pages/Calendar/calendar"
 import Calendar from "../../pages/Calendar/calendar"
-import Header from "../Header/header"
+import Header from "../Header/Header"
 import colors from "../../constants/colors"
 
 const Tab = createBottomTabNavigator()
