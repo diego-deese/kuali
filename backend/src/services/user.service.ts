@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma'
 import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
-import { NewUser, UserResponse, UsersResponse } from '../types/Users'
+import { NewUser, SafeUser, UserResponse, UsersResponse } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
 
 class UserService {
@@ -74,7 +74,7 @@ class UserService {
     return { user }
   }
 
-  async createUser (userData: NewUser): Promise<UserResponse> {
+  async createUser (userData: NewUser): Promise<SafeUser> {
     const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
@@ -104,7 +104,7 @@ class UserService {
       }
     })
 
-    return { user: newUser }
+    return newUser
   }
 
   async updateUser (userId: number, userData: NewUser): Promise<UserResponse> {

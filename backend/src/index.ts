@@ -2,7 +2,6 @@ import express from 'express'
 import cors from 'cors'
 import userRoutes from './routes/user.routes'
 import activityRoutes from './routes/activity.routes'
-import authRoutes from './routes/auth.routes'
 
 const app = express()
 
@@ -19,7 +18,6 @@ app.get('/ping', (_req, res) => {
 // Rutas
 app.use('/api/users', userRoutes)
 app.use('/api/activities', activityRoutes)
-app.use('/api/login', authRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

@@ -2,8 +2,38 @@ import { Request, Response } from 'express'
 import userService from '../services/user.service'
 import { isNumber } from '../utils/parsing'
 import { AppError } from '../types/Error'
+import authService from '../services/auth.service'
 
 class UserController {
+  login = async (req: Request, res: Response): Promise<undefined> => {
+    try {
+      const { institutionalEmail, password } = req.body
+
+      if (institutionalEmail === undefined || password === undefined) {
+        res.status(400).json({
+          message: 'Error al iniciar sesión',
+          error: 'Correo o contraseña no proporcionados'
+        })
+      }
+
+      const response = await authService.login(institutionalEmail, password)
+
+      res.status(200).json(response)
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(401).json({
+          message: 'Error al iniciar sesión',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al iniciar sesión',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
+
   getUsers = async (_req: Request, res: Response): Promise<undefined> => {
     try {
       const response = await userService.getAllUsers()

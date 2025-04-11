@@ -1,27 +1,51 @@
-const jwt = require('jsonwebtoken')
-const crypto = require('crypto')
-import { SafeUser } from "../types/Users"
+import jwt from '../lib/jwt'
+import crypto from '../lib/crypto'
+import { ValidationError } from '../types/Error'
+import { SessionTokens } from '../types/RefreshToken'
+import { Users } from '../generated/client'
 
-function generateAccessToken(user: SafeUser) {
-    return jwt.sign( { institutionalEmail: user.institutional_email}, process.env.KEYPHRASE, {
-        expiresIn: '15m'
-    } )
+const KEYPHRASE = process.env.KEYPHRASE
+const ENVIRONMENT = process.env.ENVIRONMENT ?? 'production'
+
+export const generateAccessToken = (user: Users): string => {
+  if (KEYPHRASE !== undefined) {
+    return jwt.sign({ institutional_email: user.institutional_email, user_id: user.user_id, user_role: user.role_id }, KEYPHRASE, {
+      expiresIn: ENVIRONMENT === 'dev' ? '10h' : '2h'
+    })
+  } else {
+    throw new ValidationError('No se definió una frase secreta para generar el token')
+  }
 }
 
-function generateRefreshToken() {
-    const token = crypto.randomBytes(16).toString('base64url')
-    return token
+export const generateRefreshToken = (): string => {
+  const token = crypto.randomBytes(16).toString('base64url')
+  return token
 }
 
-function hashToken(token: String){
-    return crypto.createHash('sha512').update(token).digest('hex')
+export const hashToken = (token: string): string => {
+  return crypto.createHash('sha512').update(token).digest('hex')
 }
 
-function generateTokens(user: SafeUser) {
-    const accessToken = generateAccessToken(user)
-    const refreshToken = generateRefreshToken()
-    const hashedRefreshToken = hashToken(refreshToken)
-    return { accessToken, refreshToken, hashedRefreshToken }
+export const generateTokens = (user: Users): SessionTokens => {
+  const accessToken = generateAccessToken(user)
+  const refreshToken = generateRefreshToken()
+  const hashedRefreshToken = hashToken(refreshToken)
+
+  return {
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    hashedRefresh_token: hashedRefreshToken
+  }
 }
 
-export { generateAccessToken, generateRefreshToken, generateTokens, hashToken }
+export const verifyToken = (token: string): undefined => {
+  try {
+    if (KEYPHRASE !== undefined) {
+      jwt.verify(token, KEYPHRASE)
+    } else {
+      throw new ValidationError('No se definió una frase secreta para generar el token')
+    }
+  } catch (error) {
+    throw new ValidationError('Token verification failed')
+  }
+}

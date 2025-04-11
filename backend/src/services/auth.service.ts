@@ -1,30 +1,31 @@
 import prisma from '../lib/prisma'
 import { comparePassword } from '../utils/encryption'
 import { generateTokens } from '../utils/jwt'
-import { SafeUser } from '../types/Users'
-import { addRefreshTokenToWhitelist } from './refreshToken.service'
+import refreshTokenService from './refreshToken.service'
 import { UnauthorizedError, NotFoundError } from '../types/Error'
+import { UserSession } from '../types/RefreshToken'
 
 export class AuthService {
-  async login(institutional_email: string, password: string) {
-    if (!institutional_email) {
-      throw new UnauthorizedError('Correo institucional es requerido')
-    }
-
+  async login (institutionalEmail: string, password: string): Promise<UserSession> {
     const user = await prisma.users.findUnique({
-      where: { institutional_email: institutional_email }
+      where: {
+        institutional_email: institutionalEmail
+      }
     })
 
-    if (!user) throw new NotFoundError('Correo no registrado')
+    if (user === null) throw new NotFoundError('No existe un usuario con ese correo institucional')
 
     const isPasswordValid = await comparePassword(password, user.password)
-    if (!isPasswordValid) throw new UnauthorizedError('Credenciales invalidas')
+    if (isPasswordValid !== true) throw new UnauthorizedError('La contraseña introducida es incorrecta')
 
-    const { accessToken, refreshToken } = generateTokens(user as SafeUser)
+    const sessionTokens = generateTokens(user)
 
-    await addRefreshTokenToWhitelist({ refreshToken, user_id: user.user_id })
+    await refreshTokenService.addRefreshTokenToWhitelist(sessionTokens.refresh_token, user.user_id)
 
-    return { accessToken, refreshToken }
+    return {
+      access_token: sessionTokens.access_token,
+      refresh_token: sessionTokens.refresh_token
+    }
   }
 }
 

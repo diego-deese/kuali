@@ -1,27 +1,36 @@
-import prisma from '../lib/prisma';
-import { hashToken } from '../utils/jwt';
+import { RefreshToken } from '../generated/client'
+import prisma from '../lib/prisma'
+import { hashToken } from '../utils/jwt'
 
-export async function addRefreshTokenToWhitelist({ refreshToken, user_id }: { refreshToken: string; user_id: number }) {
-  return prisma.refreshToken.create({
-    data: {
-      hashedToken: hashToken(refreshToken),
-      user_id,
-      expireAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30), // 30 days
-    },
-  });
+class RefreshTokenService {
+  async addRefreshTokenToWhitelist (refreshToken: string, userId: number): Promise<RefreshToken> {
+    const addedRefreshToken = await prisma.refreshToken.create({
+      data: {
+        hashedToken: hashToken(refreshToken),
+        user_id: userId,
+        expireAt: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30) // 30 days
+      }
+    })
+
+    return addedRefreshToken
+  }
+
+  async findRefreshToken (token: string): Promise<RefreshToken | null> {
+    const refreshToken = await prisma.refreshToken.findUnique({
+      where: {
+        hashedToken: hashToken(token)
+      }
+    })
+
+    return refreshToken
+  }
+
+  async revokeTokens (userId: number): Promise<undefined> {
+    await prisma.refreshToken.updateMany({
+      where: { user_id: userId },
+      data: { revoked: true }
+    })
+  }
 }
 
-export async function findRefreshToken(token: string) {
-  return prisma.refreshToken.findUnique({
-    where: {
-      hashedToken: hashToken(token), 
-    },
-  });
-}
-
-export async function revokeTokens(user_id: number) {
-  return prisma.refreshToken.updateMany({
-    where: { user_id },
-    data: { revoked: true }, 
-  });
-}
+export default new RefreshTokenService()
