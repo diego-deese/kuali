@@ -1,39 +1,33 @@
-import { StyleSheet } from "react-native"
-import colors from "../../constants/colors"
+import { StyleSheet } from 'react-native'
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
+    flex: 1,
+    paddingHorizontal: 40,
   },
-  imgContainer: {
-    paddingTop: 50,
-  },
-  titleContainer: {
-    paddingBottom: 5,
+  formContainer: {
+    flex: 1,
+    alignItems: 'center',
   },
   title: {
-    fontFamily: "monserratRegular",
-    textAlign: "center",
+    fontFamily: 'monserratRegular',
+    textAlign: 'center',
     fontSize: 24,
+    marginBottom: 30,
   },
   inputsContainer: {
-    display: "flex",
-    gap: 10,
-    padding: 30,
+    flex: 1,
   },
-  inputLabels: {
-    fontFamily: "monserratRegular",
-    fontSize: 16,
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+    marginStart: 5,
   },
-  inputText: {
-    fontFamily: "monserratRegular",
-    fontSize: 16,
-    backgroundColor: colors.solidWhite,
-    borderRadius: 6,
-    borderColor: colors.borderGray,
-    height: 50,
-    borderWidth: 1,
-    padding: 10,
+  checkboxLabel: {
+    marginLeft: 8,
+    fontSize: 14,
   },
 })
 

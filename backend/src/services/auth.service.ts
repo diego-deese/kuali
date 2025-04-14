@@ -10,6 +10,9 @@ export class AuthService {
     const user = await prisma.users.findUnique({
       where: {
         institutional_email: institutionalEmail
+      },
+      include: {
+        role: true
       }
     })
 
@@ -24,7 +27,9 @@ export class AuthService {
 
     return {
       access_token: sessionTokens.access_token,
-      refresh_token: sessionTokens.refresh_token
+      refresh_token: sessionTokens.refresh_token,
+      user_id: user.user_id,
+      role: user.role
     }
   }
 }

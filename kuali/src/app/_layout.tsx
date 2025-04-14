@@ -1,16 +1,36 @@
-import { Stack } from "expo-router"
-import { View } from "react-native"
-import HorizontalLogo from "../components/Logo/Logos"
+// app/_layout.js
+import { Stack } from 'expo-router'
+import { AuthProvider, useAuth } from '../context/AuthContext'
+import LoadingScreen from '../pages/LoadingScreen/LoadingScreen'
 
-export default function Layout() {
+// Componente envuelto en el proveedor de autenticación
+export default function RootLayout() {
   return (
-    <View style={{ flex: 1 }}>
-      <Stack
-        screenOptions={{
-          headerTitle: "",
-          headerLeft: () => <HorizontalLogo />,
-        }}
-      />
-    </View>
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   )
+}
+
+// Navegación basada en el estado de autenticación
+function RootLayoutNav() {
+  const { isAuthenticated, isLoading } = useAuth()
+
+  if (isLoading) {
+    return <LoadingScreen />
+  }
+
+  if (isAuthenticated) {
+    return (
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='(tabs)' options={{ headerShown: false }} />
+      </Stack>
+    )
+  } else {
+    return (
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name='(auth)' options={{ headerShown: false }} />
+      </Stack>
+    )
+  }
 }

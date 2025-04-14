@@ -1,5 +1,5 @@
-import { StyleSheet } from "react-native"
-import colors from "../../constants/colors"
+import { StyleSheet } from 'react-native'
+import colors from '../../constants/colors'
 
 const styles = StyleSheet.create({
   container: {
@@ -7,38 +7,38 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   tabs: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginBottom: 10,
   },
 
   inactiveTab: {
     fontSize: 16,
     paddingVertical: 8,
-    color: "#666",
+    color: '#666',
     borderBottomWidth: 2,
-    borderColor: "#666",
+    borderColor: '#666',
   },
 
   activeTab: {
     fontSize: 16,
     paddingVertical: 8,
-    color: "#000",
+    color: '#000',
     borderBottomWidth: 2,
-    borderColor: "#3cb4ac",
+    borderColor: '#3cb4ac',
   },
 
   eventList: {
     marginTop: 10,
   },
   card: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
     padding: 25,
     marginVertical: 8,
 
-    width: "85%",
-    alignSelf: "center",
+    width: '85%',
+    alignSelf: 'center',
 
     //Shadows
     elevation: 2, // sombra para Android
@@ -47,13 +47,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   title: {
-    fontFamily: "monserratBold",
+    fontFamily: 'monserratBold',
     fontSize: 20,
     marginBottom: 4,
     color: colors.fontBlack,
   },
   date: {
-    color: "#666",
+    color: '#666',
     fontSize: 14,
   },
 })

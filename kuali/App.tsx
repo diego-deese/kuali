@@ -1,15 +1,13 @@
-import React from "react"
-import { View, Text } from "react-native"
-import { useFonts } from "expo-font"
-import { NavigationContainer } from "@react-navigation/native"
-import TabNavigator from "./src/components/TabNavigator/TabNavigator"
-import { SafeAreaProvider } from "react-native-safe-area-context"
+import React from 'react'
+import { View, Text } from 'react-native'
+import { useFonts } from 'expo-font'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    monserratRegular: require("./assets/fonts/Montserrat-Regular.ttf"),
-    monserratBold: require("./assets/fonts/Montserrat-SemiBold.ttf"),
-    monserratItalic: require("./assets/fonts/Montserrat-Italic.ttf"),
+    monserratRegular: require('./assets/fonts/Montserrat-Regular.ttf'),
+    monserratBold: require('./assets/fonts/Montserrat-SemiBold.ttf'),
+    monserratItalic: require('./assets/fonts/Montserrat-Italic.ttf'),
   })
 
   if (!fontsLoaded) {
@@ -20,11 +18,5 @@ export default function App() {
     )
   }
 
-  return (
-    <SafeAreaProvider>
-      <NavigationContainer>
-        <TabNavigator />
-      </NavigationContainer>
-    </SafeAreaProvider>
-  )
+  return <SafeAreaProvider></SafeAreaProvider>
 }

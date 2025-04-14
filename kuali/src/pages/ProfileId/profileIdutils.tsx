@@ -1,8 +1,8 @@
-import { Dimensions } from "react-native"
-import { EdgeInsets } from "react-native-safe-area-context"
+import { Dimensions } from 'react-native'
+import { EdgeInsets } from 'react-native-safe-area-context'
 
 export const calculateDimensions = (insets: EdgeInsets) => {
-  const { width, height } = Dimensions.get("window")
+  const { width, height } = Dimensions.get('window')
   const headerHeight = 60 + (insets.top > 0 ? insets.top : 10)
   const tabBarHeight = 80
 

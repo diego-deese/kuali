@@ -1,91 +1,91 @@
-import { StyleSheet, Dimensions } from "react-native"
-import colors from "../../constants/colors"
+import { StyleSheet, Dimensions } from 'react-native'
+import colors from '../../constants/colors'
 
 // Obtener las dimensiones para calcular valores base
-const { width } = Dimensions.get("window")
+const { width } = Dimensions.get('window')
 const baseWidth = width * 0.85
 
 const styles = StyleSheet.create({
   // Estilos generales
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   card: {
-    alignItems: "center",
+    alignItems: 'center',
     borderWidth: 2,
     borderRadius: 15,
     borderColor: colors.highlightCyan,
-    overflow: "hidden",
-    backgroundColor: "white",
+    overflow: 'hidden',
+    backgroundColor: 'white',
   },
 
   // Estilos para la parte frontal
   gradient: {
-    position: "absolute",
+    position: 'absolute',
     top: 0,
-    width: "100%",
+    width: '100%',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
   imageContainer: {
     borderWidth: 2,
     borderColor: colors.highlightCyan,
-    position: "absolute",
-    backgroundColor: "white",
-    justifyContent: "center",
-    alignItems: "center",
-    overflow: "hidden",
+    position: 'absolute',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
   },
   image: {
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   info: {
-    alignItems: "center",
-    width: "90%",
+    alignItems: 'center',
+    width: '90%',
   },
   names: {
-    fontFamily: "monserratSemiBold",
-    fontWeight: "bold",
-    textAlign: "center",
+    fontFamily: 'monserratSemiBold',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   identifier: {
-    color: "white",
+    color: 'white',
     backgroundColor: colors.highlightCyan,
-    fontFamily: "monserratRegular",
+    fontFamily: 'monserratRegular',
     padding: 10,
     borderRadius: 5,
-    textAlign: "center",
+    textAlign: 'center',
   },
   role: {
-    fontFamily: "monserratSemiBold",
-    fontWeight: "bold",
-    textAlign: "center",
+    fontFamily: 'monserratSemiBold',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
   program: {
-    fontFamily: "monserratRegular",
-    textAlign: "center",
+    fontFamily: 'monserratRegular',
+    textAlign: 'center',
   },
 
   // Estilos para parte trasera
   backInfo: {
     paddingHorizontal: 0,
-    alignItems: "flex-start",
-    width: "100%",
-    justifyContent: "space-around",
+    alignItems: 'flex-start',
+    width: '100%',
+    justifyContent: 'space-around',
     flex: 1,
   },
   labelContainer: {
-    alignSelf: "flex-start",
+    alignSelf: 'flex-start',
     paddingHorizontal: 20,
-    width: "100%",
+    width: '100%',
     marginBottom: 10,
   },
   label: {
     backgroundColor: colors.highlightCyan,
     color: colors.solidWhite,
-    fontFamily: "monserratSemiBold",
+    fontFamily: 'monserratSemiBold',
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 5,
@@ -93,16 +93,16 @@ const styles = StyleSheet.create({
   },
   value: {
     marginBottom: 6,
-    color: "#555",
-    textAlign: "left",
+    color: '#555',
+    textAlign: 'left',
   },
 
   // Navegación
   navigationDots: {
-    flexDirection: "row",
+    flexDirection: 'row',
     marginTop: 20,
-    alignSelf: "center",
-    justifyContent: "center",
+    alignSelf: 'center',
+    justifyContent: 'center',
   },
   circle: {
     width: 10,
@@ -115,20 +115,18 @@ const styles = StyleSheet.create({
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: "#CCCCCC",
+    backgroundColor: '#CCCCCC',
     marginHorizontal: 5,
   },
 
   // Contenedor para FlipCard
-  
+
   flipCardContainer: {
-    alignSelf: "center",
-    alignItems: "center",
-    justifyContent: "center",
-    display: "flex",
-    
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    display: 'flex',
   },
-  
 })
 
 export default styles

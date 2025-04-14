@@ -1,15 +1,15 @@
-import { StyleSheet } from "react-native"
-import colors from "../../constants/colors"
+import { StyleSheet } from 'react-native'
+import colors from '../../constants/colors'
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "white",
+    backgroundColor: 'white',
     borderRadius: 10,
     padding: 25,
     marginVertical: 8,
 
-    width: "85%",
-    alignSelf: "center",
+    width: '85%',
+    alignSelf: 'center',
 
     //Shadows
     elevation: 2, // sombra para Android
@@ -18,13 +18,13 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   title: {
-    fontFamily: "monserratBold",
+    fontFamily: 'monserratBold',
     fontSize: 20,
     marginBottom: 4,
     color: colors.fontBlack,
   },
   date: {
-    color: "#666",
+    color: '#666',
     fontSize: 14,
   },
 })

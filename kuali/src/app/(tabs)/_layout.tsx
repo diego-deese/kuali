@@ -1,9 +1,9 @@
-import { Tabs } from "expo-router"
+import { Tabs } from 'expo-router'
 import {
   BookmarkBorderIcon,
   CalendarBorderIcon,
   ProfileBorderIcon,
-} from "../../components/Icons"
+} from '../../components/Icons/Icons'
 
 export default function TabsLayout() {
   return (
@@ -13,23 +13,23 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="index"
+        name='index'
         options={{
-          title: "Mis actividades",
+          title: 'Mis actividades',
           tabBarIcon: () => <BookmarkBorderIcon />,
         }}
       />
       <Tabs.Screen
-        name="calendar"
+        name='calendar'
         options={{
-          title: "Calendario",
+          title: 'Calendario',
           tabBarIcon: () => <CalendarBorderIcon />,
         }}
       />
       <Tabs.Screen
-        name="myprofile"
+        name='myprofile'
         options={{
-          title: "Mi Perfil",
+          title: 'Mi Perfil',
           tabBarIcon: () => <ProfileBorderIcon />,
         }}
       />
