@@ -5,12 +5,18 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native"
 import styles from "./myActivities.styles"
 import EventCard from "../../components/EventCard/EventCard"
+import CardCarousel from "../../components/CardCarousel/CardCarousel";
+
 
 export default function MyActivities() {
   const [activeTab, setActiveTab] = useState("upcoming")
+  const [viewMode, setViewMode] = useState<"carousel" | "list">("carousel");
+  const [currentIndex, setCurrentIndex] = useState(0);
+
 
   const upcomingEvents = [
     { title: "Evento ", date: "10 abril 2025" },
@@ -28,7 +34,10 @@ export default function MyActivities() {
     { title: "Evento pasado ", date: "12 marzo 2025" },
   ]
 
-  const events = activeTab === "upcoming" ? upcomingEvents : pastEvents
+  const featuredEvents = [
+    { title: "Evento de Robótica", date: "15 abril, 11:00 hrs", location: "Auditorio", image: require("../../../assets/cicataPlace.png") },
+    { title: "Exposición de Proyectos", date: "22 abril, 13:00 hrs", location: "Sala de Proyectos", image: require("../../../assets/cicataPlace.png") },
+  ];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -52,12 +61,60 @@ export default function MyActivities() {
         </TouchableOpacity>
       </View>
 
+      {/* Boton que cambia de lista a carrusel */}
+      {activeTab === "upcoming" && (
+        <TouchableOpacity
+          style={styles.toggleButton}
+          onPress={() => setViewMode(viewMode === "carousel" ? "list" : "carousel")}
+        >
+          <Text style={styles.toggleText}>
+            {viewMode === "carousel" ? "Ver en lista" : "Ver en carrusel"}
+          </Text>
+        </TouchableOpacity>
+      )}
+
+
+      {activeTab == "upcoming" && viewMode == "carousel" && (
+        <FlatList
+          data={featuredEvents}
+          renderItem={({ item }) => (
+            <CardCarousel
+              image={item.image}
+              title={item.title}
+              date={item.date}
+              location={item.location}
+            />
+          )}
+          keyExtractor={(_, index) => index.toString()}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          snapToAlignment="start"
+          snapToInterval={300} 
+          decelerationRate="fast"
+        />
+      )}
       {/* Lista de eventos */}
-      <ScrollView style={styles.eventList}>
-        {events.map((e, i) => (
-          <EventCard key={i} title={e.title} date={e.date} />
-        ))}
-      </ScrollView>
+      {(activeTab == "upcoming" && viewMode == "list") && (
+        <ScrollView style={styles.eventList}>
+          {upcomingEvents.map((e, i) => (
+            <EventCard 
+            key={i} 
+            title={e.title} 
+            date={e.date} />
+          ))}
+        </ScrollView>
+      )}
+      {(activeTab == "past") && (
+        <ScrollView style={styles.eventList}>
+          {pastEvents.map((e, i) => (
+            <EventCard 
+            key={i} 
+            title={e.title} 
+            date={e.date} />
+          ))}
+        </ScrollView>
+      )}
     </SafeAreaView>
   )
 }

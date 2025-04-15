@@ -1,4 +1,7 @@
-import { Text, View } from "react-native"
+import { 
+  Text, 
+  View 
+} from "react-native"
 import styles from "./EventCard.styles"
 
 // Componente reutilizable para cada evento
