@@ -1,11 +1,11 @@
 import prisma from '../lib/prisma'
 import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
-import { NewUser, SafeUser, UserResponse, UsersResponse } from '../types/Users'
+import { NewUser, SafeUser } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
 
 class UserService {
-  async getAllUsers (): Promise<UsersResponse> {
+  async getAllUsers (): Promise<SafeUser[]> {
     const users = await prisma.users.findMany({
       omit: {
         password: true,
@@ -35,10 +35,10 @@ class UserService {
       throw new NotFoundError('No se encontró ningún usuario')
     }
 
-    return { users }
+    return users
   }
 
-  async getUser (userId: number): Promise<UserResponse> {
+  async getUser (userId: number): Promise<SafeUser | null> {
     const user = await prisma.users.findFirst({
       where: {
         user_id: userId
@@ -67,11 +67,7 @@ class UserService {
       }
     })
 
-    if (user === null) {
-      throw new NotFoundError('No se encontró ningún usuario con ese id')
-    }
-
-    return { user }
+    return user
   }
 
   async createUser (userData: NewUser): Promise<SafeUser> {
@@ -107,7 +103,7 @@ class UserService {
     return newUser
   }
 
-  async updateUser (userId: number, userData: NewUser): Promise<UserResponse> {
+  async updateUser (userId: number, userData: NewUser): Promise<SafeUser> {
     const existingUser = await prisma.users.findFirst({
       where: {
         user_id: userId
@@ -166,7 +162,7 @@ class UserService {
       }
     })
 
-    return { user: updatedUser }
+    return updatedUser
   }
 
   async deleteUser (userId: number): Promise<ResponseMessage> {

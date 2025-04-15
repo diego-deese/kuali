@@ -11,7 +11,6 @@ router.get('/:id/activities/past', activityController.getUserPastActivities) // 
 router.get('/:userId/activities/:activityId', activityController.getActivityWithUserDetails) // Add middleware
 
 router.post('/', userController.createUser) // Add middleware
-router.post('/login', userController.login)
 
 router.put('/:id', userController.updateUser) // Add middleware
 

@@ -1,40 +1,46 @@
 import jwt from '../lib/jwt'
-import crypto from '../lib/crypto'
 import { ValidationError } from '../types/Error'
-import { SessionTokens } from '../types/RefreshToken'
-import { Users } from '../generated/client'
+import { SessionTokens } from '../types/Auth'
+import { SafeUser } from '../types/Users'
 
 const KEYPHRASE = process.env.KEYPHRASE
-const ENVIRONMENT = process.env.ENVIRONMENT ?? 'production'
+// const ENVIRONMENT = process.env.ENVIRONMENT ?? 'production'
 
-export const generateAccessToken = (user: Users): string => {
+export const generateAccessToken = (user: SafeUser): string => {
   if (KEYPHRASE !== undefined) {
-    return jwt.sign({ institutional_email: user.institutional_email, user_id: user.user_id, user_role: user.role_id }, KEYPHRASE, {
-      expiresIn: ENVIRONMENT === 'dev' ? '10h' : '2h'
+    return jwt.sign({ institutional_email: user.institutional_email, user_id: user.user_id, user_role: user.role.role_id }, KEYPHRASE, {
+      expiresIn: '5m'
     })
   } else {
     throw new ValidationError('No se definió una frase secreta para generar el token')
   }
 }
 
-export const generateRefreshToken = (): string => {
-  const token = crypto.randomBytes(16).toString('base64url')
-  return token
+export const generateRefreshToken = (user: SafeUser): string => {
+  if (KEYPHRASE !== undefined) {
+    return jwt.sign(
+      {
+        institutional_email: user.institutional_email,
+        user_id: user.user_id,
+        user_role: user.role.role_id
+      },
+      KEYPHRASE,
+      {
+        expiresIn: '7d'
+      }
+    )
+  } else {
+    throw new ValidationError('No se definió una frase secreta para generar el token')
+  }
 }
 
-export const hashToken = (token: string): string => {
-  return crypto.createHash('sha512').update(token).digest('hex')
-}
-
-export const generateTokens = (user: Users): SessionTokens => {
+export const generateTokens = (user: SafeUser): SessionTokens => {
   const accessToken = generateAccessToken(user)
-  const refreshToken = generateRefreshToken()
-  const hashedRefreshToken = hashToken(refreshToken)
+  const refreshToken = generateRefreshToken(user)
 
   return {
     access_token: accessToken,
-    refresh_token: refreshToken,
-    hashedRefresh_token: hashedRefreshToken
+    refresh_token: refreshToken
   }
 }
 
