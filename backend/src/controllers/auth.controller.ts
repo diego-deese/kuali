@@ -1,10 +1,8 @@
 import { Request, Response } from 'express'
 import authService from '../services/auth.service'
 import { AppError } from '../types/Error'
-import { KEYPHRASE } from '../constants/env'
-import jwt from '../lib/jwt'
 import userService from '../services/user.service'
-import { generateTokens } from '../utils/jwt'
+import { generateTokens, verifyToken } from '../utils/jwt'
 
 class AuthController {
   login = async (req: Request, res: Response): Promise<undefined> => {
@@ -16,11 +14,11 @@ class AuthController {
           message: 'Error al iniciar sesión',
           error: 'Correo o contraseña no proporcionados'
         })
+      } else {
+        const response = await authService.login(institutionalEmail, password)
+
+        res.status(200).json(response)
       }
-
-      const response = await authService.login(institutionalEmail, password)
-
-      res.status(200).json(response)
     } catch (error) {
       if (error instanceof AppError) {
         res.status(401).json({
@@ -45,6 +43,7 @@ class AuthController {
           message: 'Error al crear un nuevo refresh token',
           error: 'No se proporcionó el refresh token'
         })
+        return
       }
 
       const savedRefreshToken = await authService.findRefreshToken(refreshToken)
@@ -57,15 +56,7 @@ class AuthController {
         return
       }
 
-      if (KEYPHRASE === undefined) {
-        res.status(400).json({
-          message: 'Error al crear un nuevo refresh token',
-          error: 'No se proporcionó la frase secreta para verificar el token'
-        })
-        return
-      }
-
-      const payload = jwt.verify(refreshToken, KEYPHRASE)
+      const payload = verifyToken(refreshToken)
 
       if (typeof payload !== 'object' || payload === null || !('user_id' in payload)) {
         res.status(400).json({

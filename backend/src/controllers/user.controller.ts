@@ -16,6 +16,7 @@ class UserController {
           error: error.message
         })
       } else {
+        console.log('Error en getUsers')
         res.status(500).json({
           message: 'Error al obtener a los usuarios',
           error: error instanceof Error ? error.message : 'Error desconocido'

@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma'
-import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../types/Error'
+import { ConflictError, UnauthorizedError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
 import { NewUser, SafeUser } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
@@ -30,10 +30,6 @@ class UserService {
         }
       }
     })
-
-    if (users.length === 0) {
-      throw new NotFoundError('No se encontró ningún usuario')
-    }
 
     return users
   }
