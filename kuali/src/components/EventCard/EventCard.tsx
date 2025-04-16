@@ -1,5 +1,7 @@
+
 import { Text, View } from 'react-native'
 import styles from './EventCard.styles'
+
 
 export default function EventCard({
   title,
