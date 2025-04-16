@@ -5,7 +5,6 @@ import {
   Text,
   TouchableOpacity,
   ScrollView,
-  FlatList,
 } from "react-native"
 import styles from "./myActivities.styles"
 import EventCard from "../../components/EventCard/EventCard"
@@ -16,7 +15,6 @@ export default function MyActivities() {
   const [activeTab, setActiveTab] = useState("upcoming")
   const [viewMode, setViewMode] = useState<"carousel" | "list">("carousel");
   const [currentIndex, setCurrentIndex] = useState(0);
-
 
   const upcomingEvents = [
     { title: "Evento ", date: "10 abril 2025" },
@@ -38,6 +36,9 @@ export default function MyActivities() {
     { title: "Evento de Robótica", date: "15 abril, 11:00 hrs", location: "Auditorio", image: require("../../../assets/cicataPlace.png") },
     { title: "Exposición de Proyectos", date: "22 abril, 13:00 hrs", location: "Sala de Proyectos", image: require("../../../assets/cicataPlace.png") },
   ];
+
+  
+  const currentEvent = featuredEvents[currentIndex];
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,25 +76,18 @@ export default function MyActivities() {
 
 
       {activeTab == "upcoming" && viewMode == "carousel" && (
-        <FlatList
-          data={featuredEvents}
-          renderItem={({ item }) => (
-            <CardCarousel
-              image={item.image}
-              title={item.title}
-              date={item.date}
-              location={item.location}
-            />
-          )}
-          keyExtractor={(_, index) => index.toString()}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{ paddingHorizontal: 16 }}
-          snapToAlignment="start"
-          snapToInterval={300} 
-          decelerationRate="fast"
+        <CardCarousel
+        image={currentEvent.image}
+        title={currentEvent.title}
+        date={currentEvent.date}
+        location={currentEvent.location}
+        onNext={() => setCurrentIndex((prev) => prev + 1)}
+        onPrev={() => setCurrentIndex((prev) => prev - 1)}
+        isFirst={currentIndex === 0}
+        isLast={currentIndex === featuredEvents.length - 1}
         />
       )}
+
       {/* Lista de eventos */}
       {(activeTab == "upcoming" && viewMode == "list") && (
         <ScrollView style={styles.eventList}>

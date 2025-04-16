@@ -3,22 +3,20 @@ import colors from "../../constants/colors"
 
 const styles = StyleSheet.create({
   card: {
-    width: 380,            // Más ancho
+    alignSelf: "center",
+    width: 380,
     height: 600,
-    //backgroundColor: "white",
-    //borderRadius: 10,
     padding: 20,
-    marginRight: 16,
-    //elevation: 3,
-    //shadowColor: "#000",
-    //shadowOffset: { width: 0, height: 2 },
-    //shadowOpacity: 0.1,
-    //shadowRadius: 4,
-  },
-  
+  }, 
   image: {
     width: "100%",
     height: "100%",
+    borderRadius: 10,
+  },
+  darkOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.4)",
+    borderRadius: 10,
   },
   overlay: {
     position: "absolute",
@@ -41,8 +39,19 @@ const styles = StyleSheet.create({
   text: {
     color: colors.solidWhite,
     marginLeft: 6,
-    fontSize: 25,
+    fontSize: 23,
   },
+  icon: {
+    width: 20,
+    textAlign: "center",
+  },
+  controls: {
+    marginTop: -300,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  
 });
 
 export default styles;
