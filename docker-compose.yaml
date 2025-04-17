@@ -1,0 +1,37 @@
+services:
+  db:
+    container_name: kuali-db
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./backend/.env
+    volumes:
+      - ./backend/prisma/init.sh:/docker-entrypoint-initdb.d/init.sh
+      - kuali-data:/var/lib/mysql
+    networks:
+      - backend-network
+  backend:
+    container_name: kuali-backend
+    restart: unless-stopped
+    ports:
+      - "3001:3000"
+    environment:
+    # Esta URL será usada por el cliente de prisma mantener el host en el nombre del contenedor y el puerto en el puerto por defecto de MYSQL
+      - DATABASE_URL=mysql://root:root@kuali-db:3306/kuali
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - backend-network
+
+volumes:
+  kuali-data:
+
+networks:
+  backend-network:
+    driver: bridge

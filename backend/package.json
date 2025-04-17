@@ -4,8 +4,19 @@
   "main": "index.js",
   "scripts": {
     "start": "node build/index.js",
-    "dev": "ts-node-dev src/index.ts",
+    "dev": "ts-node-dev --poll src/index.ts",
     "tsc": "tsc",
+    "docker:start": "docker-compose up -d",
+    "docker:build": "docker-compose up -d --build",
+    "docker:stop": "docker-compose down",
+    "docker:delete": "docker-compose down -v",
+    "db:pull": "npx prisma db pull",
+    "db:wait": "npx wait-on tcp:3306 -t 60000",
+    "db:seed": "ts-node prisma/seed.ts",
+    "db:migrate:dev": "npx prisma migrate dev",
+    "db:migrate": "npx prisma migrate deploy",
+    "db:generate": "npx prisma generate",
+    "db:init": "npm run db:wait && npm run db:migrate && npm run db:generate",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -13,19 +24,35 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.5.0",
     "ts-node-dev": "^2.0.0",
-    "ts-standard": "^12.0.2"
+    "ts-standard": "^12.0.2",
+    "wait-on": "^8.0.3"
   },
   "dependencies": {
-    "express": "4.21.2"
+    "@prisma/client": "^6.5.0",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "express": "4.21.2",
+    "mysql2": "^3.14.0"
   },
   "eslintConfig": {
     "parserOptions": {
-      "project": "./tsconfig.json"
+      "project": [
+        "./backend/tsconfig.json",
+        "./tsconfig.json"
+      ]
     },
     "extends": [
       "./node_modules/ts-standard/eslintrc.json"
     ]
+  },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
   }
 }
