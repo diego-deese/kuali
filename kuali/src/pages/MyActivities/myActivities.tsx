@@ -9,10 +9,11 @@ import {
 import styles from './myActivities.styles'
 import EventCard from '../../components/EventCard/EventCard'
 import CardCarousel from '../../components/CardCarousel/CardCarousel'
+import ToggleButton from '../../components/ToggleButton/ToggleButton'
 
 export default function MyActivities() {
   const [activeTab, setActiveTab] = useState('upcoming')
-  const [viewMode, setViewMode] = useState<'carousel' | 'list'>('carousel')
+  const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const upcomingEvents = [
@@ -71,19 +72,16 @@ export default function MyActivities() {
 
       {/* Boton que cambia de lista a carrusel */}
       {activeTab === 'upcoming' && (
-        <TouchableOpacity
-          style={styles.toggleButton}
-          onPress={() =>
-            setViewMode(viewMode === 'carousel' ? 'list' : 'carousel')
+        <ToggleButton
+          options={['Lista', 'Tarjeta']}
+          selected={viewMode === 'list' ? 'Lista' : 'Tarjeta'}
+          onChange={(selectedOption) =>
+            setViewMode(selectedOption === 'Lista' ? 'list' : 'card')
           }
-        >
-          <Text style={styles.toggleText}>
-            {viewMode === 'carousel' ? 'Ver en lista' : 'Ver en carrusel'}
-          </Text>
-        </TouchableOpacity>
+        />
       )}
 
-      {activeTab == 'upcoming' && viewMode == 'carousel' && (
+      {activeTab == 'upcoming' && viewMode == 'card' && (
         <CardCarousel
           image={currentEvent.image}
           title={currentEvent.title}

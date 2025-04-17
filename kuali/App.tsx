@@ -9,7 +9,6 @@ export default function App() {
     monserratBold: require('./assets/fonts/Montserrat-SemiBold.ttf'),
     monserratItalic: require('./assets/fonts/Montserrat-Italic.ttf'),
   })
-
   if (!fontsLoaded) {
     return (
       <View>
@@ -17,6 +16,5 @@ export default function App() {
       </View>
     )
   }
-
   return <SafeAreaProvider></SafeAreaProvider>
 }
