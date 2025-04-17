@@ -46,6 +46,7 @@ class AuthService {
           JSON.stringify(data.user),
         )
         return data
+
       }
 
       Alert.alert(data.message, data.error)
