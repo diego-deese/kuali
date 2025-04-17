@@ -7,7 +7,6 @@ import CalendarComponent from '../../components/Calendar/Calendar'
 
 export default function MyEvents() {
   const { user } = useAuth()
-
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>

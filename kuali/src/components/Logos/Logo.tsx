@@ -21,7 +21,6 @@ const Logo = (props) => (
       <Mask
         id='b'
         width={1160}
-        height={726}
         x={-731}
         y={11}
         maskUnits='userSpaceOnUse'

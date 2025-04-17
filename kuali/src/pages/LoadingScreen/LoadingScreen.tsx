@@ -1,8 +1,12 @@
-import { ActivityIndicator, View } from 'react-native'
+import { ActivityIndicator, Text, View } from 'react-native'
 import Logo from '../../components/Logos/Logo'
 import colors from '../../constants/colors'
 
-export default function LoadingScreen() {
+interface LoadingScreenProps {
+  message?: string
+}
+
+export default function LoadingScreen({ message }: LoadingScreenProps) {
   return (
     <View
       style={{
@@ -14,6 +18,7 @@ export default function LoadingScreen() {
     >
       <Logo height={200} />
       <ActivityIndicator size={'large'} color={colors.selectionBlue} />
+      {message && <Text>{message}</Text>}
     </View>
   )
 }
