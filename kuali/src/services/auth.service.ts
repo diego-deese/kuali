@@ -1,14 +1,21 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SecureStore from 'expo-secure-store'
 import { Alert } from 'react-native'
-
-const TOKEN_KEY = 'userToken'
+import {
+  ACCESS_TOKEN_KEY,
+  REFRESH_TOKEN_KEY,
+  USER_SESSION_KEY,
+} from '../constants/storage_keys'
+import { AuthResponse } from '../types/Auth'
 
 class AuthService {
-  async login(email: string, password: string, rememberMe: boolean) {
+  async login(
+    email: string,
+    password: string,
+    rememberMe: boolean,
+  ): Promise<AuthResponse | null> {
     try {
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/login`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
         {
           method: 'POST',
           headers: {
@@ -24,27 +31,40 @@ class AuthService {
       const data = await response.json()
 
       if (response.status === 200) {
-        if (rememberMe) await AsyncStorage.setItem('rememberMe', 'true')
-        await SecureStore.setItemAsync('userSession', JSON.stringify(data))
-        await AsyncStorage.setItem(TOKEN_KEY, data.access_token)
-        return { success: true, data: data }
+        if (rememberMe) {
+          await SecureStore.setItemAsync(
+            REFRESH_TOKEN_KEY,
+            data.tokens.refresh_token,
+          )
+        }
+        await SecureStore.setItemAsync(
+          ACCESS_TOKEN_KEY,
+          data.tokens.access_token,
+        )
+        await SecureStore.setItemAsync(
+          USER_SESSION_KEY,
+          JSON.stringify(data.user),
+        )
+        return data
       }
 
       Alert.alert(data.message, data.error)
-      return { success: false }
+      return null
     } catch (error) {
       console.error(error)
       Alert.alert(
         'Error de conexión',
         'No se pudo establecer conexión con el servidor. Por favor, verifica tu conexión o intenta de nuevo más tarde.',
       )
-      return { success: false }
+      return null
     }
   }
 
   async logout() {
     try {
-      await AsyncStorage.removeItem('userToken')
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY)
+      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
+      await SecureStore.deleteItemAsync(USER_SESSION_KEY)
       return { success: true }
     } catch (error) {
       console.error(error)
@@ -54,7 +74,8 @@ class AuthService {
 
   async isAuthenticated(): Promise<boolean> {
     try {
-      const token = await AsyncStorage.getItem(TOKEN_KEY)
+      const token = await SecureStore.getItem(ACCESS_TOKEN_KEY)
+
       return !!token
     } catch (error) {
       console.log(error)
@@ -64,7 +85,7 @@ class AuthService {
 
   async getToken(): Promise<string | null> {
     try {
-      return await AsyncStorage.getItem(TOKEN_KEY)
+      return await SecureStore.getItem(ACCESS_TOKEN_KEY)
     } catch (error) {
       console.log(error)
       return null
@@ -73,7 +94,7 @@ class AuthService {
 
   async removeToken(): Promise<boolean> {
     try {
-      await AsyncStorage.removeItem(TOKEN_KEY)
+      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
       return true
     } catch (error) {
       Alert.alert('Ocurrio un error al remover el token: ', error)
@@ -81,7 +102,7 @@ class AuthService {
   }
 
   async getCurrentUser() {
-    const userJson = await SecureStore.getItemAsync('userSession')
+    const userJson = await SecureStore.getItem(USER_SESSION_KEY)
     return userJson ? JSON.parse(userJson) : null
   }
 }
