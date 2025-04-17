@@ -25,26 +25,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     color: "#000",
     borderBottomWidth: 2,
-    borderColor: "#3cb4ac",
+    borderColor: colors.highlightCyan,
   },
 
   eventList: {
     marginTop: 10,
   },
-
-  toggleButton: {
-  flexDirection: "row",
-  backgroundColor: "#3cb4ac",
-  padding: 10,
-  borderRadius: 8,
-  alignSelf: "flex-end",
-  margin: 10,
-},
-toggleText: {
-  color: "#fff",
-  fontSize: 14,
-  fontWeight: "bold",
-}
 
 })
 
