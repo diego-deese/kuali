@@ -100,14 +100,14 @@ export default function MyActivities() {
       {activeTab == 'upcoming' && viewMode == 'list' && (
         <ScrollView style={styles.eventList}>
           {upcomingEvents.map((e, i) => (
-            <EventCard key={i} title={e.title} date={e.date} />
+            <EventCard key={i} title={e.title} date={e.date} id={e.id} />
           ))}
         </ScrollView>
       )}
       {activeTab == 'past' && (
         <ScrollView style={styles.eventList}>
           {pastEvents.map((e, i) => (
-            <EventCard key={i} title={e.title} date={e.date} />
+            <EventCard key={i} title={e.title} date={e.date} id={e.id} />
           ))}
         </ScrollView>
       )}

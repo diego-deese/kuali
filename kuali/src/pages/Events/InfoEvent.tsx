@@ -1,10 +1,10 @@
 import { View } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+//import { useLocalSearchParams } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 
 export default function InfoEvent() {
-  const { id, title, date } = useLocalSearchParams()
+  // const { id, title, date } = useLocalSearchParams()
 
   const handleUpload = (docId: number) => {
     // Lógica para subir documento
