@@ -1,9 +1,9 @@
-import React from "react"
-import { View, TouchableOpacity, Image } from "react-native"
-import { Ionicons } from "@expo/vector-icons"
-import { useSafeAreaInsets } from "react-native-safe-area-context"
-import styles from "./Header.styles"
-import colors from "../../constants/colors"
+import React from 'react'
+import { View, TouchableOpacity, Image } from 'react-native'
+import { Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import styles from './Header.styles'
+import colors from '../../constants/colors'
 
 // Definimos la interfaz para las props que recibirá nuestro componente
 interface HeaderProps {
@@ -31,15 +31,15 @@ const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
       ]}
     >
       {/* Logo CICATA */}
-      <Image source={require("../../assets/CICATALogoHeader.png")} />
+      <Image source={require('../../assets/CICATALogoHeader.png')} />
 
       {/* Tab de Notification */}
       <TouchableOpacity
         style={styles.tabButton}
-        onPress={() => handleTabPress("notificacion")}
+        onPress={() => handleTabPress('notificacion')}
       >
         <Ionicons
-          name={"notifications-outline"}
+          name={'notifications-outline'}
           size={25}
           color={colors.blueIcons}
         />

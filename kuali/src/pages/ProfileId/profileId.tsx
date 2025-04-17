@@ -6,21 +6,24 @@ import { LinearGradient } from 'expo-linear-gradient'
 import FlipCard from 'react-native-flip-card'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { calculateDimensions } from './profileIdutils'
+import { useAuth } from '../../context/AuthContext'
 
-const user = {
-  name: 'Juan Pablo',
-  paternal_lastname: 'Escobar',
-  maternal_lastname: 'Juarez',
-  curp: 'BURD040804MMSCVLA1',
-  identifier: 'A01424009',
-  role: 'Student',
-  institutionalEmail: 'a01425452@tec.mx',
-  personalEmail: 'mucast8@gmail.com',
-  program: 'ITC',
-  photo: require('../../../assets/cicataLogo.png'),
-}
+// const user = {
+//   name: 'Juan Pablo',
+//   paternal_lastname: 'Escobar',
+//   maternal_lastname: 'Juarez',
+//   curp: 'BURD040804MMSCVLA1',
+//   identifier: 'A01424009',
+//   role: 'Student',
+//   institutionalEmail: 'a01425452@tec.mx',
+//   personalEmail: 'mucast8@gmail.com',
+//   program: 'ITC',
+//   photo: require('../../../assets/cicataLogo.png'),
+// }
 
 export default function ProfileId() {
+  const user = useAuth()
+  console.log(user)
   const [isFlipped, setIsFlipped] = useState(false)
   const insets = useSafeAreaInsets()
 

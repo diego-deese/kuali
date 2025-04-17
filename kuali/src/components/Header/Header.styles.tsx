@@ -1,14 +1,14 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet } from 'react-native'
 
 // Estilos header
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
-    backgroundColor: "white",
-    justifyContent: "space-between",
-    alignItems: "center",
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 20,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: {
       width: 0,
       height: 2,
@@ -18,9 +18,9 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   tabButton: {
-    marginLeft: "auto",
-    alignItems: "center",
-    justifyContent: "center",
+    marginLeft: 'auto',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 })
 
