@@ -56,6 +56,20 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 14,
   },
+  toggleButton: {
+  flexDirection: "row",
+  backgroundColor: "#3cb4ac",
+  padding: 10,
+  borderRadius: 8,
+  alignSelf: "flex-end",
+  margin: 10,
+},
+toggleText: {
+  color: "#fff",
+  fontSize: 14,
+  fontWeight: "bold",
+}
+
 })
 
 export default styles

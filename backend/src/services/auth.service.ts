@@ -1,9 +1,9 @@
 import prisma from '../lib/prisma'
-import { comparePassword } from '../utils/encryption'
+import { comparePassword, hashToken } from '../utils/encryption'
 import { generateTokens } from '../utils/jwt'
-import refreshTokenService from './refreshToken.service'
 import { UnauthorizedError, NotFoundError } from '../types/Error'
-import { UserSession } from '../types/RefreshToken'
+import { UserSession } from '../types/Auth'
+import { RefreshToken } from '../generated/client'
 
 export class AuthService {
   async login (institutionalEmail: string, password: string): Promise<UserSession> {
@@ -23,14 +23,49 @@ export class AuthService {
 
     const sessionTokens = generateTokens(user)
 
-    await refreshTokenService.addRefreshTokenToWhitelist(sessionTokens.refresh_token, user.user_id)
+    await this.addRefreshTokenToWhitelist(sessionTokens.refresh_token, user.user_id)
 
     return {
-      access_token: sessionTokens.access_token,
-      refresh_token: sessionTokens.refresh_token,
-      user_id: user.user_id,
-      role: user.role
+      tokens: sessionTokens,
+      user: {
+        user_id: user.user_id,
+        role: user.role
+      }
     }
+  }
+
+  async addRefreshTokenToWhitelist (refreshToken: string, userId: number): Promise<RefreshToken> {
+    const addedRefreshToken = await prisma.refreshToken.create({
+      data: {
+        hashedToken: hashToken(refreshToken),
+        user_id: userId
+      }
+    })
+
+    return addedRefreshToken
+  }
+
+  async findRefreshToken (token: string): Promise<RefreshToken | null> {
+    const refreshToken = await prisma.refreshToken.findUnique({
+      where: {
+        hashedToken: hashToken(token)
+      }
+    })
+
+    return refreshToken
+  }
+
+  async revokeTokens (userId: number): Promise<undefined> {
+    await prisma.refreshToken.updateMany({
+      where: { user_id: userId },
+      data: { revoked: true }
+    })
+  }
+
+  async deleteRefreshToken (id: string): Promise<undefined> {
+    await prisma.refreshToken.delete({
+      where: { id }
+    })
   }
 }
 

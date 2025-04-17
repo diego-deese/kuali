@@ -2,43 +2,13 @@ import { Request, Response } from 'express'
 import userService from '../services/user.service'
 import { isNumber } from '../utils/parsing'
 import { AppError } from '../types/Error'
-import authService from '../services/auth.service'
 
 class UserController {
-  login = async (req: Request, res: Response): Promise<undefined> => {
-    try {
-      const { institutionalEmail, password } = req.body
-
-      if (institutionalEmail === undefined || password === undefined) {
-        res.status(400).json({
-          message: 'Error al iniciar sesión',
-          error: 'Correo o contraseña no proporcionados'
-        })
-      }
-
-      const response = await authService.login(institutionalEmail, password)
-
-      res.status(200).json(response)
-    } catch (error) {
-      if (error instanceof AppError) {
-        res.status(401).json({
-          message: 'Error al iniciar sesión',
-          error: error.message
-        })
-      } else {
-        res.status(500).json({
-          message: 'Error al iniciar sesión',
-          error: error instanceof Error ? error.message : 'Error desconocido'
-        })
-      }
-    }
-  }
-
   getUsers = async (_req: Request, res: Response): Promise<undefined> => {
     try {
-      const response = await userService.getAllUsers()
+      const users = await userService.getAllUsers()
 
-      res.status(200).json(response.users)
+      res.status(200).json({ users })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
@@ -46,6 +16,7 @@ class UserController {
           error: error.message
         })
       } else {
+        console.log('Error en getUsers')
         res.status(500).json({
           message: 'Error al obtener a los usuarios',
           error: error instanceof Error ? error.message : 'Error desconocido'
@@ -64,9 +35,9 @@ class UserController {
           error: 'El id proporcionado es inválido'
         })
       } else {
-        const response = await userService.getUser(Number(id))
+        const user = await userService.getUser(Number(id))
 
-        res.status(200).json(response)
+        res.status(200).json({ user })
       }
     } catch (error) {
       if (error instanceof AppError) {
@@ -116,8 +87,8 @@ class UserController {
           errror: 'El id proporcionado es inválido'
         })
       } else {
-        const response = await userService.updateUser(Number(id), userData)
-        res.status(200).json(response)
+        const updatedUser = await userService.updateUser(Number(id), userData)
+        res.status(200).json({ updatedUser })
       }
     } catch (error) {
       if (error instanceof AppError) {
