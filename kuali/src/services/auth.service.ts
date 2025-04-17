@@ -8,7 +8,7 @@ class AuthService {
   async login(email: string, password: string, rememberMe: boolean) {
     try {
       const response = await fetch(
-        `${process.env.EXPO_PUBLIC_API_URL}/users/login`,
+        `${process.env.EXPO_PUBLIC_API_URL}/auth/login`,
         {
           method: 'POST',
           headers: {
@@ -23,10 +23,10 @@ class AuthService {
 
       const data = await response.json()
 
-      if (response.status === 200) {
+      if (response.status === 200 && data.tokens?.access_token) {
         if (rememberMe) await AsyncStorage.setItem('rememberMe', 'true')
         await SecureStore.setItemAsync('userSession', JSON.stringify(data))
-        await AsyncStorage.setItem(TOKEN_KEY, data.access_token)
+        await AsyncStorage.setItem(TOKEN_KEY, data.tokens.access_token)
         return { success: true, data: data }
       }
 
