@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,
-    top: '30%',
+    //top: '30%',
   },
   tabButton: {
     marginLeft: 'auto',
