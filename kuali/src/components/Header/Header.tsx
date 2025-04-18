@@ -3,25 +3,34 @@ import { View, TouchableOpacity } from 'react-native'
 import styles from './Header.styles'
 import colors from '../../constants/colors'
 import LogoHorizontal from '../Logos/LogoHorizontal'
-import { NotificationNoneIcon } from '../Icons/Icons'
+import { NotificationNoneIcon, LogoutIcon } from '../Icons/Icons'
+import { usePathname } from 'expo-router'
 
 interface HeaderProps {
   onTabPress: (tabName: string) => void // Función que se ejecutará cuando se presione un tab
 }
 
 const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
-  const handleTabPress = (tabName: string) => {
-    onTabPress(tabName) // Llamamos a la función que pasamos por props
+  const pathname = usePathname()
+  const isProfileScreen = pathname.includes('profile')
+
+  const handleIconPress = () => {
+    if (isProfileScreen) {
+      onTabPress('logout') // Ejecuta logout solo si es el LogoutIcon
+    } else {
+      console.log('notificacion') // Muestra console.log si es el NotificationIcon
+    }
   }
 
   return (
     <View style={styles.container}>
       <LogoHorizontal />
-      <TouchableOpacity
-        style={styles.tabButton}
-        onPress={() => handleTabPress('notificacion')}
-      >
-        <NotificationNoneIcon color={colors.selectionBlue} size={32} />
+      <TouchableOpacity style={styles.tabButton} onPress={handleIconPress}>
+        {isProfileScreen ? (
+          <LogoutIcon color={colors.warningRed} size={32} />
+        ) : (
+          <NotificationNoneIcon color={colors.selectionBlue} size={32} />
+        )}
       </TouchableOpacity>
     </View>
   )

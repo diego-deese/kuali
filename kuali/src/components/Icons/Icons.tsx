@@ -46,8 +46,8 @@ export const NotificationNoneIcon = ({ fill = true, ...props }) => {
   return <MaterialIcons name='notifications-none' size={24} {...props} />
 }
 
-export const LogoutIcon = () => {
-  return <MaterialIcons name='logout' size={24} color='black' />
+export const LogoutIcon = ({ fill = true, ...props }) => {
+  return <MaterialIcons name='logout' size={24} color='black' {...props} />
 }
 
 export const RejectedIcon = () => {

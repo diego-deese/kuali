@@ -38,12 +38,14 @@ export default function MyActivities() {
       date: '15 abril, 11:00 hrs',
       location: 'Auditorio',
       image: require('../../../assets/cicataPlace.png'),
+      id: 11,
     },
     {
       title: 'Exposición de Proyectos',
       date: '22 abril, 13:00 hrs',
       location: 'Sala de Proyectos',
       image: require('../../../assets/cicataPlace.png'),
+      id: 12,
     },
   ]
 
@@ -86,6 +88,7 @@ export default function MyActivities() {
           image={currentEvent.image}
           title={currentEvent.title}
           date={currentEvent.date}
+          id={currentEvent.id}
           location={currentEvent.location}
           onNext={() => setCurrentIndex((prev) => prev + 1)}
           onPrev={() => setCurrentIndex((prev) => prev - 1)}
