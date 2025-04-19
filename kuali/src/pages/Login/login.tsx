@@ -1,35 +1,26 @@
-import { View, Text, SafeAreaView, Alert } from 'react-native'
-import React, { useRef, useState } from 'react'
+import { View, Text, SafeAreaView } from 'react-native'
+import React, { useRef } from 'react'
 import styles from './login.styles'
-import colors from '../../constants/colors'
-import Checkbox from 'expo-checkbox'
 import Input from '../../components/InputText/InputText'
 import Button from '../../components/Button/Button'
 import Logo from '../../components/Logos/Logo'
-import { useAuth } from '../../context/AuthContext'
-import { router } from 'expo-router'
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
+import { useLogin } from '../../hooks/useLogin'
+import { useAuth } from '../../context/AuthContext'
+import { Redirect } from 'expo-router'
 
 export default function LogIn() {
-  const { onLogin, loading } = useAuth()
-
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [rememberMe, setRememberMe] = useState(false)
+  const { email, password, loading, handleLogin } = useLogin()
+  const { authenticated } = useAuth()
 
   const passwordRef = useRef(null)
 
-  const login = async () => {
-    const result = await onLogin!(email, password)
-    if (result && result.error) {
-      Alert.alert('Error', result.msg)
-    } else {
-      router.replace('/')
-    }
-  }
-
   if (loading) {
     return <LoadingScreen message='Iniciando sesión, por favor espere' />
+  }
+
+  if (authenticated) {
+    return <Redirect href='myactivities' />
   }
 
   return (
@@ -45,8 +36,8 @@ export default function LogIn() {
           placeholder='ejemplo@dominio.com'
           returnKeyType='next'
           onSubmitEditing={() => passwordRef.current?.focus()}
-          value={email}
-          onChangeText={setEmail}
+          value={email.email}
+          onChangeText={email.setEmail}
           inputMode='email'
         />
 
@@ -54,22 +45,13 @@ export default function LogIn() {
           label='Contraseña'
           placeholder='••••••'
           returnKeyType='done'
-          value={password}
-          onChangeText={setPassword}
+          value={password.password}
+          onChangeText={password.setPassword}
           secureTextEntry
           inputRef={passwordRef}
         />
 
-        <View style={styles.checkboxContainer}>
-          <Checkbox
-            value={rememberMe}
-            onValueChange={setRememberMe}
-            color={colors.selectionBlue}
-          />
-          <Text style={styles.checkboxLabel}>Recordarme</Text>
-        </View>
-
-        <Button buttonText='Iniciar sesión' onPress={login} />
+        <Button buttonText='Iniciar sesión' onPress={handleLogin} />
       </View>
     </SafeAreaView>
   )

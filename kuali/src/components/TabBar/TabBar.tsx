@@ -1,16 +1,26 @@
-import { Text, TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 import colors from '../../constants/colors'
 import styles from './styles'
-import { BookmarkIcon, CalendarIcon, ProfileIcon } from '../Icons/Icons'
+import {
+  BookmarkIcon,
+  CalendarIcon,
+  PersonSearch,
+  ProfileIcon,
+} from '../Icons/Icons'
 
 export default function TabBar({ state, descriptors, navigation }) {
   const icons = {
-    index: (props, fill) => <BookmarkIcon size={40} fill={fill} {...props} />,
+    myactivities: (props, fill) => (
+      <BookmarkIcon size={40} fill={fill} {...props} />
+    ),
     calendar: (props, fill) => (
       <CalendarIcon size={35} fill={fill} {...props} />
     ),
     myprofile: (props, fill) => (
       <ProfileIcon size={40} fill={fill} {...props} />
+    ),
+    mystudents: (props, fill) => (
+      <PersonSearch size={40} fill={fill} {...props} />
     ),
   }
 
@@ -18,12 +28,6 @@ export default function TabBar({ state, descriptors, navigation }) {
     <View style={styles.container}>
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
-        const label =
-          options.tabBarLabel !== undefined
-            ? options.tabBarLabel
-            : options.title !== undefined
-              ? options.title
-              : route.name
 
         const isFocused = state.index === index
 
@@ -39,13 +43,6 @@ export default function TabBar({ state, descriptors, navigation }) {
           }
         }
 
-        const onLongPress = () => {
-          navigation.emit({
-            type: 'tabLongPress',
-            target: route.key,
-          })
-        }
-
         return (
           <TouchableOpacity
             key={route.name}
@@ -53,7 +50,6 @@ export default function TabBar({ state, descriptors, navigation }) {
             accessibilityLabel={options.tabBarAccessibilityLabel}
             testID={options.tabBarButtonTestID}
             onPress={onPress}
-            onLongPress={onLongPress}
             style={styles.item}
           >
             {icons[route.name](
@@ -62,13 +58,6 @@ export default function TabBar({ state, descriptors, navigation }) {
               },
               isFocused,
             )}
-            {/* <Text
-              style={{
-                color: isFocused ? colors.selectionBlue : colors.standardGray,
-              }}
-            >
-              {label}
-            </Text> */}
           </TouchableOpacity>
         )
       })}
