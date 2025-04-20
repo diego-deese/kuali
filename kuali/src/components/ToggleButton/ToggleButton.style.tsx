@@ -1,17 +1,17 @@
-import { StyleSheet } from "react-native";
-import colors from "../../constants/colors"
+import { StyleSheet } from 'react-native'
+import colors from '../../constants/colors'
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: "row",
+    flexDirection: 'row',
     backgroundColor: colors.solidWhite,
     padding: 4,
-    
+
     borderRadius: 15,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     marginRight: 35,
     marginTop: 5,
-    shadowColor: "#000",
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
   },
   activeText: {
     color: colors.solidWhite,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
-});
+})
 
-export default styles;
+export default styles

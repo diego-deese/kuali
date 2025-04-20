@@ -1,8 +1,14 @@
 import React from 'react'
 import { View, Text, Image, TouchableOpacity, Pressable } from 'react-native'
 import styles from './CardCarousel.styles'
-import { FontAwesome } from '@expo/vector-icons'
 import { router } from 'expo-router'
+import colors from '../../constants/colors'
+import {
+  CalendarEvent,
+  LeftArrow,
+  LocationIcon,
+  RightArrow,
+} from '../Icons/Icons'
 
 interface Props {
   image: any
@@ -45,19 +51,17 @@ export default function CardCarousel({
         <View style={styles.overlay}>
           <Text style={styles.title}>{title}</Text>
           <View style={styles.row}>
-            <FontAwesome
-              name='calendar'
+            <CalendarEvent
               size={14}
-              color='#fff'
+              color={colors.solidWhite}
               style={styles.icon}
             />
             <Text style={styles.text}>{date}</Text>
           </View>
           <View style={styles.row}>
-            <FontAwesome
-              name='map-marker'
+            <LocationIcon
               size={14}
-              color='#fff'
+              color={colors.solidWhite}
               style={styles.icon}
             />
             <Text style={styles.text}>{location}</Text>
@@ -66,11 +70,11 @@ export default function CardCarousel({
 
         <View style={styles.controls}>
           <TouchableOpacity onPress={onPrev} disabled={isFirst}>
-            <FontAwesome name='chevron-left' size={30} color='#fff' />
+            <LeftArrow size={30} color={colors.solidWhite} />
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onNext} disabled={isLast}>
-            <FontAwesome name='chevron-right' size={30} color='#fff' />
+            <RightArrow size={30} color={colors.solidWhite} />
           </TouchableOpacity>
         </View>
       </View>
