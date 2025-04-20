@@ -1,13 +1,20 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import colors from '../../constants/colors'
-import { SafeAreaView, View, Image, Text } from 'react-native'
+import {
+  SafeAreaView,
+  View,
+  Image,
+  Text,
+  ActivityIndicator,
+} from 'react-native'
 import styles from './profileId.styles'
 import { LinearGradient } from 'expo-linear-gradient'
 import FlipCard from 'react-native-flip-card'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { calculateDimensions } from './profileIdutils'
+import { useAuth } from '../../context/AuthContext'
 
-const user = {
+const dummy_user = {
   name: 'Juan Pablo',
   paternal_lastname: 'Escobar',
   maternal_lastname: 'Juarez',
@@ -22,10 +29,23 @@ const user = {
 
 export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
+  const [imageLoading, setImageLoading] = useState(true)
+  const [imgUrl, setImgUrl] = useState('')
+  const [error, setError] = useState('')
+
+  const { user } = useAuth()
+
   const insets = useSafeAreaInsets()
 
   // Calcular las dimensiones una vez al cargar el componente
   const { cardDimensions, imageSize, fontSize } = calculateDimensions(insets)
+
+  useEffect(() => {
+    const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}/profilePhoto`
+    console.log(apiUrl)
+
+    setImgUrl(apiUrl)
+  }, [user.user_id])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,22 +92,26 @@ export default function ProfileId() {
                 },
               ]}
             >
+              {imageLoading && (
+                <ActivityIndicator size='large' color={colors.selectionBlue} />
+              )}
               <Image
-                source={user.photo}
-                style={[
-                  styles.image,
-                  {
-                    width: imageSize * 0.9,
-                    height: imageSize * 0.9,
-                  },
-                ]}
+                source={{ uri: imgUrl }}
+                style={styles.image}
+                onLoadStart={() => setImageLoading(true)}
+                onLoadEnd={() => setImageLoading(false)}
+                onError={(e) => {
+                  console.error('Error cargando imagen:', e.nativeEvent.error)
+                  setError('Error al cargar la imagen')
+                  setImageLoading(false)
+                }}
               />
             </View>
             <View
               style={[styles.info, { marginTop: cardDimensions.height * 0.38 }]}
             >
               <Text style={[styles.names, { fontSize: fontSize.name }]}>
-                {user.name} {user.paternal_lastname}
+                {dummy_user.name} {dummy_user.paternal_lastname}
               </Text>
               <Text
                 style={[
@@ -98,7 +122,7 @@ export default function ProfileId() {
                   },
                 ]}
               >
-                {user.identifier}
+                {dummy_user.identifier}
               </Text>
               <Text
                 style={[
@@ -109,7 +133,7 @@ export default function ProfileId() {
                   },
                 ]}
               >
-                {user.role}
+                {dummy_user.role}
               </Text>
               <Text
                 style={[
@@ -120,7 +144,7 @@ export default function ProfileId() {
                   },
                 ]}
               >
-                {user.program}
+                {dummy_user.program}
               </Text>
             </View>
           </View>
@@ -143,7 +167,8 @@ export default function ProfileId() {
                   Nombre completo
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {user.name} {user.paternal_lastname} {user.maternal_lastname}
+                  {dummy_user.name} {dummy_user.paternal_lastname}{' '}
+                  {dummy_user.maternal_lastname}
                 </Text>
               </View>
 
@@ -152,7 +177,7 @@ export default function ProfileId() {
                   Programa Académico
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {user.program}
+                  {dummy_user.program}
                 </Text>
               </View>
 
@@ -161,7 +186,7 @@ export default function ProfileId() {
                   Correo electrónico institucional
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {user.institutionalEmail}
+                  {dummy_user.institutionalEmail}
                 </Text>
               </View>
 
@@ -170,7 +195,7 @@ export default function ProfileId() {
                   Correo electrónico personal
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {user.personalEmail}
+                  {dummy_user.personalEmail}
                 </Text>
               </View>
 
@@ -179,7 +204,7 @@ export default function ProfileId() {
                   CURP
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {user.curp}
+                  {dummy_user.curp}
                 </Text>
               </View>
             </View>

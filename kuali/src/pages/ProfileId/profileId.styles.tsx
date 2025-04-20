@@ -39,7 +39,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
   },
   image: {
-    resizeMode: 'contain',
+    resizeMode: 'cover',
+    width: '100%',
+    height: '100%',
   },
   info: {
     alignItems: 'center',

@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma'
-import { ConflictError, UnauthorizedError, ValidationError } from '../types/Error'
+import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
-import { NewUser, SafeUser } from '../types/Users'
+import { NewUser, SafeUser, UserProfilePhoto } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
 
 class UserService {
@@ -211,6 +211,24 @@ class UserService {
     } else {
       throw new UnauthorizedError('Contraseña incorrecta')
     }
+  }
+
+  async getUserProfilePhoto (userId: number): Promise<UserProfilePhoto> {
+    const user = await prisma.users.findFirst({
+      select: {
+        profile_photo: true,
+        photo_mime_type: true
+      },
+      where: {
+        user_id: userId
+      }
+    })
+
+    if (user === null) {
+      throw new NotFoundError('No existe un usuario con ese id')
+    }
+
+    return user
   }
 }
 
