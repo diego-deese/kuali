@@ -163,6 +163,44 @@ class UserController {
       }
     }
   }
+
+  getUserProfilePhoto = async (req: Request, res: Response): Promise<undefined> => {
+    try {
+      const { id } = req.params
+
+      if (!isNumber(id)) {
+        res.status(400).json({
+          message: 'Error obtener la foto de perfil del usuario',
+          errror: 'El id proporcionado es inválido'
+        })
+      } else {
+        const userProfilePhotoInfo = await userService.getUserProfilePhoto(Number(id))
+
+        if (userProfilePhotoInfo.profile_photo !== null) {
+          const imageBuffer = Buffer.isBuffer(userProfilePhotoInfo.profile_photo)
+            ? userProfilePhotoInfo.profile_photo
+            : Buffer.from(userProfilePhotoInfo.profile_photo)
+
+          res.setHeader('Content-type', /* userProfilePhotoInfo.photo_mime_type ?? */ 'image/jpg')
+          res.setHeader('Content-Length', imageBuffer.length)
+
+          res.end(imageBuffer)
+        }
+      }
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error obtener la foto de perfil del usuario',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error obtener la foto de perfil del usuario',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
 }
 
 export default new UserController()

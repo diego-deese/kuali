@@ -9,10 +9,4 @@ export type SafeUser = Omit<Users, 'password' | 'role_id' | 'profile_photo' | 'p
 
 export type NewUser = Omit<Users, 'user_id'>
 
-export interface UsersResponse {
-  users: SafeUser[]
-}
-
-export interface UserResponse {
-  user: SafeUser | null
-}
+export type UserProfilePhoto = Pick<Users, 'profile_photo' | 'photo_mime_type'>
