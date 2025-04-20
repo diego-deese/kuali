@@ -31,7 +31,6 @@ export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const [imgUrl, setImgUrl] = useState('')
-  const [error, setError] = useState('')
 
   const { user } = useAuth()
 
@@ -42,7 +41,6 @@ export default function ProfileId() {
 
   useEffect(() => {
     const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}/profilePhoto`
-    console.log(apiUrl)
 
     setImgUrl(apiUrl)
   }, [user.user_id])
@@ -92,20 +90,20 @@ export default function ProfileId() {
                 },
               ]}
             >
-              {imageLoading && (
+              {imageLoading ? (
                 <ActivityIndicator size='large' color={colors.selectionBlue} />
+              ) : (
+                <Image
+                  source={{ uri: imgUrl }}
+                  style={styles.image}
+                  onLoadStart={() => setImageLoading(true)}
+                  onLoadEnd={() => setImageLoading(false)}
+                  onError={(e) => {
+                    console.error('Error cargando imagen:', e.nativeEvent.error)
+                    setImageLoading(false)
+                  }}
+                />
               )}
-              <Image
-                source={{ uri: imgUrl }}
-                style={styles.image}
-                onLoadStart={() => setImageLoading(true)}
-                onLoadEnd={() => setImageLoading(false)}
-                onError={(e) => {
-                  console.error('Error cargando imagen:', e.nativeEvent.error)
-                  setError('Error al cargar la imagen')
-                  setImageLoading(false)
-                }}
-              />
             </View>
             <View
               style={[styles.info, { marginTop: cardDimensions.height * 0.38 }]}
