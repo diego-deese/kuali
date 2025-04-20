@@ -59,5 +59,23 @@ export const AcceptedIcon = () => {
 }
 
 export const PendingIcon = () => {
-  return <MaterialIcons name='schedule' size={24} color='black' />
+  return <MaterialIcons name='schedule' size={24} color='black' />}
+  
+export const PersonSearch = ({ fill = true, ...props }) => {
+  return fill ? (
+    <MaterialCommunityIcons
+      name='account-search'
+      size={24}
+      color='black'
+      {...props}
+    />
+  ) : (
+    <MaterialCommunityIcons
+      name='account-search-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
 }
+

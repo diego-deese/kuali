@@ -1,4 +1,3 @@
-
 import MyActivities from '../../pages/MyActivities/myActivities'
 
 export default function MyActivitiesTab() {
