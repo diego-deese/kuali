@@ -36,7 +36,7 @@ export default function CardCarousel({
   const handlePress = () => {
     router.push({
       pathname: `/event/${id}`,
-      params: { title, date },
+      params: { title, date, location },
     })
   }
   return (

@@ -1,9 +1,10 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
+import { CalendarEvent, LocationIcon } from '../../components/Icons/Icons'
 
 // Tipos para nuestros datos
 type DocumentStatus = 'pending' | 'completed' | 'rejected'
@@ -47,7 +48,7 @@ export default function InfoEvent() {
           id: eventId,
           title: (params.title as string) || 'Nombre del evento',
           date: (params.date as string) || 'Fecha, 00:00 hrs',
-          location: 'Lugar',
+          location: (params.location as string) || 'Lugar',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
           documents: [
@@ -85,7 +86,7 @@ export default function InfoEvent() {
     }
 
     fetchEventDetails()
-  }, [eventId, params.title, params.date])
+  }, [eventId, params.title, params.date, params.location])
 
   const handleUpload = (docId: number) => {
     // Lógica para subir documento - integrar con API en el futuro
@@ -104,6 +105,7 @@ export default function InfoEvent() {
   const handleExit = () => {
     // Lógica para salir de la convocatoria - integrar con API en el futuro
     console.log('Saliendo de esta convocatoria')
+    router.push('/(tabs)/myactivities')
     // Cuando tengamos la API:
     // const response = await fetch(`/api/events/${eventId}/unsubscribe`, { method: 'POST' })
   }
@@ -133,42 +135,40 @@ export default function InfoEvent() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <View style={styles.content}>
-          {/* Información del evento */}
-          <Text style={styles.eventTitle}>{eventDetails.title}</Text>
-          <View style={styles.eventInfoRow}>
-            <Text style={styles.eventInfoIcon}>⏱</Text>
-            <Text style={styles.eventInfoText}>{eventDetails.date}</Text>
-          </View>
-          <View style={styles.eventInfoRow}>
-            <Text style={styles.eventInfoIcon}>📍</Text>
-            <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
-          </View>
-          <Text style={styles.description}>{eventDetails.description}</Text>
-
-          {/* Requisitos/Documentos */}
-          <Text style={styles.sectionTitle}>Requisitos</Text>
-          {eventDetails.documents.map((doc) => (
-            <DocumentCard
-              key={doc.id}
-              title={doc.title}
-              description={doc.description}
-              status={doc.status as 'pending' | 'completed' | 'rejected'}
-              onUpload={() => handleUpload(doc.id)}
-              onDelete={() => handleDelete(doc.id)}
-            />
-          ))}
-
-          {/* Botón de salir */}
-          <Pressable style={styles.exitButton} onPress={handleExit}>
-            <Text style={styles.exitButtonText}>
-              Salir de esta convocatoria
-            </Text>
-          </Pressable>
+    // <SafeAreaView style={styles.container}>
+    <ScrollView>
+      <View style={styles.content}>
+        {/* Información del evento */}
+        <Text style={styles.eventTitle}>{eventDetails.title}</Text>
+        <View style={styles.eventInfoRow}>
+          <CalendarEvent style={styles.eventInfoIcon} />
+          <Text style={styles.eventInfoText}>{eventDetails.date}</Text>
         </View>
-      </ScrollView>
-    </SafeAreaView>
+        <View style={styles.eventInfoRow}>
+          <LocationIcon style={styles.eventInfoIcon} />
+          <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
+        </View>
+        <Text style={styles.description}>{eventDetails.description}</Text>
+
+        {/* Requisitos/Documentos */}
+        <Text style={styles.sectionTitle}>Requisitos</Text>
+        {eventDetails.documents.map((doc) => (
+          <DocumentCard
+            key={doc.id}
+            title={doc.title}
+            description={doc.description}
+            status={doc.status as 'pending' | 'completed' | 'rejected'}
+            onUpload={() => handleUpload(doc.id)}
+            onDelete={() => handleDelete(doc.id)}
+          />
+        ))}
+
+        {/* Botón de salir */}
+        <Pressable style={styles.exitButton} onPress={handleExit}>
+          <Text style={styles.exitButtonText}>Salir de esta convocatoria</Text>
+        </Pressable>
+      </View>
+    </ScrollView>
+    // </SafeAreaView>
   )
 }

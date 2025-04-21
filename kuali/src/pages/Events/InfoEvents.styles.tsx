@@ -1,9 +1,10 @@
 import { StyleSheet } from 'react-native'
+import colors from '../../constants/colors'
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.backgroundWhite,
   },
   content: {
     padding: 20,
@@ -13,7 +14,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 12,
-    color: '#000000',
+    color: colors.fontBlack,
   },
   eventInfoRow: {
     flexDirection: 'row',
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#333333',
+    color: colors.fontBlack,
     marginTop: 16,
     marginBottom: 24,
   },
@@ -48,7 +49,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: 16,
-    color: '#666666',
+    color: colors.borderGray,
   },
   errorContainer: {
     flex: 1,
@@ -58,7 +59,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     fontSize: 16,
-    color: '#FF3B30',
+    color: colors.warningRed,
     textAlign: 'center',
   },
   exitButton: {
@@ -67,8 +68,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   exitButtonText: {
-    color: '#FF3B30',
-    fontSize: 16,
+    color: colors.warningRed,
+    fontSize: 14,
   },
 })
 

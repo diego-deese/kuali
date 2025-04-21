@@ -4,13 +4,13 @@ import colors from '../../constants/colors'
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 8,
-    paddingHorizontal: 30,
+    paddingHorizontal: 15, //Modifico para que quepan los botones
     borderRadius: 8,
     backgroundColor: colors.selectionBlue,
   },
   buttonDisabled: {
     paddingVertical: 8,
-    paddingHorizontal: 30,
+    paddingHorizontal: 15,
     borderRadius: 8,
     backgroundColor: colors.standardGray,
   },
