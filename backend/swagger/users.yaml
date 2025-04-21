@@ -1,0 +1,78 @@
+paths:
+  /users:
+    get:
+      summary: List all users
+      tags:
+        - Users
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  users:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500': 
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#components/schemas/Error'
+    post:
+      summary: Add a new user
+      tags:
+        - Users
+      requestBody:
+        description: User attributes
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/NewUser'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/CreatedUser'
+
+  /users/{id}:
+    get:
+      summary: Get an specific user
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            $ref: '#/components/schemas/User/properties/user_id'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    $ref: '#/components/schemas/User'
+
+

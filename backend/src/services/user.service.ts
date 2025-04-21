@@ -34,7 +34,7 @@ class UserService {
     return users
   }
 
-  async getUser (userId: number): Promise<SafeUser | null> {
+  async getUser (userId: number): Promise<SafeUser> {
     const user = await prisma.users.findFirst({
       where: {
         user_id: userId
@@ -62,6 +62,10 @@ class UserService {
         }
       }
     })
+
+    if (user === null) {
+      throw new NotFoundError('No se encontró a ningún usuario con ese id')
+    }
 
     return user
   }
