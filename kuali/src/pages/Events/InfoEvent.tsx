@@ -5,6 +5,7 @@ import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
 import { CalendarEvent, LocationIcon } from '../../components/Icons/Icons'
+import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
 
 // Tipos para nuestros datos
 type DocumentStatus = 'pending' | 'completed' | 'rejected'
@@ -33,6 +34,8 @@ export default function InfoEvent() {
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [modalVisible, setModalVisible] = useState(false);
+
 
   useEffect(() => {
     // Simular la llamada a una API
@@ -164,9 +167,21 @@ export default function InfoEvent() {
         ))}
 
         {/* Botón de salir */}
-        <Pressable style={styles.exitButton} onPress={handleExit}>
+        <Pressable style={styles.exitButton} onPress={() => setModalVisible(true)}>
           <Text style={styles.exitButtonText}>Salir de esta convocatoria</Text>
         </Pressable>
+
+        {/* Modal de confirmación */}
+        <ConfirmationModal
+          visible={modalVisible}
+          title="Confirmación"
+          description="¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta."
+          onCancel={() => setModalVisible(false)}
+          onConfirm={() => {
+            handleExit();
+            setModalVisible(false);
+          }}
+        />
       </View>
     </ScrollView>
     // </SafeAreaView>

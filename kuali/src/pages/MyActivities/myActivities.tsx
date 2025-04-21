@@ -15,6 +15,7 @@ export default function MyActivities() {
   const [activeTab, setActiveTab] = useState('upcoming')
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [modalVisible, setModalVisible] = useState(false);
 
   const upcomingEvents = [
     { title: 'Evento ', date: '10 abril 2025', id: 1 },
