@@ -31,6 +31,8 @@ export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const [imgUrl, setImgUrl] = useState('')
+  //const [userData, setUserData] = useState(dummy_user) //PARA INFO USER
+  //const [loading, setLoading] = useState(true)  //PARA INFO USER
 
   const { user } = useAuth()
 
@@ -44,6 +46,29 @@ export default function ProfileId() {
 
     setImgUrl(apiUrl)
   }, [user.user_id])
+
+  //PARA LA INFO DEL USUARIO
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     try {
+  //       setLoading(true)
+  //       const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}`
+  //       const response = await fetch(apiUrl)
+
+  //       if (!response.ok) {
+  //         throw new Error('Error al obtener datos del usuario')
+  //       }
+
+  //       const data = await response.json()
+  //       setUserData(data)
+  //     } catch (error) {
+  //       console.error('Error obteniendo información del usuario:', error)
+  //       // Mantener los datos dummy en caso de error
+  //     }
+  //   }
+
+  //   fetchUserData()
+  // }, [user.user_id])
 
   return (
     <SafeAreaView style={styles.container}>
