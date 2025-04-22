@@ -60,7 +60,7 @@ export default function MyActivities() {
               activeTab === 'upcoming' ? styles.activeTab : styles.inactiveTab
             }
           >
-            Eventos próximos
+            Mis eventos próximos
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setActiveTab('past')}>
