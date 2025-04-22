@@ -1,5 +1,5 @@
 paths:
-  /api/auth/login:
+  /auth/login:
     post:
       summary: Login to get access and refresh token
       tags:
@@ -12,7 +12,7 @@ paths:
               type: object
               properties:
                 institutional_email:
-                  $ref: '#/components/schemas/User/properties/institutional_email'
+                  $ref: '#/components/schemas/BaseUser/properties/institutional_email'
                 password: 
                   type: string
       responses:
@@ -21,21 +21,21 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/UserSession'
+                $ref: '#/components/schemas/UserSession'
         '401':
           description: Incorrect institutional email or password
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Error'
+                $ref: '#/components/schemas/Error'
         '500': 
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Error'
+                $ref: '#/components/schemas/Error'
 
-  /api/auth/refresh:
+  /auth/refresh:
     post:
       summary: Refresh user session
       tags:
@@ -55,24 +55,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/UserSession/properties/tokens'
+                $ref: '#/components/schemas/UserSession/properties/tokens'
         '400':
           description: Validation error
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Error'
+                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Error'
+                $ref: '#/components/schemas/Error'
         '500': 
           description: Internal server error
           content:
             application/json:
               schema:
-                $ref: '#components/schemas/Error'
+                $ref: '#/components/schemas/Error'
 
               

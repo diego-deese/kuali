@@ -13,11 +13,7 @@ interface AuthProps {
   authenticated?: boolean | null
   user?: User
   loading?: boolean
-  onLogin?: (
-    email: string,
-    password: string,
-    rememberMe: boolean,
-  ) => Promise<any>
+  onLogin?: (email: string, password: string) => Promise<any>
   onLogout?: () => Promise<any>
 }
 

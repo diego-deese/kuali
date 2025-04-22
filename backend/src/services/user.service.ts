@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma'
-import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../types/Error'
+import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
 import { NewUser, SafeUser, UserProfilePhoto } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
@@ -213,7 +213,7 @@ class UserService {
       })
       return { message: 'Contraseña del usuario actualizada correctamente' }
     } else {
-      throw new UnauthorizedError('Contraseña incorrecta')
+      throw new ForbiddenError('Contraseña incorrecta')
     }
   }
 

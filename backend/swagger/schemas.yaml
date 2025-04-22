@@ -14,13 +14,9 @@ components:
       required:
         - name
 
-    User:
+    BaseUser:
       type: object
       properties:
-        user_id:
-          type: integer
-          format: int32
-          description: Unique identifier for the user
         name:
           type: string
           maxLength: 255
@@ -54,169 +50,81 @@ components:
           maxLength: 18
           description: CURP (Clave Única de Registro de Población, optional)
           nullable: true
-        profile_photo:
-          type: string
-          format: binary
-          description: Profile photo (optional)
-          nullable: true
-        photo_mime_type:
-          type: string
-          maxLength: 50
-          description: MIME type of the profile photo (optional)
-          nullable: true
         identifier:
           type: string
           maxLength: 255
           description: User identifier
-        role:
-          $ref: '#/components/schemas/Role'
-        academic_programs_as_student:
-          type: array
-          items:
-            $ref: '#components/schemas/StudentAcademicProgram'
-        academic_programs_as_researcher:
-          type: array
-          items:
-            $ref: '#components/schemas/ResearcherAcademicProgram'
       required:
         - name
         - paternal_lastname
         - maternal_lastname
         - institutional_email
         - identifier
-        - role
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the user
+            role:
+              $ref: '#/components/schemas/Role'
+            academic_programs_as_student:
+              type: array
+              items:
+                $ref: '#/components/schemas/StudentAcademicProgram'
+            academic_programs_as_researcher:
+              type: array
+              items:
+                $ref: '#/components/schemas/ResearcherAcademicProgram'
     
     NewUser:
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          description: First name of the user
-        second_name:
-          type: string
-          maxLength: 255
-          description: Second name of the user (optional)
-          nullable: true
-        paternal_lastname:
-          type: string
-          maxLength: 255
-          description: Paternal lastname of the user
-        maternal_lastname:
-          type: string
-          maxLength: 255
-          description: Maternal lastname of the user
-        institutional_email:
-          type: string
-          maxLength: 255
-          format: email
-          description: Institutional email address (unique)
-        personal_email:
-          type: string
-          maxLength: 255
-          format: email
-          description: Personal email address (unique, optional)
-          nullable: true
-        curp:
-          type: string
-          maxLength: 18
-          description: CURP (Clave Única de Registro de Población, optional)
-          nullable: true
-        profile_photo:
-          type: string
-          format: binary
-          description: Profile photo (optional)
-          nullable: true
-        photo_mime_type:
-          type: string
-          maxLength: 50
-          description: MIME type of the profile photo (optional)
-          nullable: true
-        identifier:
-          type: string
-          maxLength: 255
-          description: User identifier
-        password:
-          type: string
-          maxLength: 255
-          description: User password (will be hashed)
-          writeOnly: true
-        role_id:
-          type: integer
-          format: int32
-          description: ID of the role assigned to the user
-      required:
-        - name
-        - paternal_lastname
-        - maternal_lastname
-        - institutional_email
-        - identifier
-        - password
-        - role_id
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            password:
+              type: string
+              maxLength: 255
+              description: User password (will be hashed)
+              writeOnly: true
+            role_id:
+              type: integer
+              format: int32
+              description: ID of the role assigned to the user
+          required:
+            - password
+            - role_id
     
     CreatedUser:
-      type: object
-      properties:
-        name:
-          type: string
-          maxLength: 255
-          description: First name of the user
-        second_name:
-          type: string
-          maxLength: 255
-          description: Second name of the user (optional)
-          nullable: true
-        paternal_lastname:
-          type: string
-          maxLength: 255
-          description: Paternal lastname of the user
-        maternal_lastname:
-          type: string
-          maxLength: 255
-          description: Maternal lastname of the user
-        institutional_email:
-          type: string
-          maxLength: 255
-          format: email
-          description: Institutional email address (unique)
-        personal_email:
-          type: string
-          maxLength: 255
-          format: email
-          description: Personal email address (unique, optional)
-          nullable: true
-        curp:
-          type: string
-          maxLength: 18
-          description: CURP (Clave Única de Registro de Población, optional)
-          nullable: true
-        profile_photo:
-          type: string
-          format: binary
-          description: Profile photo (optional)
-          nullable: true
-        photo_mime_type:
-          type: string
-          maxLength: 50
-          description: MIME type of the profile photo (optional)
-          nullable: true
-        identifier:
-          type: string
-          maxLength: 255
-          description: User identifier
-        role:
-          $ref: '#components/schemas/Role'
-        creation_date:
-          type: string
-          format: date-time
-      required:
-        - name
-        - paternal_lastname
-        - maternal_lastname
-        - institutional_email
-        - identifier
-        - password
-        - role_id
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the user
+            role:
+              $ref: '#/components/schemas/Role'
+            creation_date:
+              type: string
+              format: date-time
+    
+    UpdatedUser:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the user
+            role:
+              $ref: '#/components/schemas/Role'
 
     RefreshToken:
       type: object
@@ -341,7 +249,7 @@ components:
       required:
         - name
 
-    Activity:
+    BaseActivity:
       type: object
       properties:
         activity_id:
