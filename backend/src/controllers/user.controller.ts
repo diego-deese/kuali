@@ -58,9 +58,9 @@ class UserController {
     try {
       const user = req.body
 
-      const response = await userService.createUser(user)
+      const createdUser = await userService.createUser(user)
 
-      res.status(200).json(response)
+      res.status(200).json({ user: createdUser })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
@@ -88,7 +88,7 @@ class UserController {
         })
       } else {
         const updatedUser = await userService.updateUser(Number(id), userData)
-        res.status(200).json({ updatedUser })
+        res.status(200).json({ user: updatedUser })
       }
     } catch (error) {
       if (error instanceof AppError) {

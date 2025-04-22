@@ -1,0 +1,508 @@
+components:
+  schemas:
+    Role:
+      type: object
+      properties:
+        role_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the role
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the role
+      required:
+        - name
+
+    BaseUser:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: First name of the user
+        second_name:
+          type: string
+          maxLength: 255
+          description: Second name of the user (optional)
+          nullable: true
+        paternal_lastname:
+          type: string
+          maxLength: 255
+          description: Paternal lastname of the user
+        maternal_lastname:
+          type: string
+          maxLength: 255
+          description: Maternal lastname of the user
+        institutional_email:
+          type: string
+          maxLength: 255
+          format: email
+          description: Institutional email address (unique)
+        personal_email:
+          type: string
+          maxLength: 255
+          format: email
+          description: Personal email address (unique, optional)
+          nullable: true
+        curp:
+          type: string
+          maxLength: 18
+          description: CURP (Clave Única de Registro de Población, optional)
+          nullable: true
+        identifier:
+          type: string
+          maxLength: 255
+          description: User identifier
+      required:
+        - name
+        - paternal_lastname
+        - maternal_lastname
+        - institutional_email
+        - identifier
+
+    User:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the user
+            role:
+              $ref: '#/components/schemas/Role'
+            academic_programs_as_student:
+              type: array
+              items:
+                $ref: '#/components/schemas/StudentAcademicProgram'
+            academic_programs_as_researcher:
+              type: array
+              items:
+                $ref: '#/components/schemas/ResearcherAcademicProgram'
+    
+    NewUser:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            password:
+              type: string
+              maxLength: 255
+              description: User password (will be hashed)
+              writeOnly: true
+            role_id:
+              type: integer
+              format: int32
+              description: ID of the role assigned to the user
+          required:
+            - password
+            - role_id
+    
+    CreatedUser:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the user
+            role:
+              $ref: '#/components/schemas/Role'
+            creation_date:
+              type: string
+              format: date-time
+    
+    UpdatedUser:
+      allOf:
+        - $ref: '#/components/schemas/BaseUser'
+        - type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the user
+            role:
+              $ref: '#/components/schemas/Role'
+
+    RefreshToken:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the refresh token
+        hashedToken:
+          type: string
+          description: Hashed version of the refresh token
+        user_id:
+          type: integer
+          format: int32
+          description: ID of the user this token belongs to
+        revoked:
+          type: boolean
+          description: Whether the token has been revoked
+        createdAt:
+          type: string
+          format: date-time
+          description: Token creation time
+        updatedAt:
+          type: string
+          format: date-time
+          description: Token last update time
+      required:
+        - hashedToken
+        - user_id
+
+    StudentAcademicProgram:
+      type: object
+      properties:
+        program_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the academic program
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the academic program
+        researcher_id:
+          type: integer
+          format: int32
+          description: ID of the researcher associated with this program (optional)
+          nullable: true
+      required:
+        - name
+
+    ResearcherAcademicProgram:
+      type: object
+      properties:
+        program_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the academic program
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the academic program
+      required:
+        - name
+
+    Inscription:
+      type: object
+      properties:
+        inscription_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the inscription
+        start_date:
+          type: string
+          format: date-time
+          description: Start date of the inscription
+        end_date:
+          type: string
+          format: date-time
+          description: End date of the inscription
+        active:
+          type: boolean
+          description: Whether the inscription is active
+        student_id:
+          type: integer
+          format: int32
+          description: ID of the student
+        program_id:
+          type: integer
+          format: int32
+          description: ID of the academic program
+      required:
+        - start_date
+        - end_date
+        - active
+        - student_id
+        - program_id
+
+    Category:
+      type: object
+      properties:
+        category_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the category
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the category
+      required:
+        - name
+
+    Location:
+      type: object
+      properties:
+        location_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the location
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the location
+      required:
+        - name
+
+    BaseActivity:
+      type: object
+      properties:
+        activity_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the activity
+        title:
+          type: string
+          maxLength: 255
+          description: Title of the activity
+        description:
+          type: string
+          description: Detailed description of the activity
+        event_date:
+          type: string
+          format: date-time
+          description: Date when the activity takes place
+        register_date_limit:
+          type: string
+          format: date-time
+          description: Deadline for registration
+        poster_image:
+          type: string
+          format: binary
+          description: Poster image for the activity (optional)
+          nullable: true
+        poster_mimetype:
+          type: string
+          maxLength: 50
+          description: MIME type of the poster image (optional)
+          nullable: true
+        mandatory:
+          type: boolean
+          description: Whether the activity is mandatory
+        creation_date:
+          type: string
+          format: date-time
+          description: Date when the activity was created
+        last_updated:
+          type: string
+          format: date-time
+          description: Date when the activity was last updated (optional)
+          nullable: true
+        visible_students:
+          type: boolean
+          description: Whether the activity is visible to students
+        visible_researchers:
+          type: boolean
+          description: Whether the activity is visible to researchers
+        admin_creator_id:
+          type: integer
+          format: int32
+          description: ID of the admin who created the activity
+        location_id:
+          type: integer
+          format: int32
+          description: ID of the location for the activity
+        category_id:
+          type: integer
+          format: int32
+          description: ID of the category for the activity
+      required:
+        - title
+        - description
+        - event_date
+        - register_date_limit
+        - mandatory
+        - visible_students
+        - visible_researchers
+        - admin_creator_id
+        - location_id
+        - category_id
+
+    Requirement:
+      type: object
+      properties:
+        requirement_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the requirement
+        name:
+          type: string
+          maxLength: 100
+          description: Name of the requirement
+        description:
+          type: string
+          maxLength: 100
+          description: Description of the requirement
+        last_updated:
+          type: string
+          format: date-time
+          description: Date when the requirement was last updated (optional)
+          nullable: true
+        activity_id:
+          type: integer
+          format: int32
+          description: ID of the activity this requirement belongs to
+      required:
+        - name
+        - description
+        - activity_id
+
+    ActivityAttachedFile:
+      type: object
+      properties:
+        activity_attached_file_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the attached file
+        name:
+          type: string
+          maxLength: 100
+          description: Name of the file
+        file_content:
+          type: string
+          format: binary
+          description: Content of the file
+        mimetype:
+          type: string
+          maxLength: 50
+          description: MIME type of the file
+        upload_date:
+          type: string
+          format: date-time
+          description: Date when the file was uploaded
+        last_updated:
+          type: string
+          format: date-time
+          description: Date when the file was last updated (optional)
+          nullable: true
+        activity_id:
+          type: integer
+          format: int32
+          description: ID of the activity this file belongs to
+      required:
+        - name
+        - file_content
+        - mimetype
+        - activity_id
+
+    RevisionStatus:
+      type: object
+      properties:
+        revision_status_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the revision status
+        name:
+          type: string
+          maxLength: 255
+          description: Name of the revision status
+      required:
+        - name
+
+    UserDocument:
+      type: object
+      properties:
+        user_document_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the user document
+        file_name:
+          type: string
+          maxLength: 255
+          description: Name of the file
+        file_content:
+          type: string
+          format: binary
+          description: Content of the file
+        mimetype:
+          type: string
+          maxLength: 50
+          description: MIME type of the file
+        upload_date:
+          type: string
+          format: date-time
+          description: Date when the document was uploaded
+        last_updated:
+          type: string
+          format: date-time
+          description: Date when the document was last updated (optional)
+          nullable: true
+        last_reviewed:
+          type: string
+          format: date-time
+          description: Date when the document was last reviewed (optional)
+          nullable: true
+        revision_status_id:
+          type: integer
+          format: int32
+          description: ID of the revision status
+        registration_id:
+          type: integer
+          format: int32
+          description: ID of the registration this document belongs to
+        requirement_id:
+          type: integer
+          format: int32
+          description: ID of the requirement this document fulfills
+      required:
+        - file_name
+        - file_content
+        - mimetype
+        - revision_status_id
+        - registration_id
+        - requirement_id
+
+    Registration:
+      type: object
+      properties:
+        registration_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the registration
+        registration_date:
+          type: string
+          format: date-time
+          description: Date of registration
+        user_id:
+          type: integer
+          format: int32
+          description: ID of the user who registered
+        activity_id:
+          type: integer
+          format: int32
+          description: ID of the activity the user registered for
+      required:
+        - registration_date
+        - user_id
+        - activity_id
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    
+    UserSession:
+      type: object
+      properties:
+        tokens:
+          type: object
+          properties:
+            access_token: 
+              type: string
+            refresh_token: 
+              type: string
+        user: 
+          type: object
+          properties:
+            user_id:
+              type: integer
+            role:
+              $ref: '#/components/schemas/Role'

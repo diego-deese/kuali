@@ -102,7 +102,7 @@ class AuthService {
 
       const response = await axios.post(
         `${process.env.EXPO_PUBLIC_API_URL}/auth/refresh`,
-        { refreshToken: refreshToken },
+        { refresh_token: refreshToken },
       )
 
       if (response.status === 200) {
@@ -134,7 +134,7 @@ class AuthService {
   ): Promise<AuthResponse | ResponseError> {
     try {
       const response = await this.api.post('/auth/login', {
-        institutionalEmail: email,
+        institutional_email: email,
         password: password,
       })
 
@@ -162,9 +162,10 @@ class AuthService {
         const errorResponse = error.response?.data as ResponseError
         return {
           success: false,
-          error: errorResponse?.error || 'Error al conectar con el servidor',
           message:
-            errorResponse?.message ||
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error ||
             'Por favor, verifica tu conexión o intentalo de nuevo más tarde.',
         }
       }

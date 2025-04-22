@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma'
-import { ConflictError, NotFoundError, UnauthorizedError, ValidationError } from '../types/Error'
+import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
 import { NewUser, SafeUser, UserProfilePhoto } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
@@ -34,7 +34,7 @@ class UserService {
     return users
   }
 
-  async getUser (userId: number): Promise<SafeUser | null> {
+  async getUser (userId: number): Promise<SafeUser> {
     const user = await prisma.users.findFirst({
       where: {
         user_id: userId
@@ -62,6 +62,10 @@ class UserService {
         }
       }
     })
+
+    if (user === null) {
+      throw new NotFoundError('No se encontró a ningún usuario con ese id')
+    }
 
     return user
   }
@@ -209,7 +213,7 @@ class UserService {
       })
       return { message: 'Contraseña del usuario actualizada correctamente' }
     } else {
-      throw new UnauthorizedError('Contraseña incorrecta')
+      throw new ForbiddenError('Contraseña incorrecta')
     }
   }
 
