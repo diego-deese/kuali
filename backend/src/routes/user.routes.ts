@@ -6,18 +6,21 @@ import { isAdmin } from '../middlewares/role.middleware'
 
 const router = Router()
 
-router.get('/', isAuthenticated, isAdmin, userController.getUsers) // Add middleware
-router.get('/:id', userController.getUser) // Add middleware
-router.get('/:id/activities/upcoming', activityController.getUserUpcomingActivities) // Add middleware
-router.get('/:id/activities/past', activityController.getUserPastActivities) // Add middleware
-router.get('/:userId/activities/:activityId', activityController.getActivityWithUserDetails) // Add middleware
+router.get('/', isAuthenticated, isAdmin, userController.getUsers)
+router.post('/', isAuthenticated, isAdmin, userController.createUser)
 
-router.post('/', userController.createUser) // Add middleware
+router.get('/:id', isAuthenticated, userController.getUser)
+router.put('/:id', isAuthenticated, isAdmin, userController.updateUser)
+router.delete('/:id', isAuthenticated, isAdmin, userController.deleteUser)
 
-router.put('/:id', userController.updateUser) // Add middleware
+router.get('/:id/profilePhoto', isAuthenticated, userController.getUserProfilePhoto)
 
-router.patch('/:id/password', userController.updatePasswordWithValidation) // Add middleware
+router.get('/:id/activities/upcoming', isAuthenticated, activityController.getUserUpcomingActivities)
 
-router.delete('/:id', userController.deleteUser) // Add middleware
+router.get('/:id/activities/past', isAuthenticated, activityController.getUserPastActivities)
+
+router.get('/:userId/activities/:activityId', isAuthenticated, activityController.getActivityWithUserDetails)
+
+router.patch('/:id/password', isAuthenticated, userController.updatePasswordWithValidation)
 
 export default router

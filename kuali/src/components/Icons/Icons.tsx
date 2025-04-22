@@ -44,3 +44,21 @@ export const NotificationIcon = ({ fill = true, ...props }) => {
 export const NotificationNoneIcon = ({ fill = true, ...props }) => {
   return <MaterialIcons name='notifications-none' size={24} {...props} />
 }
+
+export const PersonSearch = ({ fill = true, ...props }) => {
+  return fill ? (
+    <MaterialCommunityIcons
+      name='account-search'
+      size={24}
+      color='black'
+      {...props}
+    />
+  ) : (
+    <MaterialCommunityIcons
+      name='account-search-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}

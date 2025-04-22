@@ -1,5 +1,6 @@
 import { useState, useEffect, createContext, useContext } from 'react'
 import authService from '../services/auth.service'
+import { ResponseError } from '../types/Request'
 
 interface User {
   user_id: number
@@ -28,33 +29,45 @@ export const AuthProvider = ({ children }: any) => {
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    const loadToken = async () => {
-      const access_token = await authService.getToken()
+    const loadUserSession = async () => {
+      try {
+        const isAuth = await authService.isAuthenticated()
 
-      if (access_token) {
-        setAuthenticated(true)
-      } else {
+        if (isAuth) {
+          const savedUser = await authService.getCurrentUser()
+          setUser(savedUser)
+          setAuthenticated(true)
+        } else {
+          setUser(null)
+          setAuthenticated(false)
+        }
+      } catch (error) {
+        console.error('Error verificando autenticación:', error)
         setAuthenticated(false)
+        setUser(null)
+      } finally {
+        setLoading(false)
       }
-
-      setLoading(false)
     }
-    loadToken()
+
+    loadUserSession()
   }, [])
 
-  const login = async (email: string, password: string) => {
-    try {
-      setLoading(true)
-      const result = await authService.login(email, password, false)
+  const login = async (
+    email: string,
+    password: string,
+  ): Promise<{ success: boolean } | ResponseError> => {
+    setLoading(true)
+    const result = await authService.login(email, password)
 
-      if (result !== null) {
-        setAuthenticated(true)
-        setUser(result.user)
-      }
-    } catch (error) {
-      return { error: true, msg: (error as any).response.data.msg }
-    } finally {
+    if (result.success) {
+      setAuthenticated(true)
+      setUser(result.user)
       setLoading(false)
+      return { success: true }
+    } else {
+      setLoading(false)
+      return result
     }
   }
 

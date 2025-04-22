@@ -7,7 +7,8 @@ import { generateTokens, verifyToken } from '../utils/jwt'
 class AuthController {
   login = async (req: Request, res: Response): Promise<undefined> => {
     try {
-      const { institutionalEmail, password } = req.body
+      const institutionalEmail = req.body.institutional_email
+      const password = req.body.password
 
       if (institutionalEmail === undefined || password === undefined) {
         res.status(400).json({
@@ -36,7 +37,7 @@ class AuthController {
 
   addRefreshToken = async (req: Request, res: Response): Promise<undefined> => {
     try {
-      const { refreshToken } = req.body
+      const refreshToken = req.body.refresh_token
 
       if (refreshToken === undefined) {
         res.status(400).json({
