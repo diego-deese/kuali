@@ -271,59 +271,33 @@ components:
           type: string
           format: date-time
           description: Deadline for registration
-        poster_image:
-          type: string
-          format: binary
-          description: Poster image for the activity (optional)
-          nullable: true
-        poster_mimetype:
-          type: string
-          maxLength: 50
-          description: MIME type of the poster image (optional)
-          nullable: true
         mandatory:
           type: boolean
           description: Whether the activity is mandatory
-        creation_date:
-          type: string
-          format: date-time
-          description: Date when the activity was created
-        last_updated:
-          type: string
-          format: date-time
-          description: Date when the activity was last updated (optional)
-          nullable: true
-        visible_students:
-          type: boolean
-          description: Whether the activity is visible to students
-        visible_researchers:
-          type: boolean
-          description: Whether the activity is visible to researchers
-        admin_creator_id:
-          type: integer
-          format: int32
-          description: ID of the admin who created the activity
-        location_id:
-          type: integer
-          format: int32
-          description: ID of the location for the activity
-        category_id:
-          type: integer
-          format: int32
-          description: ID of the category for the activity
+        location:
+          $ref: '#/components/schemas/Location'
+        category:
+          $ref: '#/components/schemas/Category'
       required:
         - title
         - description
         - event_date
         - register_date_limit
         - mandatory
-        - visible_students
-        - visible_researchers
-        - admin_creator_id
-        - location_id
-        - category_id
+        - location
+        - category
 
-    Requirement:
+    UserActivity:
+      allOf:
+        - $ref: '#/components/schemas/BaseActivity'
+        - type: object
+          properties:
+            requirements:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserRequirement'
+
+    BaseRequirement:
       type: object
       properties:
         requirement_id:
@@ -338,19 +312,26 @@ components:
           type: string
           maxLength: 100
           description: Description of the requirement
-        last_updated:
-          type: string
-          format: date-time
-          description: Date when the requirement was last updated (optional)
-          nullable: true
-        activity_id:
-          type: integer
-          format: int32
-          description: ID of the activity this requirement belongs to
       required:
         - name
         - description
-        - activity_id
+
+    UserRequirement:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequirement'
+        - type: object
+          properties:
+            userDocuments:
+              type: array
+              items:
+                type: object
+                properties:
+                  user_document_id:
+                    type: integer
+                    minimum: 1
+                  status:
+                    $ref: '#/components/schemas/RevisionStatus'
+
 
     ActivityAttachedFile:
       type: object
