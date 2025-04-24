@@ -13,6 +13,7 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
+    borderTopColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 3,
     elevation: 3,

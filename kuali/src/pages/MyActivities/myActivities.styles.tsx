@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 
   eventList: {
     marginTop: 10,
-  }
+  },
 })
 
 export default styles
