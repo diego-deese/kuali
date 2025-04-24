@@ -31,8 +31,8 @@ export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
   const [imageLoading, setImageLoading] = useState(true)
   const [imgUrl, setImgUrl] = useState('')
-  //const [userData, setUserData] = useState(dummy_user) //PARA INFO USER
-  //const [loading, setLoading] = useState(true)  //PARA INFO USER
+  const [userData, setUserData] = useState(dummy_user) //PARA INFO USER
+  const [loading, setLoading] = useState(true) //PARA INFO USER
 
   const { user } = useAuth()
 
@@ -48,27 +48,25 @@ export default function ProfileId() {
   }, [user.user_id])
 
   //PARA LA INFO DEL USUARIO
-  // useEffect(() => {
-  //   const fetchUserData = async () => {
-  //     try {
-  //       setLoading(true)
-  //       const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}`
-  //       const response = await fetch(apiUrl)
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+        const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}`
+        const response = await fetch(apiUrl)
+        if (!response.ok) {
+          throw new Error('Error al obtener datos del usuario')
+        }
 
-  //       if (!response.ok) {
-  //         throw new Error('Error al obtener datos del usuario')
-  //       }
+        const data = await response.json()
+        setUserData(data)
+      } catch (error) {
+        console.error('Error obteniendo información del usuario:', error)
+      }
+    }
 
-  //       const data = await response.json()
-  //       setUserData(data)
-  //     } catch (error) {
-  //       console.error('Error obteniendo información del usuario:', error)
-  //       // Mantener los datos dummy en caso de error
-  //     }
-  //   }
-
-  //   fetchUserData()
-  // }, [user.user_id])
+    fetchUserData()
+  }, [user.user_id])
 
   return (
     <SafeAreaView style={styles.container}>
@@ -134,7 +132,7 @@ export default function ProfileId() {
               style={[styles.info, { marginTop: cardDimensions.height * 0.38 }]}
             >
               <Text style={[styles.names, { fontSize: fontSize.name }]}>
-                {dummy_user.name} {dummy_user.paternal_lastname}
+                {userData.name} {userData.paternal_lastname}
               </Text>
               <Text
                 style={[
@@ -145,7 +143,7 @@ export default function ProfileId() {
                   },
                 ]}
               >
-                {dummy_user.identifier}
+                {userData.identifier}
               </Text>
               <Text
                 style={[
@@ -156,7 +154,7 @@ export default function ProfileId() {
                   },
                 ]}
               >
-                {dummy_user.role}
+                {userData.role}
               </Text>
               <Text
                 style={[
@@ -167,7 +165,7 @@ export default function ProfileId() {
                   },
                 ]}
               >
-                {dummy_user.program}
+                {userData.program}
               </Text>
             </View>
           </View>
@@ -190,8 +188,8 @@ export default function ProfileId() {
                   Nombre completo
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {dummy_user.name} {dummy_user.paternal_lastname}{' '}
-                  {dummy_user.maternal_lastname}
+                  {userData.name} {userData.paternal_lastname}{' '}
+                  {userData.maternal_lastname}
                 </Text>
               </View>
 
@@ -200,7 +198,7 @@ export default function ProfileId() {
                   Programa Académico
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {dummy_user.program}
+                  {userData.program}
                 </Text>
               </View>
 
@@ -209,7 +207,7 @@ export default function ProfileId() {
                   Correo electrónico institucional
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {dummy_user.institutionalEmail}
+                  {userData.institutionalEmail}
                 </Text>
               </View>
 
@@ -218,7 +216,7 @@ export default function ProfileId() {
                   Correo electrónico personal
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {dummy_user.personalEmail}
+                  {userData.personalEmail}
                 </Text>
               </View>
 
@@ -227,7 +225,7 @@ export default function ProfileId() {
                   CURP
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {dummy_user.curp}
+                  {userData.curp || 'No disponible'}
                 </Text>
               </View>
             </View>

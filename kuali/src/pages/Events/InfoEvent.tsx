@@ -34,8 +34,7 @@ export default function InfoEvent() {
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [modalVisible, setModalVisible] = useState(false);
-
+  const [modalVisible, setModalVisible] = useState(false)
 
   useEffect(() => {
     // Simular la llamada a una API
@@ -138,52 +137,60 @@ export default function InfoEvent() {
   }
 
   return (
-    // <SafeAreaView style={styles.container}>
-    <ScrollView>
-      <View style={styles.content}>
-        {/* Información del evento */}
-        <Text style={styles.eventTitle}>{eventDetails.title}</Text>
-        <View style={styles.eventInfoRow}>
-          <CalendarEvent style={styles.eventInfoIcon} />
-          <Text style={styles.eventInfoText}>{eventDetails.date}</Text>
-        </View>
-        <View style={styles.eventInfoRow}>
-          <LocationIcon style={styles.eventInfoIcon} />
-          <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
-        </View>
-        <Text style={styles.description}>{eventDetails.description}</Text>
-
-        {/* Requisitos/Documentos */}
-        <Text style={styles.sectionTitle}>Requisitos</Text>
-        {eventDetails.documents.map((doc) => (
-          <DocumentCard
-            key={doc.id}
-            title={doc.title}
-            description={doc.description}
-            status={doc.status as 'pending' | 'completed' | 'rejected'}
-            onUpload={() => handleUpload(doc.id)}
-            onDelete={() => handleDelete(doc.id)}
-          />
-        ))}
-
-        {/* Botón de salir */}
-        <Pressable style={styles.exitButton} onPress={() => setModalVisible(true)}>
-          <Text style={styles.exitButtonText}>Salir de esta convocatoria</Text>
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Regresar</Text>
         </Pressable>
+        <View style={styles.content}>
+          {/* Información del evento */}
+          <Text style={styles.eventTitle}>{eventDetails.title}</Text>
+          <View style={styles.eventInfoRow}>
+            <CalendarEvent style={styles.eventInfoIcon} />
+            <Text style={styles.eventInfoText}>{eventDetails.date}</Text>
+          </View>
+          <View style={styles.eventInfoRow}>
+            <LocationIcon style={styles.eventInfoIcon} />
+            <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
+          </View>
+          <Text style={styles.description}>{eventDetails.description}</Text>
 
-        {/* Modal de confirmación */}
-        <ConfirmationModal
-          visible={modalVisible}
-          title="Confirmación"
-          description="¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta."
-          onCancel={() => setModalVisible(false)}
-          onConfirm={() => {
-            handleExit();
-            setModalVisible(false);
-          }}
-        />
-      </View>
-    </ScrollView>
-    // </SafeAreaView>
+          {/* Requisitos/Documentos */}
+          <Text style={styles.sectionTitle}>Requisitos</Text>
+          {eventDetails.documents.map((doc) => (
+            <DocumentCard
+              key={doc.id}
+              title={doc.title}
+              description={doc.description}
+              status={doc.status as 'pending' | 'completed' | 'rejected'}
+              onUpload={() => handleUpload(doc.id)}
+              onDelete={() => handleDelete(doc.id)}
+            />
+          ))}
+
+          {/* Botón de salir */}
+          <Pressable
+            style={styles.exitButton}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.exitButtonText}>
+              Salir de esta convocatoria
+            </Text>
+          </Pressable>
+
+          {/* Modal de confirmación */}
+          <ConfirmationModal
+            visible={modalVisible}
+            title='Confirmación'
+            description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
+            onCancel={() => setModalVisible(false)}
+            onConfirm={() => {
+              handleExit()
+              setModalVisible(false)
+            }}
+          />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   )
 }

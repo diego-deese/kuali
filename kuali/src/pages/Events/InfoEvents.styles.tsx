@@ -71,6 +71,22 @@ const styles = StyleSheet.create({
     color: colors.warningRed,
     fontSize: 14,
   },
+  backButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    marginLeft: 10,
+    marginTop: 5,
+    marginBottom: 5,
+    alignSelf: 'flex-start',
+    backgroundColor: colors.highlightCyan,
+    borderRadius: 8,
+  },
+
+  backButtonText: {
+    color: colors.solidWhite,
+    fontFamily: 'monserratRegular',
+    fontSize: 14,
+  },
 })
 
 export default styles
