@@ -69,11 +69,17 @@ export default function CardCarousel({
         </View>
 
         <View style={styles.controls}>
-          <TouchableOpacity onPress={onPrev} disabled={isFirst}>
+          <TouchableOpacity onPress={(e) => {
+            e.stopPropagation();
+            if ( !isFirst) onPrev();
+          }}>
             <LeftArrow size={30} color={colors.solidWhite} />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={onNext} disabled={isLast}>
+          <TouchableOpacity onPress={(e) => {
+            e.stopPropagation();
+            if ( !isLast) onNext();
+          }}>
             <RightArrow size={30} color={colors.solidWhite} />
           </TouchableOpacity>
         </View>
