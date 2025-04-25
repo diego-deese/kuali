@@ -8,7 +8,8 @@ export type UserAccesibleActivity = Omit<Activities,
 'admin_creator_id' |
 'location_id' |
 'category_id' |
-'mandatory'> & {
+'poster_image' |
+'poster_mimetype'> & {
   isRegistered?: Boolean
 }
 

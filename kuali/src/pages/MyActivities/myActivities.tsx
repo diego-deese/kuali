@@ -1,14 +1,18 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
 import styles from './myActivities.styles'
 import EventCard from '../../components/EventCard/EventCard'
 import CardCarousel from '../../components/CardCarousel/CardCarousel'
 import ToggleButton from '../../components/ToggleButton/ToggleButton'
+import activityService from '../../services/activity.service'
+import { useAuth } from '../../context/AuthContext'
 
 export default function MyActivities() {
   const [activeTab, setActiveTab] = useState('upcoming')
   const [viewMode, setViewMode] = useState<'card' | 'list'>('card')
   const [currentIndex, setCurrentIndex] = useState(0)
+
+  const { user } = useAuth()
 
   const upcomingEvents = [
     { title: 'Evento ', date: '10 abril 2025' },
@@ -42,6 +46,15 @@ export default function MyActivities() {
   ]
 
   const currentEvent = featuredEvents[currentIndex]
+
+  const fetchActivities = async (user) => {
+    const response = await activityService.getUpcomingActivities(user.user_id)
+    console.log(response)
+  }
+
+  useEffect(() => {
+    fetchActivities(user)
+  }, [user])
 
   return (
     <View style={styles.container}>

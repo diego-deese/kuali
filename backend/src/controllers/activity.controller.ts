@@ -144,7 +144,7 @@ class ActivityController {
 
       if (!isNumber(id)) {
         res.status(400).json({
-          message: 'Error al obtener el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: 'El id proporcionado es inválido'
         })
       } else {
@@ -155,12 +155,12 @@ class ActivityController {
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
-          message: 'Error al borrar el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: error.message
         })
       } else {
         res.status(500).json({
-          message: 'Error al borrar el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }
@@ -184,12 +184,12 @@ class ActivityController {
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
-          message: 'Error al borrar el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: error.message
         })
       } else {
         res.status(500).json({
-          message: 'Error al borrar el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }
@@ -204,12 +204,12 @@ class ActivityController {
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
-          message: 'Error al borrar el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: error.message
         })
       } else {
         res.status(500).json({
-          message: 'Error al borrar el evento o convocatoria',
+          message: 'Error al obtener los eventos o convocatorias',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }
