@@ -1,5 +1,7 @@
 import { MaterialIcons } from '@expo/vector-icons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
+import AntDesign from '@expo/vector-icons/AntDesign'
+import { FontAwesome } from '@expo/vector-icons'
 
 export const BookmarkIcon = ({ fill = true, ...props }) => {
   return fill ? (
@@ -45,6 +47,22 @@ export const NotificationNoneIcon = ({ fill = true, ...props }) => {
   return <MaterialIcons name='notifications-none' size={24} {...props} />
 }
 
+export const LogoutIcon = ({ fill = true, ...props }) => {
+  return <MaterialIcons name='logout' size={24} color='black' {...props} />
+}
+
+export const RejectedIcon = () => {
+  return <AntDesign name='close' size={24} color='black' />
+}
+
+export const AcceptedIcon = () => {
+  return <AntDesign name='check' size={24} color='black' />
+}
+
+export const PendingIcon = () => {
+  return <MaterialIcons name='schedule' size={24} color='black' />
+}
+
 export const PersonSearch = ({ fill = true, ...props }) => {
   return fill ? (
     <MaterialCommunityIcons
@@ -61,4 +79,20 @@ export const PersonSearch = ({ fill = true, ...props }) => {
       {...props}
     />
   )
+}
+
+export const CalendarEvent = ({ fill = true, ...props }) => {
+  return <FontAwesome name='calendar' size={24} color='black' {...props} />
+}
+
+export const LocationIcon = ({ fill = true, ...props }) => {
+  return <FontAwesome name='map-marker' size={24} color='black' {...props} />
+}
+
+export const LeftArrow = ({ fill = true, ...props }) => {
+  return <FontAwesome name='chevron-left' size={24} color='black' {...props} />
+}
+
+export const RightArrow = ({ fill = true, ...props }) => {
+  return <FontAwesome name='chevron-right' size={24} color='black' {...props} />
 }

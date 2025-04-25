@@ -1,11 +1,11 @@
-import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
-import styles from "./ToggleButton.style";
+import React from 'react'
+import { View, Text, TouchableOpacity } from 'react-native'
+import styles from './ToggleButton.style'
 
 interface Props {
-  options: string[]; // Por ejemplo: ["opcion 1", "opcion 2"]
-  selected: string;
-  onChange: (option: string) => void;
+  options: string[] // Por ejemplo: ["opcion 1", "opcion 2"]
+  selected: string
+  onChange: (option: string) => void
 }
 
 export default function ViewToggle({ options, selected, onChange }: Props) {
@@ -23,5 +23,5 @@ export default function ViewToggle({ options, selected, onChange }: Props) {
         </TouchableOpacity>
       ))}
     </View>
-  );
+  )
 }

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, TouchableOpacity, ScrollView } from 'react-native'
+import {
+  SafeAreaView,
+  View,
+  Text,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native'
 import styles from './myActivities.styles'
 import EventCard from '../../components/EventCard/EventCard'
 import CardCarousel from '../../components/CardCarousel/CardCarousel'
@@ -15,19 +21,19 @@ export default function MyActivities() {
   const { user } = useAuth()
 
   const upcomingEvents = [
-    { title: 'Evento ', date: '10 abril 2025' },
-    { title: 'Evento ', date: '15 abril 2025' },
-    { title: 'Evento ', date: '15 mayo 2025' },
-    { title: 'Evento ', date: '15 junio 2025' },
-    { title: 'Evento ', date: '15 julio 2025' },
-    { title: 'Evento ', date: '15 agosto 2025' },
-    { title: 'Evento ', date: '15 diciembre 2025' },
-    { title: 'Evento ', date: '15 abril 2026' },
+    { title: 'Evento ', date: '10 abril 2025', id: 1 },
+    { title: 'Evento ', date: '15 abril 2025', id: 2 },
+    { title: 'Evento ', date: '15 mayo 2025', id: 3 },
+    { title: 'Evento ', date: '15 junio 2025', id: 4 },
+    { title: 'Evento ', date: '15 julio 2025', id: 5 },
+    { title: 'Evento ', date: '15 agosto 2025', id: 6 },
+    { title: 'Evento ', date: '15 diciembre 2025', id: 7 },
+    { title: 'Evento ', date: '15 abril 2026', id: 8 },
   ]
 
   const pastEvents = [
-    { title: 'Evento pasado ', date: '10 enero 2025' },
-    { title: 'Evento pasado ', date: '12 marzo 2025' },
+    { title: 'Evento pasado ', date: '10 enero 2025', id: 9 },
+    { title: 'Evento pasado ', date: '12 marzo 2025', id: 10 },
   ]
 
   const featuredEvents = [
@@ -36,12 +42,14 @@ export default function MyActivities() {
       date: '15 abril, 11:00 hrs',
       location: 'Auditorio',
       image: require('../../../assets/cicataPlace.png'),
+      id: 11,
     },
     {
       title: 'Exposición de Proyectos',
       date: '22 abril, 13:00 hrs',
       location: 'Sala de Proyectos',
       image: require('../../../assets/cicataPlace.png'),
+      id: 12,
     },
   ]
 
@@ -65,7 +73,7 @@ export default function MyActivities() {
               activeTab === 'upcoming' ? styles.activeTab : styles.inactiveTab
             }
           >
-            Eventos próximos
+            Mis eventos próximos
           </Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => setActiveTab('past')}>
@@ -93,6 +101,7 @@ export default function MyActivities() {
           image={currentEvent.image}
           title={currentEvent.title}
           date={currentEvent.date}
+          id={currentEvent.id}
           location={currentEvent.location}
           onNext={() => setCurrentIndex((prev) => prev + 1)}
           onPrev={() => setCurrentIndex((prev) => prev - 1)}
@@ -105,14 +114,14 @@ export default function MyActivities() {
       {activeTab == 'upcoming' && viewMode == 'list' && (
         <ScrollView style={styles.eventList}>
           {upcomingEvents.map((e, i) => (
-            <EventCard key={i} title={e.title} date={e.date} />
+            <EventCard key={i} title={e.title} date={e.date} id={e.id} />
           ))}
         </ScrollView>
       )}
       {activeTab == 'past' && (
         <ScrollView style={styles.eventList}>
           {pastEvents.map((e, i) => (
-            <EventCard key={i} title={e.title} date={e.date} />
+            <EventCard key={i} title={e.title} date={e.date} id={e.id} />
           ))}
         </ScrollView>
       )}
