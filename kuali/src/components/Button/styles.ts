@@ -7,6 +7,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15, //Modifico para que quepan los botones
     borderRadius: 8,
     backgroundColor: colors.selectionBlue,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonDisabled: {
     paddingVertical: 8,
@@ -17,7 +19,8 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.solidWhite,
     fontFamily: 'monserratRegular',
-    fontSize: 14,
+    fontSize: 16,
+    includeFontPadding: false,
   },
 })
 

@@ -18,8 +18,8 @@ import Toast from 'react-native-toast-message'
 
 export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
-  const [imageLoading, setImageLoading] = useState(true)
-  const [imgUrl, setImgUrl] = useState('')
+  const [imageLoading, setImageLoading] = useState(false)
+  const [imgUrl, setImgUrl] = useState('../../../assets/cicataLogo.png')
   const [userProfile, setUserProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
@@ -28,6 +28,12 @@ export default function ProfileId() {
   const { cardDimensions, imageSize, fontSize } = calculateDimensions(insets)
 
   useEffect(() => {
+    const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}/profilePhoto`
+
+    console.log('Cambiando url de imagen: ', apiUrl)
+
+    setImgUrl(apiUrl)
+  }, [user])
     const fetchUserProfile = async () => {
       if (!user || !user.user_id) {
         console.log('No hay ID de usuario disponible', user)
@@ -147,20 +153,31 @@ export default function ProfileId() {
                 },
               ]}
             >
-              {imageLoading ? (
+              {imageLoading && (
                 <ActivityIndicator size='large' color={colors.selectionBlue} />
-              ) : (
-                <Image
-                  source={{ uri: imgUrl }}
-                  style={styles.image}
-                  onLoadStart={() => setImageLoading(true)}
-                  onLoadEnd={() => setImageLoading(false)}
-                  onError={(e) => {
-                    console.error('Error cargando imagen:', e.nativeEvent.error)
-                    setImageLoading(false)
-                  }}
-                />
               )}
+              <Image
+                source={{ uri: imgUrl }}
+                style={[
+                  styles.image,
+                  { display: imageLoading ? 'none' : 'flex' },
+                ]}
+                onLoadStart={() => {
+                  console.log('Cargando imagen: ', imgUrl)
+                  // setImageLoading(true)
+                }}
+                onLoad={() => {
+                  setImageLoading(false)
+                }}
+                onLoadEnd={() => {
+                  console.log('Imagen cargada!!!')
+                  setImageLoading(false)
+                }}
+                onError={(e) => {
+                  console.error('Error cargando imagen:', e.nativeEvent.error)
+                  setImageLoading(false)
+                }}
+              />
             </View>
             <View
               style={[styles.info, { marginTop: cardDimensions.height * 0.38 }]}

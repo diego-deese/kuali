@@ -7,6 +7,7 @@ import {
   USER_SESSION_KEY,
 } from '../constants/storage_keys'
 import { AuthResponse, ResponseError } from '../types/Request'
+import { Platform } from 'react-native'
 
 class AuthService {
   private api: AxiosInstance
@@ -141,18 +142,24 @@ class AuthService {
       const data = await response.data
 
       if (response.status === 200) {
-        await SecureStore.setItemAsync(
-          REFRESH_TOKEN_KEY,
-          data.tokens.refresh_token,
-        )
-        await SecureStore.setItemAsync(
-          ACCESS_TOKEN_KEY,
-          data.tokens.access_token,
-        )
-        await SecureStore.setItemAsync(
-          USER_SESSION_KEY,
-          JSON.stringify(data.user),
-        )
+        if (Platform.OS === 'web') {
+          localStorage.setItem(REFRESH_TOKEN_KEY, data.tokens.refresh_token)
+          localStorage.setItem(ACCESS_TOKEN_KEY, data.tokens.access_token)
+          localStorage.setItem(USER_SESSION_KEY, JSON.stringify(data.user))
+        } else {
+          await SecureStore.setItemAsync(
+            REFRESH_TOKEN_KEY,
+            data.tokens.refresh_token,
+          )
+          await SecureStore.setItemAsync(
+            ACCESS_TOKEN_KEY,
+            data.tokens.access_token,
+          )
+          await SecureStore.setItemAsync(
+            USER_SESSION_KEY,
+            JSON.stringify(data.user),
+          )
+        }
         return { success: true, ...(data as AuthResponse) }
       }
 
@@ -211,7 +218,11 @@ class AuthService {
 
   async getToken(): Promise<string | null> {
     try {
-      return await SecureStore.getItemAsync(ACCESS_TOKEN_KEY)
+      if (Platform.OS === 'web') {
+        return localStorage.getItem(ACCESS_TOKEN_KEY)
+      } else {
+        return await SecureStore.getItemAsync(ACCESS_TOKEN_KEY)
+      }
     } catch (error) {
       console.error(error)
       return null
@@ -220,7 +231,11 @@ class AuthService {
 
   async removeToken(): Promise<boolean> {
     try {
-      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
+      if (Platform.OS === 'web') {
+        localStorage.removeItem(ACCESS_TOKEN_KEY)
+      } else {
+        await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
+      }
       return true
     } catch (error) {
       console.error(error)
@@ -229,7 +244,12 @@ class AuthService {
   }
 
   async getCurrentUser() {
-    const userJson = await SecureStore.getItemAsync(USER_SESSION_KEY)
+    let userJson
+    if (Platform.OS === 'web') {
+      userJson = localStorage.getItem(USER_SESSION_KEY)
+    } else {
+      userJson = await SecureStore.getItemAsync(USER_SESSION_KEY)
+    }
     return userJson ? JSON.parse(userJson) : null
   }
 

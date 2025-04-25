@@ -182,7 +182,13 @@ class ActivityService {
           include: {
             userDocuments: {
               select: {
+                user_document_id: true,
                 status: true
+              },
+              where: {
+                registration: {
+                  user_id: userId
+                }
               }
             }
           }
@@ -191,7 +197,6 @@ class ActivityService {
       omit: {
         creation_date: true,
         last_updated: true,
-        mandatory: true,
         visible_researchers: true,
         visible_students: true,
         admin_creator_id: true,
@@ -226,7 +231,13 @@ class ActivityService {
           include: {
             userDocuments: {
               select: {
+                user_document_id: true,
                 status: true
+              },
+              where: {
+                registration: {
+                  user_id: userId
+                }
               }
             }
           }
@@ -235,7 +246,6 @@ class ActivityService {
       omit: {
         creation_date: true,
         last_updated: true,
-        mandatory: true,
         visible_researchers: true,
         visible_students: true,
         admin_creator_id: true,

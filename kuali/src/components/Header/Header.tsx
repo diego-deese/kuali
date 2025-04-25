@@ -5,6 +5,7 @@ import colors from '../../constants/colors'
 import LogoHorizontal from '../Logos/LogoHorizontal'
 import { NotificationNoneIcon, LogoutIcon } from '../Icons/Icons'
 import { usePathname } from 'expo-router'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 interface HeaderProps {
   onTabPress: (tabName: string) => void // Función que se ejecutará cuando se presione un tab
@@ -22,8 +23,10 @@ const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
     }
   }
 
+  const insets = useSafeAreaInsets()
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top * 0.7 }]}>
       <LogoHorizontal />
       <TouchableOpacity style={styles.tabButton} onPress={handleIconPress}>
         {isProfileScreen ? (
