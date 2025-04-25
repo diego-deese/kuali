@@ -33,7 +33,7 @@ export default function ProfileId() {
     console.log('Cambiando url de imagen: ', apiUrl)
 
     setImgUrl(apiUrl)
-  }, [user])
+    //}, [user])
     const fetchUserProfile = async () => {
       if (!user || !user.user_id) {
         console.log('No hay ID de usuario disponible', user)
