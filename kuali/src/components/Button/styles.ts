@@ -22,6 +22,14 @@ const styles = StyleSheet.create({
     fontSize: 16,
     includeFontPadding: false,
   },
+  buttonSmall: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    flex: 1,
+  },
+  buttonTextSmall: {
+    fontSize: 14,
+  },
 })
 
 export default styles

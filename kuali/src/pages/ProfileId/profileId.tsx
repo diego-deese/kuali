@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import colors from '../../constants/colors'
 import {
   SafeAreaView,
@@ -12,72 +12,22 @@ import { LinearGradient } from 'expo-linear-gradient'
 import FlipCard from 'react-native-flip-card'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { calculateDimensions } from './profileIdutils'
-import { useAuth } from '../../context/AuthContext'
-import userService from '../../services/user.service'
-import Toast from 'react-native-toast-message'
+import { useUserProfile } from '../../hooks/useUserProfile'
 
 export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
-  const [imageLoading, setImageLoading] = useState(false)
-  const [imgUrl, setImgUrl] = useState('../../../assets/cicataLogo.png')
-  const [userProfile, setUserProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
 
-  const { user } = useAuth()
   const insets = useSafeAreaInsets()
   const { cardDimensions, imageSize, fontSize } = calculateDimensions(insets)
 
-  useEffect(() => {
-    const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}/profilePhoto`
-
-    console.log('Cambiando url de imagen: ', apiUrl)
-
-    setImgUrl(apiUrl)
-    //}, [user])
-    const fetchUserProfile = async () => {
-      if (!user || !user.user_id) {
-        console.log('No hay ID de usuario disponible', user)
-        setLoading(false)
-        return
-      }
-
-      console.log(
-        'Intentando cargar el perfil del usuario con ID:',
-        user.user_id,
-      )
-
-      try {
-        const result = await userService.getUserProfile(user.user_id)
-        console.log('Respuesta de getUserProfile:', result)
-
-        if ('success' in result && !result.success) {
-          Toast.show({
-            type: 'error',
-            text1: 'Error',
-            text2:
-              result.message || 'No se pudo cargar la información del perfil',
-          })
-        } else {
-          setUserProfile(result)
-          console.log('Perfil de usuario establecido:', result)
-        }
-      } catch (error) {
-        console.error('Error al cargar el perfil:', error)
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          text2: 'No se pudo cargar la información del perfil',
-        })
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchUserProfile()
-    if (user?.user_id) {
-      setImgUrl(userService.getProfilePhotoUrl(user.user_id))
-    }
-  }, [user, user?.user_id])
+  const {
+    userProfile,
+    imgUrl,
+    loading,
+    imageLoading,
+    setImageLoading,
+    getProgramName,
+  } = useUserProfile()
 
   // if (loading) {
   //   return (
@@ -87,26 +37,6 @@ export default function ProfileId() {
   //     </SafeAreaView>
   //   )
   // }
-
-  const getProgramName = () => {
-    // Verificar si hay programas como estudiante
-    if (userProfile?.academic_programs_as_student?.length > 0) {
-      const studentProgram = userProfile.academic_programs_as_student[0].program
-      if (studentProgram && studentProgram.name) {
-        return studentProgram.name
-      }
-    }
-
-    // Verificar si hay programas como investigador
-    if (userProfile?.academic_programs_as_researcher?.length > 0) {
-      const researcherProgram = userProfile.academic_programs_as_researcher[0]
-      if (researcherProgram && researcherProgram.name) {
-        return researcherProgram.name
-      }
-    }
-
-    return 'Sin programa asignado'
-  }
 
   return (
     <SafeAreaView style={styles.container}>

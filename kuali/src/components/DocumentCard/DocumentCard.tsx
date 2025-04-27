@@ -43,8 +43,13 @@ export default function DocumentCard({
           buttonText='Subir documento'
           onPress={onUpload}
           disabled={status === 'completed'}
+          size='small'
         />
-        <Button buttonText='Eliminar documento' onPress={onDelete} />
+        <Button
+          buttonText='Eliminar documento'
+          onPress={onDelete}
+          size='small'
+        />
       </View>
     </View>
   )
