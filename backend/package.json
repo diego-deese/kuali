@@ -11,7 +11,7 @@
     "docker:stop": "docker-compose down",
     "docker:delete": "docker-compose down -v",
     "db:pull": "npx prisma db pull",
-    "db:wait": "npx wait-on tcp:3306 -t 60000",
+    "db:wait": "npx wait-on tcp:3307 -t 60000",
     "db:seed": "ts-node prisma/seed.ts",
     "db:migrate:dev": "npx prisma migrate dev",
     "db:migrate": "npx prisma migrate deploy",

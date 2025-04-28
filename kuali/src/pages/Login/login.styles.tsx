@@ -3,20 +3,21 @@ import { StyleSheet } from 'react-native'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 40,
   },
   formContainer: {
     flex: 1,
     alignItems: 'center',
+    paddingHorizontal: 40,
   },
   title: {
     fontFamily: 'monserratRegular',
     textAlign: 'center',
     fontSize: 24,
-    marginBottom: 30,
+    marginBottom: 24,
+    width: '100%',
   },
-  inputsContainer: {
-    flex: 1,
+  button: {
+    fontSize: 16,
   },
   checkboxContainer: {
     flexDirection: 'row',

@@ -1,12 +1,13 @@
 import { StyleSheet } from "react-native";
 import colors from "../../constants/colors"
+import { RFValue } from "react-native-responsive-fontsize";
 
 const styles = StyleSheet.create({
   card: {
     alignSelf: "center",
-    width: 380,
-    height: 600,
-    padding: 15,
+    width: "85%",
+    height: "93%",
+    padding: 10,
   }, 
   image: {
     width: "100%",
@@ -21,12 +22,12 @@ const styles = StyleSheet.create({
   overlay: {
     position: "absolute",
     bottom: 10,
-    left: 20,
+    left: 10,
     padding: 16,
     width: "100%",
   },
   title: {
-    fontSize: 30,
+    fontSize: RFValue(25),
     fontWeight: "bold",
     color: colors.solidWhite,
     marginBottom: 8,
@@ -38,15 +39,15 @@ const styles = StyleSheet.create({
   },
   text: {
     color: colors.solidWhite,
-    marginLeft: 6,
-    fontSize: 23,
+    marginLeft: 3,
+    fontSize: RFValue(18),
   },
   icon: {
     width: 20,
     textAlign: "center",
   },
   controls: {
-    marginTop: -300,
+    marginTop: -200,
     flexDirection: "row",
     justifyContent: "space-between",
     paddingHorizontal: 10,

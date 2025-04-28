@@ -160,91 +160,107 @@ class ActivityService {
   }
 
   async getUserUpcomingActivities (userId: number): Promise<UserAccesibleActivity[]> {
-    const activities = await prisma.activities.findMany({
-      where: {
-        users: {
-          some: {
-            user_id: userId
-          }
-        },
-        event_date: {
-          gte: new Date()
-        }
-      },
-      include: {
-        location: true,
-        category: true,
-        requirements: {
-          omit: {
-            activity_id: true,
-            last_updated: true
-          },
+    const activities = await prisma.registrations.findMany({
+      select: {
+        activity: {
           include: {
-            userDocuments: {
-              select: {
-                status: true
+            location: true,
+            category: true,
+            requirements: {
+              omit: {
+                activity_id: true,
+                last_updated: true
+              },
+              include: {
+                userDocuments: {
+                  select: {
+                    user_document_id: true,
+                    status: true
+                  }
+                }
               }
             }
+          },
+          omit: {
+            poster_image: true,
+            poster_mimetype: true,
+            creation_date: true,
+            last_updated: true,
+            visible_researchers: true,
+            visible_students: true,
+            admin_creator_id: true,
+            location_id: true,
+            category_id: true
           }
         }
       },
-      omit: {
-        creation_date: true,
-        last_updated: true,
-        mandatory: true,
-        visible_researchers: true,
-        visible_students: true,
-        admin_creator_id: true,
-        location_id: true,
-        category_id: true
+      where: {
+        user: {
+          user_id: userId
+        },
+        activity: {
+          event_date: {
+            gte: new Date()
+          }
+        }
       }
     })
 
-    return activities
+    return activities.map((activity) => {
+      return activity.activity
+    })
   }
 
   async getUserPastActivities (userId: number): Promise<UserAccesibleActivity[]> {
-    const activities = await prisma.activities.findMany({
-      where: {
-        users: {
-          some: {
-            user_id: userId
-          }
-        },
-        event_date: {
-          lt: new Date()
-        }
-      },
-      include: {
-        location: true,
-        category: true,
-        requirements: {
-          omit: {
-            activity_id: true,
-            last_updated: true
-          },
+    const activities = await prisma.registrations.findMany({
+      select: {
+        activity: {
           include: {
-            userDocuments: {
-              select: {
-                status: true
+            location: true,
+            category: true,
+            requirements: {
+              omit: {
+                activity_id: true,
+                last_updated: true
+              },
+              include: {
+                userDocuments: {
+                  select: {
+                    user_document_id: true,
+                    status: true
+                  }
+                }
               }
             }
+          },
+          omit: {
+            poster_image: true,
+            poster_mimetype: true,
+            creation_date: true,
+            last_updated: true,
+            visible_researchers: true,
+            visible_students: true,
+            admin_creator_id: true,
+            location_id: true,
+            category_id: true
           }
         }
       },
-      omit: {
-        creation_date: true,
-        last_updated: true,
-        mandatory: true,
-        visible_researchers: true,
-        visible_students: true,
-        admin_creator_id: true,
-        location_id: true,
-        category_id: true
+      where: {
+        user: {
+          user_id: userId
+        },
+        activity: {
+          event_date: {
+            lt: new Date()
+          }
+        }
       }
     })
 
-    return activities
+    return activities.map((activity) => {
+      return activity.activity
+    })
   }
 
   async getUpcomingActivities (): Promise<ActivityInfo[]> {
@@ -256,7 +272,8 @@ class ActivityService {
         event_date: true,
         register_date_limit: true,
         location: true,
-        category: true
+        category: true,
+        mandatory: true
       },
       where: {
         event_date: {

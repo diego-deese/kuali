@@ -8,8 +8,6 @@ import { Roles } from '../../constants/roles'
 export default function TabsLayout() {
   const { authenticated, loading, onLogout, user } = useAuth()
 
-  console.log(user)
-
   if (loading) {
     return <LoadingScreen />
   }

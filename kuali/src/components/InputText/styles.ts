@@ -3,6 +3,7 @@ import colors from '../../constants/colors'
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
     marginBottom: 15,
   },
   inputContainer: {
@@ -28,6 +29,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.solidWhite,
     borderColor: colors.borderGray,
     borderWidth: 1.5,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   inputTextIcon: {
     width: '100%',
@@ -40,6 +43,8 @@ const styles = StyleSheet.create({
     borderColor: colors.borderGray,
     borderWidth: 1.5,
     paddingRight: 45,
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   icon: {
     position: 'absolute',

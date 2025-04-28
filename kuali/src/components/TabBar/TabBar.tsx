@@ -1,4 +1,4 @@
-import { TouchableOpacity, View } from 'react-native'
+import { TouchableOpacity, View, Platform } from 'react-native'
 import colors from '../../constants/colors'
 import styles from './styles'
 import {
@@ -7,6 +7,7 @@ import {
   PersonSearch,
   ProfileIcon,
 } from '../Icons/Icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 export default function TabBar({ state, descriptors, navigation }) {
   const icons = {
@@ -24,8 +25,16 @@ export default function TabBar({ state, descriptors, navigation }) {
     ),
   }
 
+  const insets = useSafeAreaInsets()
+
   return (
-    <View style={styles.container}>
+    <View
+      style={
+        Platform.OS === 'android'
+          ? [styles.container, { marginBottom: insets.bottom }]
+          : [styles.container, { paddingBottom: insets.bottom }]
+      }
+    >
       {state.routes.map((route, index) => {
         const { options } = descriptors[route.key]
 

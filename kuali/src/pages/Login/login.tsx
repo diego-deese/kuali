@@ -8,10 +8,16 @@ import LoadingScreen from '../LoadingScreen/LoadingScreen'
 import { useLogin } from '../../hooks/useLogin'
 import { useAuth } from '../../context/AuthContext'
 import { Redirect } from 'expo-router'
+import { useFonts } from 'expo-font'
 
 export default function LogIn() {
   const { email, password, loading, handleLogin } = useLogin()
   const { authenticated } = useAuth()
+  const [fontsLoaded] = useFonts({
+    monserratRegular: require('../../../assets/fonts/Montserrat-Regular.ttf'),
+    monserratBold: require('../../../assets/fonts/Montserrat-SemiBold.ttf'),
+    monserratItalic: require('../../../assets/fonts/Montserrat-Italic.ttf'),
+  })
 
   const passwordRef = useRef(null)
 
@@ -21,6 +27,10 @@ export default function LogIn() {
 
   if (authenticated) {
     return <Redirect href='myactivities' />
+  }
+
+  if (!fontsLoaded) {
+    return <LoadingScreen message='Cargando recursos de la aplicación' />
   }
 
   return (
@@ -43,7 +53,7 @@ export default function LogIn() {
 
         <Input
           label='Contraseña'
-          placeholder='••••••'
+          placeholder='• • • • • •'
           returnKeyType='done'
           value={password.password}
           onChangeText={password.setPassword}

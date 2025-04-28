@@ -13,7 +13,7 @@ router.get('/:id', isAuthenticated, userController.getUser)
 router.put('/:id', isAuthenticated, isAdmin, userController.updateUser)
 router.delete('/:id', isAuthenticated, isAdmin, userController.deleteUser)
 
-router.get('/:id/profilePhoto', isAuthenticated, userController.getUserProfilePhoto)
+router.get('/:id/profilePhoto', userController.getUserProfilePhoto)
 
 router.get('/:id/activities/upcoming', isAuthenticated, activityController.getUserUpcomingActivities)
 
