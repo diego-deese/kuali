@@ -6,14 +6,18 @@ const styles = StyleSheet.create({
   },
   calendarContainer: {
     height: '70%',
-    padding: 20,
   },
   textNextEvents: {
     fontFamily: 'monserratBold',
     fontSize: 24,
   },
   nextEventsContainer: {
-    padding: 20,
+    padding: 10,
+  },
+  nextEventsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
 })
 
