@@ -1,5 +1,5 @@
 import { TouchableOpacity, View, Platform } from 'react-native'
-import colors from '../../constants/colors'
+import colors from '../../../constants/colors'
 import styles from './styles'
 import {
   BookmarkIcon,

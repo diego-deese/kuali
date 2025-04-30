@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native'
-import colors from '../../constants/colors'
+import colors from '../../../constants/colors'
 
 const styles = StyleSheet.create({
   card: {
@@ -7,8 +7,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 25,
     marginVertical: 8,
-
-    width: '85%',
+    width: '90%',
     alignSelf: 'center',
 
     //Shadows

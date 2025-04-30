@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import Button from '../Button/Button'
 import styles from './DocumentCard.styles'
-import { PendingIcon, RejectedIcon, AcceptedIcon } from '../Icons/Icons'
+import { PendingIcon, RejectedIcon, AcceptedIcon } from '../shared/Icons/Icons'
 
 export type DocumentStatus = 'pending' | 'completed' | 'rejected'
 

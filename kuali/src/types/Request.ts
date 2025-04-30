@@ -4,6 +4,11 @@ export interface ResponseError {
   error: string
 }
 
+export interface Response<T> {
+  success: true
+  data: T | T[]
+}
+
 export interface AuthResponse {
   success: true
   tokens: {

@@ -1,5 +1,5 @@
 import { ActivityIndicator, Text, View } from 'react-native'
-import Logo from '../../components/Logos/Logo'
+import Logo from '../../components/shared/Logos/Logo'
 import colors from '../../constants/colors'
 
 interface LoadingScreenProps {

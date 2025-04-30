@@ -5,10 +5,10 @@ import { router } from 'expo-router'
 import colors from '../../constants/colors'
 import {
   CalendarEvent,
-  LeftArrow,
+  LeftArrowIcon,
   LocationIcon,
-  RightArrow,
-} from '../Icons/Icons'
+  RightArrowIcon,
+} from '../shared/Icons/Icons'
 
 interface Props {
   image: any
@@ -69,17 +69,21 @@ export default function CardCarousel({
         </View>
 
         <View style={styles.controls}>
-          <TouchableOpacity onPress={(e) => {
-            e.stopPropagation();
-            if ( !isFirst) onPrev();
-          }}>
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation()
+              if (!isFirst) onPrev()
+            }}
+          >
             <LeftArrow size={30} color={colors.solidWhite} />
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={(e) => {
-            e.stopPropagation();
-            if ( !isLast) onNext();
-          }}>
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation()
+              if (!isLast) onNext()
+            }}
+          >
             <RightArrow size={30} color={colors.solidWhite} />
           </TouchableOpacity>
         </View>

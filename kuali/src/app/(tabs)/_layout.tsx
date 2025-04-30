@@ -1,9 +1,9 @@
 import { Redirect, Tabs } from 'expo-router'
-import Header from '../../components/Header/Header'
-import TabBar from '../../components/TabBar/TabBar'
+import TabBar from '../../components/shared/TabBar/TabBar'
 import { useAuth } from '../../context/AuthContext'
 import LoadingScreen from '../../pages/LoadingScreen/LoadingScreen'
 import { Roles } from '../../constants/roles'
+import Header from '../../components/shared/Header/Header'
 
 export default function TabsLayout() {
   const { authenticated, loading, onLogout, user } = useAuth()

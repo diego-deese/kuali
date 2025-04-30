@@ -1,21 +1,20 @@
 import { StyleSheet } from 'react-native'
-import colors from '../../constants/colors'
+import colors from '../../../constants/colors'
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     backgroundColor: colors.solidWhite,
-    //padding: 0,
-
     borderRadius: 15,
     alignSelf: 'flex-end',
     marginRight: 35,
-    //marginTop: 0,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 2,
     elevation: 2,
+    marginTop: 8,
+    padding: 2,
   },
   option: {
     paddingVertical: 4,
