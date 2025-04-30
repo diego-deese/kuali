@@ -1,7 +1,12 @@
 import { Text, View } from 'react-native'
 import styles from './UserCard.styles'
 import IconButton from '../IconButton/IconButton'
-import { EnableIcon, DisableIcon, InfoIcon, EditIcon } from '../Icons/Icons'
+import {
+  EnableIcon,
+  DisableIcon,
+  InfoIcon,
+  EditIcon,
+} from '../shared/Icons/Icons'
 
 export default function UserCard({
   name,

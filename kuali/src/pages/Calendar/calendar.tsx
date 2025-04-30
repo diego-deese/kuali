@@ -5,8 +5,8 @@ import { useAuth } from '../../context/AuthContext'
 import styles from './calendar.styles'
 import CalendarComponent from '../../components/Calendar/Calendar'
 import IconButton from '../../components/IconButton/IconButton'
-import { PlusIcon } from '../../components/Icons/Icons'
 import NextEventCard from '../../components/NextEventCard/NextEventCard'
+import { PlusIcon } from '../../components/shared/Icons/Icons'
 
 export default function MyEvents() {
   const { user } = useAuth()

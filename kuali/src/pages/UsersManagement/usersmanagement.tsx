@@ -9,11 +9,11 @@ import { act, useState, useEffect } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import IconButton from '../../components/IconButton/IconButton'
 import styles from './usersmanagement.styles'
-import { PlusIcon } from '../../components/Icons/Icons'
 import UserCard from '../../components/UserCard/UserCard'
 import multipleUsersService from '../../services/multipleUsers.service'
 import { User } from '../../types/User'
 import authService from '../../services/auth.service'
+import { PlusIcon } from '../../components/shared/Icons/Icons'
 
 export default function UsersManagement() {
   const [activeTab, setActiveTab] = useState('Estudiantes')

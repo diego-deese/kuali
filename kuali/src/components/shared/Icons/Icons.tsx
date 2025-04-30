@@ -2,7 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import { FontAwesome } from '@expo/vector-icons'
-import colors from '../../constants/colors'
+import colors from '../../../constants/colors'
 
 export const BookmarkIcon = ({ fill = true, ...props }) => {
   return fill ? (
