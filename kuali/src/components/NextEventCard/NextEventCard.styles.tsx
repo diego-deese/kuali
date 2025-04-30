@@ -5,48 +5,39 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: colors.solidWhite,
     borderRadius: 10,
-    padding: 20,
+    padding: 15,
     marginVertical: 8,
-    width: '85%',
+    width: '95%',
     alignSelf: 'center',
-    flexDirection: 'row',
     position: 'relative',
     overflow: 'hidden',
     elevation: 2,
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOffset: { width: 2, height: 2 },
+    shadowOpacity: 1,
     shadowRadius: 4,
-  },
-  inactiveOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: colors.inactiveGray,
-    opacity: 0.4,
-    borderRadius: 10,
   },
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
     alignItems: 'center',
+    gap: 50,
   },
-  nameContainer: {
-    flex: 1,
+  eventInfo: {
+    flexShrink: 1,
+    flexGrow: 1,
     flexDirection: 'row',
-    width: '30%',
     flexWrap: 'wrap',
   },
-  name: {
+  eventTitle: {
+    fontSize: 18,
     fontFamily: 'monserratBold',
-    fontSize: 16,
-    color: colors.fontBlack,
   },
-  nameInactive: {
-    fontFamily: 'monserratBold',
-    fontSize: 16,
-    color: colors.fontBlack,
-    opacity: 0.6,
+  eventMoreInfo: {
+    fontSize: 14,
+    fontFamily: 'monserratRegular',
   },
-  actionsContainer: {
+  buttonContainer: {
     flexDirection: 'row',
     gap: 10,
     alignContent: 'flex-end',

@@ -4,10 +4,16 @@ import IconButton from '../IconButton/IconButton'
 import { EnableIcon, DisableIcon, InfoIcon, EditIcon } from '../Icons/Icons'
 
 export default function UserCard({
-  username,
+  name,
+  second_name,
+  paternal_lastname,
+  maternal_lastname,
   state,
 }: {
-  username: string
+  name: string
+  second_name: string
+  paternal_lastname: string
+  maternal_lastname: string
   state: boolean
 }) {
   return (
@@ -17,7 +23,7 @@ export default function UserCard({
       <View style={styles.content}>
         <View style={styles.nameContainer}>
           <Text style={state ? styles.name : styles.nameInactive}>
-            {username}
+            {`${name} ${second_name} ${paternal_lastname} ${maternal_lastname}`}
           </Text>
         </View>
         <View style={styles.actionsContainer}>
