@@ -5,21 +5,51 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native'
-import { act, useState } from 'react'
+import { act, useState, useEffect } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import IconButton from '../../components/IconButton/IconButton'
 import styles from './usersmanagement.styles'
 import { PlusIcon } from '../../components/Icons/Icons'
 import UserCard from '../../components/UserCard/UserCard'
+import multipleUsersService from '../../services/multipleUsers.service'
+import { User } from '../../types/User'
+import authService from '../../services/auth.service'
 
 export default function UsersManagement() {
   const [activeTab, setActiveTab] = useState('Estudiantes')
+  const [users, setUsers] = useState<User[]>([])
 
   const sampleUsers = [
     { username: 'Juanito Perez', id: 1, state: false },
     { username: 'Dultez de papel', id: 2, state: true },
     { username: 'Jorge Alvarez', id: 3, state: true },
   ]
+
+  useEffect(() => {
+    const initialize = async () => {
+      const token = await authService.getToken()
+      if (token) {
+        console.log('Token existe')
+        fetchUsers()
+      } else {
+        console.warn('Token expirado o sin acceso')
+      }
+    }
+    initialize()
+  }, [])
+
+  const fetchUsers = async () => {
+    const response = await multipleUsersService.getUsers()
+    if (response.success) {
+      setUsers(response.users)
+    } else {
+      console.error('Failed to fetch users:', response.error)
+    }
+  }
+
+  const students = users.filter((user) => user.role?.name === 'Estudiante')
+  const researchers = users.filter((user) => user.role?.name === 'Investigador')
+  const admins = users.filter((user) => user.role?.name === 'Administrador')
 
   return (
     <SafeAreaProvider>
@@ -72,11 +102,46 @@ export default function UsersManagement() {
         <View>
           {activeTab === 'Estudiantes' && (
             <ScrollView>
-              {sampleUsers.map((users, i) => (
+              {students.map((users, i) => (
                 <UserCard
                   key={i}
-                  username={users.username}
-                  state={users.state}
+                  name={users.name}
+                  second_name={users.second_name}
+                  paternal_lastname={users.paternal_lastname}
+                  maternal_lastname={users.maternal_lastname}
+                  state={true}
+                />
+              ))}
+            </ScrollView>
+          )}
+        </View>
+        <View>
+          {activeTab === 'Investigadores' && (
+            <ScrollView>
+              {researchers.map((users, i) => (
+                <UserCard
+                  key={i}
+                  name={users.name}
+                  second_name={users.second_name}
+                  paternal_lastname={users.paternal_lastname}
+                  maternal_lastname={users.maternal_lastname}
+                  state={true}
+                />
+              ))}
+            </ScrollView>
+          )}
+        </View>
+        <View>
+          {activeTab === 'Administradores' && (
+            <ScrollView>
+              {admins.map((users, i) => (
+                <UserCard
+                  key={i}
+                  name={users.name}
+                  second_name={users.second_name}
+                  paternal_lastname={users.paternal_lastname}
+                  maternal_lastname={users.maternal_lastname}
+                  state={true}
                 />
               ))}
             </ScrollView>

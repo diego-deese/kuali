@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   cardContainer: {
     backgroundColor: colors.solidWhite,
     borderRadius: 10,
-    padding: 25,
+    padding: 20,
     marginVertical: 8,
     width: '85%',
     alignSelf: 'center',
@@ -25,11 +25,15 @@ const styles = StyleSheet.create({
   },
   content: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     width: '100%',
+    alignItems: 'center',
   },
   nameContainer: {
     flex: 1,
-    width: '40%',
+    flexDirection: 'row',
+    width: '30%',
+    flexWrap: 'wrap',
   },
   name: {
     fontFamily: 'monserratBold',
@@ -46,6 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
     alignContent: 'flex-end',
+    flexShrink: 0,
   },
 })
 
