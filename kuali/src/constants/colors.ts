@@ -9,4 +9,5 @@ export default {
   highlightCyan: '#75BEA6',
   warningRed: '#CB2A47',
   blueIcons: '#2A4A91',
+  inactiveGray: '#767676',
 }

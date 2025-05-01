@@ -1,7 +1,7 @@
 import React from 'react'
 import { View, TouchableOpacity } from 'react-native'
 import styles from './Header.styles'
-import colors from '../../constants/colors'
+import colors from '../../../constants/colors'
 import LogoHorizontal from '../Logos/LogoHorizontal'
 import { NotificationNoneIcon, LogoutIcon } from '../Icons/Icons'
 import { usePathname } from 'expo-router'
