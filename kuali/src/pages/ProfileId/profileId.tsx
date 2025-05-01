@@ -36,7 +36,7 @@ export default function ProfileId() {
     //}, [user])
     const fetchUserProfile = async () => {
       if (!user || !user.user_id) {
-        console.log('No hay ID de usuario disponible', user)
+        console.error('No hay ID de usuario disponible', user)
         setLoading(false)
         return
       }
@@ -48,7 +48,6 @@ export default function ProfileId() {
 
       try {
         const result = await userService.getUserProfile(user.user_id)
-        console.log('Respuesta de getUserProfile:', result)
 
         if ('success' in result && !result.success) {
           Toast.show({
@@ -59,7 +58,6 @@ export default function ProfileId() {
           })
         } else {
           setUserProfile(result)
-          console.log('Perfil de usuario establecido:', result)
         }
       } catch (error) {
         console.error('Error al cargar el perfil:', error)
@@ -77,7 +75,7 @@ export default function ProfileId() {
     if (user?.user_id) {
       setImgUrl(userService.getProfilePhotoUrl(user.user_id))
     }
-  }, [user, user?.user_id])
+  }, [user, user.user_id])
 
   // if (loading) {
   //   return (
@@ -163,14 +161,12 @@ export default function ProfileId() {
                   { display: imageLoading ? 'none' : 'flex' },
                 ]}
                 onLoadStart={() => {
-                  console.log('Cargando imagen: ', imgUrl)
                   // setImageLoading(true)
                 }}
                 onLoad={() => {
                   setImageLoading(false)
                 }}
                 onLoadEnd={() => {
-                  console.log('Imagen cargada!!!')
                   setImageLoading(false)
                 }}
                 onError={(e) => {

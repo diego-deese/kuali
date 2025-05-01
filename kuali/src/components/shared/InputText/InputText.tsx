@@ -10,8 +10,8 @@ import {
   TouchableOpacity,
 } from 'react-native'
 import styles from './styles'
-import colors from '../../constants/colors'
 import { VisibilityIcon, VisibilityOffIcon } from '../Icons/Icons'
+import colors from '../../../constants/colors'
 
 interface CustomInputProps extends TextInputProps {
   label?: string
