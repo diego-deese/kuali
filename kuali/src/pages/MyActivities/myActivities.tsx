@@ -1,7 +1,7 @@
 import React from 'react'
 import { View } from 'react-native'
 import styles from './myActivities.styles'
-import ActivityCarousel from '../../components/MyActivities/ActivityCarousel/Carousel/Carousel'
+import ActivityCarousel from '../../components/MyActivities/ActivityCarousel/ActivityCarousel/ActivityCarousel'
 import { useMyActivities } from '../../hooks/MyActivities/useMyActivities'
 import ViewModeSelector from '../../components/MyActivities/ViewModeSelector/ViewModeSelector'
 import TabSelector from '../../components/MyActivities/TabSelector/TabSelector'

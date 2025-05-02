@@ -22,6 +22,7 @@ export default function ProfileId() {
   const [imgUrl, setImgUrl] = useState('../../../assets/cicataLogo.png')
   const [userProfile, setUserProfile] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [onUpdateImage, setOnUpdateImage] = useState(Math.random())
 
   const { user } = useAuth()
   const insets = useSafeAreaInsets()
@@ -29,8 +30,6 @@ export default function ProfileId() {
 
   useEffect(() => {
     const apiUrl = `${process.env.EXPO_PUBLIC_API_URL}/users/${user.user_id}/profilePhoto`
-
-    console.log('Cambiando url de imagen: ', apiUrl)
 
     setImgUrl(apiUrl)
     //}, [user])
@@ -74,6 +73,7 @@ export default function ProfileId() {
     fetchUserProfile()
     if (user?.user_id) {
       setImgUrl(userService.getProfilePhotoUrl(user.user_id))
+      setOnUpdateImage(Math.random())
     }
   }, [user, user.user_id])
 
@@ -155,7 +155,10 @@ export default function ProfileId() {
                 <ActivityIndicator size='large' color={colors.selectionBlue} />
               )}
               <Image
-                source={{ uri: imgUrl }}
+                source={{
+                  uri: imgUrl + '?' + onUpdateImage,
+                  cache: 'reload',
+                }}
                 style={[
                   styles.image,
                   { display: imageLoading ? 'none' : 'flex' },

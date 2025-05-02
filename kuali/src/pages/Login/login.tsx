@@ -2,13 +2,13 @@ import { View, Text, SafeAreaView } from 'react-native'
 import React, { useRef } from 'react'
 import styles from './login.styles'
 import Input from '../../components/shared/InputText/InputText'
-import Button from '../../components/shared/Button/Button'
 import Logo from '../../components/shared/Logos/Logo'
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
 import { useLogin } from '../../hooks/useLogin'
 import { useAuth } from '../../context/AuthContext'
 import { Redirect } from 'expo-router'
 import { useFonts } from 'expo-font'
+import Button from '../../components/shared/Button/Button'
 
 export default function LogIn() {
   const { email, password, loading, handleLogin } = useLogin()
