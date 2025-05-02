@@ -7,6 +7,7 @@ import {
   InfoIcon,
   EditIcon,
 } from '../shared/Icons/Icons'
+import { router } from 'expo-router'
 
 export default function UserCard({
   name,
@@ -21,6 +22,9 @@ export default function UserCard({
   maternal_lastname: string
   state: boolean
 }) {
+  const handlePress = () => {
+    //to do
+  }
   return (
     <View style={styles.cardContainer}>
       {state === false && <View style={styles.inactiveOverlay} />}
