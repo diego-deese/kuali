@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
-import Button from '../Button/Button'
 import styles from './NextEventCard.styles'
+import Button from '../shared/Button/Button'
 
 export default function NextEventCard({
   title,

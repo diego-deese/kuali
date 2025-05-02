@@ -37,7 +37,6 @@ export const useMyActivities = () => {
       if (upcomingActivities === null) getUpcomingActivities(user.user_id)
       if (pastActivities === null) getPastActivities(user.user_id)
     }
-    console.log('Upcoming: ', upcomingActivities, ' | Past: ', pastActivities)
   }, [user, upcomingActivities, pastActivities])
 
   const getUpcomingActivities = async (userId: number) => {
