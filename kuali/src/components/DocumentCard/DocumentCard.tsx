@@ -1,5 +1,5 @@
 import { View, Text } from 'react-native'
-import Button from '../Button/Button'
+import Button from '../shared/Button/Button'
 import styles from './DocumentCard.styles'
 import { PendingIcon, RejectedIcon, AcceptedIcon } from '../shared/Icons/Icons'
 
