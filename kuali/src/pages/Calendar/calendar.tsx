@@ -7,9 +7,11 @@ import CalendarComponent from '../../components/Calendar/Calendar'
 import IconButton from '../../components/IconButton/IconButton'
 import NextEventCard from '../../components/NextEventCard/NextEventCard'
 import { PlusIcon } from '../../components/shared/Icons/Icons'
+import { router } from 'expo-router'
 
 export default function MyEvents() {
   const { user } = useAuth()
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -24,7 +26,10 @@ export default function MyEvents() {
               onPress={() => console.log('Crear evento')}
             />
           </View>
-          <ScrollView>
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 10 }}
+            showsVerticalScrollIndicator={false}
+          >
             <NextEventCard
               title={'Evento padrisimo'}
               event_date={new Date('2025-05-15T17:00:00')}

@@ -5,13 +5,14 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   calendarContainer: {
-    height: '70%',
+    flex: 1,
   },
   textNextEvents: {
     fontFamily: 'monserratBold',
     fontSize: 24,
   },
   nextEventsContainer: {
+    flex: 100, // xd
     padding: 10,
   },
   nextEventsHeader: {
