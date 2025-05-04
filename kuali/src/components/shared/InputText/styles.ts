@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     marginBottom: 8,
     fontFamily: 'monserratRegular',
+    includeFontPadding: false,
     fontSize: 16,
   },
   inputText: {
@@ -30,7 +31,19 @@ const styles = StyleSheet.create({
     borderColor: colors.borderGray,
     borderWidth: 1.5,
     includeFontPadding: false,
-    textAlignVertical: 'center',
+  },
+  inputTextMultiline: {
+    width: '100%',
+    borderRadius: 8,
+    padding: 16,
+    fontFamily: 'monserratRegular',
+    fontSize: 16,
+    backgroundColor: colors.solidWhite,
+    borderColor: colors.borderGray,
+    borderWidth: 1.5,
+    includeFontPadding: false,
+    minHeight: 100,
+    textAlignVertical: 'top',
   },
   inputTextIcon: {
     width: '100%',

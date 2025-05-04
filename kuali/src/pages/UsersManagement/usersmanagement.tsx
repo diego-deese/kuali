@@ -7,7 +7,7 @@ import {
 } from 'react-native'
 import { act, useState, useEffect } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
-import IconButton from '../../components/IconButton/IconButton'
+import IconButton from '../../components/shared/IconButton/IconButton'
 import styles from './usersmanagement.styles'
 import UserCard from '../../components/UserCard/UserCard'
 import multipleUsersService from '../../services/multipleUsers.service'

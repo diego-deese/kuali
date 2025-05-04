@@ -26,6 +26,16 @@ interface CustomInputProps extends TextInputProps {
   containerStyle?: StyleProp<ViewStyle>
 }
 
+const getInputStyle = (multiline: boolean, secureTextEntry: boolean) => {
+  if (multiline) {
+    return styles.inputTextMultiline
+  } else if (secureTextEntry) {
+    return styles.inputTextIcon
+  } else {
+    return styles.inputText
+  }
+}
+
 const InputText: React.FC<CustomInputProps> = ({
   label,
   value,
@@ -36,6 +46,7 @@ const InputText: React.FC<CustomInputProps> = ({
   onSubmitEditing,
   secureTextEntry,
   inputRef,
+  multiline = false,
   ...restProps
 }) => {
   const [showContent, setShowContent] = useState(secureTextEntry)
@@ -51,7 +62,7 @@ const InputText: React.FC<CustomInputProps> = ({
         <TextInput
           placeholder={placeholder}
           placeholderTextColor={colors.placeholderGray}
-          style={secureTextEntry ? styles.inputTextIcon : styles.inputText}
+          style={getInputStyle(multiline, secureTextEntry)}
           returnKeyType={returnKeyType}
           onSubmitEditing={onSubmitEditing}
           value={value}
@@ -59,6 +70,8 @@ const InputText: React.FC<CustomInputProps> = ({
           inputMode={inputMode}
           secureTextEntry={showContent}
           ref={inputRef}
+          multiline={multiline}
+          numberOfLines={4}
           {...restProps}
         />
         {secureTextEntry && (

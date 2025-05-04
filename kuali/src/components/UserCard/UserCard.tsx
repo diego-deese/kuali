@@ -1,6 +1,6 @@
 import { Text, View } from 'react-native'
 import styles from './UserCard.styles'
-import IconButton from '../IconButton/IconButton'
+import IconButton from '../shared/IconButton/IconButton'
 import {
   EnableIcon,
   DisableIcon,
