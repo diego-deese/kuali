@@ -1,21 +1,13 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DocumentCard from '../../components/DocumentCard/DocumentCard'
+import DocumentCard, {
+  Document,
+} from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
 import { CalendarEvent, LocationIcon } from '../../components/Icons/Icons'
 import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
-
-// Tipos para nuestros datos
-type DocumentStatus = 'pending' | 'completed' | 'rejected'
-
-interface Document {
-  id: number
-  title: string
-  description: string
-  status: DocumentStatus
-}
 
 interface EventDetails {
   id: number
@@ -41,11 +33,8 @@ export default function InfoEvent() {
     const fetchEventDetails = async () => {
       try {
         setLoading(true)
-        // Aquí iría la llamada real al endpoint
-        // const response = await fetch(`/api/events/${eventId}`)
-        // const data = await response.json()
 
-        // Datos de ejemplo - esto vendría del endpoint
+        // Datos de ejemplo
         const mockData: EventDetails = {
           id: eventId,
           title: (params.title as string) || 'Nombre del evento',
@@ -93,23 +82,16 @@ export default function InfoEvent() {
   const handleUpload = (docId: number) => {
     // Lógica para subir documento - integrar con API en el futuro
     console.log(`Subiendo documento ${docId}`)
-    // Cuando tengamos la API:
-    // const response = await fetch(`/api/documents/${docId}/upload`, { method: 'POST', body: formData })
   }
 
   const handleDelete = (docId: number) => {
     // Lógica para eliminar documento - integrar con API en el futuro
     console.log(`Eliminando documento ${docId}`)
-    // Cuando tengamos la API:
-    // const response = await fetch(`/api/documents/${docId}`, { method: 'DELETE' })
   }
 
   const handleExit = () => {
-    // Lógica para salir de la convocatoria - integrar con API en el futuro
     console.log('Saliendo de esta convocatoria')
     router.push('/(tabs)/myactivities')
-    // Cuando tengamos la API:
-    // const response = await fetch(`/api/events/${eventId}/unsubscribe`, { method: 'POST' })
   }
 
   if (loading) {
@@ -160,11 +142,9 @@ export default function InfoEvent() {
           {eventDetails.documents.map((doc) => (
             <DocumentCard
               key={doc.id}
-              title={doc.title}
-              description={doc.description}
-              status={doc.status as 'pending' | 'completed' | 'rejected'}
-              onUpload={() => handleUpload(doc.id)}
-              onDelete={() => handleDelete(doc.id)}
+              document={doc}
+              onUpload={handleUpload}
+              onDelete={handleDelete}
             />
           ))}
 
