@@ -14,6 +14,7 @@ const styles = StyleSheet.create({
     borderRadius: 70,
     borderWidth: 1,
     borderColor: colors.highlightCyan,
+    marginTop: 24,
     marginBottom: 24,
   },
   name: {

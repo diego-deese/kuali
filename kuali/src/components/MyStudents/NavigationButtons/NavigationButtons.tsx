@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
 import { styles } from './styles'
 import { setStudents } from '../../../context/StudentsStored'

@@ -1,9 +1,10 @@
 import { View, Text, Image } from 'react-native'
-import { useLocalSearchParams } from 'expo-router'
+import { useLocalSearchParams, router } from 'expo-router'
 import styles from './infoStudents.styles'
 import NavigationButtons from '../../components/MyStudents/NavigationButtons/NavigationButtons'
 import { getStudents } from '../../context/StudentsStored'
 import colors from '../../constants/colors'
+import Button from '../../components/shared/Button/Button'
 
 export default function InfoStudents() {
   const { id, name, role, project, email, index } = useLocalSearchParams()
@@ -14,6 +15,11 @@ export default function InfoStudents() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.solidWhite }}>
       <View style={styles.container}>
+        <Button
+          buttonText='Volver a la lista'
+          onPress={() => router.push('mystudents')}
+        />
+
         {/* Círculo para la imagen */}
         <View style={styles.imagePlaceholder} />
 

@@ -6,19 +6,19 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 20,
     paddingTop: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: colors.solidWhite,
   },
   title: {
     fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#000',
+    color: colors.fontBlack,
   },
   listContainer: {
     paddingBottom: 20,
   },
   card: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.solidWhite,
     borderRadius: 10,
     padding: 15,
     marginBottom: 12,
@@ -27,12 +27,12 @@ const styles = StyleSheet.create({
   name: {
     fontWeight: 'bold',
     fontSize: 16,
-    color: '#000',
+    color: colors.fontBlack,
   },
   project: {
     marginTop: 4,
     fontSize: 14,
-    color: '#666',
+    color: colors.standardGray,
   },
 })
 
