@@ -39,6 +39,21 @@ const styles = StyleSheet.create({
     borderBottomWidth: 2,
     borderColor: colors.highlightCyan,
   },
+
+  textLoading: {
+    fontFamily: 'monserratRegular',
+    fontSize: 15,
+    color: colors.standardGray,
+    textAlign: 'center',
+  },
+
+  textError: {
+    fontFamily: 'monserratRegular',
+    fontSize: 15,
+    color: colors.warningRed,
+    textAlign: 'center',
+    padding: 20,
+  },
 })
 
 export default styles

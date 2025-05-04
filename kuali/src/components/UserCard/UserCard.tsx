@@ -7,23 +7,38 @@ import {
   InfoIcon,
   EditIcon,
 } from '../shared/Icons/Icons'
-import { router } from 'expo-router'
+import userService from '../../services/user.service'
+import authService from '../../services/auth.service'
 
 export default function UserCard({
+  user_id,
   name,
   second_name,
   paternal_lastname,
   maternal_lastname,
   state,
 }: {
+  user_id: number
   name: string
   second_name: string
   paternal_lastname: string
   maternal_lastname: string
   state: boolean
 }) {
-  const handlePress = () => {
-    //to do
+  const handleDeactivate = async () => {
+    const token = await authService.getToken()
+    if (!token) {
+      console.log('Token expirado o sin acceso')
+      return
+    }
+    const response = await userService.deactiveProfile(user_id)
+    if ('success' in response && !response.success) {
+      console.error(response.error)
+      // show some UI feedback
+    } else {
+      console.log('Usuario desactivado con éxito')
+      // Optionally update UI or icon
+    }
   }
   return (
     <View style={styles.cardContainer}>
@@ -43,7 +58,7 @@ export default function UserCard({
           />
           <IconButton
             icon={state ? <DisableIcon /> : <EnableIcon />}
-            onPress={() => console.log('Activar/desactivar')}
+            onPress={handleDeactivate}
           />
         </View>
       </View>

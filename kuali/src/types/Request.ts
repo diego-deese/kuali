@@ -23,3 +23,7 @@ export interface AuthResponse {
     }
   }
 }
+
+export interface Message {
+  message: string
+}
