@@ -4,9 +4,10 @@ import React from 'react'
 import { useAuth } from '../../context/AuthContext'
 import styles from './calendar.styles'
 import CalendarComponent from '../../components/Calendar/Calendar'
-import IconButton from '../../components/IconButton/IconButton'
+import IconButton from '../../components/shared/IconButton/IconButton'
 import NextEventCard from '../../components/NextEventCard/NextEventCard'
 import { PlusIcon } from '../../components/shared/Icons/Icons'
+import { router } from 'expo-router'
 
 export default function MyEvents() {
   const { user } = useAuth()
@@ -21,7 +22,7 @@ export default function MyEvents() {
             <Text style={styles.textNextEvents}> Eventos próximos </Text>
             <IconButton
               icon={<PlusIcon />}
-              onPress={() => console.log('Crear evento')}
+              onPress={() => router.push('/event/manage/create')}
             />
           </View>
           <ScrollView>
