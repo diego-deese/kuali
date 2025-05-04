@@ -353,6 +353,7 @@ paths:
       description: Operation available for everyone
       tags:
         - Users
+        - Activities
       responses:
         '200':
           content:
@@ -405,6 +406,7 @@ paths:
       description: Operation available for everyone
       tags:
         - Users
+        - Activities
       responses:
         '200':
           content:
@@ -463,6 +465,7 @@ paths:
       description: Operation available for everyone
       tags:
         - Users
+        - Activities
       responses:
         '200':
           content:

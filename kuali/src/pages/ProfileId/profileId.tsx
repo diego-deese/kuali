@@ -17,6 +17,8 @@ import { useUserProfile } from '../../hooks/useUserProfile'
 export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
 
+  const [onUpdateImage, setOnUpdateImage] = useState(Math.random())
+
   const insets = useSafeAreaInsets()
   const { cardDimensions, imageSize, fontSize } = calculateDimensions(insets)
 
@@ -87,20 +89,21 @@ export default function ProfileId() {
                 <ActivityIndicator size='large' color={colors.selectionBlue} />
               )}
               <Image
-                source={{ uri: imgUrl }}
+                source={{
+                  uri: imgUrl + '?' + onUpdateImage,
+                  cache: 'reload',
+                }}
                 style={[
                   styles.image,
                   { display: imageLoading ? 'none' : 'flex' },
                 ]}
                 onLoadStart={() => {
-                  console.log('Cargando imagen: ', imgUrl)
                   // setImageLoading(true)
                 }}
                 onLoad={() => {
                   setImageLoading(false)
                 }}
                 onLoadEnd={() => {
-                  console.log('Imagen cargada!!!')
                   setImageLoading(false)
                 }}
                 onError={(e) => {

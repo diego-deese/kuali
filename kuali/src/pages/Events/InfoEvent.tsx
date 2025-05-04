@@ -6,8 +6,11 @@ import DocumentCard, {
 } from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
-import { CalendarEvent, LocationIcon } from '../../components/Icons/Icons'
-import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
+import {
+  CalendarEvent,
+  LocationIcon,
+} from '../../components/shared/Icons/Icons'
+import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 
 interface EventDetails {
   id: number

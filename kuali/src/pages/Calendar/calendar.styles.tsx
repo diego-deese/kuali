@@ -5,15 +5,20 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   calendarContainer: {
-    height: '70%',
-    padding: 20,
+    flex: 2,
   },
   textNextEvents: {
     fontFamily: 'monserratBold',
     fontSize: 24,
   },
   nextEventsContainer: {
-    padding: 20,
+    flex: 1,
+    padding: 10,
+  },
+  nextEventsHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
 })
 

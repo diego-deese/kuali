@@ -10,8 +10,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@expo/vector-icons": "^14.0.2",
+    "@react-native-community/datetimepicker": "8.2.0",
     "@expo/metro-runtime": "~5.0.4",
-    "@expo/vector-icons": "^14.1.0",
     "@react-native-async-storage/async-storage": "2.1.2",
     "@react-navigation/bottom-tabs": "^7.3.10",
     "@react-navigation/native": "^7.1.6",
@@ -27,9 +28,10 @@
     "expo-secure-store": "~14.2.3",
     "expo-status-bar": "~2.2.3",
     "jwt-decode": "^4.0.0",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
-    "react-native": "0.79.2",
+    "lodash": "^4.17.21",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "react-native": "0.76.9",
     "react-native-big-calendar": "^4.17.1",
     "react-native-dotenv": "^3.4.11",
     "react-native-flip-card": "^3.5.7",
@@ -38,7 +40,8 @@
     "react-native-screens": "~4.10.0",
     "react-native-svg": "15.11.2",
     "react-native-toast-message": "^2.3.0",
-    "react-native-web": "^0.20.0"
+    "react-native-ui-datepicker": "^3.1.2",
+    "react-native-web": "~0.19.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
