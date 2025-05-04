@@ -11,9 +11,15 @@ import ConfirmationModal from '../../components/shared/ConfirmationModal/Confirm
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
 
 import { useCreateActivity } from '../../hooks/CreateActivity/useCreateActivity'
+import { mapArrayToOptions } from '../../utils/mappers'
+import LoadingScreen from '../LoadingScreen/LoadingScreen'
 
 const CreateActivity = () => {
-  const { eventDate, limitDate, options, modal } = useCreateActivity()
+  const { eventDate, limitDate, location, modal, loading } = useCreateActivity()
+
+  if (loading) {
+    return <LoadingScreen message='Cargando la información...' />
+  }
 
   return (
     <View style={styles.container}>
@@ -27,14 +33,21 @@ const CreateActivity = () => {
       <CreateActivityForm
         eventDate={eventDate}
         limitDate={limitDate}
-        options={options}
+        location={{
+          ...location,
+          locations: location.locations
+            ? mapArrayToOptions(location.locations, 'location_id', 'name')
+            : [],
+        }}
       />
 
       <ConfirmationModal
         visible={modal.isModalVisible}
         title='Confirmar acción'
-        description={`¿Eliminar el lugar "${options.options.find((option) => option.id === options.optionToDelete)?.label}"?`}
-        onConfirm={options.confirmDeleteOption}
+        confirmButtonText='Eliminar'
+        confirmButtonColor={colors.warningRed}
+        description={`¿Eliminar el lugar "${location.locationToDelete?.name}"?`}
+        onConfirm={location.confirmDeleteLocation}
         onCancel={() => modal.setIsModalVisible(false)}
       />
     </View>
