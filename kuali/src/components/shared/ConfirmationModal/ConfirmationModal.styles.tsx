@@ -1,42 +1,46 @@
-import { StyleSheet } from "react-native";
-import colors from "../../constants/colors"
+import { StyleSheet } from 'react-native'
+import colors from '../../../constants/colors'
 
 export default StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   container: {
     backgroundColor: colors.backgroundWhite,
     padding: 15,
     paddingVertical: 10,
     borderRadius: 10,
-    width: "90%",
+    width: '90%',
     elevation: 5,
   },
   title: {
     fontSize: 18,
-    fontWeight: "bold",
-    textAlign: "left",
+    fontFamily: 'monserratBold',
+    textAlign: 'left',
+    marginBottom: 8,
   },
   description: {
     fontSize: 14,
+    fontFamily: 'monserratRegular',
     color: colors.fontBlack,
-    textAlign: "left",
-    marginBottom: 10,
+    textAlign: 'left',
+    marginBottom: 16,
   },
   buttons: {
-    flexDirection: "row",
-    justifyContent: "flex-end",
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
     gap: 12,
   },
   cancelButton: {
-    backgroundColor: colors.placeholderGray,
+    backgroundColor: colors.borderGray,
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 6,
+    borderColor: 'E3E3E3',
+    borderWidth: 1,
   },
   confirmButton: {
     backgroundColor: colors.blueIcons,
@@ -46,10 +50,10 @@ export default StyleSheet.create({
   },
   cancelText: {
     color: colors.fontBlack,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
   confirmText: {
     color: colors.solidWhite,
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
-});
+})

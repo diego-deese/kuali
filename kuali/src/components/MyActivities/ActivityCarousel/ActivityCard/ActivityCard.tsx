@@ -25,7 +25,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
         }
       >
         <LinearGradient
-          colors={['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.9)']}
+          colors={['rgba(0, 0, 0, 0.5)', 'rgba(0, 0, 0, 0.7)']}
           style={styles.gradient}
         >
           <View style={styles.footer}>

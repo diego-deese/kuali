@@ -1,12 +1,13 @@
 import { Text, View } from 'react-native'
 import styles from './UserCard.styles'
-import IconButton from '../IconButton/IconButton'
+import IconButton from '../shared/IconButton/IconButton'
 import {
   EnableIcon,
   DisableIcon,
   InfoIcon,
   EditIcon,
 } from '../shared/Icons/Icons'
+import { router } from 'expo-router'
 
 export default function UserCard({
   name,
@@ -21,6 +22,9 @@ export default function UserCard({
   maternal_lastname: string
   state: boolean
 }) {
+  const handlePress = () => {
+    //to do
+  }
   return (
     <View style={styles.cardContainer}>
       {state === false && <View style={styles.inactiveOverlay} />}

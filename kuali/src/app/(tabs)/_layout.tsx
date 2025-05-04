@@ -25,11 +25,11 @@ export default function TabsLayout() {
     >
       <Tabs.Screen name='myactivities' />
       <Tabs.Screen name='calendar' />
-      <Tabs.Screen name='myprofile' />
       <Tabs.Screen
         name='mystudents'
         redirect={user.role.role_id !== Roles.TEACHER}
       />
+      <Tabs.Screen name='myprofile' />
     </Tabs>
   )
 }

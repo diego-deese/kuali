@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Activity } from '../types/Activity'
+import { Activity } from '../../types/Activity'
 
 const useCarousel = (events: Activity[]) => {
   const [currentIndex, setCurrentIndex] = useState(0)

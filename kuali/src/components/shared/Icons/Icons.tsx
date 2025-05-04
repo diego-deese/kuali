@@ -79,7 +79,14 @@ export const InfoIcon = ({ fill = true, ...props }) => {
 }
 
 export const EditIcon = ({ fill = true, ...props }) => {
-  return <MaterialIcons name='edit' size={24} color={colors.selectionBlue} />
+  return (
+    <MaterialIcons
+      name='edit'
+      size={24}
+      color={colors.selectionBlue}
+      {...props}
+    />
+  )
 }
 
 export const RejectedIcon = () => {
@@ -90,8 +97,15 @@ export const AcceptedIcon = () => {
   return <AntDesign name='check' size={24} color='black' />
 }
 
-export const PlusIcon = () => {
-  return <AntDesign name='pluscircleo' size={24} color={colors.blueIcons} />
+export const PlusIcon = (props) => {
+  return (
+    <AntDesign
+      name='pluscircleo'
+      size={24}
+      color={colors.blueIcons}
+      {...props}
+    />
+  )
 }
 
 export const PendingIcon = () => {
@@ -153,5 +167,47 @@ export const CalendarClockIcon = (props) => {
       color='black'
       {...props}
     />
+  )
+}
+
+export const SquareEditIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='square-edit-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}
+
+export const CloseIcon = (props) => {
+  return <MaterialIcons name='close' size={24} color='black' {...props} />
+}
+
+export const CheckIcon = (props) => {
+  return <MaterialIcons name='check' size={24} color='black' {...props} />
+}
+
+export const EditCalendarIcon = (props) => {
+  return (
+    <MaterialIcons name='edit-calendar' size={24} color='black' {...props} />
+  )
+}
+
+export const ArrowDownIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='chevron-down'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}
+
+export const DeleteIcon = (props) => {
+  return (
+    <MaterialIcons name='delete-forever' size={24} color='black' {...props} />
   )
 }
