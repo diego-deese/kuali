@@ -4,9 +4,9 @@ import colors from '../../constants/colors'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.solidWhite,
-    alignItems: 'center',
+    alignItems: 'flex-start',
     paddingTop: 40,
+    paddingLeft: 25,
   },
   imagePlaceholder: {
     width: 140,

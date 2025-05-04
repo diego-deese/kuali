@@ -2,6 +2,7 @@ import React from 'react'
 import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
 import styles from './myStudents.styles'
+import { setStudents } from '../../context/StudentsStored'
 
 const assignedStudents = [
   {
@@ -16,12 +17,20 @@ const assignedStudents = [
     name: 'Nombre Estudiante 2',
     role: 'ESTUDIANTE',
     project: 'Investigación 2',
-    email: 'contacto1@ipn.mx',
+    email: 'contacto2@ipn.mx',
+  },
+  {
+    id: 3,
+    name: 'Nombre Estudiante 3',
+    role: 'ESTUDIANTE',
+    project: 'Investigación 3',
+    email: 'contacto3@ipn.mx',
   },
 ]
 
 export default function MyStudents() {
   const handlePress = (student) => {
+    setStudents(assignedStudents)
     router.push({
       pathname: '/students/[id]',
       params: {
@@ -30,6 +39,9 @@ export default function MyStudents() {
         role: student.role,
         project: student.project,
         email: student.email,
+        index: assignedStudents
+          .findIndex((s) => s.id === student.id)
+          .toString(),
       },
     })
   }

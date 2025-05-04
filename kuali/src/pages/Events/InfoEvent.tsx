@@ -5,7 +5,7 @@ import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
 import { CalendarEvent, LocationIcon } from '../../components/shared/Icons/Icons'
-import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
+import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 
 // Tipos para nuestros datos
 type DocumentStatus = 'pending' | 'completed' | 'rejected'
