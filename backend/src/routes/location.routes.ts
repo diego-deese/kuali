@@ -7,6 +7,10 @@ const router = Router()
 
 router.get('/', isAuthenticated, isAdmin, locationController.getLocations)
 
+router.post('/', isAuthenticated, isAdmin, locationController.createLocation)
+
 router.put('/:locationId', isAuthenticated, isAdmin, locationController.renameLocation)
+
+router.delete('/:locationId', isAuthenticated, isAdmin, locationController.deleteLocation)
 
 export default router
