@@ -25,12 +25,16 @@ export const useCreateActivity = () => {
           text2: result.error,
         })
       } else {
-        console.log('Se edito')
         setLocations((prevOptions) =>
           prevOptions.map((option) =>
             option.location_id === id ? { ...option, label: newLabel } : option,
           ),
         )
+        Toast.show({
+          type: 'success',
+          text1: 'Lugar actualizado',
+          text2: 'El nombre del lugar se actualizó correctamente.',
+        })
       }
     } catch (error) {
       console.error('Error al renombrar el lugar:', error)
