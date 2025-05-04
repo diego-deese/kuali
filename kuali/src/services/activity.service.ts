@@ -85,6 +85,43 @@ class ActivityService {
       } as ResponseError
     }
   }
+
+  async getAllActivities() {
+    try {
+      const response = await this.api.get(`activities`)
+
+      if (response.status === 200) {
+        return { success: true, users: response.data.activities as Activity[] }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message ||
+          'Error al obtener las actividades calendarizadas',
+        error:
+          response.data.error ||
+          'No se pudieron obtener las actividades calendarizadas',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message ||
+            'Ocurrió un problema conectando con el servidor',
+          error: errorResponse?.error || 'Error al conectar con el servidor',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      } as ResponseError
+    }
+  }
 }
 
 export default new ActivityService()

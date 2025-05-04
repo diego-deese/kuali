@@ -11,6 +11,7 @@ import { router } from 'expo-router'
 
 export default function MyEvents() {
   const { user } = useAuth()
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -25,7 +26,10 @@ export default function MyEvents() {
               onPress={() => router.push('/event/manage/create')}
             />
           </View>
-          <ScrollView>
+          <ScrollView
+            contentContainerStyle={{ paddingBottom: 10 }}
+            showsVerticalScrollIndicator={false}
+          >
             <NextEventCard
               title={'Evento padrisimo'}
               event_date={new Date('2025-05-15T17:00:00')}

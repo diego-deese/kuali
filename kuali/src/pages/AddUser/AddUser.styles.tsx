@@ -3,22 +3,25 @@ import { StyleSheet } from 'react-native'
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    padding: 20,
   },
-  calendarContainer: {
-    flex: 2,
+  headerContainer: {
+    display: 'flex',
   },
-  textNextEvents: {
+  title: {
     fontFamily: 'monserratBold',
     fontSize: 24,
   },
-  nextEventsContainer: {
+  inputsContainer: {
     flex: 1,
-    padding: 10,
+    paddingTop: 20,
   },
-  nextEventsHeader: {
+  buttonsContainer: {
+    display: 'flex',
     flexDirection: 'row',
-    alignItems: 'center',
+    padding: 10,
     gap: 10,
+    alignSelf: 'flex-end',
   },
 })
 
