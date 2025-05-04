@@ -6,7 +6,12 @@ export interface ResponseError {
 
 export interface Response<T> {
   success: true
-  data: T | T[]
+  data: T
+}
+
+export interface ArrayResponse<T> {
+  success: true
+  data: T[]
 }
 
 export interface AuthResponse {

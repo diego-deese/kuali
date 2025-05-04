@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
-import { Response, ResponseError } from '../types/Request'
+import { ArrayResponse, ResponseError } from '../types/Request'
 import { Activity } from '../types/Activity'
 
 class ActivityService {
@@ -12,12 +12,12 @@ class ActivityService {
 
   async getUpcomingActivities(
     userId: number,
-  ): Promise<Response<Activity> | ResponseError> {
+  ): Promise<ArrayResponse<Activity> | ResponseError> {
     try {
       const response = await this.api.get(`users/${userId}/activities/upcoming`)
 
       if (response.status === 200) {
-        return { success: true, data: response.data.activities as Activity }
+        return { success: true, data: response.data.activities as Activity[] }
       }
 
       return {
@@ -50,12 +50,12 @@ class ActivityService {
 
   async getPastActivities(
     userId: number,
-  ): Promise<Response<Activity> | ResponseError> {
+  ): Promise<ArrayResponse<Activity> | ResponseError> {
     try {
       const response = await this.api.get(`users/${userId}/activities/past`)
 
       if (response.status === 200) {
-        return { success: true, data: response.data.activities as Activity }
+        return { success: true, data: response.data.activities as Activity[] }
       }
 
       return {

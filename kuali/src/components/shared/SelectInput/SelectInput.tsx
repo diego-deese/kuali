@@ -1,9 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import React, { useState } from 'react'
 import colors from '../../../constants/colors'
 import { ArrowDownIcon, RightArrowIcon } from '../Icons/Icons'
 import IconButton from '../IconButton/IconButton'
 import Option from './Option/Option'
+import { ScrollView } from 'react-native'
+import AddNewHeader from './AddNewHeader/AddNewHeader'
 
 interface Option {
   id: string | number
@@ -51,35 +53,44 @@ const SelectInput = ({
           {selectedOption ? selectedOption.label : placeholder}
         </Text>
         <IconButton
-          icon={unfolded ? <ArrowDownIcon /> : <RightArrowIcon />}
+          icon={
+            unfolded ? (
+              <ArrowDownIcon size={28} />
+            ) : (
+              <RightArrowIcon size={28} />
+            )
+          }
           onPress={() => setUnfolded(!unfolded)}
         />
       </View>
       {/* SelectInput options */}
       {unfolded && (
         <View style={styles.optionsContainer}>
-          {options.map((option) => (
-            <Option
-              key={option.id}
-              label={option.label}
-              onPress={() => {
-                setSelectedOption(option)
-                setUnfolded(false)
-              }}
-              editable={canEditOptions}
-              onEdit={(newLabel) => {
-                if (onEditOption) {
-                  onEditOption(option.id, newLabel) // Llama a la función onEditOption cuando se edite una opción
-                }
-              }}
-              onDelete={() => {
-                if (onDeleteOption) {
-                  onDeleteOption(option.id) // Llama a la función onDeleteOption cuando se elimine una opción
-                }
-              }}
-            />
-          ))}
-          <View></View>
+          <AddNewHeader />
+          <FlatList
+            data={options}
+            renderItem={({ item }) => (
+              <Option
+                label={item.label}
+                onPress={() => {
+                  setSelectedOption(item)
+                  setUnfolded(false)
+                }}
+                editable={canEditOptions}
+                onEdit={(newLabel) => {
+                  if (onEditOption) {
+                    onEditOption(item.id, newLabel) // Llama a la función onEditOption cuando se edite una opción
+                  }
+                }}
+                onDelete={() => {
+                  if (onDeleteOption) {
+                    onDeleteOption(item.id) // Llama a la función onDeleteOption cuando se elimine una opción
+                  }
+                }}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
         </View>
       )}
     </View>
@@ -91,6 +102,7 @@ export default SelectInput
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    position: 'relative', // Asegura que los elementos absolutos se posicionen relativos a este contenedor
   },
   label: {
     alignSelf: 'flex-start',
@@ -120,6 +132,20 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 8,
     padding: 2,
     backgroundColor: colors.solidWhite,
+    maxHeight: 210, // Limita la altura máxima del contenedor
+    overflow: 'hidden', // Asegura que el contenido no se desborde
+  },
+  absoluteOptionsContainer: {
+    position: 'absolute', // Posiciona el FlatList de manera absoluta
+    top: 71, // Ajusta según sea necesario para que no se superponga con el encabezado
+    left: 0,
+    right: 0,
+    zIndex: 10, // Asegura que el FlatList esté encima de otros elementos
+    backgroundColor: colors.solidWhite, // Fondo blanco para que las opciones sean visibles
+    borderWidth: 1.5,
+    borderColor: colors.borderGray,
+    borderBottomEndRadius: 8,
+    borderBottomStartRadius: 8,
   },
   selectedOption: {
     fontFamily: 'monserratRegular',

@@ -1,39 +1,100 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { Location } from '../../types/Location'
+import locationService from '../../services/location.service'
+import Toast from 'react-native-toast-message'
 
 export const useCreateActivity = () => {
   const [eventDate, setEventDate] = useState(new Date())
   const [limitDate, setLimitDate] = useState(eventDate)
-  const [options, setOptions] = useState([
-    { id: 1, label: 'Opcion1' },
-    { id: 2, label: 'Opcion2' },
-  ])
+  const [locations, setLocations] = useState<Location[] | null>(null)
   const [isModalVisible, setIsModalVisible] = useState(false)
-  const [optionToDelete, setOptionToDelete] = useState<number | string | null>(
+  const [locationToDelete, setLocationToDelete] = useState<Location | null>(
     null,
   )
+  const [loading, setLoading] = useState(false)
 
-  const updateOptionLabel = (id: number | string, newLabel: string) => {
-    setOptions((prevOptions) =>
-      prevOptions.map((option) =>
-        option.id === id ? { ...option, label: newLabel } : option,
-      ),
-    )
+  const updateLocationName = async (id: number, newLabel: string) => {
+    setLoading(true)
+    try {
+      const result = await locationService.renameLocation(id, newLabel)
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+      } else {
+        setLocations((prevOptions) =>
+          prevOptions.map((option) =>
+            option.location_id === id ? { ...option, label: newLabel } : option,
+          ),
+        )
+        Toast.show({
+          type: 'success',
+          text1: 'Lugar actualizado',
+          text2: 'El nombre del lugar se actualizó correctamente.',
+        })
+      }
+    } catch (error) {
+      console.error('Error al renombrar el lugar:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error renombrar el lugar',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const confirmDeleteOption = () => {
-    if (optionToDelete !== null) {
-      setOptions((prevOptions) =>
-        prevOptions.filter((option) => option.id !== optionToDelete),
+  const confirmDeleteLocation = () => {
+    if (locationToDelete !== null) {
+      setLocations((prevOptions) =>
+        prevOptions.filter(
+          (location) => location.location_id !== locationToDelete.location_id,
+        ),
       )
-      setOptionToDelete(null)
+      setLocationToDelete(null)
     }
     setIsModalVisible(false)
   }
 
-  const deleteOption = (id: number | string) => {
-    setOptionToDelete(id)
+  const deleteLocation = (location: Location) => {
+    setLocationToDelete(location)
     setIsModalVisible(true)
   }
+
+  const getLocations = async () => {
+    setLoading(true)
+    try {
+      const result = await locationService.getLocations()
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+      } else {
+        setLocations(result.data)
+      }
+    } catch (error) {
+      console.error('Error al obtener actividades:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al cargar los lugares',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+      setLocations([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    getLocations()
+  }, [])
 
   return {
     eventDate: {
@@ -44,16 +105,17 @@ export const useCreateActivity = () => {
       limitDate,
       setLimitDate,
     },
-    options: {
-      options,
-      updateOptionLabel,
-      confirmDeleteOption,
-      deleteOption,
-      optionToDelete,
+    location: {
+      locations,
+      locationToDelete,
+      updateLocationName,
+      confirmDeleteLocation,
+      deleteLocation,
     },
     modal: {
       isModalVisible,
       setIsModalVisible,
     },
+    loading,
   }
 }

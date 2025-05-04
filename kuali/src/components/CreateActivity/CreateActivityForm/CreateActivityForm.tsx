@@ -5,7 +5,7 @@ import DatePickersSection from '../DatePickersSection/DatePickersSection'
 import SelectInput from '../../shared/SelectInput/SelectInput'
 import RequirementsSection from '../RequirementsSection/RequirementsSection'
 
-const CreateActivityForm = ({ eventDate, limitDate, options }) => {
+const CreateActivityForm = ({ eventDate, limitDate, location }) => {
   return (
     <>
       <InputText label='Nombre del evento' placeholder='Evento' />
@@ -14,10 +14,10 @@ const CreateActivityForm = ({ eventDate, limitDate, options }) => {
 
       <SelectInput
         label='Lugar'
-        options={options.options}
+        options={location.locations}
         editable
-        onEditOption={options.updateOptionLabel}
-        onDeleteOption={options.deleteOption}
+        onEditOption={location.updateLocationName}
+        onDeleteOption={location.deleteLocation}
       />
 
       <InputText

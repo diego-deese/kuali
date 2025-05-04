@@ -1,7 +1,8 @@
 import React from 'react'
-import { Pressable, PressableProps, ActivityIndicator } from 'react-native'
+import { ActivityIndicator, TouchableOpacity } from 'react-native'
+import { TouchableProps } from 'react-native-svg'
 
-interface IconButtonProps extends PressableProps {
+interface IconButtonProps extends TouchableProps {
   isLoading?: boolean
   icon: React.ReactNode
 }
@@ -13,9 +14,9 @@ const IconButton: React.FC<IconButtonProps> = ({
   ...restProps
 }) => {
   return (
-    <Pressable onPress={onPress} {...restProps}>
+    <TouchableOpacity onPress={onPress} {...restProps}>
       {isLoading ? <ActivityIndicator size='small' color='black' /> : icon}
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 
