@@ -1,4 +1,4 @@
-import MyStudents from '../../pages/MyStudents/myStudents'
+import MyStudents from '../../pages/MyStudents/MyStudents'
 
 export default function MyStudentsTab() {
   return <MyStudents />
