@@ -1,11 +1,14 @@
 import React from 'react'
 import { Modal, View, Text, TouchableOpacity } from 'react-native'
 import styles from './ConfirmationModal.styles'
+import colors from '../../../constants/colors'
 
 interface Props {
   visible: boolean
   title?: string
   description?: string
+  confirmButtonText?: string
+  confirmButtonColor?: string
   onConfirm: () => void
   onCancel: () => void
 }
@@ -14,6 +17,8 @@ export default function ConfirmationModal({
   visible,
   title = '¿Estás seguro?',
   description,
+  confirmButtonText = 'Confirmar',
+  confirmButtonColor = colors.selectionBlue,
   onConfirm,
   onCancel,
 }: Props) {
@@ -27,8 +32,14 @@ export default function ConfirmationModal({
             <TouchableOpacity onPress={onCancel} style={styles.cancelButton}>
               <Text style={styles.cancelText}>Cancelar</Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={onConfirm} style={styles.confirmButton}>
-              <Text style={styles.confirmText}>Confirmar</Text>
+            <TouchableOpacity
+              onPress={onConfirm}
+              style={{
+                ...styles.confirmButton,
+                backgroundColor: confirmButtonColor,
+              }}
+            >
+              <Text style={styles.confirmText}>{confirmButtonText}</Text>
             </TouchableOpacity>
           </View>
         </View>

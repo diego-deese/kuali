@@ -211,3 +211,14 @@ export const DeleteIcon = (props) => {
     <MaterialIcons name='delete-forever' size={24} color='black' {...props} />
   )
 }
+
+export const PlusBoxIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='plus-box-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}

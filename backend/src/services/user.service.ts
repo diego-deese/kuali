@@ -86,20 +86,24 @@ class UserService {
 
     const hashedPassword = await hashPassword(userData.password)
 
+    // eslint-disable-next-line @typescript-eslint/naming-convention
+    const { role_id, ...userDataWithoutRole } = userData // separa el role de los datos del usuario para poder conectarlo
+
     const newUser = await prisma.users.create({
       data: {
-        ...userData,
-        password: hashedPassword
-      },
-      omit: {
-        password: true,
-        role_id: true
+        ...userDataWithoutRole,
+        password: hashedPassword,
+        role: {
+          connect: {
+            // eslint-disable-next-line object-shorthand
+            role_id: role_id
+          }
+        }
       },
       include: {
         role: true
       }
     })
-
     return newUser
   }
 
@@ -233,6 +237,24 @@ class UserService {
     }
 
     return user
+  }
+
+  async getUserState (userId: number): Promise<ResponseMessage> {
+    const userState = await prisma.inscriptions.findFirst(
+      {
+        select: {
+          active: true
+        },
+        where: {
+          student_id: userId
+        }
+      })
+
+    if ((userState?.active) ?? false) {
+      return { message: 'active' }
+    } else {
+      return { message: 'inactive' }
+    }
   }
 }
 

@@ -1,6 +1,7 @@
 import { Locations } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError } from '../types/Error'
+import { ResponseMessage } from '../types/Message'
 
 class LocationService {
   async getAllLocations (): Promise<Locations[]> {
@@ -23,6 +24,16 @@ class LocationService {
     return location
   }
 
+  async createLocation (name: string): Promise<Locations> {
+    const location = await prisma.locations.create({
+      data: {
+        name
+      }
+    })
+
+    return location
+  }
+
   async renameLocation (locationId: number, name: string): Promise<Locations> {
     await this.getLocation(locationId)
 
@@ -36,6 +47,18 @@ class LocationService {
     })
 
     return location
+  }
+
+  async deleteLocation (locationId: number): Promise<ResponseMessage> {
+    await this.getLocation(locationId)
+
+    await prisma.locations.delete({
+      where: {
+        location_id: locationId
+      }
+    })
+
+    return { message: 'Lugar eliminado correctamente' }
   }
 }
 

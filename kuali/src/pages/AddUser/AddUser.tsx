@@ -1,10 +1,14 @@
 import { View, Text } from 'react-native'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
-import Input from '../../components/shared/InputText/InputText'
 import styles from './AddUser.styles'
 import Button from '../../components/shared/Button/Button'
+import CreateUserForm from '../../components/CreateUser/CreateUserForm'
+import { ScrollView } from 'react-native'
+import { useCreateUser } from '../../hooks/UsersManagement/useCreateUser'
 
 export default function AddUser() {
+  const userForm = useCreateUser()
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -12,14 +16,16 @@ export default function AddUser() {
           <Text style={styles.title}>Crear usuario</Text>
         </View>
         <View style={styles.inputsContainer}>
-          <Input label='Nombre' returnKeyType='next' />
-          <Input label='Correo' returnKeyType='next' inputMode='email' />
-          <Input label='Matrícula' returnKeyType='next' />
-          <Input label='CURP' returnKeyType='next' />
+          <ScrollView>
+            <CreateUserForm {...userForm} />
+          </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>
-          <Button buttonText='Cancelar'></Button>
-          <Button buttonText='Crear usuario'></Button>
+          <Button
+            buttonText='Cancelar'
+            onPress={() => console.log('Cancelar')}
+          />
+          <Button buttonText='Crear usuario' onPress={userForm.createUser} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

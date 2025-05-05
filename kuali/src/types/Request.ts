@@ -6,7 +6,12 @@ export interface ResponseError {
 
 export interface Response<T> {
   success: true
-  data: T | T[]
+  data: T
+}
+
+export interface ArrayResponse<T> {
+  success: true
+  data: T[]
 }
 
 export interface AuthResponse {
@@ -22,4 +27,13 @@ export interface AuthResponse {
       name: string
     }
   }
+}
+
+export interface Message {
+  message: string
+}
+
+export interface ApiResponse<T> {
+  success: true
+  data: T
 }

@@ -51,11 +51,7 @@ export const useMyActivities = () => {
           text2: result.error,
         })
       } else {
-        if (Array.isArray(result.data)) {
-          setUpcomingActivities(result.data as Activity[])
-        } else {
-          setUpcomingActivities([])
-        }
+        setUpcomingActivities(result.data as Activity[])
       }
     } catch (error) {
       console.error('Error al obtener actividades:', error)
@@ -83,11 +79,7 @@ export const useMyActivities = () => {
           text2: result.error,
         })
       } else {
-        if (Array.isArray(result.data)) {
-          setPastActivities(result.data as Activity[])
-        } else {
-          setPastActivities([])
-        }
+        setPastActivities(result.data as Activity[])
       }
     } catch (error) {
       console.error('Error al obtener actividades:', error)

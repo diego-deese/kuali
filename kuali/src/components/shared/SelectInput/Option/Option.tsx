@@ -1,15 +1,17 @@
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
 import React, { useState } from 'react'
-import colors from '../../../../constants/colors'
+import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+
 import IconButton from '../../IconButton/IconButton'
-import { CheckIcon, DeleteIcon, EditIcon } from '../../Icons/Icons'
+
+import colors from '../../../../constants/colors'
+import { CheckIcon, CloseIcon, DeleteIcon, EditIcon } from '../../Icons/Icons'
 
 interface OptionProps {
   label?: string
   editable?: boolean
   onPress?: () => void
-  onEdit?: (newLabel: string) => void // Nueva prop para manejar la edición de la opción
-  onDelete?: () => void // Nueva prop para manejar la eliminación de la opción
+  onEdit?: (newLabel: string) => void
+  onDelete?: () => void
 }
 
 const Option: React.FC<OptionProps> = ({
@@ -17,15 +19,20 @@ const Option: React.FC<OptionProps> = ({
   onPress,
   editable = false,
   onEdit,
-  onDelete, // Agregada la prop onDelete
+  onDelete,
 }) => {
   const [isEditting, setIsEditting] = useState(false)
   const [inputValue, setInputValue] = useState(label)
 
   const handleSave = () => {
     if (onEdit) {
-      onEdit(inputValue) // Llama a la función onEdit cuando se guarda la edición
+      onEdit(inputValue)
     }
+    setIsEditting(false)
+  }
+
+  const handleCancel = () => {
+    setInputValue(label)
     setIsEditting(false)
   }
 
@@ -46,20 +53,29 @@ const Option: React.FC<OptionProps> = ({
       </View>
       {editable && (
         <View style={styles.iconsContainer}>
-          <IconButton
-            icon={
-              isEditting ? (
-                <CheckIcon color={colors.selectionBlue} size={30} />
-              ) : (
-                <EditIcon size={28} />
-              )
-            }
-            onPress={isEditting ? handleSave : () => setIsEditting(true)}
-          />
-          <IconButton
-            icon={<DeleteIcon color={colors.warningRed} size={30} />}
-            onPress={onDelete} // Llama a la función onDelete cuando se presiona el botón de eliminar
-          />
+          {isEditting ? (
+            <>
+              <IconButton
+                icon={<CheckIcon color={colors.selectionBlue} size={30} />}
+                onPress={handleSave}
+              />
+              <IconButton
+                icon={<CloseIcon color={colors.warningRed} size={30} />}
+                onPress={handleCancel}
+              />
+            </>
+          ) : (
+            <>
+              <IconButton
+                icon={<EditIcon size={28} />}
+                onPress={() => setIsEditting(true)}
+              />
+              <IconButton
+                icon={<DeleteIcon color={colors.warningRed} size={30} />}
+                onPress={onDelete}
+              />
+            </>
+          )}
         </View>
       )}
     </View>
