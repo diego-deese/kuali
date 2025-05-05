@@ -19,6 +19,7 @@ interface SelectInputProps {
   editable?: boolean
   onEditOption?: (id: string | number, newLabel: string) => void // Nueva prop para manejar la edición de opciones
   onDeleteOption?: (id: string | number) => void // Nueva prop para manejar la eliminación de opciones
+  onSelect?: (option: { id: number | string; label: string }) => void
 }
 
 const getStyle = (unfolded: boolean) => {
@@ -67,30 +68,27 @@ const SelectInput = ({
       {unfolded && (
         <View style={styles.optionsContainer}>
           <AddNewHeader />
-          <FlatList
-            data={options}
-            renderItem={({ item }) => (
-              <Option
-                label={item.label}
-                onPress={() => {
-                  setSelectedOption(item)
-                  setUnfolded(false)
-                }}
-                editable={canEditOptions}
-                onEdit={(newLabel) => {
-                  if (onEditOption) {
-                    onEditOption(item.id, newLabel) // Llama a la función onEditOption cuando se edite una opción
-                  }
-                }}
-                onDelete={() => {
-                  if (onDeleteOption) {
-                    onDeleteOption(item.id) // Llama a la función onDeleteOption cuando se elimine una opción
-                  }
-                }}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
+          {options.map((item) => (
+            <Option
+              key={item.id.toString()}
+              label={item.label}
+              onPress={() => {
+                setSelectedOption(item)
+                setUnfolded(false)
+              }}
+              editable={canEditOptions}
+              onEdit={(newLabel) => {
+                if (onEditOption) {
+                  onEditOption(item.id, newLabel)
+                }
+              }}
+              onDelete={() => {
+                if (onDeleteOption) {
+                  onDeleteOption(item.id)
+                }
+              }}
+            />
+          ))}
         </View>
       )}
     </View>

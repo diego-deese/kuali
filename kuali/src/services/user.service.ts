@@ -1,10 +1,10 @@
 import { AxiosInstance, AxiosError } from 'axios'
 import authService from './auth.service'
-import { ResponseError, Message } from '../types/Request'
+import { ResponseError, Message, ApiResponse } from '../types/Request'
 import axios from 'axios'
 
 interface UserProfile {
-  user_id: number
+  user_id?: number
   name: string
   second_name: string
   paternal_lastname: string
@@ -95,6 +95,43 @@ class UserService {
             errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
         }
       }
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: 'Por favor, verifica tu conexión o intenta más tarde',
+      }
+    }
+  }
+
+  async createProfile(
+    newUser: UserProfile,
+  ): Promise<ApiResponse<{ user: UserProfile }> | ResponseError> {
+    try {
+      const response = await this.api.post(`/users`, newUser)
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data as { user: UserProfile },
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error al crear al nuevo usuario',
+        error: 'Respuesta inesperada del servidor',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message: errorResponse?.message || 'Error al crear la nueva cuenta',
+          error:
+            errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
+        }
+      }
+
       return {
         success: false,
         message: 'Error al conectar con el servidor',

@@ -234,6 +234,24 @@ class UserService {
 
     return user
   }
+
+  async getUserState (userId: number): Promise<ResponseMessage> {
+    const userState = await prisma.inscriptions.findFirst(
+      {
+        select: {
+          active: true
+        },
+        where: {
+          student_id: userId
+        }
+      })
+
+    if ((userState?.active) ?? false) {
+      return { message: 'active' }
+    } else {
+      return { message: 'inactive' }
+    }
+  }
 }
 
 export default new UserService()
