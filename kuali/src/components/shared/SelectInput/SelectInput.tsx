@@ -1,11 +1,12 @@
+import React, { useState } from 'react'
 import { View, Text, StyleSheet, FlatList } from 'react-native'
-import React, { useEffect, useState } from 'react'
+
+import AddNewHeader from './AddNewHeader/AddNewHeader'
+import IconButton from '../IconButton/IconButton'
+import OptionComponent from './Option/Option'
+
 import colors from '../../../constants/colors'
 import { ArrowDownIcon, RightArrowIcon } from '../Icons/Icons'
-import IconButton from '../IconButton/IconButton'
-import Option from './Option/Option'
-import { ScrollView } from 'react-native'
-import AddNewHeader from './AddNewHeader/AddNewHeader'
 
 interface Option {
   id: string | number
@@ -17,8 +18,8 @@ interface SelectInputProps {
   placeholder?: string
   options?: Option[]
   editable?: boolean
-  onEditOption?: (id: string | number, newLabel: string) => void // Nueva prop para manejar la edición de opciones
-  onDeleteOption?: (id: string | number) => void // Nueva prop para manejar la eliminación de opciones
+  onEditOption?: (id: string | number, newLabel: string) => void
+  onDeleteOption?: (id: string | number) => void
 }
 
 const getStyle = (unfolded: boolean) => {
@@ -39,7 +40,7 @@ const SelectInput = ({
   options = [],
   editable = false,
   onEditOption,
-  onDeleteOption, // Nueva prop para manejar la eliminación de opciones
+  onDeleteOption,
 }: SelectInputProps) => {
   const [canEditOptions, setCanEditOptions] = useState(editable)
   const [unfolded, setUnfolded] = useState(false)
@@ -63,6 +64,7 @@ const SelectInput = ({
           onPress={() => setUnfolded(!unfolded)}
         />
       </View>
+
       {/* SelectInput options */}
       {unfolded && (
         <View style={styles.optionsContainer}>
@@ -70,7 +72,7 @@ const SelectInput = ({
           <FlatList
             data={options}
             renderItem={({ item }) => (
-              <Option
+              <OptionComponent
                 label={item.label}
                 onPress={() => {
                   setSelectedOption(item)
@@ -79,12 +81,12 @@ const SelectInput = ({
                 editable={canEditOptions}
                 onEdit={(newLabel) => {
                   if (onEditOption) {
-                    onEditOption(item.id, newLabel) // Llama a la función onEditOption cuando se edite una opción
+                    onEditOption(item.id, newLabel)
                   }
                 }}
                 onDelete={() => {
                   if (onDeleteOption) {
-                    onDeleteOption(item.id) // Llama a la función onDeleteOption cuando se elimine una opción
+                    onDeleteOption(item.id)
                   }
                 }}
               />
@@ -102,7 +104,7 @@ export default SelectInput
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
-    position: 'relative', // Asegura que los elementos absolutos se posicionen relativos a este contenedor
+    position: 'relative',
   },
   label: {
     alignSelf: 'flex-start',
@@ -125,6 +127,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   optionsContainer: {
+    position: 'absolute',
+    width: '100%',
+    top: 73,
+    zIndex: 10,
     borderWidth: 1.5,
     borderTopWidth: 0,
     borderColor: colors.borderGray,
@@ -132,20 +138,8 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 8,
     padding: 2,
     backgroundColor: colors.solidWhite,
-    maxHeight: 210, // Limita la altura máxima del contenedor
-    overflow: 'hidden', // Asegura que el contenido no se desborde
-  },
-  absoluteOptionsContainer: {
-    position: 'absolute', // Posiciona el FlatList de manera absoluta
-    top: 71, // Ajusta según sea necesario para que no se superponga con el encabezado
-    left: 0,
-    right: 0,
-    zIndex: 10, // Asegura que el FlatList esté encima de otros elementos
-    backgroundColor: colors.solidWhite, // Fondo blanco para que las opciones sean visibles
-    borderWidth: 1.5,
-    borderColor: colors.borderGray,
-    borderBottomEndRadius: 8,
-    borderBottomStartRadius: 8,
+    maxHeight: 210,
+    overflow: 'hidden',
   },
   selectedOption: {
     fontFamily: 'monserratRegular',
