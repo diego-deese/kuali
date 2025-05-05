@@ -9,6 +9,7 @@ interface FormattedDateProps {
   dateStyle?: TextStyle
   timeStyle?: TextStyle
   separator?: string
+  showWeekday?: boolean // Nuevo parámetro para decidir si se muestra el nombre del día
 }
 
 /**
@@ -21,6 +22,7 @@ interface FormattedDateProps {
  * @param dateStyle - Estilos específicos para la parte de la fecha
  * @param timeStyle - Estilos específicos para la parte de la hora
  * @param separator - Texto a mostrar entre fecha y hora (por defecto: " a las ")
+ * @param showWeekday - Si se debe mostrar el nombre del día (por defecto: true)
  */
 export const FormattedDate: React.FC<FormattedDateProps> = ({
   date,
@@ -30,9 +32,10 @@ export const FormattedDate: React.FC<FormattedDateProps> = ({
   dateStyle,
   timeStyle,
   separator = ' a las ',
+  showWeekday = true,
 }) => {
   const formattedDate = date.toLocaleDateString('es-MX', {
-    weekday: 'long',
+    weekday: showWeekday ? 'long' : undefined, // Condicional para mostrar el nombre del día
     year: 'numeric',
     month: 'long',
     day: 'numeric',

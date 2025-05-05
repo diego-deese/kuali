@@ -1,6 +1,6 @@
 import React from 'react'
 import InputText from '../shared/InputText/InputText'
-import SelectInput from '../shared/SelectInput/SelectInput'
+import SelectInput from '../shared/SelectInput'
 
 interface CreateUserFormProps {
   setRole: (role_id: number) => void
