@@ -1,8 +1,11 @@
-import { View, Text, StyleSheet } from 'react-native'
 import React from 'react'
+import { View, Text } from 'react-native'
+
 import IconButton from '../../IconButton/IconButton'
-import { PlusBoxIcon } from '../../Icons/Icons'
 import colors from '../../../../constants/colors'
+import { styles } from './styles'
+
+import { PlusBoxIcon } from '../../Icons/Icons'
 
 const AddNewHeader = () => {
   return (
@@ -16,19 +19,3 @@ const AddNewHeader = () => {
 }
 
 export default AddNewHeader
-
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 8,
-    borderBottomWidth: 2,
-    borderColor: colors.borderGray,
-  },
-  title: {
-    fontFamily: 'monserratRegular',
-    fontSize: 16,
-    includeFontPadding: false,
-  },
-})
