@@ -1,7 +1,7 @@
 import React from 'react'
 import { Pressable, PressableProps, Text } from 'react-native'
 import styles from './styles'
-import colors from '../../constants/colors'
+import colors from '../../../constants/colors'
 
 interface CustomPressableProps extends PressableProps {
   isLoading?: boolean
