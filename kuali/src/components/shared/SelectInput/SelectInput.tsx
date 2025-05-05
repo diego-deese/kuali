@@ -1,9 +1,12 @@
-import { View, Text, StyleSheet } from 'react-native'
 import React, { useState } from 'react'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
+
+import AddNewHeader from './AddNewHeader/AddNewHeader'
+import IconButton from '../IconButton/IconButton'
+import OptionComponent from './Option/Option'
+
 import colors from '../../../constants/colors'
 import { ArrowDownIcon, RightArrowIcon } from '../Icons/Icons'
-import IconButton from '../IconButton/IconButton'
-import Option from './Option/Option'
 
 interface Option {
   id: string | number
@@ -15,8 +18,8 @@ interface SelectInputProps {
   placeholder?: string
   options?: Option[]
   editable?: boolean
-  onEditOption?: (id: string | number, newLabel: string) => void // Nueva prop para manejar la edición de opciones
-  onDeleteOption?: (id: string | number) => void // Nueva prop para manejar la eliminación de opciones
+  onEditOption?: (id: string | number, newLabel: string) => void
+  onDeleteOption?: (id: string | number) => void
 }
 
 const getStyle = (unfolded: boolean) => {
@@ -37,7 +40,7 @@ const SelectInput = ({
   options = [],
   editable = false,
   onEditOption,
-  onDeleteOption, // Nueva prop para manejar la eliminación de opciones
+  onDeleteOption,
 }: SelectInputProps) => {
   const [canEditOptions, setCanEditOptions] = useState(editable)
   const [unfolded, setUnfolded] = useState(false)
@@ -51,35 +54,45 @@ const SelectInput = ({
           {selectedOption ? selectedOption.label : placeholder}
         </Text>
         <IconButton
-          icon={unfolded ? <ArrowDownIcon /> : <RightArrowIcon />}
+          icon={
+            unfolded ? (
+              <ArrowDownIcon size={28} />
+            ) : (
+              <RightArrowIcon size={28} />
+            )
+          }
           onPress={() => setUnfolded(!unfolded)}
         />
       </View>
+
       {/* SelectInput options */}
       {unfolded && (
         <View style={styles.optionsContainer}>
-          {options.map((option) => (
-            <Option
-              key={option.id}
-              label={option.label}
-              onPress={() => {
-                setSelectedOption(option)
-                setUnfolded(false)
-              }}
-              editable={canEditOptions}
-              onEdit={(newLabel) => {
-                if (onEditOption) {
-                  onEditOption(option.id, newLabel) // Llama a la función onEditOption cuando se edite una opción
-                }
-              }}
-              onDelete={() => {
-                if (onDeleteOption) {
-                  onDeleteOption(option.id) // Llama a la función onDeleteOption cuando se elimine una opción
-                }
-              }}
-            />
-          ))}
-          <View></View>
+          <AddNewHeader />
+          <FlatList
+            data={options}
+            renderItem={({ item }) => (
+              <OptionComponent
+                label={item.label}
+                onPress={() => {
+                  setSelectedOption(item)
+                  setUnfolded(false)
+                }}
+                editable={canEditOptions}
+                onEdit={(newLabel) => {
+                  if (onEditOption) {
+                    onEditOption(item.id, newLabel)
+                  }
+                }}
+                onDelete={() => {
+                  if (onDeleteOption) {
+                    onDeleteOption(item.id)
+                  }
+                }}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
         </View>
       )}
     </View>
@@ -91,6 +104,7 @@ export default SelectInput
 const styles = StyleSheet.create({
   container: {
     marginBottom: 16,
+    position: 'relative',
   },
   label: {
     alignSelf: 'flex-start',
@@ -113,6 +127,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   optionsContainer: {
+    position: 'absolute',
+    width: '100%',
+    top: 73,
+    zIndex: 10,
     borderWidth: 1.5,
     borderTopWidth: 0,
     borderColor: colors.borderGray,
@@ -120,6 +138,8 @@ const styles = StyleSheet.create({
     borderBottomStartRadius: 8,
     padding: 2,
     backgroundColor: colors.solidWhite,
+    maxHeight: 210,
+    overflow: 'hidden',
   },
   selectedOption: {
     fontFamily: 'monserratRegular',

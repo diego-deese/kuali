@@ -20,6 +20,7 @@ class AuthService {
       headers: {
         'Content-Type': 'application/json',
       },
+      timeout: 20000,
     })
 
     // Interceptor para todas las peticiones
@@ -63,6 +64,17 @@ class AuthService {
             originalRequest.headers.Authorization = `Bearer ${newToken}`
             return this.api(originalRequest)
           }
+        }
+
+        return Promise.reject(error)
+      },
+    )
+
+    this.api.interceptors.response.use(
+      (response) => response,
+      async (error: AxiosError) => {
+        if (error.code === 'ECONNABORTED') {
+          console.error('Error: La petición excedió el tiempo límite.')
         }
 
         return Promise.reject(error)
