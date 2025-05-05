@@ -1,4 +1,4 @@
-import { AxiosInstance, AxiosError } from 'axios'
+import { AxiosInstance } from 'axios'
 import authService from './auth.service'
 import { ResponseError, Message, ApiResponse } from '../types/Request'
 import axios from 'axios'

@@ -4,7 +4,7 @@ import userService from '../../services/user.service'
 import authService from '../../services/auth.service'
 
 export function useCreateUser() {
-  const [role, setRole] = useState({ role_id: 0, name: '' })
+  const [role_id, setRole] = useState({ role_id: 0, name: '' })
   const [name, setName] = useState('')
   const [secondName, setSecondName] = useState('')
   const [paternalLastName, setPaternalLastName] = useState('')
@@ -15,7 +15,7 @@ export function useCreateUser() {
   const [CURP, setCURP] = useState('')
 
   const newUser = {
-    role,
+    role_id,
     name,
     second_name: secondName,
     paternal_lastname: paternalLastName,
@@ -26,12 +26,15 @@ export function useCreateUser() {
     password,
   }
 
+  console.log('Sending user:', JSON.stringify(newUser, null, 2))
+
   async function createUser() {
     const token = await authService.getToken()
     if (!token) {
       console.log('Token expirado o sin acceso')
       return
     }
+    console.log(token)
     const result = await userService.createProfile(newUser)
 
     if (result.success === false) {

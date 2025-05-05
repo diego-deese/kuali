@@ -4,7 +4,6 @@ import colors from '../../../constants/colors'
 import { ArrowDownIcon, RightArrowIcon } from '../Icons/Icons'
 import IconButton from '../IconButton/IconButton'
 import Option from './Option/Option'
-import { ScrollView } from 'react-native'
 import AddNewHeader from './AddNewHeader/AddNewHeader'
 
 interface Option {
@@ -41,6 +40,7 @@ const SelectInput = ({
   editable = false,
   onEditOption,
   onDeleteOption, // Nueva prop para manejar la eliminación de opciones
+  onSelect,
 }: SelectInputProps) => {
   const [canEditOptions, setCanEditOptions] = useState(editable)
   const [unfolded, setUnfolded] = useState(false)
@@ -75,6 +75,7 @@ const SelectInput = ({
               onPress={() => {
                 setSelectedOption(item)
                 setUnfolded(false)
+                onSelect?.(item)
               }}
               editable={canEditOptions}
               onEdit={(newLabel) => {

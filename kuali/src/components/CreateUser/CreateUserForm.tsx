@@ -3,7 +3,7 @@ import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput/SelectInput'
 
 interface CreateUserFormProps {
-  setRole: (role: { role_id: number; name: string }) => void
+  setRole: (role_id: number) => void
   setName: (name: string) => void
   setSecondName: (name: string) => void
   setPaternalLastName: (name: string) => void
@@ -36,9 +36,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({
       <SelectInput
         label='Tipo'
         options={roleOptions}
-        onSelect={(option) =>
-          setRole({ role_id: option.id as number, name: option.label })
-        }
+        onSelect={(option) => setRole(option.id as number)}
       />
       <InputText label='Primer nombre' onChangeText={setName} />
       <InputText label='Segundo nombre' onChangeText={setSecondName} />
