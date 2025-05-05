@@ -28,3 +28,12 @@ export interface AuthResponse {
     }
   }
 }
+
+export interface Message {
+  message: string
+}
+
+export interface ApiResponse<T> {
+  success: true
+  data: T
+}

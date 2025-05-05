@@ -15,12 +15,22 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     borderRadius: 8,
     backgroundColor: colors.standardGray,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   buttonText: {
     color: colors.solidWhite,
     fontFamily: 'monserratRegular',
     fontSize: 16,
     includeFontPadding: false,
+  },
+  buttonSmall: {
+    paddingVertical: 6,
+    paddingHorizontal: 10,
+    flex: 1,
+  },
+  buttonTextSmall: {
+    fontSize: 14,
   },
 })
 
