@@ -12,11 +12,12 @@ export const useCreateActivity = () => {
     null,
   )
   const [loading, setLoading] = useState(false)
+  const [loadingAction, setLoadingAction] = useState(false)
 
-  const updateLocationName = async (id: number, newLabel: string) => {
-    setLoading(true)
+  const updateLocationName = async (location_id: number, newName: string) => {
+    setLoadingAction(true)
     try {
-      const result = await locationService.renameLocation(id, newLabel)
+      const result = await locationService.renameLocation(location_id, newName)
 
       if (!result.success && 'error' in result) {
         Toast.show({
@@ -26,9 +27,11 @@ export const useCreateActivity = () => {
         })
       } else {
         setLocations((prevOptions) =>
-          prevOptions.map((option) =>
-            option.location_id === id ? { ...option, label: newLabel } : option,
-          ),
+          prevOptions.map((option) => {
+            return option.location_id === location_id
+              ? { ...option, name: newName }
+              : option
+          }),
         )
         Toast.show({
           type: 'success',
@@ -44,7 +47,7 @@ export const useCreateActivity = () => {
         text2: 'Por favor intenta de nuevo más tarde',
       })
     } finally {
-      setLoading(false)
+      setLoadingAction(false)
     }
   }
 
@@ -117,5 +120,6 @@ export const useCreateActivity = () => {
       setIsModalVisible,
     },
     loading,
+    loadingAction,
   }
 }
