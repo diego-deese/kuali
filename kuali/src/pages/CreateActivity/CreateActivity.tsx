@@ -1,5 +1,5 @@
 import React from 'react'
-import { View } from 'react-native'
+import { FlatList, KeyboardAvoidingView, View } from 'react-native'
 import { styles } from './styles'
 import colors from '../../constants/colors'
 
@@ -23,7 +23,7 @@ const CreateActivity = () => {
     return <LoadingScreen message='Cargando la información...' />
   }
 
-  return (
+  const renderContent = () => (
     <View style={styles.container}>
       <ButtonsHeader title='Crear Evento'>
         <IconButton icon={<CloseIcon size={32} color={colors.warningRed} />} />
@@ -55,6 +55,19 @@ const CreateActivity = () => {
 
       <LoadingModal visible={loadingAction} />
     </View>
+  )
+
+  return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior='padding'>
+      // Use FlatList component to be able to scroll through page content if it
+      overflows screen height and still be able to use another flatlists inside
+      of it
+      <FlatList
+        data={[{ key: 'content' }]}
+        renderItem={renderContent}
+        keyExtractor={(item) => item.key}
+      />
+    </KeyboardAvoidingView>
   )
 }
 

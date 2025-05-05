@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from 'react-native'
 
 import AddNewHeader from './AddNewHeader/AddNewHeader'
 import IconButton from '../IconButton/IconButton'
@@ -9,7 +15,7 @@ import colors from '../../../constants/colors'
 import { ArrowDownIcon, RightArrowIcon } from '../Icons/Icons'
 
 interface Option {
-  id: string | number
+  id: number
   label: string
 }
 
@@ -20,18 +26,8 @@ interface SelectInputProps {
   editable?: boolean
   onEditOption?: (id: string | number, newLabel: string) => void
   onDeleteOption?: (id: string | number) => void
-}
-
-const getStyle = (unfolded: boolean) => {
-  if (unfolded) {
-    return {
-      borderBottomEndRadius: 0,
-      borderBottomStartRadius: 0,
-      ...styles.optionContainer,
-    }
-  } else {
-    return styles.optionContainer
-  }
+  onSelect?: (option: Option) => void
+  value?: Option | null
 }
 
 const SelectInput = ({
@@ -41,60 +37,85 @@ const SelectInput = ({
   editable = false,
   onEditOption,
   onDeleteOption,
+  onSelect,
+  value,
 }: SelectInputProps) => {
   const [canEditOptions, setCanEditOptions] = useState(editable)
-  const [unfolded, setUnfolded] = useState(false)
-  const [selectedOption, setSelectedOption] = useState<Option | null>(null)
+  const [isOpen, setIsOpen] = useState(false)
+  const [selectedOption, setSelectedOption] = useState<Option | null>(
+    value || null,
+  )
+
+  const handleOptionSelect = (option: Option) => {
+    setSelectedOption(option)
+    setIsOpen(false)
+    if (onSelect) {
+      onSelect(option)
+    }
+  }
+
+  const handleOptionEdit = (id: number, newLabel: string) => {
+    if (onEditOption) {
+      onEditOption(id, newLabel)
+    }
+  }
+
+  const handleOptionDelete = (id: number) => {
+    if (onDeleteOption) {
+      onDeleteOption(id)
+    }
+  }
+
+  const renderOptions = () => {
+    return (
+      <View style={styles.optionsContainer}>
+        <AddNewHeader />
+        <FlatList
+          data={options}
+          renderItem={({ item }) => (
+            <OptionComponent
+              label={item.label}
+              onPress={() => handleOptionSelect(item)}
+              editable={canEditOptions}
+              onEdit={(newLabel) => handleOptionEdit(item.id, newLabel)}
+              onDelete={() => handleOptionDelete(item.id)}
+            />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          nestedScrollEnabled={true}
+        />
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={getStyle(unfolded)}>
-        <Text style={styles.selectedOption}>
+      <TouchableOpacity
+        style={[
+          styles.optionContainer,
+          isOpen && { borderBottomEndRadius: 0, borderBottomStartRadius: 0 },
+        ]}
+        onPress={() => setIsOpen(!isOpen)}
+        activeOpacity={0.7}
+      >
+        <Text
+          style={[
+            styles.selectedOption,
+            selectedOption ? { color: colors.fontBlack } : {},
+          ]}
+        >
           {selectedOption ? selectedOption.label : placeholder}
         </Text>
         <IconButton
           icon={
-            unfolded ? (
-              <ArrowDownIcon size={28} />
-            ) : (
-              <RightArrowIcon size={28} />
-            )
+            isOpen ? <ArrowDownIcon size={28} /> : <RightArrowIcon size={28} />
           }
-          onPress={() => setUnfolded(!unfolded)}
+          onPress={() => setIsOpen(!isOpen)}
         />
-      </View>
+      </TouchableOpacity>
 
-      {/* SelectInput options */}
-      {unfolded && (
-        <View style={styles.optionsContainer}>
-          <AddNewHeader />
-          <FlatList
-            data={options}
-            renderItem={({ item }) => (
-              <OptionComponent
-                label={item.label}
-                onPress={() => {
-                  setSelectedOption(item)
-                  setUnfolded(false)
-                }}
-                editable={canEditOptions}
-                onEdit={(newLabel) => {
-                  if (onEditOption) {
-                    onEditOption(item.id, newLabel)
-                  }
-                }}
-                onDelete={() => {
-                  if (onDeleteOption) {
-                    onDeleteOption(item.id)
-                  }
-                }}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </View>
-      )}
+      {isOpen && <View>{renderOptions()}</View>}
     </View>
   )
 }
@@ -129,7 +150,6 @@ const styles = StyleSheet.create({
   optionsContainer: {
     position: 'absolute',
     width: '100%',
-    top: 73,
     zIndex: 10,
     borderWidth: 1.5,
     borderTopWidth: 0,
