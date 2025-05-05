@@ -69,7 +69,8 @@ class LocationService {
           message:
             errorResponse?.message || 'Error al conectar con el servidor',
           error:
-            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+            errorResponse?.error ||
+            'Verifica tu conexión o intenta de nuevo más tarde',
         } as ResponseError
       }
       return {
