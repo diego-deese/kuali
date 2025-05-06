@@ -2,15 +2,13 @@ import jwt from '../lib/jwt'
 import { UnauthorizedError, ValidationError } from '../types/Error'
 import { SessionTokens } from '../types/Auth'
 import { SafeUser } from '../types/Users'
-import { KEYPHRASE } from '../constants/env'
+import { ENVIRONMENT, KEYPHRASE } from '../constants/env'
 import { JwtPayload } from 'jsonwebtoken'
-
-const ENVIRONMENT = process.env.ENVIRONMENT ?? 'production'
 
 export const generateAccessToken = (user: SafeUser): string => {
   if (KEYPHRASE !== undefined) {
     return jwt.sign({ institutional_email: user.institutional_email, user_id: user.user_id, role_id: user.role.role_id }, KEYPHRASE, {
-      expiresIn: ENVIRONMENT === 'dev' ? '20d' : '5m'
+      expiresIn: ENVIRONMENT === 'dev' ? '20d' : '1m' // '5m'
     })
   } else {
     throw new ValidationError('No se definió una frase secreta para generar el token')
@@ -54,6 +52,7 @@ export const verifyToken = (token: string): string | JwtPayload => {
     }
   } catch (error) {
     if (error instanceof Error && error.name === 'TokenExpiredError') {
+      console.log('Token expirado')
       throw new UnauthorizedError('Token expirado')
     } else {
       throw new ValidationError('Token verification failed')
