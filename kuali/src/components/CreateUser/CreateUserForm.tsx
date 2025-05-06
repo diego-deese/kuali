@@ -3,6 +3,15 @@ import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
 
 interface CreateUserFormProps {
+  role?: number
+  name?: string
+  secondName?: string
+  paternalLastName?: string
+  maternalLastName?: string
+  email?: string
+  password?: string
+  identifier?: string
+  curp?: string
   setRole: (role_id: number) => void
   setName: (name: string) => void
   setSecondName: (name: string) => void
