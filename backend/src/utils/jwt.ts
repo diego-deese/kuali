@@ -8,7 +8,7 @@ import { JwtPayload } from 'jsonwebtoken'
 export const generateAccessToken = (user: SafeUser): string => {
   if (KEYPHRASE !== undefined) {
     return jwt.sign({ institutional_email: user.institutional_email, user_id: user.user_id, role_id: user.role.role_id }, KEYPHRASE, {
-      expiresIn: ENVIRONMENT === 'dev' ? '20d' : '1m' // '5m'
+      expiresIn: ENVIRONMENT === 'dev' ? '20d' : '5m'
     })
   } else {
     throw new ValidationError('No se definió una frase secreta para generar el token')
