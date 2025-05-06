@@ -15,15 +15,15 @@ export function useCreateUser() {
   const [CURP, setCURP] = useState('')
 
   const newUser = {
-    role_id,
-    name,
+    name: name,
     second_name: secondName,
     paternal_lastname: paternalLastName,
     maternal_lastname: maternalLastName,
     curp: CURP,
     identifier,
     institutional_email: email,
-    password,
+    password: password,
+    role_id: role_id.role_id,
   }
 
   console.log('Sending user:', JSON.stringify(newUser, null, 2))
@@ -34,7 +34,6 @@ export function useCreateUser() {
       console.log('Token expirado o sin acceso')
       return
     }
-    console.log(token)
     const result = await userService.createProfile(newUser)
 
     if (result.success === false) {
