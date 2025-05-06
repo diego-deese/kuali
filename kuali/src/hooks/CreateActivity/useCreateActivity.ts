@@ -2,17 +2,43 @@ import { useEffect, useState } from 'react'
 import { Location } from '../../types/Location'
 import locationService from '../../services/location.service'
 import Toast from 'react-native-toast-message'
+import { Option } from '../../components/shared/SelectInput/interfaces'
+import { mapToOption } from '../../utils/mappers'
 
 export const useCreateActivity = () => {
   const [eventDate, setEventDate] = useState(new Date())
   const [limitDate, setLimitDate] = useState(eventDate)
   const [locations, setLocations] = useState<Location[] | null>(null)
-  const [isModalVisible, setIsModalVisible] = useState(false)
-  const [locationToDelete, setLocationToDelete] = useState<Location | null>(
-    null,
-  )
+  const [location, setLocation] = useState<Option | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadingAction, setLoadingAction] = useState(false)
+
+  const getLocations = async () => {
+    setLoading(true)
+    try {
+      const result = await locationService.getLocations()
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+      } else {
+        setLocations(result.data)
+      }
+    } catch (error) {
+      console.error('Error al obtener actividades:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al cargar los lugares',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+      setLocations([])
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const updateLocationName = async (location_id: number, newName: string) => {
     setLoadingAction(true)
@@ -51,27 +77,10 @@ export const useCreateActivity = () => {
     }
   }
 
-  const confirmDeleteLocation = () => {
-    if (locationToDelete !== null) {
-      setLocations((prevOptions) =>
-        prevOptions.filter(
-          (location) => location.location_id !== locationToDelete.location_id,
-        ),
-      )
-      setLocationToDelete(null)
-    }
-    setIsModalVisible(false)
-  }
-
-  const deleteLocation = (location: Location) => {
-    setLocationToDelete(location)
-    setIsModalVisible(true)
-  }
-
-  const getLocations = async () => {
-    setLoading(true)
+  const deleteLocation = async (location_id: number) => {
+    setLoadingAction(true)
     try {
-      const result = await locationService.getLocations()
+      const result = await locationService.deleteLocation(location_id)
 
       if (!result.success && 'error' in result) {
         Toast.show({
@@ -80,18 +89,58 @@ export const useCreateActivity = () => {
           text2: result.error,
         })
       } else {
-        setLocations(result.data)
+        setLocations((prevOptions) =>
+          prevOptions.filter(
+            (location) => location.location_id !== location_id,
+          ),
+        )
+        Toast.show({
+          type: 'success',
+          text1: 'Lugar eliminado',
+          text2: 'El lugar se eliminó correctamente.',
+        })
       }
     } catch (error) {
-      console.error('Error al obtener actividades:', error)
+      console.error('Error al renombrar el lugar:', error)
       Toast.show({
         type: 'error',
-        text1: 'Error al cargar los lugares',
+        text1: 'Error renombrar el lugar',
         text2: 'Por favor intenta de nuevo más tarde',
       })
-      setLocations([])
     } finally {
-      setLoading(false)
+      setLoadingAction(false)
+    }
+  }
+
+  const createLocation = async (name: string): Promise<Option | void> => {
+    setLoadingAction(true)
+    try {
+      const result = await locationService.createLocation(name)
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+      } else {
+        setLocations((prevOptions) => [...(prevOptions || []), result.data])
+        Toast.show({
+          type: 'success',
+          text1: 'Lugar creado',
+          text2: 'El lugar se creó correctamente.',
+        })
+        return mapToOption(result.data, 'location_id', 'name')
+      }
+    } catch (error) {
+      console.error('Error al crear el lugar:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al crear el lugar',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+    } finally {
+      setLoadingAction(false)
     }
   }
 
@@ -109,15 +158,12 @@ export const useCreateActivity = () => {
       setLimitDate,
     },
     location: {
+      location,
+      setLocation,
       locations,
-      locationToDelete,
       updateLocationName,
-      confirmDeleteLocation,
       deleteLocation,
-    },
-    modal: {
-      isModalVisible,
-      setIsModalVisible,
+      createLocation,
     },
     loading,
     loadingAction,

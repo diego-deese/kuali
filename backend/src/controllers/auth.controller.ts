@@ -83,7 +83,7 @@ class AuthController {
 
       await authService.addRefreshTokenToWhitelist(newTokens.refresh_token, user.user_id)
 
-      res.status(200).json({ access_token: newTokens.access_token, refreshToken: newTokens.refresh_token })
+      res.status(200).json({ access_token: newTokens.access_token, refresh_token: newTokens.refresh_token })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({

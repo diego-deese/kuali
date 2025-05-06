@@ -1,11 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import InputText from '../../shared/InputText/InputText'
 import DatePickersSection from '../DatePickersSection/DatePickersSection'
-import SelectInput from '../../shared/SelectInput/SelectInput'
+import SelectInput from '../../shared/SelectInput'
 import RequirementsSection from '../RequirementsSection/RequirementsSection'
+import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 
-const CreateActivityForm = ({ eventDate, limitDate, location }) => {
+import { useCreateActivity } from '../../../hooks/CreateActivity/useCreateActivity'
+
+import { mapArrayToOptions } from '../../../utils/mappers'
+
+const CreateActivityForm = () => {
+  const { eventDate, limitDate, location, loadingAction } = useCreateActivity()
+
   return (
     <>
       <InputText label='Nombre del evento' placeholder='Evento' />
@@ -14,10 +21,17 @@ const CreateActivityForm = ({ eventDate, limitDate, location }) => {
 
       <SelectInput
         label='Lugar'
-        options={location.locations}
+        options={
+          location.locations
+            ? mapArrayToOptions(location.locations, 'location_id', 'name')
+            : []
+        }
+        headerInputPlaceholder='Nuevo lugar'
         editable
         onEditOption={location.updateLocationName}
         onDeleteOption={location.deleteLocation}
+        onAddOption={location.createLocation}
+        onSelect={location.setLocation}
       />
 
       <InputText
@@ -27,6 +41,8 @@ const CreateActivityForm = ({ eventDate, limitDate, location }) => {
       />
 
       <RequirementsSection />
+
+      <LoadingModal visible={loadingAction} />
     </>
   )
 }

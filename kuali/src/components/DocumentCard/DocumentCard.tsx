@@ -5,21 +5,26 @@ import Button from '../shared/Button/Button'
 
 export type DocumentStatus = 'pending' | 'completed' | 'rejected'
 
-interface DocumentCardProps {
+export interface Document {
+  id: number
   title: string
   description: string
   status: DocumentStatus
-  onUpload?: () => void
-  onDelete?: () => void
+}
+
+interface DocumentCardProps {
+  document: Document
+  onUpload?: (docId: number) => void
+  onDelete?: (docId: number) => void
 }
 
 export default function DocumentCard({
-  title,
-  description,
-  status,
+  document,
   onUpload,
   onDelete,
 }: DocumentCardProps) {
+  const { id, title, description, status } = document
+
   const renderIcon = () => {
     switch (status) {
       case 'pending':
@@ -31,21 +36,52 @@ export default function DocumentCard({
     }
   }
 
+  // Función para obtener la descripción según el status
+  const getDescription = () => {
+    switch (status) {
+      case 'pending':
+        return 'El documento está pendiente de aprobación'
+      case 'completed':
+        return 'El documento ha sido aprobado'
+      case 'rejected':
+        return 'El documento ha sido rechazado'
+    }
+  }
+
+  // Función para renderizar los botones según el status
+  const renderButtons = () => {
+    // Si el documento está aprobado, no mostramos botones
+    if (status === 'completed') {
+      return null
+    }
+
+    // Si no está aprobado, mostramos los botones normalmente
+    return (
+      <View style={styles.buttonContainer}>
+        <Button
+          buttonText='Subir documento'
+          onPress={() => onUpload && onUpload(id)}
+          disabled={false}
+          size='small'
+        />
+        <Button
+          buttonText='Eliminar documento'
+          onPress={() => onDelete && onDelete(id)}
+          size='small'
+          variant='delete'
+        />
+      </View>
+    )
+  }
+
   return (
     <View style={styles.card}>
       <View style={styles.header}>
         {renderIcon()}
         <Text style={styles.title}>{title}</Text>
       </View>
-      <Text style={styles.description}>{description}</Text>
-      <View style={styles.buttonContainer}>
-        <Button
-          buttonText='Subir documento'
-          onPress={onUpload}
-          disabled={status === 'completed'}
-        />
-        <Button buttonText='Eliminar documento' onPress={onDelete} />
-      </View>
+      <Text style={styles.description}>{getDescription()}</Text>
+      {renderButtons()}
     </View>
   )
 }

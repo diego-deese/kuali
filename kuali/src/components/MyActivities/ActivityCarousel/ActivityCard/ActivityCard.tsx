@@ -6,6 +6,7 @@ import { Activity } from '../../../../types/Activity'
 import colors from '../../../../constants/colors'
 import { CalendarClockIcon, PlaceIcon } from '../../../shared/Icons/Icons'
 import { formatDate } from '../../../../utils/parsing'
+import { FormattedDate } from '../../../shared/FormattedDate/FormattedDate'
 
 interface ActivityCardProps {
   activity: Activity & {
@@ -33,9 +34,12 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
             <View style={styles.eventMeta}>
               <View style={styles.metaItem}>
                 <CalendarClockIcon color={colors.solidWhite} />
-                <Text style={styles.metaText}>
-                  {formatDate(activity.event_date)}
-                </Text>
+                <FormattedDate
+                  date={new Date(activity.event_date)}
+                  separator=', '
+                  showWeekday={false}
+                  style={styles.metaText}
+                />
               </View>
               <View style={styles.metaItem}>
                 <PlaceIcon color={colors.solidWhite} />

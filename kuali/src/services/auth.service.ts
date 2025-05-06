@@ -120,7 +120,9 @@ class AuthService {
 
       if (response.status === 200) {
         const newAccessToken = response.data.access_token
+        const newRefreshToken = response.data.refresh_token
         await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, newAccessToken)
+        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, newRefreshToken)
 
         // Notificar a todos los suscriptores que tenemos un nuevo token
         this.refreshSubscribers.forEach((callback) => callback(newAccessToken))
@@ -154,24 +156,15 @@ class AuthService {
       const data = await response.data
 
       if (response.status === 200) {
-        if (Platform.OS === 'web') {
-          localStorage.setItem(REFRESH_TOKEN_KEY, data.tokens.refresh_token)
-          localStorage.setItem(ACCESS_TOKEN_KEY, data.tokens.access_token)
-          localStorage.setItem(USER_SESSION_KEY, JSON.stringify(data.user))
-        } else {
-          await SecureStore.setItemAsync(
-            REFRESH_TOKEN_KEY,
-            data.tokens.refresh_token,
-          )
-          await SecureStore.setItemAsync(
-            ACCESS_TOKEN_KEY,
-            data.tokens.access_token,
-          )
-          await SecureStore.setItemAsync(
-            USER_SESSION_KEY,
-            JSON.stringify(data.user),
-          )
-        }
+        await this.saveTokens(
+          data.tokens.access_token,
+          data.tokens.refresh_token,
+        )
+
+        await SecureStore.setItemAsync(
+          USER_SESSION_KEY,
+          JSON.stringify(data.user),
+        )
         return { success: true, ...(data as AuthResponse) }
       }
 
@@ -199,8 +192,7 @@ class AuthService {
 
   async logout() {
     try {
-      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY)
-      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
+      await this.removeTokens()
       await SecureStore.deleteItemAsync(USER_SESSION_KEY)
       return { success: true }
     } catch (error) {
@@ -228,6 +220,25 @@ class AuthService {
     }
   }
 
+  async saveTokens(
+    access_token: string,
+    refresh_token: string,
+  ): Promise<boolean> {
+    try {
+      if (Platform.OS === 'web') {
+        localStorage.setItem(ACCESS_TOKEN_KEY, access_token)
+        localStorage.setItem(REFRESH_TOKEN_KEY, refresh_token)
+      } else {
+        await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, access_token)
+        await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refresh_token)
+      }
+      return true
+    } catch (error) {
+      console.error('Error while saving session tokens: ', error)
+      return false
+    }
+  }
+
   async getToken(): Promise<string | null> {
     try {
       if (Platform.OS === 'web') {
@@ -241,12 +252,14 @@ class AuthService {
     }
   }
 
-  async removeToken(): Promise<boolean> {
+  async removeTokens(): Promise<boolean> {
     try {
       if (Platform.OS === 'web') {
         localStorage.removeItem(ACCESS_TOKEN_KEY)
+        localStorage.removeItem(REFRESH_TOKEN_KEY)
       } else {
         await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY)
+        await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY)
       }
       return true
     } catch (error) {
