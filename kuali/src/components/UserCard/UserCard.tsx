@@ -17,6 +17,8 @@ export default function UserCard({
   paternal_lastname,
   maternal_lastname,
   state,
+  onEditPress,
+  onDeactivatePress,
 }: {
   user_id: number
   name: string
@@ -24,22 +26,9 @@ export default function UserCard({
   paternal_lastname: string
   maternal_lastname: string
   state: boolean
+  onEditPress: (user_id: number) => void
+  onDeactivatePress: (user_id: number) => void
 }) {
-  const handleDeactivate = async () => {
-    const token = await authService.getToken()
-    if (!token) {
-      console.log('Token expirado o sin acceso')
-      return
-    }
-    const response = await userService.deactiveProfile(user_id)
-    if ('success' in response && !response.success) {
-      console.error(response.error)
-      // show some UI feedback
-    } else {
-      console.log('Usuario desactivado con éxito')
-      // Optionally update UI or icon
-    }
-  }
   return (
     <View style={styles.cardContainer}>
       {state === false && <View style={styles.inactiveOverlay} />}
@@ -54,11 +43,11 @@ export default function UserCard({
           <IconButton icon={<InfoIcon />} onPress={() => console.log('Ver')} />
           <IconButton
             icon={<EditIcon />}
-            onPress={() => console.log('Editar')}
+            onPress={() => onEditPress(user_id)}
           />
           <IconButton
             icon={state ? <DisableIcon /> : <EnableIcon />}
-            onPress={handleDeactivate}
+            onPress={() => onDeactivatePress(user_id)}
           />
         </View>
       </View>

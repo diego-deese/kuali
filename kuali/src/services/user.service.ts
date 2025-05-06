@@ -2,6 +2,7 @@ import { AxiosInstance } from 'axios'
 import authService from './auth.service'
 import { ResponseError, Message, ApiResponse } from '../types/Request'
 import axios from 'axios'
+import { NewUser } from '../types/User'
 
 interface UserProfile {
   user_id?: number
@@ -104,7 +105,7 @@ class UserService {
   }
 
   async createProfile(
-    newUser: UserProfile,
+    newUser: NewUser,
   ): Promise<ApiResponse<{ user: UserProfile }> | ResponseError> {
     try {
       const response = await this.api.post(`/users`, newUser)
