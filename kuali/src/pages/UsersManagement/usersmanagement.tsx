@@ -13,10 +13,16 @@ import UserCard from '../../components/UserCard/UserCard'
 import { PlusIcon } from '../../components/shared/Icons/Icons'
 import { router } from 'expo-router'
 import { useGetUsers } from '../../hooks/UsersManagement/useGetUsers'
+import authService from '../../services/auth.service'
+import userService from '../../services/user.service'
+import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
+import colors from '../../constants/colors'
 
 export default function UsersManagement() {
   const [activeTab, setActiveTab] = useState('Estudiantes')
   const { users, loading, error } = useGetUsers()
+  const [showModal, setShowModal] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
 
   const students = (users ?? []).filter(
     (user) => user.role?.name === 'Estudiante',
@@ -30,6 +36,33 @@ export default function UsersManagement() {
 
   const handleAddUser = () => {
     router.push({ pathname: `/user/adduser` })
+  }
+
+  const handleOnEdit = (userId: number) => {
+    router.push(`/user/edituser/${userId}`)
+  }
+
+  const openConfirmationModal = (user_id: number) => {
+    setSelectedUserId(user_id)
+    setShowModal(true)
+  }
+
+  const handleConfirmDeactivate = async () => {
+    if (selectedUserId !== null) {
+      const token = await authService.getToken()
+      if (!token) {
+        console.log('Token expirado o sin acceso')
+        return
+      }
+      const response = await userService.deactiveProfile(selectedUserId)
+      if ('success' in response && !response.success) {
+        console.error(response.error)
+      } else {
+        console.log('Usuario desactivado con éxito')
+      }
+      setShowModal(false)
+      setSelectedUserId(null)
+    }
   }
 
   return (
@@ -72,6 +105,8 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    onEditPress={() => handleOnEdit(user.user_id)}
+                    onDeactivatePress={openConfirmationModal}
                   />
                 ))}
               </ScrollView>
@@ -87,6 +122,8 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    onEditPress={() => handleOnEdit(user.user_id)}
+                    onDeactivatePress={openConfirmationModal}
                   />
                 ))}
               </ScrollView>
@@ -102,12 +139,23 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    onEditPress={() => handleOnEdit(user.user_id)}
+                    onDeactivatePress={openConfirmationModal}
                   />
                 ))}
               </ScrollView>
             )}
           </>
         )}
+        <ConfirmationModal
+          visible={showModal}
+          title='Desactivar usuario'
+          description='¿Estás seguro de que deseas desactivar este usuario?'
+          confirmButtonText='Desactivar'
+          confirmButtonColor={colors.warningRed}
+          onConfirm={handleConfirmDeactivate}
+          onCancel={() => setShowModal(false)}
+        />
       </SafeAreaView>
     </SafeAreaProvider>
   )

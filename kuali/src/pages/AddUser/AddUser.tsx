@@ -1,6 +1,6 @@
 import { View, Text } from 'react-native'
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import styles from './AddUser.styles'
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import Button from '../../components/shared/Button/Button'
 import CreateUserForm from '../../components/CreateUser/CreateUserForm'
 import { ScrollView } from 'react-native'

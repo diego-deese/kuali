@@ -26,8 +26,6 @@ export function useCreateUser() {
     role_id: role_id.role_id,
   }
 
-  console.log('Sending user:', JSON.stringify(newUser, null, 2))
-
   async function createUser() {
     const token = await authService.getToken()
     if (!token) {
