@@ -1,5 +1,11 @@
 import React from 'react'
-import { View, Text, FlatList, TouchableOpacity } from 'react-native'
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native'
 
 import AddNewHeader from './AddNewHeader/AddNewHeader'
 import IconButton from '../IconButton/IconButton'
@@ -16,13 +22,15 @@ import { useSelectInput } from './useSelectInput'
 
 const SelectInput = ({
   label,
+  headerInputPlaceholder,
   placeholder = 'Selecciona una opción',
   options = [],
   editable = false,
+  value,
+  onSelect,
   onEditOption,
   onDeleteOption,
-  onSelect,
-  value,
+  onAddOption,
 }: SelectInputProps) => {
   const { state, actions } = useSelectInput({
     options,
@@ -30,6 +38,7 @@ const SelectInput = ({
     onSelect,
     onEditOption,
     onDeleteOption,
+    onAddOption,
   })
 
   const renderOptions = () => {
@@ -43,20 +52,27 @@ const SelectInput = ({
 
     return (
       <View style={styles.optionsContainer}>
-        <AddNewHeader />
-        <FlatList
-          data={state.selectOptions}
-          renderItem={({ item }) => (
-            <OptionComponent
-              label={item.label}
-              onPress={() => actions.handleOptionSelect(item)}
-              editable={editable}
-              onEdit={(newLabel) => actions.handleEditOption(item.id, newLabel)}
-              onDelete={() => actions.handleDeleteOption(item)}
-            />
-          )}
-          keyExtractor={(item) => item.id.toString()}
+        <AddNewHeader
+          inputTextPlaceholder={headerInputPlaceholder}
+          onAddConfirm={actions.handleAddOption}
         />
+        <ScrollView>
+          <FlatList
+            data={state.selectOptions}
+            renderItem={({ item }) => (
+              <OptionComponent
+                label={item.label}
+                onPress={() => actions.handleOptionSelect(item)}
+                editable={editable}
+                onEdit={(newLabel) =>
+                  actions.handleEditOption(item.id, newLabel)
+                }
+                onDelete={() => actions.handleDeleteOption(item)}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+          />
+        </ScrollView>
       </View>
     )
   }

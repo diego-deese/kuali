@@ -2,11 +2,14 @@ import { useEffect, useState } from 'react'
 import { Location } from '../../types/Location'
 import locationService from '../../services/location.service'
 import Toast from 'react-native-toast-message'
+import { Option } from '../../components/shared/SelectInput/interfaces'
+import { mapToOption } from '../../utils/mappers'
 
 export const useCreateActivity = () => {
   const [eventDate, setEventDate] = useState(new Date())
   const [limitDate, setLimitDate] = useState(eventDate)
   const [locations, setLocations] = useState<Location[] | null>(null)
+  const [location, setLocation] = useState<Option | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadingAction, setLoadingAction] = useState(false)
 
@@ -109,6 +112,38 @@ export const useCreateActivity = () => {
     }
   }
 
+  const createLocation = async (name: string): Promise<Option | void> => {
+    setLoadingAction(true)
+    try {
+      const result = await locationService.createLocation(name)
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+      } else {
+        setLocations((prevOptions) => [...(prevOptions || []), result.data])
+        Toast.show({
+          type: 'success',
+          text1: 'Lugar creado',
+          text2: 'El lugar se creó correctamente.',
+        })
+        return mapToOption(result.data, 'location_id', 'name')
+      }
+    } catch (error) {
+      console.error('Error al crear el lugar:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al crear el lugar',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+    } finally {
+      setLoadingAction(false)
+    }
+  }
+
   useEffect(() => {
     getLocations()
   }, [])
@@ -123,9 +158,12 @@ export const useCreateActivity = () => {
       setLimitDate,
     },
     location: {
+      location,
+      setLocation,
       locations,
       updateLocationName,
       deleteLocation,
+      createLocation,
     },
     loading,
     loadingAction,

@@ -7,6 +7,7 @@ export const useSelectInput = ({
   onSelect,
   onEditOption,
   onDeleteOption,
+  onAddOption,
 }: UseSelectInputProps) => {
   const [selectOptions, setSelectOptions] = useState<Option[]>(options)
   const [isOpen, setIsOpen] = useState(false)
@@ -54,6 +55,21 @@ export const useSelectInput = ({
       onDeleteOption(id)
     }
     setIsModalVisible(false)
+    setSelectedOption(null)
+  }
+
+  const handleAddOption = async (label: string) => {
+    if (onAddOption) {
+      const newOption = await onAddOption(label)
+
+      if (newOption) {
+        setSelectOptions((prevOptions) => [...prevOptions, newOption])
+        if (onSelect) {
+          onSelect(newOption)
+        }
+        handleOptionSelect(newOption)
+      }
+    }
   }
 
   return {
@@ -71,6 +87,7 @@ export const useSelectInput = ({
       handleEditOption,
       handleDeleteOption,
       handleConfirmDeleteOption,
+      handleAddOption,
     },
   }
 }

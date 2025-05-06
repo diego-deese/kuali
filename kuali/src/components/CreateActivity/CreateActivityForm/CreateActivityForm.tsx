@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import InputText from '../../shared/InputText/InputText'
 import DatePickersSection from '../DatePickersSection/DatePickersSection'
@@ -13,12 +13,6 @@ import { mapArrayToOptions } from '../../../utils/mappers'
 const CreateActivityForm = () => {
   const { eventDate, limitDate, location, loadingAction } = useCreateActivity()
 
-  console.log(
-    location.locations
-      ? mapArrayToOptions(location.locations, 'location_id', 'name')
-      : [],
-  )
-
   return (
     <>
       <InputText label='Nombre del evento' placeholder='Evento' />
@@ -32,9 +26,12 @@ const CreateActivityForm = () => {
             ? mapArrayToOptions(location.locations, 'location_id', 'name')
             : []
         }
+        headerInputPlaceholder='Nuevo lugar'
         editable
         onEditOption={location.updateLocationName}
         onDeleteOption={location.deleteLocation}
+        onAddOption={location.createLocation}
+        onSelect={location.setLocation}
       />
 
       <InputText
