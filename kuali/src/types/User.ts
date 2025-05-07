@@ -26,6 +26,6 @@ export type NewUser = {
   curp: string
   identifier: string
   institutional_email: string
-  password: string
+  password?: string
   role_id: number
 }

@@ -67,12 +67,13 @@ export default function EditUser({ userId }: EditUserProps) {
               setPassword={setPassword}
               setIdentifier={setIdentifier}
               setCURP={setCurp}
+              onEditing={true}
             />
           </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>
           <Button buttonText='Cancelar' onPress={handleGoingBack} />
-          <Button buttonText='Crear usuario' onPress={handleGoingBack} />
+          <Button buttonText='Editar usuario' onPress={updateUser} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

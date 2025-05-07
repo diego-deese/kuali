@@ -21,6 +21,7 @@ interface CreateUserFormProps {
   setPassword: (password: string) => void
   setIdentifier: (id: string) => void
   setCURP: (curp: string) => void
+  onEditing: boolean
 }
 
 const CreateUserForm: React.FC<CreateUserFormProps> = ({
@@ -42,6 +43,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({
   setPassword,
   setIdentifier,
   setCURP,
+  onEditing,
 }) => {
   const roleOptions = [
     { id: 2, label: 'Estudiante' },
@@ -78,12 +80,14 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({
         inputMode='email'
         value={email}
       />
-      <InputText
-        label='Contraseña'
-        onChangeText={setPassword}
-        secureTextEntry
-        value={password}
-      />
+      {!onEditing && (
+        <InputText
+          label='Contraseña'
+          onChangeText={setPassword}
+          secureTextEntry
+          value={password}
+        />
+      )}
       <InputText
         label='Matrícula'
         onChangeText={setIdentifier}

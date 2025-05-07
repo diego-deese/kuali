@@ -3,6 +3,7 @@ import userService from '../../services/user.service'
 import authService from '../../services/auth.service'
 import Toast from 'react-native-toast-message'
 import { User } from '../../types/User'
+import { ResponseError } from '../../types/Request'
 
 export function useEditUser(userId: string) {
   const [user, setUser] = useState<User | null>(null)
@@ -34,10 +35,9 @@ export function useEditUser(userId: string) {
         const response = await userService.getUserProfile(Number(userId))
 
         if ('success' in response && !response.success) {
-          throw new Error(
-            response.message || 'No se pudo cargar la información del perfil',
-          )
+          throw new Error(response.message)
         }
+
         const userData = response as User
 
         setName(userData.name || '')
@@ -88,11 +88,29 @@ export function useEditUser(userId: string) {
         identifier,
         curp,
         role_id: role?.role_id,
-        ...(password ? { password } : {}),
       }
 
-      // Todo
-      // const result = await userService.updateUser(Number(userId), updatedUser)
+      const token = await authService.getToken()
+      if (!token) {
+        throw new Error('Token expirado o sin acceso')
+      }
+
+      const response = await userService.updateProfile(
+        Number(userId),
+        updatedUser,
+      )
+
+      if (!response.success) {
+        Toast.show({
+          type: 'error',
+          text1: 'El usuario no se pudo actualizar',
+        })
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Usuario actualizado con éxito',
+        })
+      }
 
       return true
     } catch (err) {
