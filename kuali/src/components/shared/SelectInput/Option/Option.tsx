@@ -1,18 +1,13 @@
 import React, { useState } from 'react'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Pressable, Text, TextInput, View } from 'react-native'
 
 import IconButton from '../../IconButton/IconButton'
-
 import colors from '../../../../constants/colors'
+import { styles } from './styles'
+
 import { CheckIcon, CloseIcon, DeleteIcon, EditIcon } from '../../Icons/Icons'
 
-interface OptionProps {
-  label?: string
-  editable?: boolean
-  onPress?: () => void
-  onEdit?: (newLabel: string) => void
-  onDelete?: () => void
-}
+import { OptionProps } from '../interfaces'
 
 const Option: React.FC<OptionProps> = ({
   label = 'Option',
@@ -83,43 +78,3 @@ const Option: React.FC<OptionProps> = ({
 }
 
 export default Option
-
-const styles = StyleSheet.create({
-  optionContainer: {
-    flexDirection: 'row',
-    gap: 4,
-    height: 45,
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: colors.solidWhite,
-    paddingVertical: 8,
-    paddingEnd: 8,
-  },
-  labelContainer: {
-    flex: 1,
-  },
-  iconsContainer: {
-    flexDirection: 'row',
-    gap: 4,
-  },
-  input: {
-    height: 40,
-    width: 'auto',
-    fontFamily: 'monserratRegular',
-    includeFontPadding: false,
-    fontSize: 16,
-    color: colors.fontBlack,
-    borderWidth: 1,
-    borderColor: colors.borderGray,
-    borderRadius: 8,
-    paddingHorizontal: 4,
-    marginHorizontal: 4,
-  },
-  label: {
-    fontFamily: 'monserratRegular',
-    fontSize: 16,
-    includeFontPadding: false,
-    color: colors.fontBlack,
-    marginStart: 8,
-  },
-})

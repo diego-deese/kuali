@@ -1,36 +1,33 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DocumentCard from '../../components/DocumentCard/DocumentCard'
+import DocumentCard, {
+  Document,
+} from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
 import { CalendarEvent, LocationIcon } from '../../components/shared/Icons/Icons'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
-
-// Tipos para nuestros datos
-type DocumentStatus = 'pending' | 'completed' | 'rejected'
-
-interface Document {
-  id: number
-  title: string
-  description: string
-  status: DocumentStatus
-}
-
+import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
+// Detalles completos de un evento académico.
 interface EventDetails {
   id: number
   title: string
-  date: string
+  event_date: Date
   location: string
   description: string
   documents: Document[]
 }
 
+/*
+   Pantalla que muestra información detallada de un evento específico,
+  incluyendo sus requisitos documentales y permitiendo al usuario
+  gestionar su participación.
+ */
 export default function InfoEvent() {
   const params = useLocalSearchParams()
   const eventId = params.id ? Number(params.id) : 0
 
-  // Estado que simulará la respuesta del endpoint
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -41,15 +38,14 @@ export default function InfoEvent() {
     const fetchEventDetails = async () => {
       try {
         setLoading(true)
-        // Aquí iría la llamada real al endpoint
-        // const response = await fetch(`/api/events/${eventId}`)
-        // const data = await response.json()
 
-        // Datos de ejemplo - esto vendría del endpoint
+        // Datos de ejemplo
         const mockData: EventDetails = {
           id: eventId,
           title: (params.title as string) || 'Nombre del evento',
-          date: (params.date as string) || 'Fecha, 00:00 hrs',
+          event_date: params.date
+            ? new Date(params.date as string)
+            : new Date(),
           location: (params.location as string) || 'Lugar',
           description:
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
@@ -93,23 +89,16 @@ export default function InfoEvent() {
   const handleUpload = (docId: number) => {
     // Lógica para subir documento - integrar con API en el futuro
     console.log(`Subiendo documento ${docId}`)
-    // Cuando tengamos la API:
-    // const response = await fetch(`/api/documents/${docId}/upload`, { method: 'POST', body: formData })
   }
 
   const handleDelete = (docId: number) => {
     // Lógica para eliminar documento - integrar con API en el futuro
     console.log(`Eliminando documento ${docId}`)
-    // Cuando tengamos la API:
-    // const response = await fetch(`/api/documents/${docId}`, { method: 'DELETE' })
   }
 
   const handleExit = () => {
-    // Lógica para salir de la convocatoria - integrar con API en el futuro
     console.log('Saliendo de esta convocatoria')
     router.push('/(tabs)/myactivities')
-    // Cuando tengamos la API:
-    // const response = await fetch(`/api/events/${eventId}/unsubscribe`, { method: 'POST' })
   }
 
   if (loading) {
@@ -137,60 +126,60 @@ export default function InfoEvent() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Pressable style={styles.backButton} onPress={() => router.back()}>
-          <Text style={styles.backButtonText}>Regresar</Text>
-        </Pressable>
-        <View style={styles.content}>
-          {/* Información del evento */}
-          <Text style={styles.eventTitle}>{eventDetails.title}</Text>
-          <View style={styles.eventInfoRow}>
-            <CalendarEvent style={styles.eventInfoIcon} />
-            <Text style={styles.eventInfoText}>{eventDetails.date}</Text>
-          </View>
-          <View style={styles.eventInfoRow}>
-            <LocationIcon style={styles.eventInfoIcon} />
-            <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
-          </View>
-          <Text style={styles.description}>{eventDetails.description}</Text>
+    // <SafeAreaView style={styles.container}>
 
-          {/* Requisitos/Documentos */}
-          <Text style={styles.sectionTitle}>Requisitos</Text>
-          {eventDetails.documents.map((doc) => (
-            <DocumentCard
-              key={doc.id}
-              title={doc.title}
-              description={doc.description}
-              status={doc.status as 'pending' | 'completed' | 'rejected'}
-              onUpload={() => handleUpload(doc.id)}
-              onDelete={() => handleDelete(doc.id)}
-            />
-          ))}
-
-          {/* Botón de salir */}
-          <Pressable
-            style={styles.exitButton}
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.exitButtonText}>
-              Salir de esta convocatoria
-            </Text>
-          </Pressable>
-
-          {/* Modal de confirmación */}
-          <ConfirmationModal
-            visible={modalVisible}
-            title='Confirmación'
-            description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
-            onCancel={() => setModalVisible(false)}
-            onConfirm={() => {
-              handleExit()
-              setModalVisible(false)
-            }}
+    <ScrollView>
+      <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>Regresar</Text>
+      </Pressable>
+      <View style={styles.content}>
+        {/* Información del evento */}
+        <Text style={styles.eventTitle}>{eventDetails.title}</Text>
+        <View style={styles.eventInfoRow}>
+          <CalendarEvent style={styles.eventInfoIcon} />
+          <FormattedDate
+            date={eventDetails.event_date}
+            style={styles.eventInfoText}
           />
         </View>
-      </ScrollView>
-    </SafeAreaView>
+        <View style={styles.eventInfoRow}>
+          <LocationIcon style={styles.eventInfoIcon} />
+          <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
+        </View>
+        <Text style={styles.description}>{eventDetails.description}</Text>
+
+        {/* Requisitos/Documentos */}
+        <Text style={styles.sectionTitle}>Requisitos</Text>
+        {eventDetails.documents.map((doc) => (
+          <DocumentCard
+            key={doc.id}
+            document={doc}
+            onUpload={handleUpload}
+            onDelete={handleDelete}
+          />
+        ))}
+
+        {/* Botón de salir */}
+        <Pressable
+          style={styles.exitButton}
+          onPress={() => setModalVisible(true)}
+        >
+          <Text style={styles.exitButtonText}>Salir de esta convocatoria</Text>
+        </Pressable>
+
+        {/* Modal de confirmación */}
+        <ConfirmationModal
+          visible={modalVisible}
+          title='Confirmación'
+          description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
+          onCancel={() => setModalVisible(false)}
+          onConfirm={() => {
+            handleExit()
+            setModalVisible(false)
+          }}
+        />
+      </View>
+    </ScrollView>
+    //</SafeAreaView>
   )
 }
