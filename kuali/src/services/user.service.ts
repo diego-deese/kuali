@@ -140,6 +140,44 @@ class UserService {
       }
     }
   }
+
+  async updateProfile(
+    userId: number,
+    updatedUser: NewUser,
+  ): Promise<ApiResponse<{ user: UserProfile }> | ResponseError> {
+    try {
+      const response = await this.api.put(`/users/${userId}`, updatedUser)
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data as { user: UserProfile },
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error al actualizar al usuario',
+        error: 'Respuesta inesperada del servidor',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message: errorResponse?.message || 'Error al actualizar al usuario',
+          error:
+            errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: 'Por favor, verifica tu conexión o intenta más tarde',
+      }
+    }
+  }
 }
 
 export default new UserService()
