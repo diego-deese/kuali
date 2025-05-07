@@ -5,12 +5,37 @@ import styles from '../../AddUser/AddUser.styles'
 import Button from '../../../components/shared/Button/Button'
 import { router } from 'expo-router'
 import { useEditUser } from '../../../hooks/UsersManagement/useEditUser'
+import { use } from 'react'
 
 type EditUserProps = {
   userId: string
 }
 
 export default function EditUser({ userId }: EditUserProps) {
+  const {
+    name,
+    setName,
+    secondName,
+    setSecondName,
+    paternalLastName,
+    setPaternalLastName,
+    maternalLastName,
+    setMaternalLastName,
+    institutionalEmail,
+    setInstitutionalEmail,
+    identifier,
+    setIdentifier,
+    curp,
+    setCurp,
+    role,
+    setRole,
+    password,
+    setPassword,
+    loading,
+    error,
+    updateUser,
+  } = useEditUser(userId)
+
   const handleGoingBack = () => {
     router.back()
   }
@@ -23,7 +48,26 @@ export default function EditUser({ userId }: EditUserProps) {
         </View>
         <View style={styles.inputsContainer}>
           <ScrollView>
-            <Text>{userId}</Text>
+            <CreateUserForm
+              role={role?.role_id}
+              name={name}
+              secondName={secondName}
+              paternalLastName={paternalLastName}
+              maternalLastName={maternalLastName}
+              email={institutionalEmail}
+              password={password}
+              identifier={identifier}
+              curp={curp}
+              setRole={(id) => setRole({ role_id: id, name: '' })}
+              setName={setName}
+              setSecondName={setSecondName}
+              setPaternalLastName={setPaternalLastName}
+              setMaternalLastName={setMaternalLastName}
+              setEmail={setInstitutionalEmail}
+              setPassword={setPassword}
+              setIdentifier={setIdentifier}
+              setCURP={setCurp}
+            />
           </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>

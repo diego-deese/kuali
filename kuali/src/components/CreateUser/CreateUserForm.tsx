@@ -24,6 +24,15 @@ interface CreateUserFormProps {
 }
 
 const CreateUserForm: React.FC<CreateUserFormProps> = ({
+  role,
+  name,
+  secondName,
+  paternalLastName,
+  maternalLastName,
+  email,
+  password,
+  identifier,
+  curp,
   setRole,
   setName,
   setSecondName,
@@ -47,18 +56,40 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({
         options={roleOptions}
         onSelect={(option) => setRole(option.id as number)}
       />
-      <InputText label='Primer nombre' onChangeText={setName} />
-      <InputText label='Segundo nombre' onChangeText={setSecondName} />
-      <InputText label='Apellido paterno' onChangeText={setPaternalLastName} />
-      <InputText label='Apellido materno' onChangeText={setMaternalLastName} />
-      <InputText label='Correo' onChangeText={setEmail} inputMode='email' />
+      <InputText label='Primer nombre' onChangeText={setName} value={name} />
+      <InputText
+        label='Segundo nombre'
+        onChangeText={setSecondName}
+        value={secondName}
+      />
+      <InputText
+        label='Apellido paterno'
+        onChangeText={setPaternalLastName}
+        value={paternalLastName}
+      />
+      <InputText
+        label='Apellido materno'
+        onChangeText={setMaternalLastName}
+        value={maternalLastName}
+      />
+      <InputText
+        label='Correo'
+        onChangeText={setEmail}
+        inputMode='email'
+        value={email}
+      />
       <InputText
         label='Contraseña'
         onChangeText={setPassword}
         secureTextEntry
+        value={password}
       />
-      <InputText label='Matrícula' onChangeText={setIdentifier} />
-      <InputText label='CURP' onChangeText={setCURP} />
+      <InputText
+        label='Matrícula'
+        onChangeText={setIdentifier}
+        value={identifier}
+      />
+      <InputText label='CURP' onChangeText={setCURP} value={curp} />
     </>
   )
 }
