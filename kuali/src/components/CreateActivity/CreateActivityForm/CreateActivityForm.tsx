@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 
 import InputText from '../../shared/InputText/InputText'
 import DatePickersSection from '../DatePickersSection/DatePickersSection'
