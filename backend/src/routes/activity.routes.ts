@@ -5,7 +5,6 @@ import { isAuthenticated } from '../middlewares/jwt.middleware'
 
 const router = Router()
 
-// Ruta para obtener actividades basado en el rol del usuario
 router.get('/', isAuthenticated, extractUserRole, activityController.getActivities)
 
 router.post('/', isAuthenticated, isAdmin, activityController.createActivity)

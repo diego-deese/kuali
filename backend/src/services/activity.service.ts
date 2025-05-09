@@ -228,9 +228,7 @@ class ActivityService {
         }
       },
       where: {
-        user: {
-          user_id: userId
-        },
+        user_id: userId,
         activity: {
           event_date: {
             gte: new Date()
