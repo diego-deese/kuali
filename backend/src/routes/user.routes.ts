@@ -17,7 +17,7 @@ router.get('/:id/profilePhoto', userController.getUserProfilePhoto)
 
 router.get('/:userId/activities/upcoming', isAuthenticated, activityController.getUserUpcomingActivities)
 
-router.get('/:id/activities/past', isAuthenticated, activityController.getUserPastActivities)
+router.get('/:userId/activities/past', isAuthenticated, activityController.getUserPastActivities)
 
 router.patch('/:id/password', isAuthenticated, userController.updatePasswordWithValidation)
 
