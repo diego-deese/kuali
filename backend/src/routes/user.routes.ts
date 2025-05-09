@@ -15,11 +15,9 @@ router.delete('/:id', isAuthenticated, isAdmin, userController.deleteUser)
 
 router.get('/:id/profilePhoto', userController.getUserProfilePhoto)
 
-router.get('/:id/activities/upcoming', isAuthenticated, activityController.getUserUpcomingActivities)
+router.get('/:userId/activities/upcoming', isAuthenticated, activityController.getUserUpcomingActivities)
 
 router.get('/:id/activities/past', isAuthenticated, activityController.getUserPastActivities)
-
-// router.get('/:userId/activities/:activityId', isAuthenticated, activityController.getActivityWithUserDetails)
 
 router.patch('/:id/password', isAuthenticated, userController.updatePasswordWithValidation)
 

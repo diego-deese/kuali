@@ -173,15 +173,15 @@ class ActivityController {
 
   async getUserUpcomingActivities (req: Request, res: Response): Promise<undefined> {
     try {
-      const { activityId } = req.params
+      const { userId } = req.params
 
-      if (!isNumber(activityId)) {
+      if (!isNumber(userId)) {
         res.status(400).json({
           message: 'Error al obtener los eventos o convocatorias',
           error: 'El id proporcionado es inválido'
         })
       } else {
-        const upcomingUserActivities = await activityService.getUserUpcomingActivities(+activityId)
+        const upcomingUserActivities = await activityService.getUserUpcomingActivities(+userId)
 
         res.status(200).json({ activities: upcomingUserActivities })
       }
