@@ -27,6 +27,7 @@ export default function AddUser() {
               setRole={(role_id: number) =>
                 userForm.setRole((prev) => ({ ...prev, role_id }))
               }
+              onEditing={false}
             />
           </ScrollView>
         </View>
