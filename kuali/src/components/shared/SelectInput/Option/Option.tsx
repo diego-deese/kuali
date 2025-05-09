@@ -21,7 +21,9 @@ const Option: React.FC<OptionProps> = ({
 
   const handleSave = () => {
     if (onEdit) {
-      onEdit(inputValue)
+      if (inputValue !== label) {
+        onEdit(inputValue)
+      }
     }
     setIsEditting(false)
   }

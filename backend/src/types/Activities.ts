@@ -1,4 +1,4 @@
-import { Activities } from '../generated/client'
+import { Activities, Prisma } from '../generated/client'
 
 export type UserAccesibleActivity = Omit<Activities,
 'creation_date' |
@@ -14,3 +14,12 @@ export type UserAccesibleActivity = Omit<Activities,
 }
 
 export type ActivityInfo = Omit<UserAccesibleActivity, 'poster_image' | 'poster_mimetype'>
+
+const activityPoster = Prisma.validator<Prisma.ActivitiesDefaultArgs>()({
+  select: {
+    poster_image: true,
+    poster_mimetype: true
+  }
+})
+
+export type ActivityPoster = Prisma.ActivitiesGetPayload<typeof activityPoster>

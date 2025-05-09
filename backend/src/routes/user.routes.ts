@@ -19,7 +19,7 @@ router.get('/:id/activities/upcoming', isAuthenticated, activityController.getUs
 
 router.get('/:id/activities/past', isAuthenticated, activityController.getUserPastActivities)
 
-router.get('/:userId/activities/:activityId', isAuthenticated, activityController.getActivityWithUserDetails)
+// router.get('/:userId/activities/:activityId', isAuthenticated, activityController.getActivityWithUserDetails)
 
 router.patch('/:id/password', isAuthenticated, userController.updatePasswordWithValidation)
 
