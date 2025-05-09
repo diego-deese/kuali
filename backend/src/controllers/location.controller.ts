@@ -36,7 +36,14 @@ class LocationController {
         return
       }
 
-      const location = await locationService.createLocation(name)
+      if (name === '') {
+        res.status(400).json({
+          message: 'Error al crear un nuevo lugar',
+          error: 'El nombre del lugar no puede estar vacío'
+        })
+      }
+
+      const location = await locationService.createLocation(String(name).trim())
 
       res.status(200).json({ location })
     } catch (error) {
@@ -75,7 +82,15 @@ class LocationController {
         return
       }
 
-      const location = await locationService.renameLocation(Number(locationId), name)
+      if (name === '') {
+        res.status(400).json({
+          message: 'Error al editar el nombre del lugar',
+          error: 'El nuevo nombre del lugar no puede estar vacío'
+        })
+        return
+      }
+
+      const location = await locationService.renameLocation(Number(locationId), String(name).trim())
 
       res.status(200).json({ location })
     } catch (error) {

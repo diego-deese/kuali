@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     fontFamily: 'monserratRegular',
     fontSize: 16,
     includeFontPadding: false,
+    textAlign: 'center',
   },
   buttonSmall: {
     paddingVertical: 6,
