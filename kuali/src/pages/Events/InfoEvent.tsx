@@ -12,9 +12,12 @@ import {
 } from '../../components/shared/Icons/Icons'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
+import Button from '../../components/shared/Button/Button'
+import colors from '../../constants/colors'
+
 // Detalles completos de un evento académico.
 interface EventDetails {
-  id: number
+  activity_id: number
   title: string
   event_date: Date
   location: string
@@ -29,29 +32,34 @@ interface EventDetails {
  */
 export default function InfoEvent() {
   const params = useLocalSearchParams()
-  const eventId = params.id ? Number(params.id) : 0
+  const activity_id = params.id ? Number(params.id) : 0
 
   const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modalVisible, setModalVisible] = useState(false)
+  const [applyModalVisible, setApplyModalVisible] = useState(false)
+  const [hasApplied, setHasApplied] = useState(false)
 
   useEffect(() => {
-    // Simular la llamada a una API
+    console.log('Descripción recibida:', JSON.stringify(params))
+    console.log('Descripción específica:', params.description)
+    console.log('Tipo de descripción:', typeof params.description)
     const fetchEventDetails = async () => {
       try {
         setLoading(true)
 
         // Datos de ejemplo
         const mockData: EventDetails = {
-          id: eventId,
+          activity_id,
           title: (params.title as string) || 'Nombre del evento',
-          event_date: params.date
-            ? new Date(params.date as string)
+          event_date: params.event_date
+            ? new Date(params.event_date as string)
             : new Date(),
           location: (params.location as string) || 'Lugar',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+          description: params.desc
+            ? decodeURIComponent(params.desc as string)
+            : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida justo et elit vulputate elementum at quis dolor. Nulla ac nibh dapibus est malesuada vehicula vitae a justo.',
           documents: [
             {
               id: 1,
@@ -74,7 +82,7 @@ export default function InfoEvent() {
           ],
         }
 
-        // Simular un pequeño retraso como en una llamada real
+        // Simular llamda xd
         setTimeout(() => {
           setEventDetails(mockData)
           setLoading(false)
@@ -87,7 +95,13 @@ export default function InfoEvent() {
     }
 
     fetchEventDetails()
-  }, [eventId, params.title, params.date, params.location])
+  }, [
+    activity_id,
+    params.title,
+    params.event_date,
+    params.location,
+    params.description,
+  ])
 
   const handleUpload = (docId: number) => {
     // Lógica para subir documento - integrar con API en el futuro
@@ -101,9 +115,18 @@ export default function InfoEvent() {
 
   const handleExit = () => {
     console.log('Saliendo de esta convocatoria')
-    router.push('/(tabs)/myactivities')
+    router.back()
   }
 
+  const handleApply = () => {
+    setApplyModalVisible(true)
+  }
+
+  const confirmApply = () => {
+    console.log('Aplicando a la convocatoria')
+    setHasApplied(true)
+    setApplyModalVisible(false)
+  }
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -129,12 +152,12 @@ export default function InfoEvent() {
   }
 
   return (
-    // <SafeAreaView style={styles.container}>
-
     <ScrollView>
-      <Pressable style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>Regresar</Text>
-      </Pressable>
+      <Button
+        buttonText='Regresar'
+        style={styles.backButton}
+        onPress={() => router.back()}
+      />
       <View style={styles.content}>
         {/* Información del evento */}
         <Text style={styles.eventTitle}>{eventDetails.title}</Text>
@@ -153,28 +176,54 @@ export default function InfoEvent() {
 
         {/* Requisitos/Documentos */}
         <Text style={styles.sectionTitle}>Requisitos</Text>
-        {eventDetails.documents.map((doc) => (
-          <DocumentCard
-            key={doc.id}
-            document={doc}
-            onUpload={handleUpload}
-            onDelete={handleDelete}
+
+        {!hasApplied ? (
+          /* Solo mostrar el botón de Aplicar cuando no ha aplicado */
+          <Button
+            buttonText='Aplicar'
+            onPress={handleApply}
+            //style={styles.applyButton}
           />
-        ))}
+        ) : (
+          /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
+          <>
+            {eventDetails.documents.map((doc) => (
+              <DocumentCard
+                key={doc.id}
+                document={doc}
+                onUpload={handleUpload}
+                onDelete={handleDelete}
+              />
+            ))}
 
-        {/* Botón de salir */}
-        <Pressable
-          style={styles.exitButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.exitButtonText}>Salir de esta convocatoria</Text>
-        </Pressable>
+            {/* Botón de salir */}
+            <Pressable
+              style={styles.exitButton}
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.exitButtonText}>
+                Darte de baja de la convocatoria
+              </Text>
+            </Pressable>
+          </>
+        )}
 
+        {/* Modal de confirmación para aplicar */}
+        <ConfirmationModal
+          visible={applyModalVisible}
+          title='Confirmar aplicación'
+          description='¿Estás seguro que deseas aplicar a esta convocatoria? Recibirás notificaciones y alertas sobre los requisitos y fechas importantes.'
+          confirmButtonText='Aplicar'
+          confirmButtonColor={colors.selectionBlue}
+          onCancel={() => setApplyModalVisible(false)}
+          onConfirm={confirmApply}
+        />
         {/* Modal de confirmación */}
         <ConfirmationModal
           visible={modalVisible}
           title='Confirmación'
           description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
+          confirmButtonColor={colors.warningRed}
           onCancel={() => setModalVisible(false)}
           onConfirm={() => {
             handleExit()
@@ -183,6 +232,5 @@ export default function InfoEvent() {
         />
       </View>
     </ScrollView>
-    //</SafeAreaView>
   )
 }

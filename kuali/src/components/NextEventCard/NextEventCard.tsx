@@ -8,7 +8,7 @@ export default function NextEventCard({
   title,
   event_date,
   location,
-  activity_id: id,
+  activity_id,
 }: {
   title: string
   event_date: Date
@@ -17,12 +17,12 @@ export default function NextEventCard({
 }) {
   const handlePress = () => {
     router.push({
-      pathname: `/event/${id}`,
+      pathname: `/event/${activity_id}`,
       params: {
         title,
         event_date: event_date.toISOString(),
         location,
-        id,
+        activity_id,
       },
     })
   }
