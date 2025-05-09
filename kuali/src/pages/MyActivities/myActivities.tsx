@@ -11,6 +11,8 @@ export default function MyActivities() {
   const { activities, viewMode, activeTab, showViewSelector } =
     useMyActivities()
 
+  console.log(activities.activitiesToDisplay)
+
   return (
     <View style={styles.container}>
       <TabSelector

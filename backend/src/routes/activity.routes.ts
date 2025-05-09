@@ -12,7 +12,7 @@ router.post('/', isAuthenticated, isAdmin, activityController.createActivity)
 router.get('/:activityId', isAuthenticated, activityController.getActivity)
 router.delete('/:activityId', isAuthenticated, isAdmin, activityController.deleteActivity)
 
-router.get('/:activityId/poster', isAuthenticated, activityController.getActivityPoster)
+router.get('/:activityId/poster', activityController.getActivityPoster)
 
 router.get('/upcoming', isAuthenticated, activityController.getUpcomingActivities)
 

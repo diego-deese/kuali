@@ -251,9 +251,9 @@ class ActivityController {
 
   async getActivityPoster (req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params
+      const { activityId } = req.params
 
-      if (!isNumber(id)) {
+      if (!isNumber(activityId)) {
         res.status(400).json({
           message: 'Error al obtener el poster del evento o convocatoria',
           error: 'El id proporcionado es inválido'
@@ -261,7 +261,7 @@ class ActivityController {
         return
       }
 
-      const posterInfo = await activityService.getActivityPoster(+id)
+      const posterInfo = await activityService.getActivityPoster(+activityId)
 
       if (posterInfo.poster_image !== null) {
         const imageBuffer = Buffer.isBuffer(posterInfo.poster_image)
