@@ -23,7 +23,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.diego.deese.kuali"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +33,8 @@
       "expo-router",
       "expo-secure-store"
     ],
-    "assetBundlePatterns": ["**/*"]
+    "assetBundlePatterns": [
+      "**/*"
+    ]
   }
 }

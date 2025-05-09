@@ -287,6 +287,21 @@ components:
         - location
         - category
 
+    Activity:
+      allOf:
+        - $ref: '#/components/schemas/BaseActivity'
+        - type: object
+          properties:
+            visible_students:
+              type: boolean
+              description: Whether the activity is visible to students
+            visible_researchers:
+              type: boolean
+              description: Whether the activity is visible to researchers
+          required:
+            - visible_students
+            - visible_researchers
+
     UserActivity:
       allOf:
         - $ref: '#/components/schemas/BaseActivity'
@@ -331,7 +346,6 @@ components:
                     minimum: 1
                   status:
                     $ref: '#/components/schemas/RevisionStatus'
-
 
     ActivityAttachedFile:
       type: object

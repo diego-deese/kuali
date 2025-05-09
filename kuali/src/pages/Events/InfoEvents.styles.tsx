@@ -82,10 +82,19 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 
-  backButtonText: {
-    color: colors.solidWhite,
-    fontFamily: 'monserratRegular',
-    fontSize: 14,
+  applyButton: {
+    backgroundColor: colors.blueIcons,
+    padding: 12,
+    borderRadius: 4,
+    alignItems: 'center',
+    marginVertical: 16,
+    alignSelf: 'flex-start',
+    textAlign: 'center',
+  },
+  applyButtonText: {
+    color: colors.fontBlack,
+    fontWeight: '600',
+    fontSize: 16,
   },
 })
 

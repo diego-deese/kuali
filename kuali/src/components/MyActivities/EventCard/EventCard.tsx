@@ -7,21 +7,24 @@ export default function EventCard({
   title,
   event_date,
   location,
-  activity_id: id, //Para saber que evento es
+  activity_id,
+  description,
 }: {
   title: string
   event_date: Date
   activity_id: number
   location: string
+  description: string
 }) {
   const handlePress = () => {
     router.push({
-      pathname: `/event/${id}`,
+      pathname: `/event/${activity_id}`,
       params: {
         title,
         event_date: event_date.toISOString(),
         location,
-        id,
+        activity_id,
+        des: encodeURIComponent(description),
       },
     })
   }

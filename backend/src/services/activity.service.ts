@@ -1,6 +1,7 @@
+import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import { Activities } from '../generated/client'
 import prisma from '../lib/prisma'
-import { ActivityInfo, UserAccesibleActivity } from '../types/Activities'
+import { ActivityInfo, ActivityPoster, UserAccesibleActivity } from '../types/Activities'
 import { NotFoundError } from '../types/Error'
 import registrationService from './registration.service'
 
@@ -12,11 +13,39 @@ class ActivityService {
         last_updated: true,
         admin_creator_id: true,
         location_id: true,
-        category_id: true
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
       },
       include: {
         category: true,
         location: true
+      }
+    })
+
+    return activities
+  }
+
+  async getActivitiesByRole (roleId: number): Promise<UserAccesibleActivity[]> {
+    const activities = await prisma.activities.findMany({
+      omit: {
+        creation_date: true,
+        last_updated: true,
+        admin_creator_id: true,
+        location_id: true,
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
+      },
+      include: {
+        category: true,
+        location: true
+      },
+      where: {
+        OR: [
+          roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
+          roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
+        ]
       }
     })
 
@@ -33,7 +62,9 @@ class ActivityService {
         last_updated: true,
         admin_creator_id: true,
         location_id: true,
-        category_id: true
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
       },
       include: {
         category: true,
@@ -69,7 +100,9 @@ class ActivityService {
           last_updated: true,
           admin_creator_id: true,
           location_id: true,
-          category_id: true
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
         },
         include: {
           category: true,
@@ -283,6 +316,28 @@ class ActivityService {
     })
 
     return activities
+  }
+
+  async getActivityPoster (activityId: number): Promise<ActivityPoster> {
+    const activityPoster = await prisma.activities.findFirst({
+      where: {
+        activity_id: activityId
+      },
+      select: {
+        poster_image: true,
+        poster_mimetype: true
+      }
+    })
+
+    if (activityPoster === null) {
+      throw new NotFoundError('No se encontró ninguna actividad con ese id')
+    }
+
+    if (activityPoster.poster_image === null) {
+      throw new NotFoundError('Esta actividad no tiene un poster')
+    }
+
+    return activityPoster
   }
 }
 
