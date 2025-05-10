@@ -101,8 +101,8 @@ model Activities {
   description String @db.Text
   event_date DateTime
   register_date_limit DateTime
-  poster_image Bytes @db.MediumBlob
-  poster_mimetype String @db.VarChar(50)
+  poster_image Bytes? @db.MediumBlob
+  poster_mimetype String? @db.VarChar(50)
   mandatory Boolean
   creation_date DateTime @default(now())
   last_updated DateTime? @updatedAt

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import userService from '../services/user.service'
-import { isNumber } from '../utils/parsing'
+import { isNumber } from '../utils/validations'
 import { AppError } from '../types/Error'
 
 class UserController {

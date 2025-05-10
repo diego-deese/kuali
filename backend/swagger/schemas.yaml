@@ -311,6 +311,31 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/UserRequirement'
+            isRegistered:
+              type: boolean
+
+    NewActivity:
+      allOf:
+        - $ref: '#/components/schemas/BaseActivity'
+        - type: object
+          properties:
+            visible_students:
+              type: boolean
+            visible_researchers:
+              type: boolean
+    
+    CreatedActivity:
+      allOf:
+        - $ref: '#/components/schemas/NewActivity'
+        - type: object
+          properties:
+            creation_date:
+              type: date-time
+            last_updated:
+              type: date-time
+            admin_creator_id:
+              type: integer
+              minimum: 1
 
     BaseRequirement:
       type: object
@@ -476,14 +501,6 @@ components:
         - user_id
         - activity_id
 
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-    
     UserSession:
       type: object
       properties:
@@ -501,3 +518,17 @@ components:
               type: integer
             role:
               $ref: '#/components/schemas/Role'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    
+    Message:
+      type: object
+      properties:
+        message:
+          type: string
