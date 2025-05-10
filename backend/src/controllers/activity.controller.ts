@@ -4,7 +4,7 @@ import { AppError } from '../types/Error'
 import { isNumber } from '../utils/validations'
 import { AuthRequest } from '../types/Request'
 import { ADMIN_ROLE_ID } from '../constants/roles'
-import { toNewActivity } from '../utils/parsing'
+import { toNewActivity } from '../utils/parsing/Activity'
 
 class ActivityController {
   async getActivities (req: AuthRequest, res: Response): Promise<void> {

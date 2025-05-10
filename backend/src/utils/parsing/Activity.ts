@@ -1,6 +1,7 @@
-import { NewActivity } from '../types/Activities'
-import { ValidationError } from '../types/Error'
-import { isBoolean, isDate, isNumber, isString } from './validations'
+import { NewActivity } from '../../types/Activities'
+import { ValidationError } from '../../types/Error'
+import { isDate, isString } from '../validations'
+import { parseBoolean, parseId } from './shared'
 
 const parseTitle = (titleFromRequest: string): string => {
   if (!isString(titleFromRequest) || titleFromRequest === '') {
@@ -36,25 +37,6 @@ const parseRegisterDate = (dateFromRequest: any): Date => {
   }
 
   return new Date(dateFromRequest)
-}
-
-const parseBoolean = (booleanFromRequest: any, errorMsg: string): boolean => {
-  if (!isBoolean(booleanFromRequest)) {
-    throw new ValidationError(errorMsg)
-  }
-
-  if (booleanFromRequest === true || booleanFromRequest === 'true') return true
-  if (booleanFromRequest === false || booleanFromRequest === 'false') return false
-
-  return Boolean(booleanFromRequest)
-}
-
-const parseId = (idFromRequest: any, errorMsg: string): number => {
-  if (!isNumber(idFromRequest)) {
-    throw new ValidationError(errorMsg)
-  }
-
-  return +idFromRequest
 }
 
 export const toNewActivity = (object: any): NewActivity => {

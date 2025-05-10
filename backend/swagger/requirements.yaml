@@ -1,0 +1,208 @@
+paths:
+  /requirements:
+    post:
+      summary: Creates a new requirement related to an already created activity
+      description: Operation only available for admins.
+      tags:
+        - Requirements
+      requestBody:
+        description: Requirement attributes
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/NewRequirement'
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requirement:
+                    $ref: '#/components/schemas/CreatedRequirement'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Activity Not Found
+          content:
+            application/json:
+              schema:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /requirements/{requirementId}:
+    parameters:
+      - name: requirementId
+        in: path
+        required: true
+        schema:
+          type: integer
+          minimum: 1
+        description: Requirement id
+
+    get:
+      summary: Retrieves information of an specific requirement
+      description: Operation only available for admins. 
+      tags:
+        - Requirements
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requirement:
+                    $ref: '#/components/schemas/CreatedRequirement'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Requirement Not Found
+          content:
+            application/json:
+              schema:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    put:
+      summary: Updates all atributes of an specific requirement
+      description: Operation only available for admins. 
+      tags:
+        - Requirements
+      requestBody:
+        description: Requirement attributes
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/BaseRequirement'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requirement:
+                    $ref: '#/components/schemas/CreatedRequirement'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Requirement Not Found
+          content:
+            application/json:
+              schema:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    patch:
+      summary: Updates some atributes of an specific requirement
+      description: Operation only available for admins. 
+      tags:
+        - Requirements
+      requestBody:
+        description: Requirement attributes
+        content:
+          application/json:
+            schema:
+              type: object
+              $ref: '#/components/schemas/PatchRequirement'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  requirement:
+                    $ref: '#/components/schemas/CreatedRequirement'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Requirement Not Found
+          content:
+            application/json:
+              schema:
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

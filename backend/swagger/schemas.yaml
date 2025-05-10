@@ -380,10 +380,6 @@ components:
     BaseRequirement:
       type: object
       properties:
-        requirement_id:
-          type: integer
-          format: int32
-          description: Unique identifier for the requirement
         name:
           type: string
           maxLength: 100
@@ -396,9 +392,49 @@ components:
         - name
         - description
 
-    UserRequirement:
+    Requirement:
+      allOf:
+        - type: object
+          properties:
+            requirement_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the requirement
+        - $ref: '#/components/schemas/BaseRequirement'
+    
+    NewRequirement:
       allOf:
         - $ref: '#/components/schemas/BaseRequirement'
+        - type: object
+          properties:
+            activity_id:
+              type: integer
+              minimum: 1
+              description: ID of the activity to which the requirement belongs
+          required:
+            - activity_id
+
+    PatchRequirement:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    CreatedRequirement:
+      allOf:
+        - $ref: '#/components/schemas/Requirement'
+        - $ref: '#/components/schemas/NewRequirement'
+        - type: object
+          properties:
+            last_updated:
+              type: string
+              format: date-time
+
+    UserRequirement:
+      allOf:
+        - $ref: '#/components/schemas/Requirement'
         - type: object
           properties:
             userDocuments:
