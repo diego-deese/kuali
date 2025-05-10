@@ -126,6 +126,36 @@ components:
             role:
               $ref: '#/components/schemas/Role'
 
+    StudentInProgram:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: First name of the user
+        second_name:
+          type: string
+          maxLength: 255
+          description: Second name of the user (optional)
+          nullable: true
+        paternal_lastname:
+          type: string
+          maxLength: 255
+          description: Paternal lastname of the user
+        maternal_lastname:
+          type: string
+          maxLength: 255
+          description: Maternal lastname of the user
+        institutional_email:
+          type: string
+          maxLength: 255
+          format: email
+          description: Institutional email address (unique)
+        identifier:
+          type: string
+          maxLength: 255
+          description: User identifier
+
     RefreshToken:
       type: object
       properties:
@@ -154,6 +184,16 @@ components:
       required:
         - hashedToken
         - user_id
+
+    AcademicProgramWithStudents:
+      type: object
+      properties:
+        name:
+          type: string
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentInProgram'
 
     StudentAcademicProgram:
       type: object

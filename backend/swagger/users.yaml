@@ -337,3 +337,39 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+
+  /users/students:
+    get:
+      summary: List all the resarcher's students group by academic program
+      description: Operation only available for researchers
+      tags:
+        - Users
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  studentsByAcademicProgram:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/AcademicProgramWithStudents'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'

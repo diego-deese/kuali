@@ -63,7 +63,7 @@ model AcademicPrograms {
   researcher_id Int?
 
   researcher Users? @relation(fields: [researcher_id], references: [user_id])
-  students Inscriptions[]
+  inscriptions Inscriptions[]
 }
 
 model Inscriptions {
