@@ -14,6 +14,7 @@ import ConfirmationModal from '../../components/shared/ConfirmationModal/Confirm
 import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
+import { DocumentStatus } from '../../types/UserDocument'
 
 // Detalles completos de un evento académico.
 interface EventDetails {
@@ -65,19 +66,19 @@ export default function InfoEvent() {
               id: 1,
               title: 'Documento 1',
               description: 'Solicita este documento en servicios escolares',
-              status: 'pending',
+              status: DocumentStatus.Pendiente,
             },
             {
               id: 2,
               title: 'Documento 2',
               description: 'Solicita este documento en servicios escolares',
-              status: 'completed',
+              status: DocumentStatus.Aprobado,
             },
             {
               id: 3,
               title: 'Documento 3',
               description: 'Descarga y llena el formulario',
-              status: 'rejected',
+              status: DocumentStatus.Rechazado,
             },
           ],
         }
@@ -179,11 +180,7 @@ export default function InfoEvent() {
 
         {!hasApplied ? (
           /* Solo mostrar el botón de Aplicar cuando no ha aplicado */
-          <Button
-            buttonText='Aplicar'
-            onPress={handleApply}
-            //style={styles.applyButton}
-          />
+          <Button buttonText='Aplicar' onPress={handleApply} />
         ) : (
           /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
           <>
