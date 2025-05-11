@@ -31,11 +31,13 @@ export default function MyEvents() {
             showsVerticalScrollIndicator={false}
           >
             <NextEventCard
+              activity_id={6}
               title={'Evento padrisimo'}
               event_date={new Date('2025-05-15T17:00:00')}
               location={'Auditorio'}
             ></NextEventCard>
             <NextEventCard
+              activity_id={7}
               title={'Evento padrisimo'}
               event_date={new Date('2025-05-15T17:00:00')}
               location={'Auditorio'}

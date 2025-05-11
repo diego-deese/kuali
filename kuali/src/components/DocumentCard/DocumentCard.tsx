@@ -57,8 +57,19 @@ export default function DocumentCard({
     if (status === DocumentStatus.Aprobado) {
       return null
     }
-
-    // Si no está aprobado, mostramos los botones normalmente
+    if (status === DocumentStatus.Rechazado) {
+      return (
+        <View style={styles.buttonContainer}>
+          <Button
+            buttonText='Subir documento'
+            onPress={() => onUpload && onUpload(id)}
+            disabled={false}
+            size='small'
+          />
+        </View>
+      )
+    }
+    // Si esta pendiente, se muestran ambos
     return (
       <View style={styles.buttonContainer}>
         <Button

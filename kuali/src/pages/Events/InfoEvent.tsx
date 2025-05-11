@@ -43,9 +43,6 @@ export default function InfoEvent() {
   const [hasApplied, setHasApplied] = useState(false)
 
   useEffect(() => {
-    console.log('Descripción recibida:', JSON.stringify(params))
-    console.log('Descripción específica:', params.description)
-    console.log('Tipo de descripción:', typeof params.description)
     const fetchEventDetails = async () => {
       try {
         setLoading(true)
@@ -58,9 +55,9 @@ export default function InfoEvent() {
             ? new Date(params.event_date as string)
             : new Date(),
           location: (params.location as string) || 'Lugar',
-          description: params.desc
-            ? decodeURIComponent(params.desc as string)
-            : 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida justo et elit vulputate elementum at quis dolor. Nulla ac nibh dapibus est malesuada vehicula vitae a justo.',
+          description:
+            (params.des as string) ||
+            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida justo et elit vulputate elementum at quis dolor. Nulla ac nibh dapibus est malesuada vehicula vitae a justo.',
           documents: [
             {
               id: 1,
