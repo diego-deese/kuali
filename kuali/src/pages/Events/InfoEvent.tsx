@@ -39,9 +39,9 @@ export default function InfoEvent() {
   const [hasApplied, setHasApplied] = useState(false)
 
   useEffect(() => {
-    console.log('Descripción recibida:', JSON.stringify(params))
-    console.log('Descripción específica:', params.description)
-    console.log('Tipo de descripción:', typeof params.description)
+    // console.log('Descripción recibida:', JSON.stringify(params))
+    // console.log('Descripción específica:', params.description)
+    // console.log('Tipo de descripción:', typeof params.description)
     const fetchEventDetails = async () => {
       try {
         setLoading(true)

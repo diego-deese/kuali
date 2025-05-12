@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import locationService from '../services/location.service'
 import { AppError } from '../types/Error'
-import { isNumber } from '../utils/parsing'
+import { isNumber } from '../utils/validations'
 
 class LocationController {
   async getLocations (_req: Request, res: Response): Promise<void> {

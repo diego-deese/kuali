@@ -19,7 +19,7 @@ services:
       - "3001:3000"
     environment:
     # Esta URL será usada por el cliente de prisma mantener el host en el nombre del contenedor y el puerto en el puerto por defecto de MYSQL
-      - DATABASE_URL=mysql://root:root@kuali-db:3306/kuali
+      - DATABASE_URL=mysql://root:root@kuali-db:3306/kuali?timezone=-06:00
     build:
       context: ./backend
       dockerfile: Dockerfile
