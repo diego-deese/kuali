@@ -12,6 +12,7 @@ const EventCalendarCard = ({
   date: string
   id: number
   onPress?: () => void
+  disabled?: boolean
 }) => {
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>

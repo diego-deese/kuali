@@ -1,7 +1,8 @@
 import { Pressable, Text, View } from 'react-native'
-import { router } from 'expo-router'
 import styles from './EventCard.styles'
 import { FormattedDate } from '../../shared/FormattedDate/FormattedDate'
+import { useEventNavigation } from '../../../hooks/NavigationActivity/useEventNavigation'
+import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 
 export default function EventCard({
   title,
@@ -16,8 +17,9 @@ export default function EventCard({
   location: string
   description: string
 }) {
+  const { isNavigating, navigateToEvent } = useEventNavigation()
   const handlePress = () => {
-    router.push({
+    navigateToEvent({
       pathname: `/event/${activity_id}`,
       params: {
         title,
@@ -30,11 +32,15 @@ export default function EventCard({
   }
 
   return (
-    <Pressable onPress={handlePress}>
-      <View style={styles.card}>
-        <Text style={styles.title}>{title}</Text>
-        <FormattedDate date={event_date} style={styles.date}></FormattedDate>
-      </View>
-    </Pressable>
+    <>
+      <Pressable onPress={handlePress}>
+        <View style={styles.card}>
+          <Text style={styles.title}>{title}</Text>
+          <FormattedDate date={event_date} style={styles.date}></FormattedDate>
+        </View>
+      </Pressable>
+      {/* Modal de carga */}
+      <LoadingModal visible={isNavigating} />
+    </>
   )
 }

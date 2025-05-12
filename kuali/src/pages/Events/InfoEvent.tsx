@@ -14,16 +14,25 @@ import ConfirmationModal from '../../components/shared/ConfirmationModal/Confirm
 import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
-import { DocumentStatus } from '../../types/UserDocument'
+import { Requirements } from '../../types/Requirements'
+import { UserDocument, DocumentStatus } from '../../types/UserDocument'
 
 // Detalles completos de un evento académico.
 interface EventDetails {
   activity_id: number
   title: string
-  event_date: Date
-  location: string
   description: string
-  documents: Document[]
+  event_date: Date
+  register_date_limit: Date
+  location: {
+    location_id: number
+    name: string
+  }
+  category: {
+    category_id: number
+    name: DocumentStatus
+  }
+  requirements: Requirements[]
 }
 
 /*
@@ -54,28 +63,41 @@ export default function InfoEvent() {
           event_date: params.event_date
             ? new Date(params.event_date as string)
             : new Date(),
-          location: (params.location as string) || 'Lugar',
+          location: {
+            location_id: 1,
+            name: (params.location as string) || 'Lugar',
+          },
           description:
             (params.des as string) ||
             'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida justo et elit vulputate elementum at quis dolor. Nulla ac nibh dapibus est malesuada vehicula vitae a justo.',
-          documents: [
+          requirements: [
             {
-              id: 1,
-              title: 'Documento 1',
+              requirement_id: 1,
+              name: 'Documento 1',
               description: 'Solicita este documento en servicios escolares',
-              status: DocumentStatus.Pendiente,
+              userDocuments: [],
             },
             {
-              id: 2,
-              title: 'Documento 2',
+              requirement_id: 2,
+              name: 'Documento 2',
               description: 'Solicita este documento en servicios escolares',
-              status: DocumentStatus.Aprobado,
+              userDocuments: [
+                {
+                  user_document_id: 101,
+                  status: {
+                    revision_status_id: 2,
+                    name: DocumentStatus.Aprobado,
+                  },
+                  //title: 'Mi documento 2',
+                  //description: 'Documento cargado',
+                },
+              ],
             },
             {
-              id: 3,
-              title: 'Documento 3',
+              requirement_id: 3,
+              name: 'Documento 3',
               description: 'Descarga y llena el formulario',
-              status: DocumentStatus.Rechazado,
+              userDocuments: [],
             },
           ],
         }
@@ -168,7 +190,7 @@ export default function InfoEvent() {
         </View>
         <View style={styles.eventInfoRow}>
           <LocationIcon style={styles.eventInfoIcon} />
-          <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
+          <Text style={styles.eventInfoText}>{eventDetails.location.name}</Text>
         </View>
         <Text style={styles.description}>{eventDetails.description}</Text>
 
@@ -181,9 +203,9 @@ export default function InfoEvent() {
         ) : (
           /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
           <>
-            {eventDetails.documents.map((doc) => (
+            {eventDetails.requirements.map((doc) => (
               <DocumentCard
-                key={doc.id}
+                key={doc.requirement_id}
                 document={doc}
                 onUpload={handleUpload}
                 onDelete={handleDelete}

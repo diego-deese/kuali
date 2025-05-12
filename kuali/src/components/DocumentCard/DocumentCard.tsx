@@ -9,6 +9,7 @@ export interface Document {
   title: string
   description: string
   status: DocumentStatus
+  userDocumentId?: number
 }
 
 interface DocumentCardProps {
