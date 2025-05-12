@@ -17,6 +17,7 @@ export default function UserCard({
   paternal_lastname,
   maternal_lastname,
   state,
+  onGetInfoPress,
   onEditPress,
   onDeactivatePress,
 }: {
@@ -26,6 +27,7 @@ export default function UserCard({
   paternal_lastname: string
   maternal_lastname: string
   state: boolean
+  onGetInfoPress: (user_id: number) => void
   onEditPress: (user_id: number) => void
   onDeactivatePress: (user_id: number) => void
 }) {
@@ -40,7 +42,10 @@ export default function UserCard({
           </Text>
         </View>
         <View style={styles.actionsContainer}>
-          <IconButton icon={<InfoIcon />} onPress={() => console.log('Ver')} />
+          <IconButton
+            icon={<InfoIcon />}
+            onPress={() => onGetInfoPress(user_id)}
+          />
           <IconButton
             icon={<EditIcon />}
             onPress={() => onEditPress(user_id)}

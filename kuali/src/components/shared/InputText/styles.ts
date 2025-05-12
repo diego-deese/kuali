@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
     paddingRight: 45,
     includeFontPadding: false,
     textAlignVertical: 'center',
+    color: colors.fontBlack,
   },
   icon: {
     position: 'absolute',

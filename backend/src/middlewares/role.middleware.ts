@@ -2,6 +2,19 @@ import { Response, NextFunction } from 'express'
 import { AuthRequest } from '../types/Request'
 import { ADMIN_ROLE_ID, RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 
+export const extractUserRole = (req: AuthRequest, res: Response, next: NextFunction): void => {
+  if (req.user == null) {
+    res.status(403).json({
+      message: 'Error al extraer el rol del usuario',
+      error: 'Usuario no autenticado'
+    })
+    return
+  }
+
+  // El role_id ya está disponible en req.user gracias al middleware de autenticación
+  next()
+}
+
 export const hasRole = (allowedRoles: number[]) => {
   return (req: AuthRequest, res: Response, next: NextFunction): void => {
     if (req.user == null) {

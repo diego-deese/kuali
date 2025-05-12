@@ -19,7 +19,7 @@ const ActivityCarousel: React.FC<ActivityCarouselProps> = ({ activities }) => {
 
   return (
     <View style={styles.container}>
-      <ActivityCard activity={{ image_url: null, ...currentEvent }} />
+      <ActivityCard activity={currentEvent} />
       {/* Only if there's more than 1 activity we show the navigation component */}
       {activities.length > 1 && (
         <CarouselNavigation onNext={nextSlide} onPrev={prevSlide} />

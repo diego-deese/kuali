@@ -126,6 +126,36 @@ components:
             role:
               $ref: '#/components/schemas/Role'
 
+    StudentInProgram:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 255
+          description: First name of the user
+        second_name:
+          type: string
+          maxLength: 255
+          description: Second name of the user (optional)
+          nullable: true
+        paternal_lastname:
+          type: string
+          maxLength: 255
+          description: Paternal lastname of the user
+        maternal_lastname:
+          type: string
+          maxLength: 255
+          description: Maternal lastname of the user
+        institutional_email:
+          type: string
+          maxLength: 255
+          format: email
+          description: Institutional email address (unique)
+        identifier:
+          type: string
+          maxLength: 255
+          description: User identifier
+
     RefreshToken:
       type: object
       properties:
@@ -154,6 +184,16 @@ components:
       required:
         - hashedToken
         - user_id
+
+    AcademicProgramWithStudents:
+      type: object
+      properties:
+        name:
+          type: string
+        students:
+          type: array
+          items:
+            $ref: '#/components/schemas/StudentInProgram'
 
     StudentAcademicProgram:
       type: object
@@ -287,6 +327,21 @@ components:
         - location
         - category
 
+    Activity:
+      allOf:
+        - $ref: '#/components/schemas/BaseActivity'
+        - type: object
+          properties:
+            visible_students:
+              type: boolean
+              description: Whether the activity is visible to students
+            visible_researchers:
+              type: boolean
+              description: Whether the activity is visible to researchers
+          required:
+            - visible_students
+            - visible_researchers
+
     UserActivity:
       allOf:
         - $ref: '#/components/schemas/BaseActivity'
@@ -296,14 +351,35 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/UserRequirement'
+            isRegistered:
+              type: boolean
+
+    NewActivity:
+      allOf:
+        - $ref: '#/components/schemas/BaseActivity'
+        - type: object
+          properties:
+            visible_students:
+              type: boolean
+            visible_researchers:
+              type: boolean
+    
+    CreatedActivity:
+      allOf:
+        - $ref: '#/components/schemas/NewActivity'
+        - type: object
+          properties:
+            creation_date:
+              type: date-time
+            last_updated:
+              type: date-time
+            admin_creator_id:
+              type: integer
+              minimum: 1
 
     BaseRequirement:
       type: object
       properties:
-        requirement_id:
-          type: integer
-          format: int32
-          description: Unique identifier for the requirement
         name:
           type: string
           maxLength: 100
@@ -316,9 +392,49 @@ components:
         - name
         - description
 
-    UserRequirement:
+    Requirement:
+      allOf:
+        - type: object
+          properties:
+            requirement_id:
+              type: integer
+              format: int32
+              description: Unique identifier for the requirement
+        - $ref: '#/components/schemas/BaseRequirement'
+    
+    NewRequirement:
       allOf:
         - $ref: '#/components/schemas/BaseRequirement'
+        - type: object
+          properties:
+            activity_id:
+              type: integer
+              minimum: 1
+              description: ID of the activity to which the requirement belongs
+          required:
+            - activity_id
+
+    PatchRequirement:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    CreatedRequirement:
+      allOf:
+        - $ref: '#/components/schemas/Requirement'
+        - $ref: '#/components/schemas/NewRequirement'
+        - type: object
+          properties:
+            last_updated:
+              type: string
+              format: date-time
+
+    UserRequirement:
+      allOf:
+        - $ref: '#/components/schemas/Requirement'
         - type: object
           properties:
             userDocuments:
@@ -331,7 +447,6 @@ components:
                     minimum: 1
                   status:
                     $ref: '#/components/schemas/RevisionStatus'
-
 
     ActivityAttachedFile:
       type: object
@@ -462,14 +577,6 @@ components:
         - user_id
         - activity_id
 
-    Error:
-      type: object
-      properties:
-        error:
-          type: string
-        message:
-          type: string
-    
     UserSession:
       type: object
       properties:
@@ -487,3 +594,17 @@ components:
               type: integer
             role:
               $ref: '#/components/schemas/Role'
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+    
+    Message:
+      type: object
+      properties:
+        message:
+          type: string

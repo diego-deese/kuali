@@ -1,10 +1,10 @@
 paths:
-  /users:
+  /activities:
     get:
-      summary: List all users
-      description: Operation only available for admins
+      summary: List all the activities available for the user
+      description: Operation available for everyone
       tags:
-        - Users
+        - Activities
       responses:
         '200':
           content:
@@ -12,12 +12,12 @@ paths:
               schema:
                 type: object
                 properties:
-                  users:
+                  activities:
                     type: array
                     items:
-                      $ref: '#/components/schemas/User'
+                      $ref: '#/components/schemas/UserActivity'
         '400':
-          description: Invalid parameters
+          description: Bad request
           content:
             application/json:
               schema:
@@ -34,7 +34,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '500': 
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
           description: Internal server error
           content:
             application/json:
@@ -42,27 +48,32 @@ paths:
                 $ref: '#/components/schemas/Error'
 
     post:
-      summary: Add a new user
-      description: Operation only available for admins
+      summary: Creates a new activity
+      description: Operation available for everyone.
       tags:
-        - Users
+        - Activities
       requestBody:
         description: User attributes
         content:
           application/json:
             schema:
               type: object
-              $ref: '#/components/schemas/NewUser'
+              $ref: '#/components/schemas/NewActivity'
       responses:
         '200':
-          description: Retrieves the created user
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  user:
-                    $ref: '#/components/schemas/CreatedUser'
+                  activity:
+                    $ref: '#/components/schemas/CreatedActivity'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
@@ -71,12 +82,6 @@ paths:
                 $ref: '#/components/schemas/Error'
         '403':
           description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '409':
-          description: Conflict error
           content:
             application/json:
               schema:
@@ -88,21 +93,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/{id}:
+  /activities/{activityId}:
     parameters:
-      - name: id
+      - name: activityId
         in: path
         required: true
         schema:
           type: integer
           minimum: 1
-        description: User id
-    
+        description: Activity id
+
     get:
-      summary: Get an specific user
-      description: Operation available for everyone
+      summary: Retrieves information of an specific activity
+      description: "Operation available for everyone. \n If the user is subscribed to the activity, it will return the information of the documents the user has uploaded to fullfill the activity's requirements"
       tags:
-        - Users
+        - Activities
       responses:
         '200':
           content:
@@ -110,8 +115,8 @@ paths:
               schema:
                 type: object
                 properties:
-                  user:
-                    $ref: '#/components/schemas/User'
+                  activity:
+                    $ref: '#/components/schemas/UserActivity'
         '400':
           description: Bad request
           content:
@@ -124,14 +129,14 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '403':
-          description: Forbidden
+        '404':
+          description: Not Found
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '404':
-          description: User not found
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:
@@ -142,76 +147,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-    
-    put:
-      summary: Update all user data
-      description: Operation only available for admins
-      tags:
-        - Users
-      responses:
-        '200':
-          description: Retrieves the updated user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  user:
-                    $ref: '#/components/schemas/UpdatedUser'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-                type: object
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '409':
-          description: Conflict error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-                type: object
-        '500':
-            description: Internal server error
-            content:
-              application/json:
-                schema:
-                  $ref: '#/components/schemas/Error'
 
     delete:
-      summary: Delete the user
-      description: Operation only available for admins
+      summary: Deletes an specific activity.
+      description: Operation available for everyone. WARNING all registers retated to the activity get deleted too (registrations, requirements, userDocuments and activityAttachedFiles)
       tags:
-        - Users
+        - Activities
       responses:
         '200':
-          description: User deleted successfully
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  message:
-                    type: string
+                $ref: '#/components/schemas/Message'
         '400':
           description: Bad request
           content:
             application/json:
               schema:
-                  $ref: '#/components/schemas/Error'
+                $ref: '#/components/schemas/Error'
         '401':
           description: Unauthorized
           content:
@@ -225,7 +178,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
         '404':
-          description: User not found
+          description: Not Found
           content:
             application/json:
               schema:
@@ -237,21 +190,21 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/{id}/profilePhoto:
+  /activities/{activityId}/poster:
     parameters:
-      - name: id
+      - name: activityId
         in: path
         required: true
         schema:
           type: integer
           minimum: 1
-        description: User id
+        description: Activity id
     
     get:
-      summary: Get user's profile photo
+      summary: Get activity poster image
       description: Operation available for everyone
       tags:
-        - Users
+        - Activities
       responses:
         '200':
           content:
@@ -265,6 +218,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
         '404':
           description: User not found
           content:
@@ -277,33 +242,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-
-  /users/{id}/password:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          minimum: 1
-        description: User id
-    
-    patch:
-      summary: Update user's password
+  
+  /activities/upcoming:
+    get:
+      summary: Retrieves all user's available upcoming activities
       description: Operation available for everyone
       tags:
-        - Users
-      requestBody:
-        description: Actual user's password for validation and the new password
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                actual_password:
-                  type: string
-                new_password:
-                  type: string
+        - Activities
       responses:
         '200':
           content:
@@ -311,8 +256,10 @@ paths:
               schema:
                 type: object
                 properties:
-                  message:
-                    type: string
+                  activities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserActivity'
         '400':
           description: Bad request
           content:
@@ -338,12 +285,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/students:
+  /activities/upcoming/user:
     get:
-      summary: List all the resarcher's students group by academic program
-      description: Operation only available for researchers
+      summary: Retrieves user's upcoming activities is registered to (the user is obtained by the token)
+      description: Operation available for everyone
       tags:
-        - Users
+        - Activities
       responses:
         '200':
           content:
@@ -351,18 +298,66 @@ paths:
               schema:
                 type: object
                 properties:
-                  studentsByAcademicProgram:
+                  activities:
                     type: array
                     items:
-                      $ref: '#/components/schemas/AcademicProgramWithStudents'
+                      $ref: '#/components/schemas/UserActivity'
         '400':
           description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '404':
-          description: User not found
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /activities/past/user:
+    get:
+      summary: Retrieves user's past activities is registered to (the user is obtained by the token)
+      description: Operation available for everyone
+      tags:
+        - Activities
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  activities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserActivity'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
           content:
             application/json:
               schema:

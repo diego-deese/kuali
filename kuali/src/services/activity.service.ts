@@ -10,6 +10,10 @@ class ActivityService {
     this.api = authService.getApiClient()
   }
 
+  getActivityPosterUrl(activityId: number): string {
+    return `${process.env.EXPO_PUBLIC_API_URL}/activities/${activityId}/poster`
+  }
+
   async getUpcomingActivities(
     userId: number,
   ): Promise<ArrayResponse<Activity> | ResponseError> {
