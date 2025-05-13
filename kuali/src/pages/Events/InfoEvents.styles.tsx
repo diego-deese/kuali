@@ -96,6 +96,22 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
   },
+  registerLimitContainer: {
+    marginTop: 10,
+    marginBottom: 20,
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  registerLimitLabel: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: colors.fontBlack,
+    marginBottom: 4,
+  },
+  registerLimitDate: {
+    fontSize: 16,
+    color: colors.fontBlack,
+  },
 })
 
 export default styles

@@ -30,9 +30,10 @@ interface EventDetails {
   }
   category: {
     category_id: number
-    name: DocumentStatus
+    name: string
   }
   requirements: Requirements[]
+  isRegistered: boolean
 }
 
 /*
@@ -60,16 +61,20 @@ export default function InfoEvent() {
         const mockData: EventDetails = {
           activity_id,
           title: (params.title as string) || 'Nombre del evento',
+          description:
+            (params.des as string) || 'Lorem ipsum dolor sit amet...',
           event_date: params.event_date
             ? new Date(params.event_date as string)
             : new Date(),
+          register_date_limit: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
           location: {
             location_id: 1,
             name: (params.location as string) || 'Lugar',
           },
-          description:
-            (params.des as string) ||
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer gravida justo et elit vulputate elementum at quis dolor. Nulla ac nibh dapibus est malesuada vehicula vitae a justo.',
+          category: {
+            category_id: 1,
+            name: 'Evento académico',
+          },
           requirements: [
             {
               requirement_id: 1,
@@ -86,10 +91,8 @@ export default function InfoEvent() {
                   user_document_id: 101,
                   status: {
                     revision_status_id: 2,
-                    name: DocumentStatus.Aprobado,
+                    name: DocumentStatus.Aprobado, // Texto plano en lugar de DocumentStatus.Aprobado
                   },
-                  //title: 'Mi documento 2',
-                  //description: 'Documento cargado',
                 },
               ],
             },
@@ -97,9 +100,18 @@ export default function InfoEvent() {
               requirement_id: 3,
               name: 'Documento 3',
               description: 'Descarga y llena el formulario',
-              userDocuments: [],
+              userDocuments: [
+                {
+                  user_document_id: 102,
+                  status: {
+                    revision_status_id: 2,
+                    name: DocumentStatus.Rechazado, // Texto plano en lugar de DocumentStatus.Aprobado
+                  },
+                },
+              ],
             },
           ],
+          isRegistered: false, // Por defecto no está registrado
         }
 
         // Simular llamda xd
@@ -147,6 +159,26 @@ export default function InfoEvent() {
     setHasApplied(true)
     setApplyModalVisible(false)
   }
+
+  // Agrega esta función antes del return en tu componente InfoEvent
+  const getDocumentStatusFromString = (
+    statusName: DocumentStatus | string,
+  ): DocumentStatus => {
+    // Si ya es un DocumentStatus, devuélvelo directamente
+    if (Object.values(DocumentStatus).includes(statusName as DocumentStatus)) {
+      return statusName as DocumentStatus
+    }
+
+    // Si es un string, conviértelo al enum correspondiente
+    switch (String(statusName).toLowerCase()) {
+      case 'aprobado':
+        return DocumentStatus.Aprobado
+      case 'rechazado':
+        return DocumentStatus.Rechazado
+      default:
+        return DocumentStatus.Pendiente
+    }
+  }
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -193,6 +225,17 @@ export default function InfoEvent() {
           <Text style={styles.eventInfoText}>{eventDetails.location.name}</Text>
         </View>
         <Text style={styles.description}>{eventDetails.description}</Text>
+        {/* Fecha límite de registro */}
+        <View style={styles.registerLimitContainer}>
+          <Text style={styles.registerLimitLabel}>
+            Fecha límite de registro:{' '}
+          </Text>
+          <FormattedDate
+            date={eventDetails.register_date_limit}
+            style={styles.registerLimitDate}
+            showTime={false}
+          />
+        </View>
 
         {/* Requisitos/Documentos */}
         <Text style={styles.sectionTitle}>Requisitos</Text>
@@ -203,14 +246,35 @@ export default function InfoEvent() {
         ) : (
           /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
           <>
-            {eventDetails.requirements.map((doc) => (
-              <DocumentCard
-                key={doc.requirement_id}
-                document={doc}
-                onUpload={handleUpload}
-                onDelete={handleDelete}
-              />
-            ))}
+            {eventDetails.requirements.map((req) => {
+              // Obtener el documento del usuario si existe
+              const userDocument =
+                req.userDocuments && req.userDocuments.length > 0
+                  ? req.userDocuments[0]
+                  : undefined
+
+              // Determinar el estado del documento basado en el status
+              const documentStatus = userDocument?.status?.name
+                ? getDocumentStatusFromString(userDocument.status.name)
+                : DocumentStatus.Pendiente
+
+              return (
+                <DocumentCard
+                  key={req.requirement_id}
+                  document={{
+                    id: req.requirement_id,
+                    title: req.name,
+                    description: req.description,
+                    status: documentStatus,
+                    userDocumentId: userDocument?.user_document_id,
+                  }}
+                  onUpload={() => handleUpload(req.requirement_id)}
+                  onDelete={() =>
+                    handleDelete(userDocument?.user_document_id || 0)
+                  }
+                />
+              )
+            })}
 
             {/* Botón de salir */}
             <Pressable
