@@ -6,7 +6,6 @@ import { isNumber } from '../utils/validations'
 class ActivityAttachedFileController {
   uploadFile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { name } = req.body
       const { activityId } = req.params
       const file = req.file
 
@@ -18,15 +17,7 @@ class ActivityAttachedFileController {
         return
       }
 
-      if (name === undefined) {
-        res.status(400).json({
-          message: 'Error al subir el archivo a la Base de Datos',
-          error: 'No se proporcionó el nombre del archivo'
-        })
-        return
-      }
-
-      const activityAttachedFile = await activityAttachedFileService.uploadFile(+activityId, name, file)
+      const activityAttachedFile = await activityAttachedFileService.uploadFile(+activityId, file)
 
       res.status(201).json({ activityAttachedFile })
     } catch (error) {

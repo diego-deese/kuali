@@ -6,7 +6,7 @@ import { isAdmin } from '../middlewares/role.middleware'
 
 const router = Router()
 
-router.get('/download/:fileId', /* isAuthenticated, */ activityAttachedFileController.downloadFile)
+router.get('/download/:fileId', isAuthenticated, activityAttachedFileController.downloadFile)
 
 router.post('/upload/:activityId', isAuthenticated, isAdmin, uploadMemory.single('file'), activityAttachedFileController.uploadFile)
 
