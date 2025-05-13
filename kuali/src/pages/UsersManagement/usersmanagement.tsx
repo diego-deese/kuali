@@ -42,6 +42,10 @@ export default function UsersManagement() {
     router.push(`/user/edituser/${userId}`)
   }
 
+  const handleGetInfo = (userId: number) => {
+    router.push(`/user/infouser/${userId}`)
+  }
+
   const openConfirmationModal = (user_id: number) => {
     setSelectedUserId(user_id)
     setShowModal(true)
@@ -105,6 +109,7 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={openConfirmationModal}
                   />
@@ -122,6 +127,7 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={openConfirmationModal}
                   />
@@ -139,6 +145,7 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={openConfirmationModal}
                   />
