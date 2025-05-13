@@ -114,6 +114,7 @@ class ActivityService {
             include: {
               userDocuments: {
                 select: {
+                  user_document_id: true,
                   status: true
                 },
                 where: {
