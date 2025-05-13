@@ -4,20 +4,13 @@ import { router } from 'expo-router'
 import { styles } from './styles'
 import { setStudents } from '../../../context/StudentsStored'
 
-interface Student {
-  id: number
-  name: string
-  project: string
-  role: string
-  email: string
-}
-
-interface Props {
-  students: Student[]
-  currentIndex: number
-}
-
-export default function NavigationButtons({ students, currentIndex }: Props) {
+export default function NavigationButtons({
+  index,
+  students,
+}: {
+  index: number
+  students: any[]
+}) {
   const navigateTo = (newIndex: number) => {
     const nextStudent = students[newIndex]
 
@@ -26,11 +19,13 @@ export default function NavigationButtons({ students, currentIndex }: Props) {
     router.push({
       pathname: '/students/[id]',
       params: {
-        id: nextStudent.id.toString(),
+        user_id: nextStudent.user_id.toString(),
         name: nextStudent.name,
+        paternal_lastname: nextStudent.paternal_lastname,
+        identifier: nextStudent.identifier,
         project: nextStudent.project,
         role: nextStudent.role,
-        email: nextStudent.email,
+        institutional_email: nextStudent.institutional_email,
         index: newIndex.toString(),
       },
     })
@@ -38,13 +33,13 @@ export default function NavigationButtons({ students, currentIndex }: Props) {
 
   return (
     <View style={styles.container}>
-      {currentIndex > 0 && (
-        <TouchableOpacity onPress={() => navigateTo(currentIndex - 1)}>
+      {index > 0 && (
+        <TouchableOpacity onPress={() => navigateTo(index - 1)}>
           <Text style={styles.text}>← Anterior</Text>
         </TouchableOpacity>
       )}
-      {currentIndex < students.length - 1 && (
-        <TouchableOpacity onPress={() => navigateTo(currentIndex + 1)}>
+      {index < students.length - 1 && (
+        <TouchableOpacity onPress={() => navigateTo(index + 1)}>
           <Text style={styles.text}>Siguiente →</Text>
         </TouchableOpacity>
       )}

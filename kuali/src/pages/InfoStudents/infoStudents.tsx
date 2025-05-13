@@ -7,7 +7,16 @@ import colors from '../../constants/colors'
 import Button from '../../components/shared/Button/Button'
 
 export default function InfoStudents() {
-  const { id, name, role, project, email, index } = useLocalSearchParams()
+  const {
+    user_id,
+    name,
+    paternal_lastname,
+    identifier,
+    role,
+    project,
+    institutional_email,
+    index,
+  } = useLocalSearchParams()
 
   const parsedIndex = parseInt(index as string)
   const parsedStudents = getStudents()
@@ -24,11 +33,13 @@ export default function InfoStudents() {
         <View style={styles.imagePlaceholder} />
 
         {/* Nombre */}
-        <Text style={styles.name}>{name}</Text>
+        <Text style={styles.name}>
+          {name} {paternal_lastname}
+        </Text>
 
         {/* ID simulado */}
         <View style={styles.idContainer}>
-          <Text style={styles.idText}>{id}</Text>
+          <Text style={styles.idText}>{identifier}</Text>
         </View>
 
         {/* Rol */}
@@ -38,9 +49,9 @@ export default function InfoStudents() {
         <Text style={styles.info}>{project}</Text>
 
         {/* Correo */}
-        <Text style={styles.info}>{email}</Text>
+        <Text style={styles.info}>{institutional_email}</Text>
       </View>
-      <NavigationButtons students={parsedStudents} currentIndex={parsedIndex} />
+      <NavigationButtons students={parsedStudents} index={parsedIndex} />
     </View>
   )
 }

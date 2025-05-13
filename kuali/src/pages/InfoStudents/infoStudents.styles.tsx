@@ -18,7 +18,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   name: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 8,
     color: colors.fontBlack,
@@ -31,16 +31,18 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   idText: {
+    fontSize: 18,
     color: colors.solidWhite,
-    fontWeight: 'bold',
+    //fontWeight: 'bold',
   },
   role: {
+    fontSize: 17,
     fontWeight: 'bold',
     marginBottom: 8,
     color: colors.fontBlack,
   },
   info: {
-    fontSize: 16,
+    fontSize: 17,
     marginBottom: 4,
     color: colors.fontBlack,
     textAlign: 'center',

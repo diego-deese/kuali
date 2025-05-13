@@ -1,64 +1,57 @@
 import React from 'react'
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native'
-import { router } from 'expo-router'
+import { View, Text, ScrollView } from 'react-native'
 import styles from './myStudents.styles'
+import StudentCard from '../../components/MyStudents/StudentCard/StudentCard'
 import { setStudents } from '../../context/StudentsStored'
 
 const assignedStudents = [
   {
-    id: 1,
-    name: 'Nombre Estudiante 1',
+    user_id: 1,
+    name: 'Juan',
+    paternal_lastname: 'Pi',
+    identifier: 'IPN000001',
     role: 'ESTUDIANTE',
     project: 'Investigación 1',
-    email: 'contacto1@ipn.mx',
+    institutional_email: 'contacto1@ipn.mx',
   },
   {
-    id: 2,
-    name: 'Nombre Estudiante 2',
+    user_id: 2,
+    name: 'Sahid',
+    paternal_lastname: 'Diego',
+    identifier: 'IPN000002',
     role: 'ESTUDIANTE',
     project: 'Investigación 2',
-    email: 'contacto2@ipn.mx',
+    institutional_email: 'contacto2@ipn.mx',
   },
   {
-    id: 3,
-    name: 'Nombre Estudiante 3',
+    user_id: 3,
+    name: 'Erick',
+    paternal_lastname: 'Blas',
+    identifier: 'IPN000003',
     role: 'ESTUDIANTE',
     project: 'Investigación 3',
-    email: 'contacto3@ipn.mx',
+    institutional_email: 'contacto3@ipn.mx',
   },
 ]
 
 export default function MyStudents() {
-  const handlePress = (student) => {
-    setStudents(assignedStudents)
-    router.push({
-      pathname: '/students/[id]',
-      params: {
-        id: student.id.toString(),
-        name: student.name,
-        role: student.role,
-        project: student.project,
-        email: student.email,
-        index: assignedStudents
-          .findIndex((s) => s.id === student.id)
-          .toString(),
-      },
-    })
-  }
-
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Estudiantes asignados</Text>
       <ScrollView contentContainerStyle={styles.listContainer}>
-        {assignedStudents.map((student) => (
-          <TouchableOpacity
-            key={student.id}
-            onPress={() => handlePress(student)}
-            style={styles.card}
-          >
-            <Text style={styles.name}>{student.name}</Text>
-            <Text style={styles.project}>{student.project}</Text>
-          </TouchableOpacity>
+        {assignedStudents.map((student, index) => (
+          <StudentCard
+            key={student.user_id}
+            user_id={student.user_id}
+            name={student.name}
+            paternal_lastname={student.paternal_lastname}
+            project={student.project}
+            identifier={student.identifier}
+            role={student.role}
+            institutional_email={student.institutional_email}
+            index={index}
+            students={assignedStudents}
+          />
         ))}
       </ScrollView>
     </View>
