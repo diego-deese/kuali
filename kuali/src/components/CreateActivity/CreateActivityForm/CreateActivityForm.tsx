@@ -6,19 +6,22 @@ import SelectInput from '../../shared/SelectInput'
 import RequirementsSection from '../RequirementsSection/RequirementsSection'
 import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 
-import { useCreateActivity } from '../../../hooks/CreateActivity/useCreateActivity'
-
 import { mapArrayToOptions } from '../../../utils/mappers'
-import AttachedFilesSection from '../AttachedFiles/AttachedFilesSection'
+import { useCreateActivity } from '../../../context/CreateActivityContext/useCreateActivity'
+import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker'
+import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
-  const { eventDate, limitDate, location, loadingAction } = useCreateActivity()
+  const { activityDate, limitDate, location, loadingAction } =
+    useCreateActivity()
+
+  const defaultStyles = useDefaultStyles()
 
   return (
     <>
       <InputText label='Nombre del evento' placeholder='Evento' />
 
-      <DatePickersSection eventDate={eventDate} limitDate={limitDate} />
+      <DatePickersSection activityDate={activityDate} limitDate={limitDate} />
 
       <SelectInput
         label='Lugar'
@@ -32,7 +35,7 @@ const CreateActivityForm = () => {
         onEditOption={location.updateLocationName}
         onDeleteOption={location.deleteLocation}
         onAddOption={location.createLocation}
-        onSelect={location.setLocation}
+        onSelect={location.onLocationChange}
       />
 
       <InputText
@@ -40,8 +43,6 @@ const CreateActivityForm = () => {
         placeholder='Evento'
         multiline
       />
-
-      <AttachedFilesSection />
 
       <RequirementsSection />
 

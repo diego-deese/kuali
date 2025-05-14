@@ -6,8 +6,8 @@ import { Option } from '../../components/shared/SelectInput/interfaces'
 import { mapToOption } from '../../utils/mappers'
 
 export const useCreateActivity = () => {
-  const [eventDate, setEventDate] = useState(new Date())
-  const [limitDate, setLimitDate] = useState(eventDate)
+  const [activityDate, setActivityDate] = useState(new Date())
+  const [limitDate, setLimitDate] = useState(activityDate)
   const [locations, setLocations] = useState<Location[] | null>(null)
   const [location, setLocation] = useState<Option | null>(null)
   const [loading, setLoading] = useState(false)
@@ -144,23 +144,35 @@ export const useCreateActivity = () => {
     }
   }
 
+  const onActivityDateChange = (newDate: Date) => {
+    setActivityDate(newDate)
+  }
+
+  const onLimitDateChange = (newDate: Date) => {
+    setLimitDate(newDate)
+  }
+
+  const onLocationChange = (newLocation: Option) => {
+    setLocation(newLocation)
+  }
+
   useEffect(() => {
     getLocations()
   }, [])
 
   return {
-    eventDate: {
-      eventDate,
-      setEventDate,
+    activityDate: {
+      activityDate,
+      onActivityDateChange,
     },
     limitDate: {
       limitDate,
-      setLimitDate,
+      onLimitDateChange,
     },
     location: {
       location,
       locations,
-      setLocation,
+      onLocationChange,
       updateLocationName,
       deleteLocation,
       createLocation,

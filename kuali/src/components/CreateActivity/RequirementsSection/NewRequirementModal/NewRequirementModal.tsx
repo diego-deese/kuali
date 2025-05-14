@@ -14,23 +14,22 @@ import Button from '../../../shared/Button/Button'
 import { UploadIcon } from '../../../shared/Icons/Icons'
 import * as DocumentPicker from 'expo-document-picker'
 
-interface NewAttachedFileModalProps {
+interface NewRequirementModalProps {
   visible: boolean
   onConfirm: () => void
   onCancel: () => void
 }
 
-const NewAttachedFileModal = ({
+const NewRequirementModal = ({
   visible,
   onConfirm,
   onCancel,
-}: NewAttachedFileModalProps) => {
+}: NewRequirementModalProps) => {
   const [withTemplate, setWithTemplate] = useState(false)
   const [requirementName, setRequirementName] = useState('')
   const [requirementDescription, setRequirementDescription] = useState('')
   const [selectedFile, setSelectedFile] =
     useState<DocumentPicker.DocumentPickerResult | null>(null)
-  const [isUploading, setIsUploading] = useState(false)
   const [errors, setErrors] = useState({
     name: {
       error: false,
@@ -125,14 +124,18 @@ const NewAttachedFileModal = ({
   }
 
   const pickDocument = async () => {
-    console.log(pickDocument)
     try {
       const result = await DocumentPicker.getDocumentAsync({
-        type: '*/*', // Permite cualquier tipo de archivo
+        type: [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/msword',
+        ],
         copyToCacheDirectory: true,
       })
 
       if (!result.canceled) {
+        console.log(result)
         setSelectedFile(result)
       }
     } catch (error) {
@@ -173,11 +176,14 @@ const NewAttachedFileModal = ({
             />
           </View>
           {withTemplate && (
-            <Button
-              buttonText='Subir documento'
-              icon={<UploadIcon color={colors.solidWhite} />}
-              onPress={pickDocument}
-            />
+            <>
+              <Button
+                buttonText='Subir documento'
+                icon={<UploadIcon color={colors.solidWhite} />}
+                onPress={pickDocument}
+              />
+              <Text style={styles.uploadButtonLabel}>pdf / docx</Text>
+            </>
           )}
           <View
             style={[styles.buttonsContainer, withTemplate && { marginTop: 16 }]}
@@ -195,7 +201,7 @@ const NewAttachedFileModal = ({
   )
 }
 
-export default NewAttachedFileModal
+export default NewRequirementModal
 
 const styles = StyleSheet.create({
   background: {
@@ -235,5 +241,10 @@ const styles = StyleSheet.create({
     backgroundColor: colors.borderGray,
     borderColor: colors.inactiveGray,
     borderWidth: 1.5,
+  },
+  uploadButtonLabel: {
+    fontFamily: 'monserratRegular',
+    marginStart: 8,
+    marginTop: 4,
   },
 })

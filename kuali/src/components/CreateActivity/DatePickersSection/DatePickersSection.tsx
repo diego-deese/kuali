@@ -3,18 +3,32 @@ import React from 'react'
 import { styles } from './styles'
 import ActivityDatePicker from '../DatePicker/ActivityDatePicker/ActivityDatePicker'
 
-const DatePickersSection = ({ eventDate, limitDate }) => {
+interface DatePickersSectionProps {
+  activityDate: {
+    activityDate: Date
+    onActivityDateChange: (newDate: Date) => void
+  }
+  limitDate: {
+    limitDate: Date
+    onLimitDateChange: (newDate: Date) => void
+  }
+}
+
+const DatePickersSection: React.FC<DatePickersSectionProps> = ({
+  activityDate,
+  limitDate,
+}) => {
   return (
     <View style={styles.datePickersContainer}>
       <ActivityDatePicker
-        date={eventDate.eventDate}
-        setDate={eventDate.setEventDate}
+        date={activityDate.activityDate}
+        setDate={activityDate.onActivityDateChange}
         title='Fecha del evento'
       />
       <ActivityDatePicker
         date={limitDate.limitDate}
-        setDate={limitDate.setLimitDate}
-        maxDate={eventDate.eventDate}
+        setDate={limitDate.onLimitDateChange}
+        maxDate={activityDate.activityDate}
         title='Fecha límite de registro'
       />
     </View>
