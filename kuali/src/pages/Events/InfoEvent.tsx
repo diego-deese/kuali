@@ -66,7 +66,7 @@ export default function InfoEvent() {
           event_date: params.event_date
             ? new Date(params.event_date as string)
             : new Date(),
-          register_date_limit: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          register_date_limit: new Date(Date.now()),
           location: {
             location_id: 1,
             name: (params.location as string) || 'Lugar',
@@ -91,7 +91,7 @@ export default function InfoEvent() {
                   user_document_id: 101,
                   status: {
                     revision_status_id: 2,
-                    name: DocumentStatus.Aprobado, // Texto plano en lugar de DocumentStatus.Aprobado
+                    name: DocumentStatus.Aprobado,
                   },
                 },
               ],
@@ -105,7 +105,7 @@ export default function InfoEvent() {
                   user_document_id: 102,
                   status: {
                     revision_status_id: 2,
-                    name: DocumentStatus.Rechazado, // Texto plano en lugar de DocumentStatus.Aprobado
+                    name: DocumentStatus.Rechazado,
                   },
                 },
               ],
