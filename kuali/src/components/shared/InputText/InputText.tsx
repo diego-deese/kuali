@@ -24,13 +24,15 @@ interface CustomInputProps extends TextInputProps {
   }
   inputRef?: React.RefObject<TextInput>
   containerStyle?: StyleProp<ViewStyle>
+  error?: boolean
+  errorMessage?: string
 }
 
 const getInputStyle = (multiline: boolean, secureTextEntry: boolean) => {
   if (multiline) {
-    return styles.inputTextMultiline
+    return { ...styles.inputText, ...styles.inputTextMultiline }
   } else if (secureTextEntry) {
-    return styles.inputTextIcon
+    return { ...styles.inputText, ...styles.inputTextIcon }
   } else {
     return styles.inputText
   }
@@ -47,6 +49,8 @@ const InputText: React.FC<CustomInputProps> = ({
   secureTextEntry,
   inputRef,
   multiline = false,
+  error,
+  errorMessage,
   ...restProps
 }) => {
   const [showContent, setShowContent] = useState(secureTextEntry)
@@ -62,7 +66,12 @@ const InputText: React.FC<CustomInputProps> = ({
         <TextInput
           placeholder={placeholder}
           placeholderTextColor={colors.placeholderGray}
-          style={getInputStyle(multiline, secureTextEntry)}
+          style={[
+            getInputStyle(multiline, secureTextEntry),
+            error && {
+              borderColor: colors.warningRed,
+            },
+          ]}
           returnKeyType={returnKeyType}
           onSubmitEditing={onSubmitEditing}
           value={value}
@@ -80,6 +89,7 @@ const InputText: React.FC<CustomInputProps> = ({
           </TouchableOpacity>
         )}
       </View>
+      {error && <Text style={styles.errorText}>{errorMessage}</Text>}
     </View>
   )
 }

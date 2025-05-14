@@ -222,3 +222,9 @@ export const PlusBoxIcon = (props) => {
     />
   )
 }
+
+export const UploadIcon = (props) => {
+  return (
+    <MaterialCommunityIcons name='upload' size={24} color='black' {...props} />
+  )
+}

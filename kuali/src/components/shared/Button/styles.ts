@@ -9,6 +9,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.selectionBlue,
     alignItems: 'center',
     justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 8,
   },
   buttonDisabled: {
     paddingVertical: 8,
