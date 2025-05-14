@@ -182,7 +182,7 @@ class UserController {
             ? userProfilePhotoInfo.profile_photo
             : Buffer.from(userProfilePhotoInfo.profile_photo)
 
-          res.setHeader('Content-type', /* userProfilePhotoInfo.photo_mime_type ?? */ 'image/jpg')
+          res.setHeader('Content-type', userProfilePhotoInfo.photo_mime_type ?? 'image/jpg')
           res.setHeader('Content-Length', imageBuffer.length)
 
           res.end(imageBuffer)

@@ -4,11 +4,11 @@ import { CreatedAttachedFile } from '../types/ActivityAttachedFile'
 import { NotFoundError } from '../types/Error'
 
 class ActivityAttachedFileService {
-  async uploadFile (activityId: number, name: string, file: Express.Multer.File): Promise<CreatedAttachedFile> {
+  async uploadFile (activityId: number, file: Express.Multer.File): Promise<CreatedAttachedFile> {
     try {
       // Preparar datos para guardar en la base de datos
       const documentData = {
-        name,
+        name: file.originalname,
         file_content: file.buffer, // Contenido binario del archivo
         mimetype: file.mimetype,
         activity_id: activityId

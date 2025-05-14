@@ -14,11 +14,9 @@ class ActivityService {
     return `${process.env.EXPO_PUBLIC_API_URL}/activities/${activityId}/poster`
   }
 
-  async getUpcomingActivities(
-    userId: number,
-  ): Promise<ArrayResponse<Activity> | ResponseError> {
+  async getUpcomingActivities(): Promise<ArrayResponse<Activity> | ResponseError> {
     try {
-      const response = await this.api.get(`users/${userId}/activities/upcoming`)
+      const response = await this.api.get(`/activities/upcoming/user`)
 
       if (response.status === 200) {
         return { success: true, data: response.data.activities as Activity[] }
@@ -52,11 +50,9 @@ class ActivityService {
     }
   }
 
-  async getPastActivities(
-    userId: number,
-  ): Promise<ArrayResponse<Activity> | ResponseError> {
+  async getPastActivities(): Promise<ArrayResponse<Activity> | ResponseError> {
     try {
-      const response = await this.api.get(`users/${userId}/activities/past`)
+      const response = await this.api.get(`/activities/past/user`)
 
       if (response.status === 200) {
         return { success: true, data: response.data.activities as Activity[] }

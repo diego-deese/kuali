@@ -23,3 +23,15 @@ const studentInProgram = Prisma.validator<Prisma.UsersDefaultArgs>()({
 })
 
 export type StudentInProgram = Prisma.UsersGetPayload<typeof studentInProgram>
+
+const userBasicInfo = Prisma.validator<Prisma.UsersDefaultArgs>()({
+  select: {
+    user_id: true,
+    name: true,
+    second_name: true,
+    paternal_lastname: true,
+    maternal_lastname: true
+  }
+})
+
+export type UserBasicInfo = Prisma.UsersGetPayload<typeof userBasicInfo>

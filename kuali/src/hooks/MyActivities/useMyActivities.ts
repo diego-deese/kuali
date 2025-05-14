@@ -34,15 +34,15 @@ export const useMyActivities = () => {
 
   useEffect(() => {
     if (user && user.user_id) {
-      if (upcomingActivities === null) getUpcomingActivities(user.user_id)
-      if (pastActivities === null) getPastActivities(user.user_id)
+      if (upcomingActivities === null) getUpcomingActivities()
+      if (pastActivities === null) getPastActivities()
     }
-  }, [user, upcomingActivities, pastActivities])
+  }, [upcomingActivities, pastActivities])
 
-  const getUpcomingActivities = async (userId: number) => {
+  const getUpcomingActivities = async () => {
     try {
       setLoadingActivities(true)
-      const result = await activityService.getUpcomingActivities(userId)
+      const result = await activityService.getUpcomingActivities()
 
       if (!result.success && 'error' in result) {
         Toast.show({
@@ -66,11 +66,11 @@ export const useMyActivities = () => {
     }
   }
 
-  const getPastActivities = async (userId: number) => {
+  const getPastActivities = async () => {
     try {
       setLoadingActivities(true)
 
-      const result = await activityService.getPastActivities(userId)
+      const result = await activityService.getPastActivities()
 
       if (!result.success && 'error' in result) {
         Toast.show({
