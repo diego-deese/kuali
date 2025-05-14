@@ -4,8 +4,9 @@ import { View, Text, TouchableOpacity  } from "react-native";
 import { Calendar } from "react-native-big-calendar";
 import dayjs from "dayjs";
 import calendarTheme from "./Calendar.styles";
-import { router } from "expo-router";
 import EventCalendarCard from "../EventCalendarCard/EventCalendarCard";
+import { useEventNavigation } from "../../hooks/NavigationActivity/useEventNavigation";
+import LoadingModal from "../shared/LoadingModal/LoadingModal";
 
 /*esto debería ser un fetch a los eventos */
 const events = [
@@ -47,6 +48,7 @@ function getLimitedEvents(events: any[], limitPerDay: number) {
 export default function CalendarComponent() {
   const [monthName, setMonthName] = useState(dayjs().format('MMMM'))
   const [monthNumber, setMonthNumber] = useState(dayjs().format('MM'))
+  const { isNavigating, navigateToEvent } = useEventNavigation()
 
   const updateDisplayedMonth = (date: Date) => {
     const newDate = dayjs(date)
@@ -56,7 +58,7 @@ export default function CalendarComponent() {
 
   const handleEventPress = (event: any) => {
     console.log({event})
-    router.push({
+    navigateToEvent({
       pathname: `/event/${event.id}`,
       params: { title: event.title, date: event.start.toISOString() },
     });
@@ -82,9 +84,12 @@ export default function CalendarComponent() {
             title={event.title}
             date={dayjs(event.start).format('YYYY-MM-DD HH:mm')}
             onPress={() => handleEventPress(event)}
+            disabled={isNavigating}
           />
         )}
       />
+       {/* Modal de carga */}
+      <LoadingModal visible={isNavigating} />
     </View>
   );
 }

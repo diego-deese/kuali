@@ -1,4 +1,4 @@
-enum DocumentStatus {
+export enum DocumentStatus {
   'Pendiente',
   'Aprobado',
   'Rechazado',
