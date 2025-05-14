@@ -3,30 +3,23 @@ import styles from './EventCard.styles'
 import { FormattedDate } from '../../shared/FormattedDate/FormattedDate'
 import { useEventNavigation } from '../../../hooks/NavigationActivity/useEventNavigation'
 import LoadingModal from '../../shared/LoadingModal/LoadingModal'
+import { Activity } from '../../../types/Activity'
 
-export default function EventCard({
-  title,
-  event_date,
-  location,
-  activity_id,
-  description,
-}: {
-  title: string
-  event_date: Date
-  activity_id: number
-  location: string
-  description: string
-}) {
+interface ActivityCardProps {
+  activity: Activity
+}
+
+const EventCard: React.FC<ActivityCardProps> = ({ activity }) => {
   const { isNavigating, navigateToEvent } = useEventNavigation()
   const handlePress = () => {
     navigateToEvent({
-      pathname: `/event/${activity_id}`,
+      pathname: `/event/${activity.activity_id}`,
       params: {
-        title,
-        event_date: event_date.toISOString(),
-        location,
-        activity_id,
-        des: encodeURIComponent(description),
+        activity_id: activity.activity_id, // Cambiado a id para evitar warning
+        title: activity.title || 'SIN TITULO',
+        event_date: new Date(activity.event_date).toISOString(),
+        location: activity.location.name,
+        des: encodeURIComponent(activity.description || ''),
       },
     })
   }
@@ -35,8 +28,11 @@ export default function EventCard({
     <>
       <Pressable onPress={handlePress}>
         <View style={styles.card}>
-          <Text style={styles.title}>{title}</Text>
-          <FormattedDate date={event_date} style={styles.date}></FormattedDate>
+          <Text style={styles.title}>{activity?.title || 'Sin título'}</Text>
+          <FormattedDate
+            date={new Date(activity.event_date)}
+            style={styles.date}
+          ></FormattedDate>
         </View>
       </Pressable>
       {/* Modal de carga */}
@@ -44,3 +40,5 @@ export default function EventCard({
     </>
   )
 }
+
+export default EventCard

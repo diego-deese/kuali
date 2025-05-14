@@ -15,10 +15,10 @@ const ActivitiesList: React.FC<ActivitiesListProps> = ({ activities }) => {
       {activities.map((activity) => (
         <EventCard
           key={activity.activity_id}
-          activity_id={activity.activity_id}
-          title={activity.title}
-          event_date={new Date(activity.event_date)}
-          location={activity.location.name}
+          activity={activity}
+          //title={activity.title}
+          //event_date={new Date(activity.event_date)}
+          //location={activity.location.name}
         />
       ))}
     </ScrollView>
