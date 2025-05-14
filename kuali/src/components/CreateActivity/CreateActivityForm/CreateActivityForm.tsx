@@ -9,6 +9,7 @@ import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 import { useCreateActivity } from '../../../hooks/CreateActivity/useCreateActivity'
 
 import { mapArrayToOptions } from '../../../utils/mappers'
+import AttachedFilesSection from '../AttachedFiles/AttachedFilesSection'
 
 const CreateActivityForm = () => {
   const { eventDate, limitDate, location, loadingAction } = useCreateActivity()
@@ -39,6 +40,8 @@ const CreateActivityForm = () => {
         placeholder='Evento'
         multiline
       />
+
+      <AttachedFilesSection />
 
       <RequirementsSection />
 
