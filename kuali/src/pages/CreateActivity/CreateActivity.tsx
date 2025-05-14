@@ -36,7 +36,7 @@ const CreateActivity = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Ajusta el offset según sea necesario
+      // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Ajusta el offset según sea necesario
     >
       {/**
        
@@ -49,7 +49,8 @@ const CreateActivity = () => {
         data={[{ key: 'content' }]}
         renderItem={renderContent}
         keyExtractor={(item) => item.key}
-        keyboardShouldPersistTaps='always' // Asegura que los taps no cierren el teclado
+        keyboardShouldPersistTaps='never' // Asegura que los taps no cierren el teclado
+        removeClippedSubviews={false}
       />
     </KeyboardAvoidingView>
   )

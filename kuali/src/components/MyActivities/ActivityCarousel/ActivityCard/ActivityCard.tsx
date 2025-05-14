@@ -5,13 +5,11 @@ import { styles } from './styles'
 import { Activity } from '../../../../types/Activity'
 import colors from '../../../../constants/colors'
 import { CalendarClockIcon, PlaceIcon } from '../../../shared/Icons/Icons'
-import { formatDate } from '../../../../utils/parsing'
 import { FormattedDate } from '../../../shared/FormattedDate/FormattedDate'
+import activityService from '../../../../services/activity.service'
 
 interface ActivityCardProps {
-  activity: Activity & {
-    image_url: string | null
-  }
+  activity: Activity
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
@@ -20,8 +18,10 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
       <ImageBackground
         style={styles.backgroundImage}
         source={
-          activity.image_url
-            ? { uri: activity.image_url }
+          activity.activity_id
+            ? {
+                uri: activityService.getActivityPosterUrl(activity.activity_id),
+              }
             : require('../../../../../assets/cicataPlace.png')
         }
       >

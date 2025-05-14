@@ -1,20 +1,23 @@
 import { Router } from 'express'
 import activityController from '../controllers/activity.controller'
-import { extractUserRole, isAdmin } from '../middlewares/role.middleware'
+import { isAdmin } from '../middlewares/role.middleware'
 import { isAuthenticated } from '../middlewares/jwt.middleware'
 
 const router = Router()
 
-// Ruta para obtener actividades basado en el rol del usuario
-router.get('/', isAuthenticated, extractUserRole, activityController.getActivities)
+router.get('/', isAuthenticated, activityController.getActivities)
 
 router.post('/', isAuthenticated, isAdmin, activityController.createActivity)
+
+router.get('/upcoming/user', isAuthenticated, activityController.getUserUpcomingActivities)
+
+router.get('/upcoming', isAuthenticated, activityController.getUpcomingActivities)
+
+router.get('/past/user', isAuthenticated, activityController.getUserPastActivities)
 
 router.get('/:activityId', isAuthenticated, activityController.getActivity)
 router.delete('/:activityId', isAuthenticated, isAdmin, activityController.deleteActivity)
 
-router.get('/:activityId/poster', isAuthenticated, activityController.getActivityPoster)
-
-router.get('/upcoming', isAuthenticated, activityController.getUpcomingActivities)
+router.get('/:activityId/poster', activityController.getActivityPoster)
 
 export default router

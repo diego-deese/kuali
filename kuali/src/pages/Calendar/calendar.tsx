@@ -8,6 +8,8 @@ import IconButton from '../../components/shared/IconButton/IconButton'
 import NextEventCard from '../../components/NextEventCard/NextEventCard'
 import { PlusIcon } from '../../components/shared/Icons/Icons'
 import { router } from 'expo-router'
+import WithRole from '../../components/WithRole/WithRole'
+import { Roles } from '../../constants/roles'
 
 export default function MyEvents() {
   const { user } = useAuth()
@@ -21,10 +23,12 @@ export default function MyEvents() {
         <View style={styles.nextEventsContainer}>
           <View style={styles.nextEventsHeader}>
             <Text style={styles.textNextEvents}> Eventos próximos </Text>
-            <IconButton
-              icon={<PlusIcon />}
-              onPress={() => router.push('/event/manage/create')}
-            />
+            <WithRole role={Roles.ADMIN}>
+              <IconButton
+                icon={<PlusIcon />}
+                onPress={() => router.push('/event/manage/create')}
+              />
+            </WithRole>
           </View>
           <ScrollView
             contentContainerStyle={{ paddingBottom: 10 }}

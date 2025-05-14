@@ -8,6 +8,9 @@ import authRoutes from './routes/auth.routes'
 import userRoutes from './routes/user.routes'
 import activityRoutes from './routes/activity.routes'
 import locationRoutes from './routes/location.routes'
+import activityFileRoutes from './routes/activity-attached-file.routes'
+import requirementRoutes from './routes/requirement.routes'
+import userDocumentRoutes from './routes/user-document.routes'
 
 const app = express()
 
@@ -29,6 +32,9 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/activities', activityRoutes)
 app.use('/api/locations', locationRoutes)
+app.use('/api/activity-files', activityFileRoutes)
+app.use('/api/requirements', requirementRoutes)
+app.use('/api/user-documents', userDocumentRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

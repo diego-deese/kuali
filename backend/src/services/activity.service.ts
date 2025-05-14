@@ -1,7 +1,6 @@
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
-import { Activities } from '../generated/client'
 import prisma from '../lib/prisma'
-import { ActivityInfo, ActivityPoster, UserAccesibleActivity } from '../types/Activities'
+import { ActivityInfo, ActivityPoster, NewActivity, UserAccesibleActivity } from '../types/Activities'
 import { NotFoundError } from '../types/Error'
 import registrationService from './registration.service'
 
@@ -115,6 +114,7 @@ class ActivityService {
             include: {
               userDocuments: {
                 select: {
+                  user_document_id: true,
                   status: true
                 },
                 where: {
@@ -141,14 +141,16 @@ class ActivityService {
     }
   }
 
-  async createActivity (activityData: Activities): Promise<UserAccesibleActivity> {
+  async createActivity (activityData: NewActivity): Promise<UserAccesibleActivity> {
     const newActivity = await prisma.activities.create({
       data: {
         ...activityData
       },
       omit: {
         location_id: true,
-        category_id: true
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
       },
       include: {
         category: true,
@@ -160,6 +162,12 @@ class ActivityService {
   }
 
   async deleteActivity (activityId: number): Promise<Boolean> {
+    const activity = this.getActivity(activityId)
+
+    if (activity === null) {
+      throw new NotFoundError('No se encontró ninguna actividad con ese id')
+    }
+
     await prisma.$transaction([
       prisma.userDocuments.deleteMany({
         where: {
@@ -228,9 +236,7 @@ class ActivityService {
         }
       },
       where: {
-        user: {
-          user_id: userId
-        },
+        user_id: userId,
         activity: {
           event_date: {
             gte: new Date()
@@ -298,6 +304,11 @@ class ActivityService {
 
   async getUpcomingActivities (): Promise<ActivityInfo[]> {
     const activities = await prisma.activities.findMany({
+      where: {
+        event_date: {
+          gte: new Date()
+        }
+      },
       select: {
         activity_id: true,
         title: true,
@@ -307,11 +318,29 @@ class ActivityService {
         location: true,
         category: true,
         mandatory: true
-      },
+      }
+    })
+
+    return activities
+  }
+
+  async getUpcomingActivitiesByRole (roleId: number): Promise<ActivityInfo[]> {
+    const activities = await prisma.activities.findMany({
       where: {
-        event_date: {
-          gte: new Date()
-        }
+        OR: [
+          roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
+          roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
+        ]
+      },
+      select: {
+        activity_id: true,
+        title: true,
+        description: true,
+        event_date: true,
+        register_date_limit: true,
+        location: true,
+        category: true,
+        mandatory: true
       }
     })
 
