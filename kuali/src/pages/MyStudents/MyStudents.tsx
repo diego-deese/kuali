@@ -15,15 +15,9 @@ export default function MyStudents() {
         {students.map((student, index) => (
           <StudentCard
             key={student.user_id}
-            user_id={student.user_id}
-            name={student.name}
-            paternal_lastname={student.paternal_lastname}
-            project={student.project}
-            identifier={student.identifier}
-            role={student.role}
-            institutional_email={student.institutional_email}
+            student={student}
             index={index}
-            students={assignedStudents}
+            students={students}
           />
         ))}
       </ScrollView>

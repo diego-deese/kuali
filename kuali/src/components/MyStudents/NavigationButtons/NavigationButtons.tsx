@@ -13,7 +13,6 @@ export default function NavigationButtons({
 }) {
   const navigateTo = (newIndex: number) => {
     const nextStudent = students[newIndex]
-
     setStudents(students)
 
     router.push({
@@ -24,7 +23,7 @@ export default function NavigationButtons({
         paternal_lastname: nextStudent.paternal_lastname,
         identifier: nextStudent.identifier,
         project: nextStudent.project,
-        role: nextStudent.role,
+        role: nextStudent.role.name,
         institutional_email: nextStudent.institutional_email,
         index: newIndex.toString(),
       },

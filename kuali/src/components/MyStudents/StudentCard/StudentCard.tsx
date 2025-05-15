@@ -2,41 +2,32 @@ import { Pressable, Text, View } from 'react-native'
 import { router } from 'expo-router'
 import styles from './styles'
 import { setStudents } from '../../../context/StudentsStored'
+import { User } from '../../../types/User'
+
+interface StudentCardProps {
+  student: User
+  index: number
+  students: User[]
+}
 
 export default function StudentCard({
-  user_id,
-  name,
-  paternal_lastname,
-  project,
-  identifier,
-  role,
-  institutional_email,
-  index,
+  student,
   students,
-}: {
-  user_id: number
-  name: string
-  paternal_lastname: string
-  project: string
-  identifier: string
-  role: string
-  institutional_email: string
-  index: number
-  students: any[]
-}) {
+  index,
+}: StudentCardProps) {
   const handlePress = () => {
-    setStudents(students)
+    setStudents(students) // aquí se guarda toda la lista
 
     router.push({
       pathname: '/students/[id]',
       params: {
-        id: user_id.toString(),
-        name,
-        paternal_lastname,
-        identifier,
-        role,
-        project,
-        institutional_email,
+        id: student.user_id.toString(),
+        name: student.name,
+        paternal_lastname: student.paternal_lastname,
+        identifier: student.identifier,
+        role: student.role.name, //Esto convierte lo que sea que sea role en texto antes de pasarlo como parámetro en router.push
+        //project: student.project,
+        institutional_email: student.institutional_email,
         index: index.toString(),
       },
     })
@@ -46,9 +37,10 @@ export default function StudentCard({
     <Pressable onPress={handlePress}>
       <View style={styles.card}>
         <Text style={styles.name}>
-          {name} {paternal_lastname}
+          {student.name} {student.paternal_lastname}
         </Text>
-        <Text style={styles.project}>{project}</Text>
+        {/*  Como aun no esta conectado a la base de datos, por el momento solo dira project */}
+        <Text style={styles.project}>{'Investigacion x'}</Text>
       </View>
     </Pressable>
   )

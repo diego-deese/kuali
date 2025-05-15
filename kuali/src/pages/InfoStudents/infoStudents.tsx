@@ -13,7 +13,7 @@ export default function InfoStudents() {
     paternal_lastname,
     identifier,
     role,
-    project,
+    //project,
     institutional_email,
     index,
   } = useLocalSearchParams()
@@ -46,7 +46,7 @@ export default function InfoStudents() {
         <Text style={styles.role}>{role}</Text>
 
         {/* Proyecto */}
-        <Text style={styles.info}>{project}</Text>
+        <Text style={styles.info}>{'Investigacion x'}</Text>
 
         {/* Correo */}
         <Text style={styles.info}>{institutional_email}</Text>
