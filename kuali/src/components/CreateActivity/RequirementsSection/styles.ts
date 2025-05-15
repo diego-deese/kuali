@@ -5,6 +5,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
+    marginBottom: 8,
   },
   subtitle: {
     fontFamily: 'monserratBold',

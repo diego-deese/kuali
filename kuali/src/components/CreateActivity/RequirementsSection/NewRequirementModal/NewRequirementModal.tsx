@@ -6,122 +6,37 @@ import {
   Text,
   View,
 } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react'
 import colors from '../../../../constants/colors'
 import InputText from '../../../shared/InputText/InputText'
 import Switch from '../../../shared/Switch/Switch'
 import Button from '../../../shared/Button/Button'
 import { UploadIcon } from '../../../shared/Icons/Icons'
 import * as DocumentPicker from 'expo-document-picker'
+import { useNewRequirementModal } from './useNewRequirementModal'
+import { ActivityRequirement } from '../../../../types/Requirements'
 
 interface NewRequirementModalProps {
+  requirementInfo?: ActivityRequirement
   visible: boolean
-  onConfirm: () => void
+  onConfirm: (name: string, description: string) => void
   onCancel: () => void
 }
 
 const NewRequirementModal = ({
+  requirementInfo,
   visible,
   onConfirm,
   onCancel,
 }: NewRequirementModalProps) => {
-  const [withTemplate, setWithTemplate] = useState(false)
-  const [requirementName, setRequirementName] = useState('')
-  const [requirementDescription, setRequirementDescription] = useState('')
-  const [selectedFile, setSelectedFile] =
-    useState<DocumentPicker.DocumentPickerResult | null>(null)
-  const [errors, setErrors] = useState({
-    name: {
-      error: false,
-      errorMessage: '',
-    },
-    description: {
-      error: false,
-      errorMessage: '',
-    },
-  })
-
-  const handleNameChange = (text: string) => {
-    setRequirementName(text)
-    setErrors((prev) => ({
-      ...prev,
-      name: validateName(text),
-    }))
-  }
-
-  const handleDescriptionChange = (text: string) => {
-    setRequirementDescription(text)
-    setErrors((prev) => ({
-      ...prev,
-      description: validateName(text),
-    }))
-  }
-
-  const validateName = (name: string) => {
-    if (name === '' || !name) {
-      return {
-        error: true,
-        errorMessage: 'El nombre es requerido',
-      }
-    }
-
-    const letterRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/
-    if (!letterRegex.test(name)) {
-      return {
-        error: true,
-        errorMessage: 'Solo se permiten letras',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateDescription = (description: string) => {
-    if (description === '' || !description) {
-      return {
-        error: true,
-        errorMessage: 'La descripción es requerida',
-      }
-    }
-
-    if (description.length > 100) {
-      return {
-        error: true,
-        errorMessage: `La descripción es demasiado larga (${description.length}/100)`,
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateFields = () => {
-    setErrors({
-      name: validateName(requirementName),
-      description: validateDescription(requirementDescription),
-    })
-  }
-
-  const handleCancel = () => {
-    setErrors({
-      name: {
-        error: false,
-        errorMessage: '',
-      },
-      description: {
-        error: false,
-        errorMessage: '',
-      },
-    })
-    setRequirementName('')
-    setRequirementDescription('')
-    onCancel()
-  }
+  const {
+    errors,
+    requirementName,
+    requirementDescription,
+    withTemplate,
+    handleCancel,
+    handleConfirm,
+  } = useNewRequirementModal(requirementInfo)
 
   const pickDocument = async () => {
     try {
@@ -136,7 +51,6 @@ const NewRequirementModal = ({
 
       if (!result.canceled) {
         console.log(result)
-        setSelectedFile(result)
       }
     } catch (error) {
       console.error('Error al seleccionar el archivo:', error)
@@ -156,8 +70,8 @@ const NewRequirementModal = ({
             placeholder='Nombre del requisito'
             error={errors.name.error}
             errorMessage={errors.name.errorMessage}
-            value={requirementName}
-            onChangeText={handleNameChange}
+            value={requirementName.requirementName}
+            onChangeText={requirementName.handleNameChange}
           />
           <InputText
             label='Descripción'
@@ -165,17 +79,17 @@ const NewRequirementModal = ({
             multiline
             error={errors.description.error}
             errorMessage={errors.description.errorMessage}
-            value={requirementDescription}
-            onChangeText={handleDescriptionChange}
+            value={requirementDescription.requirementDescription}
+            onChangeText={requirementDescription.handleDescriptionChange}
           />
           <View style={styles.switchContainer}>
             <Text style={styles.switchLabel}>¿Requiere plantilla?</Text>
             <Switch
-              enabled={withTemplate}
-              onChange={() => setWithTemplate(!withTemplate)}
+              enabled={withTemplate.withTemplate}
+              onChange={withTemplate.handleWithTemplateChange}
             />
           </View>
-          {withTemplate && (
+          {withTemplate.withTemplate && (
             <>
               <Button
                 buttonText='Subir documento'
@@ -190,10 +104,25 @@ const NewRequirementModal = ({
           >
             <Button
               buttonText='Cancelar'
-              onPress={handleCancel}
+              onPress={() => {
+                handleCancel()
+                onCancel()
+              }}
               variant='cancel'
             />
-            <Button buttonText='Agregar' onPress={validateFields} />
+            <Button
+              buttonText='Agregar'
+              onPress={() => {
+                const canAdd = handleConfirm()
+
+                if (canAdd) {
+                  onConfirm(
+                    requirementName.requirementName,
+                    requirementDescription.requirementDescription,
+                  )
+                }
+              }}
+            />
           </View>
         </View>
       </KeyboardAvoidingView>

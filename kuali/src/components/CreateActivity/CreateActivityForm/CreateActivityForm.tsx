@@ -8,20 +8,15 @@ import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 
 import { mapArrayToOptions } from '../../../utils/mappers'
 import { useCreateActivity } from '../../../context/CreateActivityContext/useCreateActivity'
-import DateTimePicker, { useDefaultStyles } from 'react-native-ui-datepicker'
-import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
-  const { activityDate, limitDate, location, loadingAction } =
-    useCreateActivity()
-
-  const defaultStyles = useDefaultStyles()
+  const { location, loadingAction } = useCreateActivity()
 
   return (
     <>
       <InputText label='Nombre del evento' placeholder='Evento' />
 
-      <DatePickersSection activityDate={activityDate} limitDate={limitDate} />
+      <DatePickersSection />
 
       <SelectInput
         label='Lugar'

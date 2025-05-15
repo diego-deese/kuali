@@ -4,14 +4,28 @@ import locationService from '../../services/location.service'
 import Toast from 'react-native-toast-message'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { mapToOption } from '../../utils/mappers'
+import { DateType } from 'react-native-ui-datepicker'
+import { ActivityRequirement } from '../../types/Requirements'
 
 export const useCreateActivity = () => {
-  const [activityDate, setActivityDate] = useState(new Date())
+  const [activityDate, setActivityDate] = useState<DateType>(new Date())
   const [limitDate, setLimitDate] = useState(activityDate)
   const [locations, setLocations] = useState<Location[] | null>(null)
   const [location, setLocation] = useState<Option | null>(null)
   const [loading, setLoading] = useState(false)
   const [loadingAction, setLoadingAction] = useState(false)
+  const [requirements, setRequirements] = useState<ActivityRequirement[]>([
+    {
+      requirement_id: 1,
+      name: 'Constancia',
+      description: 'Constancia de estudios',
+    },
+    {
+      requirement_id: 2,
+      name: 'Carta responsiva',
+      description: 'Carta responsiva firmada',
+    },
+  ])
 
   const getLocations = async () => {
     setLoading(true)
@@ -144,6 +158,36 @@ export const useCreateActivity = () => {
     }
   }
 
+  const addRequirement = (name: string, description: string) => {
+    const newRequirementId = requirements.length + 1
+    setRequirements((prevRequirements) => [
+      ...prevRequirements,
+      { requirement_id: newRequirementId, name, description },
+    ])
+  }
+
+  const deleteRequirement = (requirementId: number) => {
+    setRequirements((prevRequirements) =>
+      prevRequirements.filter(
+        (requirement) => requirement.requirement_id !== requirementId,
+      ),
+    )
+  }
+
+  const editRequirement = (
+    requiremetId: number,
+    name: string,
+    description: string,
+  ) => {
+    setRequirements((prevRequirements) =>
+      prevRequirements.map((requirement) =>
+        requirement.requirement_id === requiremetId
+          ? { ...requirement, name, description }
+          : requirement,
+      ),
+    )
+  }
+
   const onActivityDateChange = (newDate: Date) => {
     setActivityDate(newDate)
   }
@@ -176,6 +220,12 @@ export const useCreateActivity = () => {
       updateLocationName,
       deleteLocation,
       createLocation,
+    },
+    requirements: {
+      requirements,
+      addRequirement,
+      deleteRequirement,
+      editRequirement,
     },
     loading,
     loadingAction,

@@ -228,3 +228,14 @@ export const UploadIcon = (props) => {
     <MaterialCommunityIcons name='upload' size={24} color='black' {...props} />
   )
 }
+
+export const DocumentIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='file-document'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}
