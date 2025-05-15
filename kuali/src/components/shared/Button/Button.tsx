@@ -1,55 +1,70 @@
 import React from 'react'
-import { Pressable, PressableProps, Text } from 'react-native'
+import {
+  Pressable,
+  PressableProps,
+  StyleProp,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+} from 'react-native'
 import styles from './styles'
 import colors from '../../../constants/colors'
 
 interface CustomPressableProps extends PressableProps {
-  isLoading?: boolean
   buttonText?: string
   size?: 'normal' | 'small'
   disabled?: boolean
-  variant?: 'primary' | 'delete'
+  variant?: 'primary' | 'delete' | 'cancel'
+  icon?: React.ReactNode
+  style?: StyleProp<ViewStyle>
 }
 
 const Button: React.FC<CustomPressableProps> = ({
-  isLoading = false,
   onPress,
   buttonText,
   size = 'normal',
   disabled = false,
   variant = 'primary',
+  icon,
+  style,
   ...restProps
 }) => {
   const getButtonColor = () => {
-    if (disabled || isLoading) return styles.buttonDisabled
+    if (disabled) return styles.buttonDisabled
 
     switch (variant) {
       case 'delete':
         return { ...styles.button, backgroundColor: colors.warningRed }
-      case 'primary':
+      case 'cancel':
+        return {
+          ...styles.button,
+          backgroundColor: colors.borderGray,
+          borderColor: colors.inactiveGray,
+          borderWidth: 1.5,
+        }
       default:
         return styles.button
     }
   }
+
   return (
-    <Pressable
-      style={({ pressed }) => [
-        getButtonColor(),
-        //isLoading ? styles.buttonDisabled : styles.button,
-        size === 'small' && styles.buttonSmall,
-        pressed && { opacity: 0.7 },
-      ]}
+    <TouchableOpacity
+      style={[getButtonColor(), size === 'small' && styles.buttonSmall, style]}
       onPress={onPress}
-      disabled={isLoading}
+      disabled={disabled}
       {...restProps}
     >
+      {icon && icon}
       <Text
-        style={[styles.buttonText, size === 'small' && styles.buttonTextSmall]}
-        //numberOfLines={1}
+        style={[
+          styles.buttonText,
+          size === 'small' && styles.buttonTextSmall,
+          variant === 'cancel' && { color: colors.fontBlack },
+        ]}
       >
-        {isLoading ? 'Cargando...' : buttonText}
+        {buttonText}
       </Text>
-    </Pressable>
+    </TouchableOpacity>
   )
 }
 

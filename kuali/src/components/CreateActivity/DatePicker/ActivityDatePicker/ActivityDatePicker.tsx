@@ -10,16 +10,16 @@ import DatePickerModal from '../DatePickerModal/DatePickerModal'
 
 interface ActivityDatePickerProps {
   title?: string
-  date?: Date
-  setDate
-  minDate?: Date
-  maxDate?: Date
+  date?: DateType
+  onDateChange?: (newDate: DateType) => void
+  minDate?: DateType
+  maxDate?: DateType
 }
 
 const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
   title,
   date,
-  setDate,
+  onDateChange,
   minDate = new Date(),
   maxDate,
 }) => {
@@ -43,7 +43,7 @@ const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
 
       <DatePickerModal
         selectedDate={date}
-        onChangeDate={(selectedDate: DateType) => setDate(selectedDate)}
+        onChangeDate={onDateChange}
         onConfirm={() => setShowDatePicker(false)}
         minDate={minDate}
         maxDate={maxDate}
