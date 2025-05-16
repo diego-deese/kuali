@@ -19,7 +19,7 @@ export function useUserProfile() {
       return
     }
 
-    console.log('Intentando cargar el perfil del usuario con ID:', userId)
+    // console.log('Intentando cargar el perfil del usuario con ID:', userId)
 
     try {
       const result = await userService.getUserProfile(userId)
@@ -33,7 +33,7 @@ export function useUserProfile() {
         })
       } else {
         setUserProfile(result)
-        console.log('Perfil de usuario establecido:', result)
+        //console.log('Perfil de usuario establecido:', result)
       }
     } catch (error) {
       console.error('Error al cargar el perfil:', error)

@@ -8,7 +8,7 @@ export type Activity = {
   description: string
   event_date: string
   register_date_limit: string
-  mandatory: false
+  mandatory?: false
   location: Location
   category: Category
   requirements: Requirements[]
