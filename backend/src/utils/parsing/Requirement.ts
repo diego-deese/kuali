@@ -1,6 +1,7 @@
 import { ValidationError } from '../../types/Error'
-import { NewRequirement, PatchRequirement, UpdateRequirement } from '../../types/Requirement'
+import { ActivityRequirement, NewRequirement, PatchRequirement, UpdateRequirement } from '../../types/Requirement'
 import { isString } from '../validations'
+import { toNewActivityRequirementTemplate } from './RequirementTemplate'
 import { parseId } from './shared'
 
 const parseName = (nameFromRequest: string): string => {
@@ -73,4 +74,14 @@ export const toRequirementPatch = (object: any): PatchRequirement => {
   }
 
   return patchedRequirement
+}
+
+export const toActivityRequirement = (object: any): ActivityRequirement => {
+  const activityRequirement: ActivityRequirement = {
+    name: parseName(object.name),
+    description: parseDescription(object.description),
+    template: object.template === null || object.template === undefined ? null : toNewActivityRequirementTemplate(object.template)
+  }
+
+  return activityRequirement
 }

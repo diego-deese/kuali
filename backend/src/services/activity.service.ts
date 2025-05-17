@@ -1,6 +1,6 @@
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
-import { ActivityInfo, ActivityPoster, NewActivity, UserAccesibleActivity } from '../types/Activities'
+import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UserAccesibleActivity } from '../types/Activities'
 import { NotFoundError } from '../types/Error'
 import registrationService from './registration.service'
 
@@ -122,7 +122,8 @@ class ActivityService {
                     user_id: userId
                   }
                 }
-              }
+              },
+              template: true
             }
           }
         }
@@ -141,23 +142,81 @@ class ActivityService {
     }
   }
 
-  async createActivity (activityData: NewActivity): Promise<UserAccesibleActivity> {
-    const newActivity = await prisma.activities.create({
-      data: {
-        ...activityData
-      },
-      omit: {
-        location_id: true,
-        category_id: true,
-        poster_image: true,
-        poster_mimetype: true
-      },
-      include: {
-        category: true,
-        location: true
+  async createActivity (activityData: NewActivity): Promise<CreatedActivity> {
+    const { requirements, ...activityDetails } = activityData
+
+    const newActivity = await prisma.$transaction(async (prisma) => {
+      // Create the new activity
+      const activity = await prisma.activities.create({
+        data: {
+          ...activityDetails
+        },
+        omit: {
+          location_id: true,
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
+        },
+        include: {
+          category: true,
+          location: true,
+          requirements: true
+        }
+      })
+
+      // If the activity has requirements, then create them
+      if (requirements !== null && requirements.length > 0) {
+        for (const req of requirements) {
+          const { template, ...requirementDetails } = req
+
+          const newRequirement = await prisma.requirements.create({
+            data: {
+              ...requirementDetails,
+              activity_id: activity.activity_id
+            }
+          })
+
+          // If the requirement has a template, then create it
+          if (template !== null) {
+            await prisma.requirementTemplates.create({
+              data: {
+                ...template,
+                requirement_id: newRequirement.requirement_id
+              }
+            })
+          }
+        }
       }
+
+      // Retornar la actividad con todos sus datos
+      return await prisma.activities.findFirst({
+        where: { activity_id: activity.activity_id },
+        omit: {
+          location_id: true,
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
+        },
+        include: {
+          category: true,
+          location: true,
+          requirements: {
+            include: {
+              template: {
+                select: {
+                  requirement_template_id: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
+      })
     })
 
+    if (newActivity === null) {
+      throw new Error('No se pudo crear la actividad')
+    }
     return newActivity
   }
 
@@ -183,10 +242,14 @@ class ActivityService {
           }
         }
       }),
-      prisma.requirements.deleteMany({
-        where: { activity_id: activityId }
+      prisma.requirementTemplates.deleteMany({
+        where: {
+          requirement: {
+            activity_id: activityId
+          }
+        }
       }),
-      prisma.activityAttachedFiles.deleteMany({
+      prisma.requirements.deleteMany({
         where: { activity_id: activityId }
       }),
       prisma.registrations.deleteMany({
