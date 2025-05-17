@@ -4,12 +4,12 @@ import IconButton from '../../shared/IconButton/IconButton'
 import { PlusIcon } from '../../shared/Icons/Icons'
 import { styles } from './styles'
 import NewRequirementModal from './NewRequirementModal/NewRequirementModal'
-import { useCreateActivity } from '../../../context/CreateActivityContext/useCreateActivity'
 import ActivityRequirementCard from '../../shared/ActivityRequirementCard/ActivityRequirementCard'
+import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
 
 const RequirementsSection = () => {
   const [showModal, setShowModal] = useState(false)
-  const { requirements } = useCreateActivity()
+  const { requirements } = useCreateActivityContext()
 
   return (
     <>

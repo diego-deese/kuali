@@ -1,5 +1,11 @@
 import React from 'react'
-import { FlatList, KeyboardAvoidingView, View, Platform } from 'react-native'
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  View,
+  Platform,
+  ScrollView,
+} from 'react-native'
 import { styles } from './styles'
 import colors from '../../constants/colors'
 
@@ -35,7 +41,7 @@ const CreateActivity = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      // keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Ajusta el offset según sea necesario
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 64} // Ajusta el offset según sea necesario
     >
       {/**
        
@@ -49,7 +55,7 @@ const CreateActivity = () => {
         renderItem={renderContent}
         keyExtractor={(item) => item.key}
         keyboardShouldPersistTaps='never' // Asegura que los taps no cierren el teclado
-        removeClippedSubviews={false}
+        nestedScrollEnabled={true}
       />
     </KeyboardAvoidingView>
   )

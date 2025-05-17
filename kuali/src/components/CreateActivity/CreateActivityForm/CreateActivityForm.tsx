@@ -7,16 +7,27 @@ import RequirementsSection from '../RequirementsSection/RequirementsSection'
 import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 
 import { mapArrayToOptions } from '../../../utils/mappers'
-import { useCreateActivity } from '../../../context/CreateActivityContext/useCreateActivity'
+import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
+import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { FlatList, ScrollView } from 'react-native'
+import Button from '../../shared/Button/Button'
+import { ImagePlusIcon } from '../../shared/Icons/Icons'
+import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
-  const { location, loadingAction } = useCreateActivity()
+  const { location, loadingAction } = useCreateActivityContext()
 
   return (
-    <>
+    <ScrollView nestedScrollEnabled>
       <InputText label='Nombre del evento' placeholder='Evento' />
 
       <DatePickersSection />
+
+      <InputText
+        label='Descripción del evento'
+        placeholder='Evento'
+        multiline
+      />
 
       <SelectInput
         label='Lugar'
@@ -33,16 +44,18 @@ const CreateActivityForm = () => {
         onSelect={location.onLocationChange}
       />
 
-      <InputText
-        label='Descripción del evento'
-        placeholder='Evento'
-        multiline
+      <Button
+        style={{ marginBottom: 16 }}
+        buttonText='Poster del evento'
+        icon={<ImagePlusIcon color={colors.solidWhite} />}
       />
+
+      <ActivityOptionsSection />
 
       <RequirementsSection />
 
       <LoadingModal visible={loadingAction} />
-    </>
+    </ScrollView>
   )
 }
 
