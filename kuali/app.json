@@ -32,10 +32,13 @@
     "plugins": [
       "expo-router",
       "expo-secure-store",
-      "expo-image-picker",
-      {
-        "photosPermission": "Select and upload images."
-      }
+      [
+        "expo-image-picker",
+      
+        {
+          "photosPermission": "custom photos permission"
+        }
+      ]
     ],
     "assetBundlePatterns": [
       "**/*"
