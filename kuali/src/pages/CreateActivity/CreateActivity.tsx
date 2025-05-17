@@ -9,8 +9,7 @@ import CreateActivityForm from '../../components/CreateActivity/CreateActivityFo
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
 
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
-
-import { useCreateActivity } from '../../hooks/CreateActivity/useCreateActivity'
+import { useCreateActivity } from '../../context/CreateActivityContext/useCreateActivity'
 
 const CreateActivity = () => {
   const { loading } = useCreateActivity()

@@ -2,15 +2,16 @@ import { createContext, useContext } from 'react'
 import { useCreateActivity } from './useCreateActivity'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { Location } from '../../types/Location'
+import { DateType } from 'react-native-ui-datepicker'
 
 interface CreateActivityContextProps {
   activityDate?: {
-    activityDate: Date
-    onActivityDateChange: (newDate: Date) => void
+    activityDate: DateType
+    onActivityDateChange: (newDate: DateType) => void
   }
   limitDate?: {
-    limitDate: Date
-    onLimitDateChange: (newDate: Date) => void
+    limitDate: DateType
+    onLimitDateChange: (newDate: DateType) => void
   }
   location?: {
     location: Option
