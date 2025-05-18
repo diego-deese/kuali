@@ -26,10 +26,10 @@ const RequirementsSection = () => {
         data={requirements.requirements}
         renderItem={({ item }) => (
           <ActivityRequirementCard
-            requirement_id={item.requirement_id}
+            requirementId={item.requirement_id}
             name={item.name}
             description={item.description}
-            hasAttachedFile
+            templateUri={item.template_uri}
             onDeletePress={requirements.deleteRequirement}
             onEdit={requirements.editRequirement}
           />
@@ -39,9 +39,13 @@ const RequirementsSection = () => {
       <NewRequirementModal
         visible={showModal}
         onCancel={() => setShowModal(false)}
-        onConfirm={(name: string, description: string) => {
+        onConfirm={(
+          name: string,
+          description: string,
+          template_uri?: string,
+        ) => {
           setShowModal(false)
-          requirements.addRequirement(name, description)
+          requirements.addRequirement(name, description, template_uri)
         }}
       />
     </>

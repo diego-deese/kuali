@@ -1,4 +1,3 @@
-import { AttachedFile } from './AttachedFile'
 import { UserDocument } from './UserDocument'
 
 export type Requirements = {
@@ -12,5 +11,5 @@ export type ActivityRequirement = {
   requirement_id: number
   name: string
   description: string
-  attached_file?: AttachedFile
+  template_uri?: string
 }

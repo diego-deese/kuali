@@ -6,12 +6,12 @@ import Button from '../../../shared/Button/Button'
 import { datePickerStyles } from '../../../../constants/datepicker'
 
 interface DatePickerModalProps {
-  selectedDate?: DateType
+  selectedDate?: Date
   visible?: boolean
-  onChangeDate?: (selectedDate: DateType) => void
+  onChangeDate?: (selectedDate: Date) => void
   onConfirm?: () => void
-  minDate?: DateType
-  maxDate?: DateType
+  minDate?: Date
+  maxDate?: Date
 }
 
 const DatePickerModal: React.FC<DatePickerModalProps> = ({
@@ -38,7 +38,7 @@ const DatePickerModal: React.FC<DatePickerModalProps> = ({
               mode='single'
               date={selectedDate}
               onChange={({ date }) => {
-                onChangeDate(date)
+                onChangeDate(new Date(date.valueOf()))
               }}
               maxDate={maxDate}
               minDate={minDate}

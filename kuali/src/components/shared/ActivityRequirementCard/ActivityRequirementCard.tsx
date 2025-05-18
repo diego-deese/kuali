@@ -7,19 +7,24 @@ import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'
 import NewRequirementModal from '../../CreateActivity/RequirementsSection/NewRequirementModal/NewRequirementModal'
 
 interface ActivityRequirementCardProps {
-  requirement_id: number
+  requirementId: number
   name: string
   description: string
-  hasAttachedFile?: boolean
+  templateUri?: string
   onDeletePress?: (requirementId: number) => void
-  onEdit?: (requirementId: number, name: string, description: string) => void
+  onEdit?: (
+    requirementId: number,
+    name: string,
+    description: string,
+    templateUri: string,
+  ) => void
 }
 
 const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
-  requirement_id,
+  requirementId,
   name,
   description,
-  hasAttachedFile = false,
+  templateUri,
   onDeletePress,
   onEdit,
 }) => {
@@ -46,13 +51,11 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
           description.length > 24 && { alignSelf: 'flex-start' },
         ]}
       >
-        {hasAttachedFile && (
-          <DocumentIcon color={colors.standardGray} size={28} />
-        )}
+        {templateUri && <DocumentIcon color={colors.standardGray} size={28} />}
         <View
           style={[
             styles.actionIconsContainer,
-            hasAttachedFile && styles.actionIconsContainerWithLimit,
+            templateUri && styles.actionIconsContainerWithLimit,
           ]}
         >
           <IconButton
@@ -67,12 +70,17 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
       </View>
 
       <NewRequirementModal
-        requirementInfo={{ requirement_id, name, description }}
+        requirementInfo={{
+          requirement_id: requirementId,
+          name,
+          description,
+          template_uri: templateUri,
+        }}
         visible={showEditModal}
         onCancel={handleEditModalCancel}
-        onConfirm={(name: string, description: string) => {
+        onConfirm={(name: string, description: string, templateUri: string) => {
           setShowEditModal(false)
-          onEdit(requirement_id, name, description)
+          onEdit(requirementId, name, description, templateUri)
         }}
       />
 
@@ -82,7 +90,7 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
         confirmButtonColor={colors.warningRed}
         visible={showConfirmationModal}
         onCancel={handleConfirmationModalCancel}
-        onConfirm={() => onDeletePress(requirement_id)}
+        onConfirm={() => onDeletePress(requirementId)}
       />
     </View>
   )

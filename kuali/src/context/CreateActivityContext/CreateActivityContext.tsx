@@ -30,18 +30,26 @@ interface CreateActivityContextProps {
   }
   requirements?: {
     requirements: ActivityRequirement[]
-    addRequirement: (name: string, description: string) => void
+    addRequirement: (
+      name: string,
+      description: string,
+      templateUri?: string,
+    ) => void
     deleteRequirement: (requirementId: number) => void
     editRequirement: (
       requirementId: number,
       name: string,
       description: string,
+      templateUri: string,
     ) => void
   }
   loading?: boolean
   loadingAction?: boolean
   setLoading?: (value: boolean) => void
   setLoadingAction?: (value: boolean) => void
+  selectPosterImg?: () => void
+  createActivity?: () => void
+  posterImg?: string | null
 }
 
 const CreateActivityContext = createContext<CreateActivityContextProps>({})

@@ -15,10 +15,10 @@ import CreateActivityForm from '../../components/CreateActivity/CreateActivityFo
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
 
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
-import { useCreateActivity } from '../../context/CreateActivityContext/useCreateActivity'
+import { useCreateActivityContext } from '../../context/CreateActivityContext/CreateActivityContext'
 
 const CreateActivity = () => {
-  const { loading } = useCreateActivity()
+  const { loading, createActivity } = useCreateActivityContext()
 
   if (loading) {
     return <LoadingScreen message='Cargando la información...' />
@@ -30,6 +30,7 @@ const CreateActivity = () => {
         <IconButton icon={<CloseIcon size={32} color={colors.warningRed} />} />
         <IconButton
           icon={<CheckIcon size={32} color={colors.selectionBlue} />}
+          onPress={createActivity}
         />
       </ButtonsHeader>
 

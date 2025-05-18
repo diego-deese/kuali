@@ -9,13 +9,14 @@ import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 import { mapArrayToOptions } from '../../../utils/mappers'
 import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
 import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
-import { FlatList, ScrollView } from 'react-native'
+import { ScrollView, Text } from 'react-native'
 import Button from '../../shared/Button/Button'
 import { ImagePlusIcon } from '../../shared/Icons/Icons'
 import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
-  const { location, loadingAction } = useCreateActivityContext()
+  const { location, loadingAction, selectPosterImg } =
+    useCreateActivityContext()
 
   return (
     <ScrollView nestedScrollEnabled>
@@ -48,6 +49,7 @@ const CreateActivityForm = () => {
         style={{ marginBottom: 16 }}
         buttonText='Poster del evento'
         icon={<ImagePlusIcon color={colors.solidWhite} />}
+        onPress={selectPosterImg}
       />
 
       <ActivityOptionsSection />

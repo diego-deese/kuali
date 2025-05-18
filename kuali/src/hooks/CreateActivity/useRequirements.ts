@@ -2,24 +2,17 @@ import { useState } from 'react'
 import { ActivityRequirement } from '../../types/Requirements'
 
 export const useRequirements = () => {
-  const [requirements, setRequirements] = useState<ActivityRequirement[]>([
-    // {
-    //   requirement_id: 1,
-    //   name: 'Constancia',
-    //   description: 'Constancia de estudios',
-    // },
-    // {
-    //   requirement_id: 2,
-    //   name: 'Carta responsiva',
-    //   description: 'Carta responsiva firmada',
-    // },
-  ])
+  const [requirements, setRequirements] = useState<ActivityRequirement[]>([])
 
-  const addRequirement = (name: string, description: string) => {
+  const addRequirement = (
+    name: string,
+    description: string,
+    template_uri?: string,
+  ) => {
     const newRequirementId = requirements.length + 1
     setRequirements((prevRequirements) => [
       ...prevRequirements,
-      { requirement_id: newRequirementId, name, description },
+      { requirement_id: newRequirementId, name, description, template_uri },
     ])
   }
 
@@ -35,11 +28,12 @@ export const useRequirements = () => {
     requiremetId: number,
     name: string,
     description: string,
+    templateUri: string,
   ) => {
     setRequirements((prevRequirements) =>
       prevRequirements.map((requirement) =>
         requirement.requirement_id === requiremetId
-          ? { ...requirement, name, description }
+          ? { ...requirement, name, description, template_uri: templateUri }
           : requirement,
       ),
     )

@@ -4,5 +4,4 @@ import multer from 'multer'
 const memoryStorage = multer.memoryStorage()
 
 // Crear middlewares de multer
-// const uploadDisk = multer({ storage })
 export const uploadMemory = multer({ storage: memoryStorage })
