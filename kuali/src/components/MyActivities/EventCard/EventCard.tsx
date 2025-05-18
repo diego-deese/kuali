@@ -16,10 +16,6 @@ const EventCard: React.FC<ActivityCardProps> = ({ activity }) => {
       pathname: `/event/${activity.activity_id}`,
       params: {
         activity_id: activity.activity_id, // Cambiado a id para evitar warning
-        title: activity.title || 'SIN TITULO',
-        event_date: new Date(activity.event_date).toISOString(),
-        location: activity.location.name,
-        des: encodeURIComponent(activity.description || ''),
       },
     })
   }

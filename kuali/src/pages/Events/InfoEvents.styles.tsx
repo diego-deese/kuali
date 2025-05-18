@@ -112,6 +112,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.fontBlack,
   },
+  noRequirementsText: {
+    textAlign: 'center',
+    marginVertical: 20,
+    fontStyle: 'italic',
+    color: '#666',
+  },
 })
 
 export default styles

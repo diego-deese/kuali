@@ -9,6 +9,7 @@ export type Activity = {
   event_date: string
   register_date_limit: string
   mandatory?: false
+  isRegistered?: boolean // Añade esta propiedad como opcional
   location: Location
   category: Category
   requirements: Requirements[]

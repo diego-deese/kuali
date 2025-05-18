@@ -1,9 +1,7 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DocumentCard, {
-  Document,
-} from '../../components/DocumentCard/DocumentCard'
+import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
 import {
@@ -13,12 +11,12 @@ import {
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
-import { UserDocument, DocumentStatus } from '../../types/UserDocument'
+import { DocumentStatus } from '../../types/UserDocument'
 import { Activity } from '../../types/Activity'
-import { CategoryName } from '../../types/Category'
 import { getDocumentStatusFromString } from './InfoEvent.utils'
 import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
 import { parseValidDate } from './InfoEvent.utils'
+import activityService from '../../services/activity.service'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -27,7 +25,7 @@ import { parseValidDate } from './InfoEvent.utils'
  */
 const InfoEvent: React.FC = () => {
   const params = useLocalSearchParams()
-  const activity_id = params.id ? Number(params.id) : 0
+  const activity_id = params.activity_id ? Number(params.activity_id) : 0
 
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(true)
@@ -41,67 +39,25 @@ const InfoEvent: React.FC = () => {
       try {
         setLoading(true)
 
-        // Datos de ejemplo
-        const activityFromParams: Activity = {
-          activity_id,
-          title: (params.title as string) || 'Nombre del evento',
-          description:
-            (params.des as string) || 'Lorem ipsum dolor sit amet...',
-          event_date: (params.event_date as string) || 'Fecha',
-          register_date_limit:
-            (params.register_date_limit as string) || 'Fecha limite',
-          location: {
-            location_id: 1,
-            name: (params.location as string) || 'Lugar',
-          },
-          category: {
-            category_id: 1,
-            name: CategoryName.Evento,
-          },
-          requirements: [
-            {
-              requirement_id: 1,
-              name: 'Documento 1',
-              description: 'Solicita este documento en servicios escolares',
-              userDocuments: [],
-            },
-            {
-              requirement_id: 2,
-              name: 'Documento 2',
-              description: 'Solicita este documento en servicios escolares',
-              userDocuments: [
-                {
-                  user_document_id: 101,
-                  status: {
-                    revision_status_id: 2,
-                    name: DocumentStatus.Aprobado,
-                  },
-                },
-              ],
-            },
-            {
-              requirement_id: 3,
-              name: 'Documento 3',
-              description: 'Descarga y llena el formulario',
-              userDocuments: [
-                {
-                  user_document_id: 102,
-                  status: {
-                    revision_status_id: 2,
-                    name: DocumentStatus.Rechazado,
-                  },
-                },
-              ],
-            },
-          ],
-          // isRegistered: false, // Por defecto no está registrado
+        if (!activity_id) {
+          setError('ID de actividad no válido')
+          setLoading(false)
+          return
         }
 
-        // Simular llamda xd
-        setTimeout(() => {
-          setEventDetails(activityFromParams)
+        // Llamada al servicio para obtener detalles de la actividad
+        const result = await activityService.getActivityById(activity_id)
+
+        if (!result.success && 'error' in result) {
+          setError(result.error || 'No se pudo cargar la información')
           setLoading(false)
-        }, 500)
+          return
+        }
+
+        setEventDetails(result.data)
+        // Verificar si el usuario ya está registrado en esta actividad
+        setHasApplied(result.data.isRegistered || false)
+        setLoading(false)
       } catch (err) {
         setError('Error al cargar los detalles del evento')
         setLoading(false)
@@ -112,29 +68,77 @@ const InfoEvent: React.FC = () => {
     fetchEventDetails()
   }, [activity_id])
 
-  const handleUpload = (docId: number) => {
-    // Lógica para subir documento - integrar con API en el futuro
-    console.log(`Subiendo documento ${docId}`)
+  const handleUpload = async (docId: number) => {
+    // Implementación de la llamada al servicio para subir documento
+    try {
+      // Aquí iría la lógica para seleccionar un archivo
+      // const result = await documentService.uploadDocument(activity_id, docId, fileData)
+
+      // Si la subida es exitosa, actualizar los datos
+      // if (result.success) {
+      //   // Refrescar los datos para mostrar el documento actualizado
+      //   fetchEventDetails()
+      // }
+
+      // Por ahora, solo mostramos el mensaje en consola
+      console.log(`Subiendo documento ${docId}`)
+    } catch (error) {
+      console.error('Error al subir documento:', error)
+    }
   }
 
-  const handleDelete = (docId: number) => {
-    // Lógica para eliminar documento - integrar con API en el futuro
-    console.log(`Eliminando documento ${docId}`)
+  const handleDelete = async (docId: number) => {
+    // Implementación de la llamada al servicio para eliminar documento
+    try {
+      // const result = await documentService.deleteDocument(docId)
+
+      // Si la eliminación es exitosa, actualizar los datos
+      // if (result.success) {
+      //   // Refrescar los datos para actualizar la UI
+      //   fetchEventDetails()
+      // }
+
+      // Por ahora, solo mostramos el mensaje en consola
+      console.log(`Eliminando documento ${docId}`)
+    } catch (error) {
+      console.error('Error al eliminar documento:', error)
+    }
   }
 
-  const handleExit = () => {
-    console.log('Saliendo de esta convocatoria')
-    router.back()
+  const handleExit = async () => {
+    try {
+      // const result = await activityService.unregisterFromActivity(activity_id)?
+
+      // if (result.success) {
+      //   setHasApplied(false)
+      // }
+
+      console.log('Saliendo de esta convocatoria')
+      router.back()
+    } catch (error) {
+      console.error('Error al darse de baja del evento:', error)
+    }
   }
 
   const handleApply = () => {
     setApplyModalVisible(true)
   }
 
-  const confirmApply = () => {
-    console.log('Aplicando a la convocatoria')
-    setHasApplied(true)
-    setApplyModalVisible(false)
+  const confirmApply = async () => {
+    try {
+      // const result = await activityService.applyToActivity(activity_id)?
+
+      // if (result.success) {
+      //   setHasApplied(true)
+      // }
+
+      console.log('Aplicando a la convocatoria')
+      setHasApplied(true)
+      setApplyModalVisible(false)
+    } catch (error) {
+      console.error('Error al aplicar a la convocatoria:', error)
+      setApplyModalVisible(false)
+    }
   }
 
   if (loading) {
@@ -217,35 +221,44 @@ const InfoEvent: React.FC = () => {
         ) : (
           /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
           <>
-            {eventDetails.requirements.map((req) => {
-              // Obtener el documento del usuario si existe
-              const userDocument =
-                req.userDocuments && req.userDocuments.length > 0
-                  ? req.userDocuments[0]
-                  : undefined
+            {eventDetails.requirements &&
+            eventDetails.requirements.length > 0 ? (
+              // Si hay requisitos, mapearlos como haces actualmente
+              eventDetails.requirements.map((req) => {
+                // Obtener el documento del usuario si existe
+                const userDocument =
+                  req.userDocuments && req.userDocuments.length > 0
+                    ? req.userDocuments[0]
+                    : undefined
 
-              // Determinar el estado del documento basado en el status
-              const documentStatus = userDocument?.status?.name
-                ? getDocumentStatusFromString(userDocument.status.name)
-                : DocumentStatus.Pendiente
+                // Determinar el estado del documento basado en el status
+                const documentStatus = userDocument?.status?.name
+                  ? getDocumentStatusFromString(userDocument.status.name)
+                  : DocumentStatus.Pendiente
 
-              return (
-                <DocumentCard
-                  key={req.requirement_id}
-                  document={{
-                    id: req.requirement_id,
-                    title: req.name,
-                    description: req.description,
-                    status: documentStatus,
-                    userDocumentId: userDocument?.user_document_id,
-                  }}
-                  onUpload={() => handleUpload(req.requirement_id)}
-                  onDelete={() =>
-                    handleDelete(userDocument?.user_document_id || 0)
-                  }
-                />
-              )
-            })}
+                return (
+                  <DocumentCard
+                    key={req.requirement_id}
+                    document={{
+                      id: req.requirement_id,
+                      title: req.name,
+                      description: req.description,
+                      status: documentStatus,
+                      userDocumentId: userDocument?.user_document_id,
+                    }}
+                    onUpload={() => handleUpload(req.requirement_id)}
+                    onDelete={() =>
+                      handleDelete(userDocument?.user_document_id || 0)
+                    }
+                  />
+                )
+              })
+            ) : (
+              // Si NO hay requisitos, mostrar este mensaje
+              <Text style={styles.noRequirementsText}>
+                Esta actividad no tiene requisitos documentales.
+              </Text>
+            )}
 
             {/* Botón de salir */}
             <Pressable
@@ -269,7 +282,7 @@ const InfoEvent: React.FC = () => {
           onCancel={() => setApplyModalVisible(false)}
           onConfirm={confirmApply}
         />
-        {/* Modal de confirmación para desaplicar */}
+        {/* Modal de confirmación para desuscribirse */}
         <ConfirmationModal
           visible={modalVisible}
           title='Confirmación'
