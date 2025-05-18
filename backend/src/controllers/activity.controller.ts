@@ -120,6 +120,25 @@ class ActivityController {
         return
       }
 
+      // Obtain all the requirements that require a template
+      const requirementsWithTemplate: ActivityRequirement[] = newActivityDataRaw.requirements.filter((req: ActivityRequirement) => req.template !== undefined)
+
+      if (requirementsWithTemplate.length === 0) {
+        // Build the new activity data
+        const newActivityData = toNewActivity({
+          ...newActivityDataRaw,
+          admin_creator_id: req.user.user_id,
+          category_id: 1,
+          poster_image: posterFile.buffer,
+          poster_mimetype: posterFile.mimetype
+        })
+
+        const createdActivity = await activityService.createActivity(newActivityData)
+
+        res.status(201).json({ activity: createdActivity })
+        return
+      }
+
       const templateFiles = req.files.template_files
 
       // If the activity has requirements, then we check for the template_files array
@@ -130,9 +149,6 @@ class ActivityController {
         })
         return
       }
-
-      // Obtain all the requirements that require a template
-      const requirementsWithTemplate = newActivityDataRaw.requirements.filter((req: ActivityRequirement) => req.template !== undefined)
 
       // Make sure that we don't have less templates than requirements that require them
       if (requirementsWithTemplate.length !== templateFiles.length) {
