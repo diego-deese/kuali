@@ -1,6 +1,6 @@
 import { Category } from './Category'
 import { Location } from './Location'
-import { Requirements } from './Requirements'
+import { ActivityRequirement, Requirements } from './Requirements'
 
 export type Activity = {
   activity_id: number
@@ -12,4 +12,17 @@ export type Activity = {
   location: Location
   category: Category
   requirements: Requirements[]
+}
+
+export type NewActivityData = {
+  title: string
+  description: string
+  event_date: Date
+  register_date_limit: Date
+  mandatory: boolean
+  visible_researchers: boolean
+  visible_students: boolean
+  location_id: number
+  requirements: ActivityRequirement[]
+  poster_image_uri: string
 }

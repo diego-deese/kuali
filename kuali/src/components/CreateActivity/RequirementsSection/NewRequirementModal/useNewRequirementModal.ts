@@ -5,15 +5,19 @@ import { ActivityRequirement } from '../../../../types/Requirements'
 export const useNewRequirementModal = (
   requirementInfo: ActivityRequirement,
 ) => {
-  const [withTemplate, setWithTemplate] = useState(false)
+  const [withTemplate, setWithTemplate] = useState(
+    requirementInfo ? requirementInfo.template_uri !== null : false,
+  )
   const [requirementName, setRequirementName] = useState(
     requirementInfo ? requirementInfo.name : '',
   )
   const [requirementDescription, setRequirementDescription] = useState(
     requirementInfo ? requirementInfo.description : '',
   )
-  const [selectedFile, setSelectedFile] =
-    useState<DocumentPicker.DocumentPickerResult | null>(null)
+  const [templateUri, setTemplateUri] = useState<string | null>(
+    requirementInfo ? requirementInfo.template_uri : null,
+  )
+
   const [errors, setErrors] = useState({
     name: {
       error: false,
@@ -23,7 +27,37 @@ export const useNewRequirementModal = (
       error: false,
       errorMessage: '',
     },
+    template: {
+      error: false,
+      errorMessage: '',
+    },
   })
+
+  const pickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/msword',
+        ],
+        copyToCacheDirectory: true,
+      })
+
+      if (!result.canceled) {
+        setTemplateUri(result.assets[0].uri)
+        setErrors((prev) => ({
+          ...prev,
+          template: {
+            error: false,
+            errorMessage: '',
+          },
+        }))
+      }
+    } catch (error) {
+      console.error('Error al seleccionar el archivo:', error)
+    }
+  }
 
   const handleNameChange = (text: string) => {
     setRequirementName(text)
@@ -88,43 +122,45 @@ export const useNewRequirementModal = (
     }
   }
 
+  const validateTemplate = () => {
+    if (withTemplate && templateUri === null) {
+      console.log('URI incorrecta')
+      return {
+        error: true,
+        errorMessage: 'No se proporcionó el archivo de plantilla',
+      }
+    }
+
+    return {
+      error: false,
+      errorMessage: '',
+    }
+  }
+
   const validateFields = (): boolean => {
     const newErrors = {
       name: validateName(requirementName),
       description: validateDescription(requirementDescription),
+      template: validateTemplate(),
     }
 
     setErrors(newErrors)
 
-    return !(newErrors.name.error || newErrors.description.error)
+    return !(
+      newErrors.name.error ||
+      newErrors.description.error ||
+      newErrors.template.error
+    )
   }
 
-  const handleConfirm = (): boolean => {
-    const correctInputs = validateFields()
-
-    if (correctInputs) {
-      console.log('inputs correctos')
-      setErrors({
-        name: {
-          error: false,
-          errorMessage: '',
-        },
-        description: {
-          error: false,
-          errorMessage: '',
-        },
-      })
-
-      if (!requirementInfo) {
-        setRequirementName('')
-        setRequirementDescription('')
-      }
-    }
-
-    return correctInputs
+  const resetFields = (): void => {
+    setRequirementName('')
+    setRequirementDescription('')
+    setWithTemplate(false)
+    setTemplateUri(null)
   }
 
-  const handleCancel = () => {
+  const resetErrors = (): void => {
     setErrors({
       name: {
         error: false,
@@ -134,29 +170,47 @@ export const useNewRequirementModal = (
         error: false,
         errorMessage: '',
       },
+      template: {
+        error: false,
+        errorMessage: '',
+      },
     })
+  }
+
+  const handleConfirm = (): boolean => {
+    const correctInputs = validateFields()
+
+    if (correctInputs) {
+      if (!requirementInfo) {
+        resetFields()
+        resetErrors()
+      }
+    }
+
+    return correctInputs
+  }
+
+  const handleCancel = () => {
+    resetErrors()
 
     if (!requirementInfo) {
-      setRequirementName('')
-      setRequirementDescription('')
+      resetFields()
     }
   }
 
   return {
-    requirementName: {
+    requirement: {
       requirementName,
       handleNameChange,
-    },
-    requirementDescription: {
       requirementDescription,
       handleDescriptionChange,
-    },
-    withTemplate: {
+      templateUri,
       withTemplate,
       handleWithTemplateChange,
     },
     errors,
     handleCancel,
     handleConfirm,
+    pickDocument,
   }
 }

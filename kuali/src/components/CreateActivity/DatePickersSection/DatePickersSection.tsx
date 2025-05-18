@@ -2,22 +2,22 @@ import { View } from 'react-native'
 import React from 'react'
 import { styles } from './styles'
 import ActivityDatePicker from '../DatePicker/ActivityDatePicker/ActivityDatePicker'
-import { useCreateActivity } from '../../../context/CreateActivityContext/useCreateActivity'
+import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
 
 const DatePickersSection = () => {
-  const { activityDate, limitDate } = useCreateActivity()
+  const { dates } = useCreateActivityContext()
 
   return (
     <View style={styles.datePickersContainer}>
       <ActivityDatePicker
-        date={activityDate.activityDate}
-        onDateChange={activityDate.onActivityDateChange}
+        date={dates.activityDate}
+        onDateChange={dates.onActivityDateChange}
         title='Fecha del evento'
       />
       <ActivityDatePicker
-        date={limitDate.limitDate}
-        onDateChange={limitDate.onLimitDateChange}
-        maxDate={activityDate.activityDate}
+        date={dates.limitDate}
+        onDateChange={dates.onLimitDateChange}
+        maxDate={dates.activityDate}
         title='Fecha límite de registro'
       />
     </View>

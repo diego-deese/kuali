@@ -35,8 +35,48 @@ const newActivity = Prisma.validator<Prisma.ActivitiesDefaultArgs>()({
     visible_students: true,
     admin_creator_id: true,
     location_id: true,
-    category_id: true
+    category_id: true,
+    requirements: {
+      select: {
+        name: true,
+        description: true,
+        template: {
+          select: {
+            name: true,
+            file_content: true,
+            mimetype: true
+          }
+        }
+      }
+    },
+    poster_image: true,
+    poster_mimetype: true
   }
 })
 
 export type NewActivity = Prisma.ActivitiesGetPayload<typeof newActivity>
+
+const createdActivity = Prisma.validator<Prisma.ActivitiesDefaultArgs>()({
+  omit: {
+    location_id: true,
+    category_id: true,
+    poster_image: true,
+    poster_mimetype: true
+  },
+  include: {
+    category: true,
+    location: true,
+    requirements: {
+      include: {
+        template: {
+          select: {
+            requirement_template_id: true,
+            name: true
+          }
+        }
+      }
+    }
+  }
+})
+
+export type CreatedActivity = Prisma.ActivitiesGetPayload<typeof createdActivity>

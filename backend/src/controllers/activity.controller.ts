@@ -4,6 +4,7 @@ import { AppError } from '../types/Error'
 import { isNumber } from '../utils/validations'
 import { AuthRequest } from '../types/Request'
 import { ADMIN_ROLE_ID } from '../constants/roles'
+import { ActivityRequirement } from '../types/Requirement'
 import { toNewActivity } from '../utils/parsing/Activity'
 
 class ActivityController {
@@ -91,11 +92,108 @@ class ActivityController {
         return
       }
 
-      const newActivity = toNewActivity({ admin_creator_id: req.user.user_id, ...req.body })
+      if (req.files === undefined || !('poster_image' in req.files)) {
+        res.status(400).json({
+          message: 'Error al crear el evento o convocatoria',
+          error: 'No se proporcionó la imagen del poster del evento'
+        })
+        return
+      }
 
-      const createdActivity = await activityService.createActivity(newActivity)
+      const posterFile = req.files.poster_image[0]
 
-      res.status(200).json({ activity: createdActivity })
+      const newActivityDataRaw = JSON.parse(req.body.activityData)
+
+      // If the activity doesn't has requirements, then we don't check the files and continue
+      if (newActivityDataRaw.requirements === undefined) {
+        const newActivityData = toNewActivity({
+          ...newActivityDataRaw,
+          admin_creator_id: req.user.user_id,
+          category_id: 2,
+          poster_image: posterFile.buffer,
+          poster_mimetype: posterFile.mimetype
+        })
+
+        const createdActivity = await activityService.createActivity(newActivityData)
+
+        res.status(201).json({ activity: createdActivity })
+        return
+      }
+
+      // Obtain all the requirements that require a template
+      const requirementsWithTemplate: ActivityRequirement[] = newActivityDataRaw.requirements.filter((req: ActivityRequirement) => req.template !== undefined)
+
+      if (requirementsWithTemplate.length === 0) {
+        // Build the new activity data
+        const newActivityData = toNewActivity({
+          ...newActivityDataRaw,
+          admin_creator_id: req.user.user_id,
+          category_id: 1,
+          poster_image: posterFile.buffer,
+          poster_mimetype: posterFile.mimetype
+        })
+
+        const createdActivity = await activityService.createActivity(newActivityData)
+
+        res.status(201).json({ activity: createdActivity })
+        return
+      }
+
+      const templateFiles = req.files.template_files
+
+      // If the activity has requirements, then we check for the template_files array
+      if (templateFiles === undefined || !Array.isArray(templateFiles)) {
+        res.status(400).json({
+          message: 'Error al crear el evento o convocatoria',
+          error: 'No se proporcionaron archivos de plantilla de los requisitos'
+        })
+        return
+      }
+
+      // Make sure that we don't have less templates than requirements that require them
+      if (requirementsWithTemplate.length !== templateFiles.length) {
+        res.status(400).json({
+          message: 'Error al crear el evento o convocatoria',
+          error: 'El número de archivos de plantilla no coincide con el número de requisitos que las requieren'
+        })
+        return
+      }
+
+      let fileCursor = 0
+
+      // Build the requirements
+      newActivityDataRaw.requirements = newActivityDataRaw.requirements.map((req: ActivityRequirement) => {
+        if (req.template !== undefined) {
+          const file = templateFiles[fileCursor++]
+
+          return {
+            ...req,
+            template: {
+              name: file.originalname,
+              file_content: file.buffer,
+              mimetype: file.mimetype
+            }
+          }
+        } else {
+          return {
+            ...req,
+            template: null
+          }
+        }
+      })
+
+      // Build the new activity data
+      const newActivityData = toNewActivity({
+        ...newActivityDataRaw,
+        admin_creator_id: req.user.user_id,
+        category_id: 1,
+        poster_image: posterFile.buffer,
+        poster_mimetype: posterFile.mimetype
+      })
+
+      const createdActivity = await activityService.createActivity(newActivityData)
+
+      res.status(201).json({ activity: createdActivity })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({

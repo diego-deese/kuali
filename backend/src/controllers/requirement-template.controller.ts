@@ -1,34 +1,41 @@
 import { Request, Response } from 'express'
-import activityAttachedFileService from '../services/activity-attached-file.service'
+import activityAttachedFileService from '../services/requirement-template.service'
 import { AppError } from '../types/Error'
 import { isNumber } from '../utils/validations'
+import { toNewRequirementTemplate } from '../utils/parsing/RequirementTemplate'
 
-class ActivityAttachedFileController {
+class RequirementTemplateController {
   uploadFile = async (req: Request, res: Response): Promise<void> => {
     try {
-      const { activityId } = req.params
       const file = req.file
 
       if (file === undefined) {
         res.status(400).json({
-          message: 'Error al subir el archivo a la Base de Datos',
-          error: 'No se proporcionó el archivo'
+          message: 'Error al subir la plantilla del requisito',
+          error: 'No se proporcionó el archivo de la platilla'
         })
         return
       }
 
-      const activityAttachedFile = await activityAttachedFileService.uploadFile(+activityId, file)
+      const newRequirementTemplateData = toNewRequirementTemplate({
+        name: file.filename,
+        file_content: file.buffer,
+        mimetype: file.mimetype,
+        requirement_id: req.params.requirementId
+      })
 
-      res.status(201).json({ activityAttachedFile })
+      await activityAttachedFileService.uploadFile(newRequirementTemplateData)
+
+      res.status(201).json({ message: 'La plantilla del requisito se subió con éxito' })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
-          message: 'Error al subir el archivo a la Base de Datos',
+          message: 'Error al subir la plantilla del requisito',
           error: error.message
         })
       } else {
         res.status(500).json({
-          message: 'Error al subir el archivo a la Base de Datos',
+          message: 'Error al subir la plantilla del requisito',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }
@@ -69,4 +76,4 @@ class ActivityAttachedFileController {
   }
 }
 
-export default new ActivityAttachedFileController()
+export default new RequirementTemplateController()

@@ -239,3 +239,14 @@ export const DocumentIcon = (props) => {
     />
   )
 }
+
+export const ImagePlusIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='image-plus'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}

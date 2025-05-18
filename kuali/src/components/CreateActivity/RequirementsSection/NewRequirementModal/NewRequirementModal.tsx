@@ -12,14 +12,13 @@ import InputText from '../../../shared/InputText/InputText'
 import Switch from '../../../shared/Switch/Switch'
 import Button from '../../../shared/Button/Button'
 import { UploadIcon } from '../../../shared/Icons/Icons'
-import * as DocumentPicker from 'expo-document-picker'
 import { useNewRequirementModal } from './useNewRequirementModal'
 import { ActivityRequirement } from '../../../../types/Requirements'
 
 interface NewRequirementModalProps {
   requirementInfo?: ActivityRequirement
   visible: boolean
-  onConfirm: (name: string, description: string) => void
+  onConfirm: (name: string, description: string, templateUri?: string) => void
   onCancel: () => void
 }
 
@@ -29,33 +28,8 @@ const NewRequirementModal = ({
   onConfirm,
   onCancel,
 }: NewRequirementModalProps) => {
-  const {
-    errors,
-    requirementName,
-    requirementDescription,
-    withTemplate,
-    handleCancel,
-    handleConfirm,
-  } = useNewRequirementModal(requirementInfo)
-
-  const pickDocument = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: [
-          'application/pdf',
-          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-          'application/msword',
-        ],
-        copyToCacheDirectory: true,
-      })
-
-      if (!result.canceled) {
-        console.log(result)
-      }
-    } catch (error) {
-      console.error('Error al seleccionar el archivo:', error)
-    }
-  }
+  const { errors, requirement, handleCancel, handleConfirm, pickDocument } =
+    useNewRequirementModal(requirementInfo)
 
   return (
     <Modal transparent visible={visible} animationType='fade'>
@@ -70,8 +44,8 @@ const NewRequirementModal = ({
             placeholder='Nombre del requisito'
             error={errors.name.error}
             errorMessage={errors.name.errorMessage}
-            value={requirementName.requirementName}
-            onChangeText={requirementName.handleNameChange}
+            value={requirement.requirementName}
+            onChangeText={requirement.handleNameChange}
           />
           <InputText
             label='Descripción'
@@ -79,28 +53,52 @@ const NewRequirementModal = ({
             multiline
             error={errors.description.error}
             errorMessage={errors.description.errorMessage}
-            value={requirementDescription.requirementDescription}
-            onChangeText={requirementDescription.handleDescriptionChange}
+            value={requirement.requirementDescription}
+            onChangeText={requirement.handleDescriptionChange}
           />
           <View style={styles.switchContainer}>
             <Text style={styles.switchLabel}>¿Requiere plantilla?</Text>
             <Switch
-              enabled={withTemplate.withTemplate}
-              onChange={withTemplate.handleWithTemplateChange}
+              enabled={requirement.withTemplate}
+              onChange={requirement.handleWithTemplateChange}
             />
           </View>
-          {withTemplate.withTemplate && (
+          {requirement.withTemplate && (
             <>
               <Button
                 buttonText='Subir documento'
                 icon={<UploadIcon color={colors.solidWhite} />}
                 onPress={pickDocument}
               />
-              <Text style={styles.uploadButtonLabel}>pdf / docx</Text>
+              <View style={styles.uploadButtonLabelsContainer}>
+                <Text
+                  style={[
+                    styles.uploadButtonLabel,
+                    errors.template.error && { color: colors.warningRed },
+                  ]}
+                >
+                  {errors.template.error
+                    ? errors.template.errorMessage
+                    : 'pdf / docx'}
+                </Text>
+                {requirement.templateUri && (
+                  <Text
+                    style={[
+                      styles.uploadButtonLabel,
+                      { color: colors.highlightCyan },
+                    ]}
+                  >
+                    Plantilla subida
+                  </Text>
+                )}
+              </View>
             </>
           )}
           <View
-            style={[styles.buttonsContainer, withTemplate && { marginTop: 16 }]}
+            style={[
+              styles.buttonsContainer,
+              requirement.withTemplate && { marginTop: 16 },
+            ]}
           >
             <Button
               buttonText='Cancelar'
@@ -117,8 +115,9 @@ const NewRequirementModal = ({
 
                 if (canAdd) {
                   onConfirm(
-                    requirementName.requirementName,
-                    requirementDescription.requirementDescription,
+                    requirement.requirementName,
+                    requirement.requirementDescription,
+                    requirement.templateUri,
                   )
                 }
               }}
@@ -157,6 +156,10 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     gap: 8,
   },
+  uploadButtonLabelsContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
   title: {
     fontFamily: 'monserratBold',
     fontSize: 24,
@@ -172,8 +175,8 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
   },
   uploadButtonLabel: {
-    fontFamily: 'monserratRegular',
-    marginStart: 8,
+    fontFamily: 'monserratItalic',
+    marginHorizontal: 8,
     marginTop: 4,
   },
 })
