@@ -2,12 +2,13 @@ import { Router } from 'express'
 import activityController from '../controllers/activity.controller'
 import { isAdmin } from '../middlewares/role.middleware'
 import { isAuthenticated } from '../middlewares/jwt.middleware'
+import { uploadMemory } from '../middlewares/upload-files.middleware'
 
 const router = Router()
 
 router.get('/', isAuthenticated, activityController.getActivities)
 
-router.post('/', isAuthenticated, isAdmin, activityController.createActivity)
+router.post('/', isAuthenticated, isAdmin, uploadMemory.fields([{ name: 'template_files' }, { name: 'poster_image', maxCount: 1 }]), activityController.createActivity)
 
 router.get('/upcoming/user', isAuthenticated, activityController.getUserUpcomingActivities)
 

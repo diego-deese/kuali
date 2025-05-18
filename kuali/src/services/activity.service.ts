@@ -1,7 +1,9 @@
 import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
 import { ArrayResponse, ResponseError, Response } from '../types/Request'
-import { Activity } from '../types/Activity'
+import { Activity, NewActivityData } from '../types/Activity'
+import { template } from '@babel/core'
+import { getFileInfo } from '../utils/parsing'
 
 class ActivityService {
   private api: AxiosInstance
@@ -122,6 +124,71 @@ class ActivityService {
         message: 'Error desconocido',
         error: error.message,
       } as ResponseError
+    }
+  }
+
+  async createActivity(newActivityData: NewActivityData) {
+    try {
+      const formData = new FormData()
+
+      // Manejo de imagen local
+      const localUri = newActivityData.poster_image_uri
+      console.log(localUri)
+      const posterFileInfo = getFileInfo(localUri)
+
+      formData.append('poster_image', {
+        uri: localUri,
+        name: posterFileInfo.fileName,
+        type: posterFileInfo.mimeType,
+      } as any)
+
+      const activityData = {
+        ...newActivityData,
+        requirements: newActivityData.requirements.map((req) => {
+          return {
+            name: req.name,
+            description: req.description,
+            template: req.template_uri
+              ? {
+                  name: `${req.name}_plantilla`,
+                }
+              : undefined,
+          }
+        }),
+      }
+
+      const requirementsWithTemplate = newActivityData.requirements.filter(
+        (req) => req.template_uri !== null,
+      )
+
+      requirementsWithTemplate.forEach((req) => {
+        const templateInfo = getFileInfo(req.template_uri!)
+
+        formData.append('template_files', {
+          uri: req.template_uri,
+          name: templateInfo.fileName,
+          type: templateInfo.mimeType,
+        } as any)
+      })
+
+      formData.append(
+        'activityData',
+        JSON.stringify({
+          ...activityData,
+          poster_image_uri: undefined,
+        }),
+      )
+
+      console.log(formData)
+
+      const response = await this.api.post('/activities', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      console.log(response.data)
+    } catch (error) {
+      console.error('Error completo:', error)
+      console.log(error.response.data)
     }
   }
 

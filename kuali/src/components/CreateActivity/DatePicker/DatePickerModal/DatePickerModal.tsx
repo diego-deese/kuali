@@ -1,17 +1,14 @@
 import { Modal, View } from 'react-native'
-import React, { useState } from 'react'
-import DateTimePicker, {
-  DateType,
-  useDefaultStyles,
-} from 'react-native-ui-datepicker'
+import React from 'react'
+import DateTimePicker, { DateType } from 'react-native-ui-datepicker'
 import { styles } from './styles'
 import Button from '../../../shared/Button/Button'
-import colors from '../../../../constants/colors'
+import { datePickerStyles } from '../../../../constants/datepicker'
 
 interface DatePickerModalProps {
-  selectedDate?: DateType
+  selectedDate?: Date
   visible?: boolean
-  onChangeDate?: (selectedDate: DateType) => void
+  onChangeDate?: (selectedDate: Date) => void
   onConfirm?: () => void
   minDate?: Date
   maxDate?: Date
@@ -25,8 +22,6 @@ const DatePickerModal: React.FC<DatePickerModalProps> = ({
   minDate,
   maxDate,
 }) => {
-  const defaultStyles = useDefaultStyles()
-  const [date, setDate] = useState<DateType>(selectedDate)
   return (
     <Modal
       transparent
@@ -36,36 +31,23 @@ const DatePickerModal: React.FC<DatePickerModalProps> = ({
     >
       <View style={styles.background}>
         <View style={styles.container}>
-          <DateTimePicker
-            locale='es'
-            timeZone='America/Mexico_City'
-            mode='single'
-            date={date}
-            onChange={({ date }) => {
-              setDate(date)
-              onChangeDate(date)
-            }}
-            maxDate={maxDate}
-            minDate={minDate}
-            timePicker
-            showOutsideDays
-            styles={{
-              ...defaultStyles,
-              selected: { backgroundColor: colors.selectionBlue },
-              today_label: {},
-              button_next: {},
-              button_next_image: {
-                tintColor: colors.highlightCyan,
-                width: 20,
-                height: 20,
-              },
-              button_prev_image: {
-                tintColor: colors.highlightCyan,
-                width: 20,
-                height: 20,
-              },
-            }}
-          />
+          <View style={styles.datePickerContainer}>
+            <DateTimePicker
+              locale='es'
+              timeZone='America/Mexico_City'
+              mode='single'
+              date={selectedDate}
+              onChange={({ date }) => {
+                onChangeDate(new Date(date.valueOf()))
+              }}
+              maxDate={maxDate}
+              minDate={minDate}
+              timePicker
+              showOutsideDays
+              styles={datePickerStyles}
+              navigationPosition='right'
+            />
+          </View>
           <Button buttonText='Confirmar' onPress={onConfirm} />
         </View>
       </View>

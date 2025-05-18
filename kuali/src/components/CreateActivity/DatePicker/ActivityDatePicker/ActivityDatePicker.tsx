@@ -1,6 +1,5 @@
 import { Text, View } from 'react-native'
 import React, { useState } from 'react'
-import { DateType } from 'react-native-ui-datepicker'
 import { styles } from './styles'
 import { formatDate } from '../../../../utils/parsing'
 import IconButton from '../../../shared/IconButton/IconButton'
@@ -11,7 +10,7 @@ import DatePickerModal from '../DatePickerModal/DatePickerModal'
 interface ActivityDatePickerProps {
   title?: string
   date?: Date
-  setDate
+  onDateChange?: (newDate: Date) => void
   minDate?: Date
   maxDate?: Date
 }
@@ -19,7 +18,7 @@ interface ActivityDatePickerProps {
 const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
   title,
   date,
-  setDate,
+  onDateChange,
   minDate = new Date(),
   maxDate,
 }) => {
@@ -43,7 +42,7 @@ const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
 
       <DatePickerModal
         selectedDate={date}
-        onChangeDate={(selectedDate: DateType) => setDate(selectedDate)}
+        onChangeDate={onDateChange}
         onConfirm={() => setShowDatePicker(false)}
         minDate={minDate}
         maxDate={maxDate}

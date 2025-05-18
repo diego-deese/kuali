@@ -5,6 +5,8 @@ import {
   FlatList,
   TouchableOpacity,
   ScrollView,
+  Modal,
+  Pressable,
 } from 'react-native'
 
 import AddNewHeader from './AddNewHeader/AddNewHeader'
@@ -33,61 +35,17 @@ const SelectInput = ({
   onAddOption,
 }: SelectInputProps) => {
   const { state, actions } = useSelectInput({
-    options,
     value,
     onSelect,
-    onEditOption,
     onDeleteOption,
     onAddOption,
   })
-
-  const renderOptions = () => {
-    if (state.selectOptions.length === 0) {
-      return (
-        <View style={styles.optionsContainer}>
-          <Text style={styles.emptyText}>No hay opciones disponibles</Text>
-        </View>
-      )
-    }
-
-    return (
-      <View style={styles.optionsContainer}>
-        <AddNewHeader
-          inputTextPlaceholder={headerInputPlaceholder}
-          onAddConfirm={actions.handleAddOption}
-        />
-        <ScrollView>
-          <FlatList
-            data={state.selectOptions}
-            renderItem={({ item }) => (
-              <OptionComponent
-                label={item.label}
-                onPress={() => actions.handleOptionSelect(item)}
-                editable={editable}
-                onEdit={(newLabel) =>
-                  actions.handleEditOption(item.id, newLabel)
-                }
-                onDelete={() => actions.handleDeleteOption(item)}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </ScrollView>
-      </View>
-    )
-  }
 
   return (
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity
-        style={[
-          styles.optionContainer,
-          state.isOpen && {
-            borderBottomEndRadius: 0,
-            borderBottomStartRadius: 0,
-          },
-        ]}
+        style={styles.optionContainer}
         onPress={() => actions.setIsOpen(!state.isOpen)}
         activeOpacity={0.7}
       >
@@ -111,7 +69,33 @@ const SelectInput = ({
         />
       </TouchableOpacity>
 
-      {state.isOpen && <View>{renderOptions()}</View>}
+      <Modal transparent animationType='fade' visible={state.isOpen}>
+        <Pressable
+          style={styles.optionsOverlay}
+          onPress={() => actions.setIsOpen(false)}
+        >
+          <View style={styles.optionsContainer}>
+            {editable && (
+              <AddNewHeader
+                inputTextPlaceholder={headerInputPlaceholder}
+                onAddConfirm={actions.handleAddOption}
+              />
+            )}
+            <ScrollView>
+              {options.map((option) => (
+                <OptionComponent
+                  label={option.label}
+                  onPress={() => actions.handleOptionSelect(option)}
+                  editable={editable}
+                  onEdit={(newLabel) => onEditOption(option.id, newLabel)}
+                  onDelete={() => actions.handleDeleteOption(option)}
+                  key={option.id}
+                />
+              ))}
+            </ScrollView>
+          </View>
+        </Pressable>
+      </Modal>
 
       <ConfirmationModal
         visible={state.isModalVisible}

@@ -4,10 +4,8 @@ export interface Option {
 }
 
 export interface UseSelectInputProps {
-  options: Option[]
   value?: Option | null
   onSelect?: (option: Option) => void
-  onEditOption?: (id: number, newLabel: string) => void
   onDeleteOption?: (id: number) => void
   onAddOption?: (label: string) => Promise<Option | void>
 }

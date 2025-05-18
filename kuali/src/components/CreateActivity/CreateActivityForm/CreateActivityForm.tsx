@@ -6,19 +6,29 @@ import SelectInput from '../../shared/SelectInput'
 import RequirementsSection from '../RequirementsSection/RequirementsSection'
 import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 
-import { useCreateActivity } from '../../../hooks/CreateActivity/useCreateActivity'
-
 import { mapArrayToOptions } from '../../../utils/mappers'
-import AttachedFilesSection from '../AttachedFiles/AttachedFilesSection'
+import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
+import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { ScrollView, Text } from 'react-native'
+import Button from '../../shared/Button/Button'
+import { ImagePlusIcon } from '../../shared/Icons/Icons'
+import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
-  const { eventDate, limitDate, location, loadingAction } = useCreateActivity()
+  const { location, loadingAction, selectPosterImg } =
+    useCreateActivityContext()
 
   return (
-    <>
+    <ScrollView nestedScrollEnabled>
       <InputText label='Nombre del evento' placeholder='Evento' />
 
-      <DatePickersSection eventDate={eventDate} limitDate={limitDate} />
+      <DatePickersSection />
+
+      <InputText
+        label='Descripción del evento'
+        placeholder='Evento'
+        multiline
+      />
 
       <SelectInput
         label='Lugar'
@@ -32,21 +42,22 @@ const CreateActivityForm = () => {
         onEditOption={location.updateLocationName}
         onDeleteOption={location.deleteLocation}
         onAddOption={location.createLocation}
-        onSelect={location.setLocation}
+        onSelect={location.onLocationChange}
       />
 
-      <InputText
-        label='Descripción del evento'
-        placeholder='Evento'
-        multiline
+      <Button
+        style={{ marginBottom: 16 }}
+        buttonText='Poster del evento'
+        icon={<ImagePlusIcon color={colors.solidWhite} />}
+        onPress={selectPosterImg}
       />
 
-      <AttachedFilesSection />
+      <ActivityOptionsSection />
 
       <RequirementsSection />
 
       <LoadingModal visible={loadingAction} />
-    </>
+    </ScrollView>
   )
 }
 

@@ -107,7 +107,6 @@ model Activities {
   creator             Users                   @relation(fields: [admin_creator_id], references: [user_id])
   category            Categories              @relation(fields: [category_id], references: [category_id])
   location            Locations               @relation(fields: [location_id], references: [location_id])
-  attachedFiles       ActivityAttachedFiles[]
   users               Registrations[]
   requirements        Requirements[]
 
@@ -124,21 +123,22 @@ model Requirements {
   activity_id    Int
   activity       Activities      @relation(fields: [activity_id], references: [activity_id])
   userDocuments  UserDocuments[]
+  template RequirementTemplates?
 
   @@index([activity_id], map: "Requirements_activity_id_fkey")
 }
 
-model ActivityAttachedFiles {
-  activity_attached_file_id Int        @id @default(autoincrement())
+model RequirementTemplates {
+  requirement_template_id Int        @id @default(autoincrement())
   name                      String     @db.VarChar(100)
   file_content              Bytes
   mimetype                  String     @db.VarChar(50)
   upload_date               DateTime   @default(now())
   last_updated              DateTime?  @updatedAt
-  activity_id               Int
-  activity                  Activities @relation(fields: [activity_id], references: [activity_id])
+  requirement_id               Int @unique
+  requirement                  Requirements @relation(fields: [requirement_id], references: [requirement_id])
 
-  @@index([activity_id], map: "ActivityAttachedFiles_activity_id_fkey")
+  @@index([requirement_id], map: "RequirementTemplate_requirement_id_fkey")
 }
 
 model RevisionStatus {
