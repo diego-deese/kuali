@@ -4,7 +4,6 @@ import { Option } from '../../components/shared/SelectInput/interfaces'
 import { Location } from '../../types/Location'
 import locationService from '../../services/location.service'
 import { mapToOption } from '../../utils/mappers'
-import { InputError } from '../../types/Error'
 
 export const useLocations = () => {
   const [locations, setLocations] = useState<Location[] | null>(null)
