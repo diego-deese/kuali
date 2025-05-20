@@ -95,7 +95,10 @@ class ActivityService {
       const response = await this.api.get(`activities`)
 
       if (response.status === 200) {
-        return { success: true, users: response.data.activities as Activity[] }
+        return {
+          success: true,
+          activities: response.data.activities as Activity[],
+        }
       }
 
       return {
