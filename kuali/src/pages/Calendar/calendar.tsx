@@ -1,53 +1,21 @@
-import { View, Text, SafeAreaView, ScrollView } from 'react-native'
+import { View, SafeAreaView } from 'react-native'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import React from 'react'
 import { useAuth } from '../../context/AuthContext'
 import styles from './calendar.styles'
 import CalendarComponent from '../../components/Calendar/Calendar'
-import IconButton from '../../components/shared/IconButton/IconButton'
-import NextEventCard from '../../components/NextEventCard/NextEventCard'
-import { PlusIcon } from '../../components/shared/Icons/Icons'
-import { router } from 'expo-router'
-import WithRole from '../../components/WithRole/WithRole'
-import { Roles } from '../../constants/roles'
+import NextEventsComponents from '../../components/NextEventsComponent/NextEventsComponent'
+import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities';
 
 export default function MyEvents() {
-  const { user } = useAuth()
-
+  const { activities, error, loading} = useGetActivities()
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <View style={styles.calendarContainer}>
           <CalendarComponent></CalendarComponent>
         </View>
-        <View style={styles.nextEventsContainer}>
-          <View style={styles.nextEventsHeader}>
-            <Text style={styles.textNextEvents}> Eventos próximos </Text>
-            <WithRole role={Roles.ADMIN}>
-              <IconButton
-                icon={<PlusIcon />}
-                onPress={() => router.push('/event/manage/create')}
-              />
-            </WithRole>
-          </View>
-          <ScrollView
-            contentContainerStyle={{ paddingBottom: 10 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <NextEventCard
-              activity_id={6}
-              title={'Evento padrisimo'}
-              event_date={new Date('2025-05-15T17:00:00')}
-              location={'Auditorio'}
-            ></NextEventCard>
-            <NextEventCard
-              activity_id={7}
-              title={'Evento padrisimo'}
-              event_date={new Date('2025-05-15T17:00:00')}
-              location={'Auditorio'}
-            ></NextEventCard>
-          </ScrollView>
-        </View>
+        <NextEventsComponents activities={activities}></NextEventsComponents>
       </SafeAreaView>
     </SafeAreaProvider>
   )

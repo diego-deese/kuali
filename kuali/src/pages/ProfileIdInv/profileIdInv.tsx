@@ -7,11 +7,11 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native'
-import styles from './profileId.styles'
+import styles from './profileIdInv.styles'
 import { LinearGradient } from 'expo-linear-gradient'
 import FlipCard from 'react-native-flip-card'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { calculateDimensions } from './profileIdutils'
+import { calculateDimensions } from '../ProfileId/profileIdutils'
 import { useUserProfile } from '../../hooks/useUserProfile'
 import BlackBox from '../../components/ProfileId/ReverseBox'
 import { ReverseIcon } from '../../components/shared/Icons/Icons'
@@ -55,7 +55,7 @@ export default function ProfileId() {
         ]}
       >
         <FlipCard
-          friction={200}
+          friction={20}
           onFlipEnd={() => {
             setIsFlipped((prevState) => !prevState)
           }}
@@ -153,6 +153,28 @@ export default function ProfileId() {
               >
                 {getProgramName()}
               </Text>
+              <Text
+                style={[
+                  styles.program,
+                  {
+                    fontSize: fontSize.program,
+                    marginTop: cardDimensions.height * 0.02,
+                  },
+                ]}
+              >
+                {'SNI Distincion'}
+              </Text>
+              <Text
+                style={[
+                  styles.program,
+                  {
+                    fontSize: fontSize.program,
+                    marginTop: cardDimensions.height * 0.02,
+                  },
+                ]}
+              >
+                {'hugo@dominio.com'}
+              </Text>
             </View>
             <BlackBox cardDimensions={cardDimensions}>
               <ReverseIcon />
@@ -174,7 +196,7 @@ export default function ProfileId() {
             >
               <View style={styles.labelContainer}>
                 <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Nombre completo
+                  No. nombramiento
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
                   {userProfile?.name}{' '}
@@ -188,7 +210,7 @@ export default function ProfileId() {
 
               <View style={styles.labelContainer}>
                 <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Programa Académico
+                  Categoria
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
                   {getProgramName()}
@@ -197,7 +219,7 @@ export default function ProfileId() {
 
               <View style={styles.labelContainer}>
                 <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Correo electrónico institucional
+                  Linea de investigación
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
                   {userProfile?.institutional_email}
@@ -206,7 +228,7 @@ export default function ProfileId() {
 
               <View style={styles.labelContainer}>
                 <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Correo electrónico personal
+                  No. de seguro social
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
                   {userProfile?.personal_email || 'No proporcionado'}
@@ -215,7 +237,7 @@ export default function ProfileId() {
 
               <View style={styles.labelContainer}>
                 <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  CURP
+                  Vigencia
                 </Text>
                 <Text style={[styles.value, { fontSize: fontSize.value }]}>
                   {userProfile?.curp || 'No disponible'}
