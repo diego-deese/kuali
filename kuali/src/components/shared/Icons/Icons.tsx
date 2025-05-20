@@ -229,6 +229,12 @@ export const UploadIcon = (props) => {
   )
 }
 
+export const DownloadIcon = (props) => {
+  return (
+    <MaterialCommunityIcons name='download' size={24} color='blue' {...props} />
+  )
+}
+
 export const DocumentIcon = (props) => {
   return (
     <MaterialCommunityIcons

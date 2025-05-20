@@ -25,7 +25,7 @@ export default function StudentCard({
         name: student.name,
         paternal_lastname: student.paternal_lastname,
         identifier: student.identifier,
-        role: student.role.name, //Esto convierte lo que sea que sea role en texto antes de pasarlo como parámetro en router.push
+        role: student.role.name,
         //project: student.project,
         institutional_email: student.institutional_email,
         index: index.toString(),

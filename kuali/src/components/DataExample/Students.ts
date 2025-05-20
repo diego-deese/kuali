@@ -2,7 +2,7 @@ export const assignedStudents = [
   {
     user_id: 1,
     name: 'Juan',
-    second_name: 'Pi',
+    second_name: 'Pablo',
     paternal_lastname: 'Apellido',
     maternal_lastname: 'Apellido2',
     institutional_email: 'usuario@dominio.com',
@@ -14,6 +14,18 @@ export const assignedStudents = [
       name: 'ESTUDIANTE',
     },
     academic_programs_as_student: [],
+    Requirements: [
+      {
+        requirement_id: 1,
+        name: 'Currículum',
+        description: 'CV actualizado',
+      },
+      {
+        requirement_id: 2,
+        name: 'Permiso',
+        description: 'Permiso firmado por los padres',
+      },
+    ],
   },
   {
     user_id: 2,
@@ -30,11 +42,23 @@ export const assignedStudents = [
       name: 'ESTUDIANTE',
     },
     academic_programs_as_student: [],
+    Requirements: [
+      {
+        requirement_id: 1,
+        name: 'Currículum',
+        description: 'CV actualizado',
+      },
+      {
+        requirement_id: 2,
+        name: 'Permiso',
+        description: 'Permiso firmado por los padres',
+      },
+    ],
   },
   {
     user_id: 3,
     name: 'Erick',
-    second_name: 'A',
+    second_name: 'Arjuna',
     paternal_lastname: 'Apellido',
     maternal_lastname: 'Apellido2',
     institutional_email: 'usuario@dominio.com',
@@ -46,5 +70,17 @@ export const assignedStudents = [
       name: 'ESTUDIANTE',
     },
     academic_programs_as_student: [],
+    Requirements: [
+      {
+        requirement_id: 1,
+        name: 'Currículum',
+        description: 'CV actualizado',
+      },
+      {
+        requirement_id: 2,
+        name: 'Permiso',
+        description: 'Permiso firmado por los padres',
+      },
+    ],
   },
 ]
