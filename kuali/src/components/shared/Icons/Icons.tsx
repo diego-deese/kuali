@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import { FontAwesome } from '@expo/vector-icons'
+import Fontisto from '@expo/vector-icons/Fontisto'
 import colors from '../../../constants/colors'
 
 export const BookmarkIcon = ({ fill = true, ...props }) => {
@@ -72,6 +73,9 @@ export const LogoutIcon = ({ fill = true, ...props }) => {
   return <MaterialIcons name='logout' size={24} color='black' {...props} />
 }
 
+export const ReverseIcon = ({ fill = true, ...props }) => {
+  return <MaterialIcons name='touch-app' size={30} color='white' {...props} />
+}
 export const InfoIcon = ({ fill = true, ...props }) => {
   return (
     <MaterialIcons name='info-outline' size={24} color={colors.selectionBlue} />
