@@ -56,4 +56,12 @@ export const styles = StyleSheet.create({
     includeFontPadding: false,
     margin: 4,
   },
+  errorLabel: {
+    fontFamily: 'monserratRegular',
+    color: colors.warningRed,
+    includeFontPadding: false,
+    marginStart: 8,
+    marginTop: 8,
+    fontSize: 16,
+  },
 })

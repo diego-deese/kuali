@@ -29,6 +29,8 @@ const SelectInput = ({
   options = [],
   editable = false,
   value,
+  error = false,
+  errorMessage = '',
   onSelect,
   onEditOption,
   onDeleteOption,
@@ -45,7 +47,10 @@ const SelectInput = ({
     <View style={styles.container}>
       {label && <Text style={styles.label}>{label}</Text>}
       <TouchableOpacity
-        style={styles.optionContainer}
+        style={[
+          styles.optionContainer,
+          error && { borderColor: colors.warningRed },
+        ]}
         onPress={() => actions.setIsOpen(!state.isOpen)}
         activeOpacity={0.7}
       >
@@ -68,6 +73,7 @@ const SelectInput = ({
           onPress={() => actions.setIsOpen(!state.isOpen)}
         />
       </TouchableOpacity>
+      {error && <Text style={styles.errorLabel}>{errorMessage}</Text>}
 
       <Modal transparent animationType='fade' visible={state.isOpen}>
         <Pressable
