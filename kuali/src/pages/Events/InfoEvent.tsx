@@ -1,48 +1,30 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DocumentCard, {
-  Document,
-} from '../../components/DocumentCard/DocumentCard'
+import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
 import { CalendarEvent, LocationIcon } from '../../components/shared/Icons/Icons'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
-import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
-import { Requirements } from '../../types/Requirements'
-import { UserDocument, DocumentStatus } from '../../types/UserDocument'
-
-// Detalles completos de un evento académico.
-interface EventDetails {
-  activity_id: number
-  title: string
-  description: string
-  event_date: Date
-  register_date_limit: Date
-  location: {
-    location_id: number
-    name: string
-  }
-  category: {
-    category_id: number
-    name: string
-  }
-  requirements: Requirements[]
-  isRegistered: boolean
-}
+import { DocumentStatus } from '../../types/UserDocument'
+import { Activity } from '../../types/Activity'
+import { getDocumentStatusFromString } from './InfoEvent.utils'
+import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
+import { parseValidDate } from './InfoEvent.utils'
+import activityService from '../../services/activity.service'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
   gestionar su participación.
  */
-export default function InfoEvent() {
+const InfoEvent: React.FC = () => {
   const params = useLocalSearchParams()
-  const activity_id = params.id ? Number(params.id) : 0
+  const activity_id = params.activity_id ? Number(params.activity_id) : 0
 
-  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
+  const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [modalVisible, setModalVisible] = useState(false)
@@ -54,68 +36,25 @@ export default function InfoEvent() {
       try {
         setLoading(true)
 
-        // Datos de ejemplo
-        const mockData: EventDetails = {
-          activity_id,
-          title: (params.title as string) || 'Nombre del evento',
-          description:
-            (params.des as string) || 'Lorem ipsum dolor sit amet...',
-          event_date: params.event_date
-            ? new Date(params.event_date as string)
-            : new Date(),
-          register_date_limit: new Date(Date.now()),
-          location: {
-            location_id: 1,
-            name: (params.location as string) || 'Lugar',
-          },
-          category: {
-            category_id: 1,
-            name: 'Evento académico',
-          },
-          requirements: [
-            {
-              requirement_id: 1,
-              name: 'Documento 1',
-              description: 'Solicita este documento en servicios escolares',
-              userDocuments: [],
-            },
-            {
-              requirement_id: 2,
-              name: 'Documento 2',
-              description: 'Solicita este documento en servicios escolares',
-              userDocuments: [
-                {
-                  user_document_id: 101,
-                  status: {
-                    revision_status_id: 2,
-                    name: DocumentStatus.Aprobado,
-                  },
-                },
-              ],
-            },
-            {
-              requirement_id: 3,
-              name: 'Documento 3',
-              description: 'Descarga y llena el formulario',
-              userDocuments: [
-                {
-                  user_document_id: 102,
-                  status: {
-                    revision_status_id: 2,
-                    name: DocumentStatus.Rechazado,
-                  },
-                },
-              ],
-            },
-          ],
-          isRegistered: false, // Por defecto no está registrado
+        if (!activity_id) {
+          setError('ID de actividad no válido')
+          setLoading(false)
+          return
         }
 
-        // Simular llamda xd
-        setTimeout(() => {
-          setEventDetails(mockData)
+        // Llamada al servicio para obtener detalles de la actividad
+        const result = await activityService.getActivityById(activity_id)
+
+        if (!result.success && 'error' in result) {
+          setError(result.error || 'No se pudo cargar la información')
           setLoading(false)
-        }, 500)
+          return
+        }
+
+        setEventDetails(result.data)
+        // Verificar si el usuario ya está registrado en esta actividad
+        setHasApplied(result.data.isRegistered || false)
+        setLoading(false)
       } catch (err) {
         setError('Error al cargar los detalles del evento')
         setLoading(false)
@@ -124,58 +63,81 @@ export default function InfoEvent() {
     }
 
     fetchEventDetails()
-  }, [
-    activity_id,
-    params.title,
-    params.event_date,
-    params.location,
-    params.description,
-  ])
+  }, [activity_id])
 
-  const handleUpload = (docId: number) => {
-    // Lógica para subir documento - integrar con API en el futuro
-    console.log(`Subiendo documento ${docId}`)
+  const handleUpload = async (docId: number) => {
+    // Implementación de la llamada al servicio para subir documento
+    try {
+      // Aquí iría la lógica para seleccionar un archivo
+      // const result = await documentService.uploadDocument(activity_id, docId, fileData)
+
+      // Si la subida es exitosa, actualizar los datos
+      // if (result.success) {
+      //   // Refrescar los datos para mostrar el documento actualizado
+      //   fetchEventDetails()
+      // }
+
+      // Por ahora, solo mostramos el mensaje en consola
+      console.log(`Subiendo documento ${docId}`)
+    } catch (error) {
+      console.error('Error al subir documento:', error)
+    }
   }
 
-  const handleDelete = (docId: number) => {
-    // Lógica para eliminar documento - integrar con API en el futuro
-    console.log(`Eliminando documento ${docId}`)
+  const handleDelete = async (docId: number) => {
+    // Implementación de la llamada al servicio para eliminar documento
+    try {
+      // const result = await documentService.deleteDocument(docId)
+
+      // Si la eliminación es exitosa, actualizar los datos
+      // if (result.success) {
+      //   // Refrescar los datos para actualizar la UI
+      //   fetchEventDetails()
+      // }
+
+      // Por ahora, solo mostramos el mensaje en consola
+      console.log(`Eliminando documento ${docId}`)
+    } catch (error) {
+      console.error('Error al eliminar documento:', error)
+    }
   }
 
-  const handleExit = () => {
-    console.log('Saliendo de esta convocatoria')
-    router.back()
+  const handleExit = async () => {
+    try {
+      // const result = await activityService.unregisterFromActivity(activity_id)?
+
+      // if (result.success) {
+      //   setHasApplied(false)
+      // }
+
+      console.log('Saliendo de esta convocatoria')
+      router.back()
+    } catch (error) {
+      console.error('Error al darse de baja del evento:', error)
+    }
   }
 
   const handleApply = () => {
     setApplyModalVisible(true)
   }
 
-  const confirmApply = () => {
-    console.log('Aplicando a la convocatoria')
-    setHasApplied(true)
-    setApplyModalVisible(false)
-  }
+  const confirmApply = async () => {
+    try {
+      // const result = await activityService.applyToActivity(activity_id)?
 
-  // Agrega esta función antes del return en tu componente InfoEvent
-  const getDocumentStatusFromString = (
-    statusName: DocumentStatus | string,
-  ): DocumentStatus => {
-    // Si ya es un DocumentStatus, devuélvelo directamente
-    if (Object.values(DocumentStatus).includes(statusName as DocumentStatus)) {
-      return statusName as DocumentStatus
-    }
+      // if (result.success) {
+      //   setHasApplied(true)
+      // }
 
-    // Si es un string, conviértelo al enum correspondiente
-    switch (String(statusName).toLowerCase()) {
-      case 'aprobado':
-        return DocumentStatus.Aprobado
-      case 'rechazado':
-        return DocumentStatus.Rechazado
-      default:
-        return DocumentStatus.Pendiente
+      console.log('Aplicando a la convocatoria')
+      setHasApplied(true)
+      setApplyModalVisible(false)
+    } catch (error) {
+      console.error('Error al aplicar a la convocatoria:', error)
+      setApplyModalVisible(false)
     }
   }
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -212,10 +174,17 @@ export default function InfoEvent() {
         <Text style={styles.eventTitle}>{eventDetails.title}</Text>
         <View style={styles.eventInfoRow}>
           <CalendarEvent style={styles.eventInfoIcon} />
-          <FormattedDate
-            date={eventDetails.event_date}
-            style={styles.eventInfoText}
-          />
+          <Text style={styles.eventInfoText}>
+            {parseValidDate(eventDetails.event_date) ? (
+              <FormattedDate
+                date={parseValidDate(eventDetails.event_date)!}
+                separator=', '
+                showWeekday={false}
+              />
+            ) : (
+              eventDetails.event_date
+            )}
+          </Text>
         </View>
         <View style={styles.eventInfoRow}>
           <LocationIcon style={styles.eventInfoIcon} />
@@ -227,11 +196,17 @@ export default function InfoEvent() {
           <Text style={styles.registerLimitLabel}>
             Fecha límite de registro:{' '}
           </Text>
-          <FormattedDate
-            date={eventDetails.register_date_limit}
-            style={styles.registerLimitDate}
-            showTime={false}
-          />
+          <Text style={styles.registerLimitDate}>
+            {parseValidDate(eventDetails.register_date_limit) ? (
+              <FormattedDate
+                date={parseValidDate(eventDetails.register_date_limit)!}
+                separator=', '
+                showWeekday={false}
+              />
+            ) : (
+              eventDetails.register_date_limit
+            )}
+          </Text>
         </View>
 
         {/* Requisitos/Documentos */}
@@ -243,35 +218,44 @@ export default function InfoEvent() {
         ) : (
           /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
           <>
-            {eventDetails.requirements.map((req) => {
-              // Obtener el documento del usuario si existe
-              const userDocument =
-                req.userDocuments && req.userDocuments.length > 0
-                  ? req.userDocuments[0]
-                  : undefined
+            {eventDetails.requirements &&
+            eventDetails.requirements.length > 0 ? (
+              // Si hay requisitos, mapearlos como haces actualmente
+              eventDetails.requirements.map((req) => {
+                // Obtener el documento del usuario si existe
+                const userDocument =
+                  req.userDocuments && req.userDocuments.length > 0
+                    ? req.userDocuments[0]
+                    : undefined
 
-              // Determinar el estado del documento basado en el status
-              const documentStatus = userDocument?.status?.name
-                ? getDocumentStatusFromString(userDocument.status.name)
-                : DocumentStatus.Pendiente
+                // Determinar el estado del documento basado en el status
+                const documentStatus = userDocument?.status?.name
+                  ? getDocumentStatusFromString(userDocument.status.name)
+                  : DocumentStatus.Pendiente
 
-              return (
-                <DocumentCard
-                  key={req.requirement_id}
-                  document={{
-                    id: req.requirement_id,
-                    title: req.name,
-                    description: req.description,
-                    status: documentStatus,
-                    userDocumentId: userDocument?.user_document_id,
-                  }}
-                  onUpload={() => handleUpload(req.requirement_id)}
-                  onDelete={() =>
-                    handleDelete(userDocument?.user_document_id || 0)
-                  }
-                />
-              )
-            })}
+                return (
+                  <DocumentCard
+                    key={req.requirement_id}
+                    document={{
+                      id: req.requirement_id,
+                      title: req.name,
+                      description: req.description,
+                      status: documentStatus,
+                      userDocumentId: userDocument?.user_document_id,
+                    }}
+                    onUpload={() => handleUpload(req.requirement_id)}
+                    onDelete={() =>
+                      handleDelete(userDocument?.user_document_id || 0)
+                    }
+                  />
+                )
+              })
+            ) : (
+              // Si NO hay requisitos, mostrar este mensaje
+              <Text style={styles.noRequirementsText}>
+                Esta actividad no tiene requisitos documentales.
+              </Text>
+            )}
 
             {/* Botón de salir */}
             <Pressable
@@ -279,7 +263,7 @@ export default function InfoEvent() {
               onPress={() => setModalVisible(true)}
             >
               <Text style={styles.exitButtonText}>
-                Darte de baja de la convocatoria
+                Darte de baja del evento
               </Text>
             </Pressable>
           </>
@@ -295,7 +279,7 @@ export default function InfoEvent() {
           onCancel={() => setApplyModalVisible(false)}
           onConfirm={confirmApply}
         />
-        {/* Modal de confirmación */}
+        {/* Modal de confirmación para desuscribirse */}
         <ConfirmationModal
           visible={modalVisible}
           title='Confirmación'
@@ -311,3 +295,5 @@ export default function InfoEvent() {
     </ScrollView>
   )
 }
+
+export default InfoEvent

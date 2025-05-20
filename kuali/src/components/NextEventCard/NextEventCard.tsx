@@ -21,9 +21,6 @@ export default function NextEventCard({
     navigateToEvent({
       pathname: `/event/${activity_id}`,
       params: {
-        title,
-        event_date: event_date.toISOString(),
-        location,
         activity_id,
       },
     })

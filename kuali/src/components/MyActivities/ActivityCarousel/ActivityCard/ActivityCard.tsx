@@ -21,11 +21,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
     navigateToEvent({
       pathname: `/event/${activity.activity_id}`,
       params: {
-        title: activity.title,
-        event_date: new Date(activity.event_date).toISOString(),
-        location: activity.location.name,
         activity_id: activity.activity_id,
-        des: encodeURIComponent(activity.description || ''),
       },
     })
   }

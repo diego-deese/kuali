@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
-import { ArrayResponse, ResponseError } from '../types/Request'
+import { ArrayResponse, ResponseError, Response } from '../types/Request'
 import { Activity, NewActivityData } from '../types/Activity'
 import { template } from '@babel/core'
 import { getFileInfo } from '../utils/parsing'
@@ -189,6 +189,47 @@ class ActivityService {
     } catch (error) {
       console.error('Error completo:', error)
       console.log(error.response.data)
+    }
+  }
+
+  // Método para obtener actividad por ID
+  async getActivityById(
+    activityId: number,
+  ): Promise<Response<Activity> | ResponseError> {
+    try {
+      const response = await this.api.get(`/activities/${activityId}`)
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data.activity as Activity,
+        }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al obtener los detalles del evento',
+        error:
+          response.data.error || 'No se pudo obtener la información del evento',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
     }
   }
 }
