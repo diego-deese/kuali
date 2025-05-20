@@ -2,7 +2,6 @@ import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
 import { ArrayResponse, ResponseError, Response } from '../types/Request'
 import { Activity, NewActivityData } from '../types/Activity'
-import { template } from '@babel/core'
 import { getFileInfo } from '../utils/parsing'
 
 class ActivityService {
