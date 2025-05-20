@@ -127,7 +127,9 @@ class ActivityService {
     }
   }
 
-  async createActivity(newActivityData: NewActivityData) {
+  async createActivity(
+    newActivityData: NewActivityData,
+  ): Promise<Response<Activity> | ResponseError> {
     try {
       const formData = new FormData()
 
@@ -179,16 +181,40 @@ class ActivityService {
         }),
       )
 
-      console.log(formData)
-
       const response = await this.api.post('/activities', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
 
-      console.log(response.data)
+      if (response.status === 201) {
+        return {
+          success: true,
+          data: response.data.activity,
+        }
+      }
+
+      return {
+        success: false,
+        message: response.data.message || 'Error al crear la nueva actividad',
+        error: response.data.error || 'No se pudo crear la nueva actividad',
+      }
     } catch (error) {
-      console.error('Error completo:', error)
-      console.log(error.response.data)
+      console.error(error)
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
     }
   }
 

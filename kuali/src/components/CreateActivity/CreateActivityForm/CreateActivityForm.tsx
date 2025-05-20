@@ -9,18 +9,25 @@ import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 import { mapArrayToOptions } from '../../../utils/mappers'
 import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
 import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
-import { ScrollView, Text } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import Button from '../../shared/Button/Button'
 import { ImagePlusIcon } from '../../shared/Icons/Icons'
 import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
-  const { location, loadingAction, selectPosterImg } =
+  const { location, loadingAction, posterImg, title, description, errors } =
     useCreateActivityContext()
 
   return (
     <ScrollView nestedScrollEnabled>
-      <InputText label='Nombre del evento' placeholder='Evento' />
+      <InputText
+        label='Título del evento'
+        placeholder='Evento'
+        value={title.title}
+        onChangeText={title.onTitleChange}
+        error={errors.title.error}
+        errorMessage={errors.title.errorMessage}
+      />
 
       <DatePickersSection />
 
@@ -28,6 +35,10 @@ const CreateActivityForm = () => {
         label='Descripción del evento'
         placeholder='Evento'
         multiline
+        value={description.description}
+        onChangeText={description.onDescriptionChange}
+        error={errors.description.error}
+        errorMessage={errors.description.errorMessage}
       />
 
       <SelectInput
@@ -39,18 +50,25 @@ const CreateActivityForm = () => {
         }
         headerInputPlaceholder='Nuevo lugar'
         editable
+        error={errors.location.error}
+        errorMessage={errors.location.errorMessage}
         onEditOption={location.updateLocationName}
         onDeleteOption={location.deleteLocation}
         onAddOption={location.createLocation}
         onSelect={location.onLocationChange}
       />
 
-      <Button
-        style={{ marginBottom: 16 }}
-        buttonText='Poster del evento'
-        icon={<ImagePlusIcon color={colors.solidWhite} />}
-        onPress={selectPosterImg}
-      />
+      <View>
+        <Button
+          buttonText='Poster del evento'
+          icon={<ImagePlusIcon color={colors.solidWhite} />}
+          onPress={posterImg.selectPosterImg}
+          error={errors.posterImage.error}
+          errorLabel={errors.posterImage.errorMessage}
+          showLabel={posterImg.posterImg !== null}
+          label='Poster agregado'
+        />
+      </View>
 
       <ActivityOptionsSection />
 

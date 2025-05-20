@@ -2,6 +2,9 @@ import { StyleSheet } from 'react-native'
 import colors from '../../../constants/colors'
 
 const styles = StyleSheet.create({
+  container: {
+    marginBottom: 16,
+  },
   button: {
     paddingVertical: 8,
     paddingHorizontal: 15, //Modifico para que quepan los botones
@@ -34,6 +37,22 @@ const styles = StyleSheet.create({
   },
   buttonTextSmall: {
     fontSize: 14,
+  },
+  errorLabel: {
+    fontFamily: 'monserratRegular',
+    color: colors.warningRed,
+    includeFontPadding: false,
+    marginStart: 8,
+    marginTop: 8,
+    fontSize: 16,
+  },
+  label: {
+    fontFamily: 'monserratItalic',
+    color: colors.highlightCyan,
+    includeFontPadding: false,
+    marginStart: 8,
+    marginTop: 8,
+    fontSize: 16,
   },
 })
 
