@@ -15,6 +15,7 @@ import CreateActivityForm from '../../components/CreateActivity/CreateActivityFo
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
 
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
+
 import { useCreateActivityContext } from '../../context/CreateActivityContext/CreateActivityContext'
 
 const CreateActivity = () => {
