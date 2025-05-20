@@ -7,7 +7,7 @@ import calendarTheme from "./Calendar.styles";
 import EventCalendarCard from "../EventCalendarCard/EventCalendarCard";
 import { useEventNavigation } from "../../hooks/NavigationActivity/useEventNavigation";
 import LoadingModal from "../shared/LoadingModal/LoadingModal";
-import { useGetActivities } from "../../hooks/CalendarActivities/useGetActivities";
+import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities';
 
 function getLimitedEvents(events: any[], limitPerDay: number) {
   const grouped: { [key: string]: any[] } = {};
@@ -28,8 +28,16 @@ export default function CalendarComponent() {
   const [monthName, setMonthName] = useState(dayjs().format('MMMM'))
   const [monthNumber, setMonthNumber] = useState(dayjs().format('MM'))
   const { isNavigating, navigateToEvent } = useEventNavigation()
-  const { events, error, loading} = useGetActivities()
+  const { activities, error, loading } = useGetActivities()
+
+  const calendarEvents = activities.map((activity) => ({
+    id: activity.activity_id,
+    title: activity.title,
+    start: dayjs(activity.event_date).toDate(),
+    end: dayjs(activity.event_date).add(30, 'minute').toDate(),
+  }))
   
+    
   const updateDisplayedMonth = (date: Date) => {
     const newDate = dayjs(date)
     setMonthName(newDate.format('MMMM'))
@@ -52,7 +60,7 @@ export default function CalendarComponent() {
         <Text style={calendarTheme.styles.headerText}>{monthName}</Text>
       </View>
       <Calendar
-        events={getLimitedEvents(events, 2)}
+        events={getLimitedEvents(calendarEvents, 2)}
         height={500}
         mode='month'
         theme={calendarTheme}

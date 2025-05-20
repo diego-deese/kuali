@@ -12,7 +12,7 @@ type CalendarEvent = {
 }
 
 export function useGetActivities() {
-  const [events, setEvents] = useState<CalendarEvent[]>([])
+  const [activities, setActivities] = useState<Activity[]>([])
   const [error, setError] = useState<boolean>(false)
   const [loading, setLoading] = useState<string | null>(null)
 
@@ -26,13 +26,7 @@ export function useGetActivities() {
 
       const response = await activityService.getAllActivities()
       if (response.success) {
-        const parsed = response.activities.map((activity: Activity) => ({
-          id: activity.activity_id,
-          title: activity.title,
-          start: dayjs(activity.event_date).toDate(),
-          end: dayjs(activity.event_date).add(30, 'minute').toDate(), // or use `register_date_limit` if you want that as the `end`
-        }))
-        setEvents(parsed)
+        setActivities(response.activities)
       } else {
         setError(true)
       }
@@ -40,5 +34,5 @@ export function useGetActivities() {
     initialize()
   }, [])
 
-  return { events, error, loading }
+  return { activities, error, loading }
 }
