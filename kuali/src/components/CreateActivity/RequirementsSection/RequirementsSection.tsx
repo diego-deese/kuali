@@ -29,7 +29,7 @@ const RequirementsSection = () => {
             requirementId={item.requirement_id}
             name={item.name}
             description={item.description}
-            templateUri={item.template_uri}
+            templateUri={item.template_uri && item.template_uri}
             onDeletePress={requirements.deleteRequirement}
             onEdit={requirements.editRequirement}
           />
