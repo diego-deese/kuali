@@ -24,7 +24,6 @@ export const getDocumentStatusFromString = (
 }
 
 export const parseValidDate = (dateString: string): Date | null => {
-  // Si es una fecha ISO válida o formato reconocido por JS
   const parsedDate = new Date(dateString)
   return !isNaN(parsedDate.getTime()) ? parsedDate : null
 }
