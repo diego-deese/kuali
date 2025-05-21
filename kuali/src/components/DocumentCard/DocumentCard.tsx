@@ -3,6 +3,7 @@ import styles from './DocumentCard.styles'
 import { PendingIcon, RejectedIcon, AcceptedIcon } from '../shared/Icons/Icons'
 import Button from '../shared/Button/Button'
 import { DocumentStatus } from '../../types/UserDocument'
+import * as DocumentPicker from 'expo-document-picker'
 
 export interface Document {
   id: number
@@ -14,7 +15,7 @@ export interface Document {
 
 interface DocumentCardProps {
   document: Document
-  onUpload?: (docId: number) => void
+  onUpload?: (docId: number, fileUri?: string) => void
   onDelete?: (docId: number) => void
 }
 
@@ -24,6 +25,26 @@ export default function DocumentCard({
   onDelete,
 }: DocumentCardProps) {
   const { id, title, description, status } = document
+
+  const pickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/msword',
+        ],
+        copyToCacheDirectory: true,
+      })
+
+      if (!result.canceled) {
+        // Llamar a onUpload con el ID del documento y la URI del archivo seleccionado
+        onUpload && onUpload(id, result.assets[0].uri)
+      }
+    } catch (error) {
+      console.error('Error al seleccionar el archivo:', error)
+    }
+  }
 
   const renderIcon = () => {
     switch (status) {
@@ -63,7 +84,7 @@ export default function DocumentCard({
         <View style={styles.buttonContainer}>
           <Button
             buttonText='Subir documento'
-            onPress={() => onUpload && onUpload(id)}
+            onPress={pickDocument}
             disabled={false}
             size='small'
           />
@@ -75,7 +96,7 @@ export default function DocumentCard({
       <View style={styles.buttonContainer}>
         <Button
           buttonText='Subir documento'
-          onPress={() => onUpload && onUpload(id)}
+          onPress={pickDocument}
           disabled={false}
           size='small'
         />

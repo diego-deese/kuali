@@ -64,9 +64,10 @@ const InfoEvent: React.FC = () => {
     fetchEventDetails()
   }, [activity_id])
 
-  const handleUpload = async (docId: number) => {
+  const handleUpload = async (docId: number, fileUri?: string) => {
     // Implementación de la llamada al servicio para subir documento
     try {
+      console.log(`Subiendo documento ${docId} con URI: ${fileUri || 'No URI'}`)
       // Aquí iría la lógica para seleccionar un archivo
       // const result = await documentService.uploadDocument(activity_id, docId, fileData)
 
@@ -77,7 +78,6 @@ const InfoEvent: React.FC = () => {
       // }
 
       // Por ahora, solo mostramos el mensaje en consola
-      console.log(`Subiendo documento ${docId}`)
     } catch (error) {
       console.error('Error al subir documento:', error)
     }
