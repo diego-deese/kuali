@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native'
 import { useEffect, useState } from 'react'
-import { CalendarEvent, LocationIcon } from '../shared/Icons/Icons' // Corregir la ruta
-import { FormattedDate } from '../shared/FormattedDate/FormattedDate' // Corregir la ruta
+import { CalendarEvent, LocationIcon } from '../shared/Icons/Icons'
+import { FormattedDate } from '../shared/FormattedDate/FormattedDate'
 import { Activity } from '../../types/Activity'
 import { parseValidDate } from '../../pages/Events/InfoEvent.utils'
 import activityService from '../../services/activity.service'
@@ -9,13 +9,13 @@ import styles from '../../pages/Events/InfoEvents.styles'
 
 interface EventDetailsHeaderProps {
   activity_id: number
-  existingData?: Activity | null // Nueva prop para datos preexistentes
+  existingData?: Activity | null
   onDataLoaded?: (eventDetails: Activity) => void
 }
 
 const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
   activity_id,
-  existingData, // Recibir datos existentes
+  existingData,
   onDataLoaded,
 }) => {
   // Usar datos existentes como estado inicial si están disponibles
@@ -27,7 +27,7 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    // Si ya tenemos datos existentes, no necesitamos hacer la llamada al API
+    // Recibe los datos si los hay
     if (existingData) {
       return
     }
@@ -42,7 +42,7 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
           return
         }
 
-        // Llamada al servicio para obtener detalles de la actividad
+        // Si no hace la llamada, no se que tan bueno sea que lo haga pero confio
         const result = await activityService.getActivityById(activity_id)
 
         if (!result.success && 'error' in result) {
@@ -52,7 +52,6 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
         }
 
         setEventDetails(result.data)
-        // Notificar al componente padre que los datos se cargaron
         if (onDataLoaded) {
           onDataLoaded(result.data)
         }

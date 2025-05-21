@@ -4,18 +4,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
-import {
-  CalendarEvent,
-  LocationIcon,
-} from '../../components/shared/Icons/Icons'
+
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
 import { DocumentStatus } from '../../types/UserDocument'
 import { Activity } from '../../types/Activity'
 import { getDocumentStatusFromString } from './InfoEvent.utils'
-import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
-import { parseValidDate } from './InfoEvent.utils'
 import activityService from '../../services/activity.service'
 import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
 
@@ -174,7 +169,7 @@ const InfoEvent: React.FC = () => {
         onPress={() => router.back()}
       />
       <View style={styles.content}>
-        <EventDetailsHeader
+        <EventDetailsHeader // Info del evento
           activity_id={activity_id}
           existingData={eventDetails}
           onDataLoaded={(data) => {
