@@ -13,7 +13,7 @@ import { Activity } from '../../types/Activity'
 import { getDocumentStatusFromString } from './InfoEvent.utils'
 import activityService from '../../services/activity.service'
 import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
-
+import documentService from '../../services/document.service'
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
@@ -29,6 +29,8 @@ const InfoEvent: React.FC = () => {
   const [modalVisible, setModalVisible] = useState(false)
   const [applyModalVisible, setApplyModalVisible] = useState(false)
   const [hasApplied, setHasApplied] = useState(false)
+  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
+  const [documentToDelete, setDocumentToDelete] = useState<number | null>(null)
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -67,37 +69,73 @@ const InfoEvent: React.FC = () => {
   const handleUpload = async (docId: number, fileUri?: string) => {
     // Implementación de la llamada al servicio para subir documento
     try {
-      console.log(`Subiendo documento ${docId} con URI: ${fileUri || 'No URI'}`)
-      // Aquí iría la lógica para seleccionar un archivo
-      // const result = await documentService.uploadDocument(activity_id, docId, fileData)
+      if (!fileUri) {
+        console.error('No se proporcionó URI del archivo')
+        return
+      }
 
-      // Si la subida es exitosa, actualizar los datos
-      // if (result.success) {
-      //   // Refrescar los datos para mostrar el documento actualizado
-      //   fetchEventDetails()
-      // }
+      setLoading(true)
+      const result = await documentService.uploadDocument(
+        activity_id,
+        docId,
+        fileUri,
+      )
 
-      // Por ahora, solo mostramos el mensaje en consola
+      if (!result.success && 'error' in result) {
+        setError(result.error || 'Error al subir documento')
+        console.error('Error:', result.error)
+      } else {
+        // Actualizar la interfaz después de subir el documento
+        // fetchEventDetails()
+        console.log('¡Documento subido correctamente!', {
+          activityId: activity_id,
+          requirementId: docId,
+          fileName: fileUri.split('/').pop(),
+        })
+      }
     } catch (error) {
       console.error('Error al subir documento:', error)
+      setError('Error al subir el documento')
+    } finally {
+      setLoading(false)
     }
   }
 
   const handleDelete = async (docId: number) => {
     // Implementación de la llamada al servicio para eliminar documento
+    if (!docId) {
+      console.error('ID de documento inválido')
+      return
+    }
+    setDocumentToDelete(docId)
+    setDeleteModalVisible(true)
+  }
+  const confirmDelete = async () => {
     try {
-      // const result = await documentService.deleteDocument(docId)
+      if (!documentToDelete) {
+        console.error('ID de documento inválido')
+        return
+      }
 
-      // Si la eliminación es exitosa, actualizar los datos
-      // if (result.success) {
-      //   // Refrescar los datos para actualizar la UI
-      //   fetchEventDetails()
-      // }
+      setLoading(true)
+      console.log('Eliminando documento:', documentToDelete)
+      const result = await documentService.deleteDocument(documentToDelete)
 
-      // Por ahora, solo mostramos el mensaje en consola
-      console.log(`Eliminando documento ${docId}`)
+      if (!result.success && 'error' in result) {
+        setError(result.error || 'Error al eliminar documento')
+        console.error('Error:', result.error)
+      } else {
+        console.log('¡Documento eliminado correctamente!')
+        // Refrescar los datos para actualizar la UI
+        //fetchEventDetails()
+      }
     } catch (error) {
       console.error('Error al eliminar documento:', error)
+      setError('Error al eliminar el documento')
+    } finally {
+      setLoading(false)
+      setDeleteModalVisible(false)
+      setDocumentToDelete(null)
     }
   }
 
@@ -212,7 +250,7 @@ const InfoEvent: React.FC = () => {
                       status: documentStatus,
                       userDocumentId: userDocument?.user_document_id,
                     }}
-                    onUpload={() => handleUpload(req.requirement_id)}
+                    onUpload={(docId, fileUri) => handleUpload(docId, fileUri)}
                     onDelete={() =>
                       handleDelete(userDocument?.user_document_id || 0)
                     }
@@ -259,6 +297,19 @@ const InfoEvent: React.FC = () => {
             handleExit()
             setModalVisible(false)
           }}
+        />
+        {/* Modal de confirmación para eliminar documento */}
+        <ConfirmationModal
+          visible={deleteModalVisible}
+          title='Eliminar documento'
+          description='¿Estás seguro que deseas eliminar este documento? Esta acción no se puede deshacer.'
+          confirmButtonText='Eliminar'
+          confirmButtonColor={colors.warningRed}
+          onCancel={() => {
+            setDeleteModalVisible(false)
+            setDocumentToDelete(null)
+          }}
+          onConfirm={confirmDelete}
         />
       </View>
     </ScrollView>

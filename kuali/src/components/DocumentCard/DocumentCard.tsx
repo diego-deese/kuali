@@ -102,7 +102,7 @@ export default function DocumentCard({
         />
         <Button
           buttonText='Eliminar documento'
-          onPress={() => onDelete && onDelete(id)}
+          onPress={() => onDelete && onDelete(document.userDocumentId || 0)}
           size='small'
           variant='delete'
         />
