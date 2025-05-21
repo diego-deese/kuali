@@ -4,6 +4,7 @@ import { Option } from '../../components/shared/SelectInput/interfaces'
 import { Location } from '../../types/Location'
 import { DateType } from 'react-native-ui-datepicker'
 import { ActivityRequirement } from '../../types/Requirements'
+import { ActivityErrors } from '../../types/Error'
 
 interface CreateActivityContextProps {
   dates?: {
@@ -43,13 +44,24 @@ interface CreateActivityContextProps {
       templateUri: string,
     ) => void
   }
+  title?: {
+    title: string
+    onTitleChange: (title: string) => void
+  }
+  description?: {
+    description: string
+    onDescriptionChange: (description: string) => void
+  }
+  posterImg?: {
+    posterImg: string
+    selectPosterImg?: () => void
+  }
   loading?: boolean
   loadingAction?: boolean
   setLoading?: (value: boolean) => void
   setLoadingAction?: (value: boolean) => void
-  selectPosterImg?: () => void
   createActivity?: () => void
-  posterImg?: string | null
+  errors?: ActivityErrors
 }
 
 const CreateActivityContext = createContext<CreateActivityContextProps>({})

@@ -1,10 +1,10 @@
 import React from 'react'
 import {
-  Pressable,
   PressableProps,
   StyleProp,
   Text,
   TouchableOpacity,
+  View,
   ViewStyle,
 } from 'react-native'
 import styles from './styles'
@@ -17,6 +17,10 @@ interface CustomPressableProps extends PressableProps {
   variant?: 'primary' | 'delete' | 'cancel'
   icon?: React.ReactNode
   style?: StyleProp<ViewStyle>
+  errorLabel?: string
+  error?: boolean
+  showLabel?: boolean
+  label?: string
 }
 
 const Button: React.FC<CustomPressableProps> = ({
@@ -27,6 +31,10 @@ const Button: React.FC<CustomPressableProps> = ({
   variant = 'primary',
   icon,
   style,
+  errorLabel = '',
+  error = false,
+  label = '',
+  showLabel = false,
   ...restProps
 }) => {
   const getButtonColor = () => {
@@ -48,23 +56,31 @@ const Button: React.FC<CustomPressableProps> = ({
   }
 
   return (
-    <TouchableOpacity
-      style={[getButtonColor(), size === 'small' && styles.buttonSmall, style]}
-      onPress={onPress}
-      disabled={disabled}
-      {...restProps}
-    >
-      {icon && icon}
-      <Text
+    <View style={styles.container}>
+      <TouchableOpacity
         style={[
-          styles.buttonText,
-          size === 'small' && styles.buttonTextSmall,
-          variant === 'cancel' && { color: colors.fontBlack },
+          getButtonColor(),
+          size === 'small' && styles.buttonSmall,
+          style,
         ]}
+        onPress={onPress}
+        disabled={disabled}
+        {...restProps}
       >
-        {buttonText}
-      </Text>
-    </TouchableOpacity>
+        {icon && icon}
+        <Text
+          style={[
+            styles.buttonText,
+            size === 'small' && styles.buttonTextSmall,
+            variant === 'cancel' && { color: colors.fontBlack },
+          ]}
+        >
+          {buttonText}
+        </Text>
+      </TouchableOpacity>
+      {error && <Text style={styles.errorLabel}>{errorLabel}</Text>}
+      {showLabel && <Text style={styles.label}>{label}</Text>}
+    </View>
   )
 }
 

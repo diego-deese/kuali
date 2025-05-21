@@ -17,6 +17,8 @@ export interface SelectInputProps {
   options?: Option[]
   editable?: boolean
   value?: Option | null
+  error?: boolean
+  errorMessage?: string
   onSelect?: (option: Option) => void
   onEditOption?: (id: number, newLabel: string) => void
   onDeleteOption?: (id: number) => void
