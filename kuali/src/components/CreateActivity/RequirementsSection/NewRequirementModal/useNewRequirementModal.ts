@@ -77,6 +77,7 @@ export const useNewRequirementModal = (
 
   const handleWithTemplateChange = () => {
     setWithTemplate(!withTemplate)
+    setTemplateUri(null)
   }
 
   const validateName = (name: string) => {

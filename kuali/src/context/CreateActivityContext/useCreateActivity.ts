@@ -53,11 +53,11 @@ export const useCreateActivity = () => {
       }
     }
 
-    const letterRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/
+    const letterRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/
     if (!letterRegex.test(title)) {
       return {
         error: true,
-        errorMessage: 'Solo se permiten letras',
+        errorMessage: 'Solo se permiten letras y números',
       }
     }
 
@@ -227,7 +227,7 @@ export const useCreateActivity = () => {
         } else {
           Toast.show({
             text1: 'Nueva actividad creada',
-            text2: 'Ahora puedes visualizar la actividad en el calendario',
+            text2: 'Ahora se puede visualizar la actividad en el calendario',
           })
           restartFields()
         }
