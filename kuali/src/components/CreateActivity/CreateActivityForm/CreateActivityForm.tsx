@@ -58,7 +58,7 @@ const CreateActivityForm = () => {
         onSelect={location.onLocationChange}
       />
 
-      <View>
+      <View style={{ marginBottom: 16 }}>
         <Button
           buttonText='Poster del evento'
           icon={<ImagePlusIcon color={colors.solidWhite} />}

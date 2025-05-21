@@ -31,6 +31,7 @@ export const EnableIcon = ({ fill = true, ...props }) => {
       name='eye-outline'
       size={24}
       color={colors.selectionBlue}
+      {...props}
     />
   )
 }
@@ -41,6 +42,7 @@ export const DisableIcon = ({ fill = true, ...props }) => {
       name='eye-off-outline'
       size={24}
       color={colors.warningRed}
+      {...props}
     />
   )
 }
@@ -78,7 +80,12 @@ export const ReverseIcon = ({ fill = true, ...props }) => {
 }
 export const InfoIcon = ({ fill = true, ...props }) => {
   return (
-    <MaterialIcons name='info-outline' size={24} color={colors.selectionBlue} />
+    <MaterialIcons
+      name='info-outline'
+      size={24}
+      color={colors.selectionBlue}
+      {...props}
+    />
   )
 }
 
@@ -93,12 +100,12 @@ export const EditIcon = ({ fill = true, ...props }) => {
   )
 }
 
-export const RejectedIcon = () => {
-  return <AntDesign name='close' size={24} color='black' />
+export const RejectedIcon = (props) => {
+  return <AntDesign name='close' size={24} color='black' {...props} />
 }
 
-export const AcceptedIcon = () => {
-  return <AntDesign name='check' size={24} color='black' />
+export const AcceptedIcon = (props) => {
+  return <AntDesign name='check' size={24} color='black' {...props} />
 }
 
 export const PlusIcon = (props) => {
@@ -112,8 +119,8 @@ export const PlusIcon = (props) => {
   )
 }
 
-export const PendingIcon = () => {
-  return <MaterialIcons name='schedule' size={24} color='black' />
+export const PendingIcon = (props) => {
+  return <MaterialIcons name='schedule' size={24} color='black' {...props} />
 }
 
 export const PersonSearch = ({ fill = true, ...props }) => {

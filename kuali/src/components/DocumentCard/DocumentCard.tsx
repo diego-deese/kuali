@@ -49,13 +49,13 @@ export default function DocumentCard({
   const renderIcon = () => {
     switch (status) {
       case DocumentStatus.Pendiente:
-        return <PendingIcon />
+        return <PendingIcon size={32} />
       case DocumentStatus.Aprobado:
-        return <AcceptedIcon />
+        return <AcceptedIcon size={32} />
       case DocumentStatus.Rechazado:
-        return <RejectedIcon />
+        return <RejectedIcon size={32} />
       default:
-        return <PendingIcon />
+        return <PendingIcon size={32} />
     }
   }
 
@@ -63,7 +63,7 @@ export default function DocumentCard({
   const getDescription = () => {
     switch (status) {
       case DocumentStatus.Pendiente:
-        return 'El documento está pendiente de aprobación'
+        return 'Documento pendiente de aprobación'
       case DocumentStatus.Aprobado:
         return 'El documento ha sido aprobado'
       case DocumentStatus.Rechazado:
@@ -114,9 +114,11 @@ export default function DocumentCard({
     <View style={styles.card}>
       <View style={styles.header}>
         {renderIcon()}
-        <Text style={styles.title}>{title}</Text>
+        <View style={styles.headerText}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{getDescription()}</Text>
+        </View>
       </View>
-      <Text style={styles.description}>{getDescription()}</Text>
       {renderButtons()}
     </View>
   )
