@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -17,9 +17,12 @@ import LoadingScreen from '../LoadingScreen/LoadingScreen'
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
 
 import { useCreateActivityContext } from '../../context/CreateActivityContext/CreateActivityContext'
+import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
+import { Redirect, router } from 'expo-router'
 
 const CreateActivity = () => {
   const { loading, createActivity } = useCreateActivityContext()
+  const [showModal, setShowModal] = useState(false)
 
   if (loading) {
     return <LoadingScreen message='Cargando la información...' />
@@ -28,7 +31,17 @@ const CreateActivity = () => {
   const renderContent = () => (
     <View style={styles.container}>
       <ButtonsHeader title='Crear Evento'>
-        <IconButton icon={<CloseIcon size={32} color={colors.warningRed} />} />
+        <IconButton
+          icon={
+            <CloseIcon
+              size={32}
+              color={colors.warningRed}
+              onPress={() => {
+                setShowModal(true)
+              }}
+            />
+          }
+        />
         <IconButton
           icon={<CheckIcon size={32} color={colors.selectionBlue} />}
           onPress={createActivity}
@@ -36,6 +49,19 @@ const CreateActivity = () => {
       </ButtonsHeader>
 
       <CreateActivityForm />
+
+      <ConfirmationModal
+        title='Volver a la pantalla de inicio'
+        description='¿Estás seguro de que quieres salir de la pantalla de creación de actividad? Todos los datos que ya llenaste se perderán.'
+        confirmButtonColor={colors.warningRed}
+        visible={showModal}
+        onCancel={() => {
+          setShowModal(false)
+        }}
+        onConfirm={() => {
+          router.back()
+        }}
+      />
     </View>
   )
 
