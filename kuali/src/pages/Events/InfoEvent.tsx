@@ -4,16 +4,15 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
-import { CalendarEvent, LocationIcon } from '../../components/shared/Icons/Icons'
+
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
 import { DocumentStatus } from '../../types/UserDocument'
 import { Activity } from '../../types/Activity'
 import { getDocumentStatusFromString } from './InfoEvent.utils'
-import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
-import { parseValidDate } from './InfoEvent.utils'
 import activityService from '../../services/activity.service'
+import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -25,7 +24,7 @@ const InfoEvent: React.FC = () => {
   const activity_id = params.activity_id ? Number(params.activity_id) : 0
 
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modalVisible, setModalVisible] = useState(false)
   const [applyModalVisible, setApplyModalVisible] = useState(false)
@@ -170,44 +169,14 @@ const InfoEvent: React.FC = () => {
         onPress={() => router.back()}
       />
       <View style={styles.content}>
-        {/* Información del evento */}
-        <Text style={styles.eventTitle}>{eventDetails.title}</Text>
-        <View style={styles.eventInfoRow}>
-          <CalendarEvent style={styles.eventInfoIcon} />
-          <Text style={styles.eventInfoText}>
-            {parseValidDate(eventDetails.event_date) ? (
-              <FormattedDate
-                date={parseValidDate(eventDetails.event_date)!}
-                separator=', '
-                showWeekday={false}
-              />
-            ) : (
-              eventDetails.event_date
-            )}
-          </Text>
-        </View>
-        <View style={styles.eventInfoRow}>
-          <LocationIcon style={styles.eventInfoIcon} />
-          <Text style={styles.eventInfoText}>{eventDetails.location.name}</Text>
-        </View>
-        <Text style={styles.description}>{eventDetails.description}</Text>
-        {/* Fecha límite de registro */}
-        <View style={styles.registerLimitContainer}>
-          <Text style={styles.registerLimitLabel}>
-            Fecha límite de registro:{' '}
-          </Text>
-          <Text style={styles.registerLimitDate}>
-            {parseValidDate(eventDetails.register_date_limit) ? (
-              <FormattedDate
-                date={parseValidDate(eventDetails.register_date_limit)!}
-                separator=', '
-                showWeekday={false}
-              />
-            ) : (
-              eventDetails.register_date_limit
-            )}
-          </Text>
-        </View>
+        <EventDetailsHeader // Info del evento
+          activity_id={activity_id}
+          existingData={eventDetails}
+          onDataLoaded={(data) => {
+            setEventDetails(data)
+            setHasApplied(data.isRegistered || false)
+          }}
+        />
 
         {/* Requisitos/Documentos */}
         <Text style={styles.sectionTitle}>Requisitos</Text>
@@ -220,7 +189,7 @@ const InfoEvent: React.FC = () => {
           <>
             {eventDetails.requirements &&
             eventDetails.requirements.length > 0 ? (
-              // Si hay requisitos, mapearlos como haces actualmente
+              // Si hay requisitos, mapearlos
               eventDetails.requirements.map((req) => {
                 // Obtener el documento del usuario si existe
                 const userDocument =
