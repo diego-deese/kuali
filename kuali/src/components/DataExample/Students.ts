@@ -19,11 +19,29 @@ export const assignedStudents = [
         requirement_id: 1,
         name: 'Currículum',
         description: 'CV actualizado',
+        userDocuments: [
+          {
+            user_document_id: 1,
+            status: {
+              revision_status_id: 1,
+              name: 'Pendiente',
+            },
+          },
+        ],
       },
       {
         requirement_id: 2,
         name: 'Permiso',
         description: 'Permiso firmado por los padres',
+        userDocuments: [
+          {
+            user_document_id: 2,
+            status: {
+              revision_status_id: 1,
+              name: 'Pendiente',
+            },
+          },
+        ],
       },
     ],
   },
@@ -47,11 +65,29 @@ export const assignedStudents = [
         requirement_id: 1,
         name: 'Currículum',
         description: 'CV actualizado',
+        userDocuments: [
+          {
+            user_document_id: 1,
+            status: {
+              revision_status_id: 1,
+              name: 'Pendiente',
+            },
+          },
+        ],
       },
       {
         requirement_id: 2,
         name: 'Permiso',
         description: 'Permiso firmado por los padres',
+        userDocuments: [
+          {
+            user_document_id: 2,
+            status: {
+              revision_status_id: 1,
+              name: 'Pendiente',
+            },
+          },
+        ],
       },
     ],
   },
@@ -75,11 +111,29 @@ export const assignedStudents = [
         requirement_id: 1,
         name: 'Currículum',
         description: 'CV actualizado',
+        userDocuments: [
+          {
+            user_document_id: 1,
+            status: {
+              revision_status_id: 1,
+              name: 'Pendiente',
+            },
+          },
+        ],
       },
       {
         requirement_id: 2,
         name: 'Permiso',
         description: 'Permiso firmado por los padres',
+        userDocuments: [
+          {
+            user_document_id: 2,
+            status: {
+              revision_status_id: 1,
+              name: 'Pendiente',
+            },
+          },
+        ],
       },
     ],
   },

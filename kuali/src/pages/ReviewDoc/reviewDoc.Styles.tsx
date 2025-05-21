@@ -41,26 +41,6 @@ const styles = StyleSheet.create({
     gap: 12,
     paddingBottom: 20,
   },
-  card: {
-    backgroundColor: colors.standardGray,
-    padding: 16,
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  docName: {
-    fontSize: 16,
-    fontWeight: '600',
-    marginBottom: 4,
-    color: colors.fontBlack,
-  },
-  docDesc: {
-    fontSize: 14,
-    color: colors.standardGray,
-  },
 })
 
 export default styles

@@ -8,32 +8,28 @@ export default StyleSheet.create({
     borderRadius: 10,
     elevation: 2,
   },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  name: {
+  docName: {
     flex: 1,
     marginLeft: 10,
     fontSize: 16,
     marginBottom: 8,
   },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   actions: {
     flexDirection: 'column',
+  },
+  iconContainer: {
+    //width: '20%',
+    alignItems: 'center',
   },
   buttonCompact: {
     width: '65%',
     alignSelf: 'center',
     marginTop: 5,
     marginBottom: -10,
-  },
-  approved: {
-    color: '#4CAF50',
-    fontWeight: 'bold',
-  },
-  rejected: {
-    color: '#F44336',
-    fontWeight: 'bold',
   },
 })

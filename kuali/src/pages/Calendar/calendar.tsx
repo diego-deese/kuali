@@ -5,10 +5,10 @@ import { useAuth } from '../../context/AuthContext'
 import styles from './calendar.styles'
 import CalendarComponent from '../../components/Calendar/Calendar'
 import NextEventsComponents from '../../components/NextEventsComponent/NextEventsComponent'
-import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities';
+import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities'
 
 export default function MyEvents() {
-  const { activities, error, loading} = useGetActivities()
+  const { activities, error, loading } = useGetActivities()
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>

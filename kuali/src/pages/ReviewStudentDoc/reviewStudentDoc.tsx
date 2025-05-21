@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Pressable, View, Text, ScrollView } from 'react-native'
 import { assignedStudents } from '../../components/DataExample/Students'
+import { setStudents as setGlobalStudents } from '../../context/StudentsStored' // Renombrado para evitar conflicto
 import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard/StudentReviewCard'
 import styles from './reviewStudentDoc.styles'
 import Button from '../../components/shared/Button/Button'
@@ -8,12 +9,19 @@ import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 
 export default function ReviewDoc() {
+  const [students, setStudents] = useState(assignedStudents)
+
+  const updateStatus = (index: number, status: 'approved' | 'rejected') => {
+    const updated = [...students]
+    //updated[index].documentStatus = status
+    setStudents(updated)
+  }
+
   const handleChange = () => {
     console.log('Cambio de vista a los documentos del primer estudiante')
+    const firstStudent = students[0]
 
-    const firstStudent = students[0] // Se toma el primer estudiante
-
-    setStudents(students)
+    setGlobalStudents(students) // Guardamos en memoria compartida
 
     router.push({
       pathname: '/documents/[id]',
@@ -24,14 +32,7 @@ export default function ReviewDoc() {
     })
   }
   const handleDownload = () => {
-    console.log('Descargando...')
-    // Aquí va tu lógica de descarga
-  }
-  const [students, setStudents] = useState(assignedStudents)
-
-  const updateStatus = (index: number, status: 'approved' | 'rejected') => {
-    const updated = [...students]
-    setStudents(updated)
+    //Logica para descargar
   }
 
   return (
@@ -60,7 +61,6 @@ export default function ReviewDoc() {
           <StudentReviewCard
             key={student.user_id}
             student={{ ...student, index }}
-            students={students}
             onApprove={() => updateStatus(index, 'approved')}
             onReject={() => updateStatus(index, 'rejected')}
           />
