@@ -266,8 +266,8 @@ components:
       properties:
         category_id:
           type: integer
-          format: int32
           description: Unique identifier for the category
+          minimum: 1
         name:
           type: string
           maxLength: 255
@@ -280,8 +280,8 @@ components:
       properties:
         location_id:
           type: integer
-          format: int32
           description: Unique identifier for the location
+          minimum: 1
         name:
           type: string
           maxLength: 255
@@ -292,10 +292,6 @@ components:
     BaseActivity:
       type: object
       properties:
-        activity_id:
-          type: integer
-          format: int32
-          description: Unique identifier for the activity
         title:
           type: string
           maxLength: 255
@@ -314,10 +310,6 @@ components:
         mandatory:
           type: boolean
           description: Whether the activity is mandatory
-        location:
-          $ref: '#/components/schemas/Location'
-        category:
-          $ref: '#/components/schemas/Category'
       required:
         - title
         - description
@@ -329,7 +321,12 @@ components:
 
     Activity:
       allOf:
-        - $ref: '#/components/schemas/BaseActivity'
+        - type: object
+          properties:
+            activity_id:
+              type: integer
+              minimum: 1
+              description: Unique identifier for the activity
         - type: object
           properties:
             visible_students:
@@ -338,6 +335,10 @@ components:
             visible_researchers:
               type: boolean
               description: Whether the activity is visible to researchers
+            location:
+              $ref: '#/components/schemas/Location'
+            category:
+              $ref: '#/components/schemas/Category'
           required:
             - visible_students
             - visible_researchers
@@ -363,16 +364,32 @@ components:
               type: boolean
             visible_researchers:
               type: boolean
+            location_id:
+              type: integer
+              minimum: 1
+            requirements:
+              type: array
+              items:
+                $ref: '#/components/schemas/ActivityRequirement'
+          required:
+            - visible_students
+            - visible_researchers
     
     CreatedActivity:
       allOf:
-        - $ref: '#/components/schemas/NewActivity'
+        - $ref: '#/components/schemas/Activity'
         - type: object
           properties:
+            requirements:
+              type: array
+              items:
+                $ref: '#/components/schemas/CreatedRequirement'
             creation_date:
-              type: date-time
+              type: string
+              format: date-time
             last_updated:
-              type: date-time
+              type: string
+              format: date-time
             admin_creator_id:
               type: integer
               minimum: 1
@@ -398,8 +415,9 @@ components:
           properties:
             requirement_id:
               type: integer
-              format: int32
+              minimum: 1
               description: Unique identifier for the requirement
+        - $ref: '#/components/schemas/NewRequirement'
         - $ref: '#/components/schemas/BaseRequirement'
     
     NewRequirement:
@@ -414,6 +432,27 @@ components:
           required:
             - activity_id
 
+    CreatedRequirement:
+      allOf:
+        - $ref: '#/components/schemas/Requirement'
+        - type: object
+          properties:
+            last_updated:
+              type: string
+              format: date-time
+            template:
+              nullable: true
+              $ref: '#/components/schemas/Template'
+
+    ActivityRequirement:
+      allOf:
+        - $ref: '#/components/schemas/BaseRequirement'
+        - type: object
+          nullable: true
+          properties:
+            template:
+              $ref: '#/components/schemas/BaseTemplate'
+
     PatchRequirement:
       type: object
       properties:
@@ -421,16 +460,6 @@ components:
           type: string
         description:
           type: string
-
-    CreatedRequirement:
-      allOf:
-        - $ref: '#/components/schemas/Requirement'
-        - $ref: '#/components/schemas/NewRequirement'
-        - type: object
-          properties:
-            last_updated:
-              type: string
-              format: date-time
 
     UserRequirement:
       allOf:
@@ -448,43 +477,22 @@ components:
                   status:
                     $ref: '#/components/schemas/RevisionStatus'
 
-    ActivityAttachedFile:
+    BaseTemplate:
       type: object
       properties:
-        activity_attached_file_id:
-          type: integer
-          format: int32
-          description: Unique identifier for the attached file
         name:
           type: string
-          maxLength: 100
-          description: Name of the file
-        file_content:
-          type: string
-          format: binary
-          description: Content of the file
-        mimetype:
-          type: string
-          maxLength: 50
-          description: MIME type of the file
-        upload_date:
-          type: string
-          format: date-time
-          description: Date when the file was uploaded
-        last_updated:
-          type: string
-          format: date-time
-          description: Date when the file was last updated (optional)
-          nullable: true
-        activity_id:
-          type: integer
-          format: int32
-          description: ID of the activity this file belongs to
       required:
         - name
-        - file_content
-        - mimetype
-        - activity_id
+
+    Template:
+      allOf:
+        - type: object
+          properties:
+            requirement_template_id:
+              type: integer
+              minimum: 1
+        - $ref: '#/components/schemas/BaseTemplate'
 
     RevisionStatus:
       type: object
