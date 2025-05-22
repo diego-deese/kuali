@@ -34,6 +34,19 @@ class RegistrationService {
 
     return registration
   }
+
+  async getAllUsersByActivity (activityId: number): Promise<any[]> {
+    const registrations = await prisma.registrations.findMany({
+      where: {
+        activity_id: activityId
+      },
+      include: {
+        user: true
+      }
+    })
+
+    return registrations.map((r) => r.user)
+  }
 }
 
 export default new RegistrationService()

@@ -8,15 +8,20 @@ import Button from '../../components/shared/Button/Button'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import { useLocalSearchParams } from 'expo-router'
+import { useRegisteredUsers } from '../../hooks/ReviewDocs/useRegisteredUsers'
 
 export default function ReviewStudentDoc() {
   const { activity_id } = useLocalSearchParams()
-  const [students, setStudents] = useState(assignedStudents)
+  const {
+    users: students,
+    loading,
+    error,
+  } = useRegisteredUsers(Number(activity_id))
 
   const updateStatus = (index: number, status: 'approved' | 'rejected') => {
     const updated = [...students]
     //updated[index].documentStatus = status
-    setStudents(updated)
+    //setStudents(updated)
   }
 
   const handleChange = () => {
@@ -62,14 +67,26 @@ export default function ReviewStudentDoc() {
         </Pressable>
       </View>
       <ScrollView contentContainerStyle={styles.list}>
-        {students.map((student, index) => (
-          <StudentReviewCard
-            key={student.user_id}
-            student={{ ...student, index }}
-            onApprove={() => updateStatus(index, 'approved')}
-            onReject={() => updateStatus(index, 'rejected')}
-          />
-        ))}
+        {loading && <Text style={styles.title}>Cargando estudiantes...</Text>}
+        {error && <Text style={styles.title}>Error al cargar estudiantes</Text>}
+        {!loading && students.length === 0 && (
+          <Text style={styles.title}>No hay estudiantes registrados</Text>
+        )}
+
+        {!loading &&
+          !error &&
+          students.map((student, index) => (
+            <StudentReviewCard
+              key={student.user_id}
+              student={{
+                ...student,
+                index,
+                documentStatus: null, // Temporal, hasta que se implemente el estado real
+              }}
+              onApprove={() => updateStatus(index, 'approved')}
+              onReject={() => updateStatus(index, 'rejected')}
+            />
+          ))}
       </ScrollView>
     </View>
   )

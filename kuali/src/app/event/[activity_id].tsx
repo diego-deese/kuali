@@ -9,7 +9,6 @@ export default function EventPage() {
 
   if (user.role.role_id === Roles.ADMIN) {
     //return <EditEvent />
-    //return <ReviewDoc />
     return <InfoEvent />
   }
 

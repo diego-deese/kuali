@@ -17,6 +17,7 @@ import activityService from '../../services/activity.service'
 import WithRole from '../../components/WithRole/WithRole'
 import { Roles } from '../../constants/roles'
 import { useAuth } from '../../context/AuthContext'
+import { CategoryName } from '../../types/Category'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -171,7 +172,7 @@ const InfoEvent: React.FC = () => {
       <Button
         buttonText='Regresar'
         style={styles.backButton}
-        onPress={() => router.back()}
+        onPress={() => router.push('calendar')}
       />
       <View style={styles.content}>
         {/* Información del evento */}
@@ -214,24 +215,34 @@ const InfoEvent: React.FC = () => {
         </View>
 
         <WithRole role={Roles.ADMIN}>
-          {/*Solo los ADMIN deben ver */}
-          <Text style={styles.sectionTitle}>Panel Administrativo</Text>
-          <Button
-            buttonText='Revisar por estudiantes'
-            onPress={() =>
-              router.push({
-                pathname: '/documents/student/studentsDoc',
-                params: { activity_id: activity_id.toString() },
-              })
-            }
-          />
-          {/*
-          Botón deshabilitado temporalmente mientras se implementa navegación segura a ReviewDoc
-          <Button
-            buttonText='Revisar por documento'
-            onPress={() => router.push('/documents/doc/[id]')}
-          />
-          */}
+          {eventDetails.category.category_id === 1 && (
+            <>
+              <Text style={styles.sectionTitle}>Panel Administrativo</Text>
+              <Button
+                buttonText='Revisar por estudiantes'
+                onPress={() =>
+                  router.push({
+                    pathname: '/documents/student/studentsDoc',
+                    params: { activity_id: activity_id.toString() },
+                  })
+                }
+              />
+              {/*
+              <Button
+                buttonText='Revisar por documento'
+                onPress={() =>
+                  router.push({
+                    pathname: '/documents/doc/[id]',
+                    params: {
+                      id: '1', // usar ID real luego
+                      activity_id: activity_id.toString(),
+                    },
+                  })
+                }
+              />
+              */}
+            </>
+          )}
         </WithRole>
         {user?.role.role_id !== Roles.ADMIN && (
           <>
