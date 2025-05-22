@@ -7,8 +7,10 @@ import styles from './reviewStudentDoc.styles'
 import Button from '../../components/shared/Button/Button'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
+import { useLocalSearchParams } from 'expo-router'
 
-export default function ReviewDoc() {
+export default function ReviewStudentDoc() {
+  const { activity_id } = useLocalSearchParams()
   const [students, setStudents] = useState(assignedStudents)
 
   const updateStatus = (index: number, status: 'approved' | 'rejected') => {
@@ -20,11 +22,9 @@ export default function ReviewDoc() {
   const handleChange = () => {
     console.log('Cambio de vista a los documentos del primer estudiante')
     const firstStudent = students[0]
-
     setGlobalStudents(students) // Guardamos en memoria compartida
-
     router.push({
-      pathname: '/documents/[id]',
+      pathname: '/documents/doc/[id]',
       params: {
         id: firstStudent.user_id.toString(),
         index: '0',
@@ -39,7 +39,12 @@ export default function ReviewDoc() {
     <View style={styles.container}>
       <Button
         buttonText='Volver'
-        onPress={() => router.push('calendar')}
+        onPress={() =>
+          router.push({
+            pathname: '/event/[activity_id]',
+            params: { activity_id: activity_id.toString() },
+          })
+        }
         style={{ width: '30%' }}
       />
       <Text style={styles.title}>Revisión de documentos</Text>

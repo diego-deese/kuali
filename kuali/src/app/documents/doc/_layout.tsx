@@ -1,5 +1,5 @@
 import { Stack } from 'expo-router'
-import Header from '../../components/shared/Header/Header'
+import Header from '../../../components/shared/Header/Header'
 
 export default function EventLayout() {
   return (

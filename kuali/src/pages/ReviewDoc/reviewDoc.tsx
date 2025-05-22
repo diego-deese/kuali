@@ -21,7 +21,7 @@ export default function ReviewDoc() {
     <View style={styles.container}>
       <Button
         buttonText='Volver'
-        onPress={() => router.back()}
+        onPress={() => router.push('/documents/student/studentsDoc')}
         style={{ width: '30%' }}
       />
 

@@ -14,6 +14,9 @@ import { getDocumentStatusFromString } from './InfoEvent.utils'
 import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
 import { parseValidDate } from './InfoEvent.utils'
 import activityService from '../../services/activity.service'
+import WithRole from '../../components/WithRole/WithRole'
+import { Roles } from '../../constants/roles'
+import { useAuth } from '../../context/AuthContext'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -21,6 +24,7 @@ import activityService from '../../services/activity.service'
   gestionar su participación.
  */
 const InfoEvent: React.FC = () => {
+  const { user } = useAuth()
   const params = useLocalSearchParams()
   const activity_id = params.activity_id ? Number(params.activity_id) : 0
 
@@ -209,63 +213,74 @@ const InfoEvent: React.FC = () => {
           </Text>
         </View>
 
-        {/* Requisitos/Documentos */}
-        <Text style={styles.sectionTitle}>Requisitos</Text>
-
-        {!hasApplied ? (
-          /* Solo mostrar el botón de Aplicar cuando no ha aplicado */
-          <Button buttonText='Aplicar' onPress={handleApply} />
-        ) : (
-          /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
-          <>
-            {eventDetails.requirements &&
-            eventDetails.requirements.length > 0 ? (
-              // Si hay requisitos, mapearlos como haces actualmente
-              eventDetails.requirements.map((req) => {
-                // Obtener el documento del usuario si existe
-                const userDocument =
-                  req.userDocuments && req.userDocuments.length > 0
-                    ? req.userDocuments[0]
-                    : undefined
-
-                // Determinar el estado del documento basado en el status
-                const documentStatus = userDocument?.status?.name
-                  ? getDocumentStatusFromString(userDocument.status.name)
-                  : DocumentStatus.Pendiente
-
-                return (
-                  <DocumentCard
-                    key={req.requirement_id}
-                    document={{
-                      id: req.requirement_id,
-                      title: req.name,
-                      description: req.description,
-                      status: documentStatus,
-                      userDocumentId: userDocument?.user_document_id,
-                    }}
-                    onUpload={() => handleUpload(req.requirement_id)}
-                    onDelete={() =>
-                      handleDelete(userDocument?.user_document_id || 0)
-                    }
-                  />
-                )
+        <WithRole role={Roles.ADMIN}>
+          {/*Solo los ADMIN deben ver */}
+          <Text style={styles.sectionTitle}>Panel Administrativo</Text>
+          <Button
+            buttonText='Revisar por estudiantes'
+            onPress={() =>
+              router.push({
+                pathname: '/documents/student/studentsDoc',
+                params: { activity_id: activity_id.toString() },
               })
-            ) : (
-              // Si NO hay requisitos, mostrar este mensaje
-              <Text style={styles.noRequirementsText}>
-                Esta actividad no tiene requisitos documentales.
-              </Text>
-            )}
+            }
+          />
+          {/*
+          Botón deshabilitado temporalmente mientras se implementa navegación segura a ReviewDoc
+          <Button
+            buttonText='Revisar por documento'
+            onPress={() => router.push('/documents/doc/[id]')}
+          />
+          */}
+        </WithRole>
+        {user?.role.role_id !== Roles.ADMIN && (
+          <>
+            <Text style={styles.sectionTitle}>Requisitos</Text>
 
-            {/* Botón de salir */}
-            <Pressable
-              style={styles.exitButton}
-              onPress={() => setModalVisible(true)}
-            >
-              <Text style={styles.exitButtonText}>
-                Darte de baja del evento
-              </Text>
-            </Pressable>
+            {!hasApplied ? (
+              <Button buttonText='Aplicar' onPress={handleApply} />
+            ) : (
+              <>
+                {eventDetails.requirements?.length > 0 ? (
+                  eventDetails.requirements.map((req) => {
+                    const userDocument = req.userDocuments?.[0]
+                    const documentStatus = userDocument?.status?.name
+                      ? getDocumentStatusFromString(userDocument.status.name)
+                      : DocumentStatus.Pendiente
+
+                    return (
+                      <DocumentCard
+                        key={req.requirement_id}
+                        document={{
+                          id: req.requirement_id,
+                          title: req.name,
+                          description: req.description,
+                          status: documentStatus,
+                          userDocumentId: userDocument?.user_document_id,
+                        }}
+                        onUpload={() => handleUpload(req.requirement_id)}
+                        onDelete={() =>
+                          handleDelete(userDocument?.user_document_id || 0)
+                        }
+                      />
+                    )
+                  })
+                ) : (
+                  <Text style={styles.noRequirementsText}>
+                    Esta actividad no tiene requisitos documentales.
+                  </Text>
+                )}
+
+                <Pressable
+                  style={styles.exitButton}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <Text style={styles.exitButtonText}>
+                    Darte de baja del evento
+                  </Text>
+                </Pressable>
+              </>
+            )}
           </>
         )}
 
