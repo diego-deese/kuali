@@ -85,6 +85,7 @@ model Categories {
 model Locations {
   location_id Int          @id @default(autoincrement())
   name        String       @db.VarChar(255)
+  deleted     Boolean      @default(false)
   activities  Activities[]
 }
 
