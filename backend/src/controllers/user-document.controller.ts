@@ -4,7 +4,7 @@ import userDocumentService from '../services/user-document.service'
 import { AppError } from '../types/Error'
 import { APPROVED_ID, REJECTED_ID } from '../constants/revision-status'
 import { toNewUserDocument, toUpdateUserDocument } from '../utils/parsing/UserDocument'
-import { NewUserDocument } from '../types/UserDocuments'
+import { NewUserDocument, RequirementUserDocuments, UserUserDocuments } from '../types/UserDocuments'
 import { AuthRequest } from '../types/Request'
 
 class UserDocumentController {
@@ -13,8 +13,7 @@ class UserDocumentController {
       const groupBy = req.query.groupBy === undefined ? 'requirement' : (req.query.groupBy as string).toLowerCase()
       const activityId = parseId(req.params.activityId, 'El id proporcionado de la actividad es inválido')
 
-      let activityUserDocuments
-
+      let activityUserDocuments: RequirementUserDocuments[] | UserUserDocuments[]
       if (groupBy === 'requirement') {
         activityUserDocuments = await userDocumentService.getUserDocumentsByRequirement(activityId)
       } else if (groupBy === 'user') {

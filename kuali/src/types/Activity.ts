@@ -24,6 +24,6 @@ export type NewActivityData = {
   visible_researchers: boolean
   visible_students: boolean
   location_id: number
-  requirements: ActivityRequirement[]
+  requirements?: ActivityRequirement[]
   poster_image_uri: string
 }

@@ -212,8 +212,11 @@ export const useCreateActivity = () => {
           location_id: locationManagement.location.id,
           event_date: dateManagement.activityDate as Date,
           register_date_limit: dateManagement.limitDate as Date,
-          requirements: requirementsManagement.requirements,
           poster_image_uri: posterImg,
+          // If the activity has requirements then we pass them
+          ...(requirementsManagement.requirements.length > 0
+            ? { requirements: requirementsManagement.requirements }
+            : {}),
         }
 
         const result = await activityService.createActivity(activityData)

@@ -1,0 +1,16 @@
+paths:
+  /user-documents/activity/{activity_id}:
+    parameters:
+      - in: query
+        name: groupBy
+        schema:
+          type: string
+          enum:
+            - user
+            - requirement
+          description: Group results by user or by requirement
+    
+    get:
+      tags:
+        - User Documents
+

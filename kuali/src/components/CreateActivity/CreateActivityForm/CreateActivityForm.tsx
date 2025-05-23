@@ -21,8 +21,8 @@ const CreateActivityForm = () => {
   return (
     <ScrollView nestedScrollEnabled>
       <InputText
-        label='Título del evento'
-        placeholder='Evento'
+        label='Título de la actividad'
+        placeholder='Mi Actividad'
         value={title.title}
         onChangeText={title.onTitleChange}
         error={errors.title.error}
@@ -32,8 +32,8 @@ const CreateActivityForm = () => {
       <DatePickersSection />
 
       <InputText
-        label='Descripción del evento'
-        placeholder='Evento'
+        label='Descripción de la actividad'
+        placeholder='¿A quién le puede interesar? ¿Qué se hará?'
         multiline
         value={description.description}
         onChangeText={description.onDescriptionChange}
@@ -60,7 +60,7 @@ const CreateActivityForm = () => {
 
       <View style={{ marginBottom: 16 }}>
         <Button
-          buttonText='Poster del evento'
+          buttonText='Poster de la actividad'
           icon={<ImagePlusIcon color={colors.solidWhite} />}
           onPress={posterImg.selectPosterImg}
           error={errors.posterImage.error}

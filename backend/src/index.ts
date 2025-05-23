@@ -11,6 +11,7 @@ import locationRoutes from './routes/location.routes'
 import requirementTemplateRoutes from './routes/requirement-template.routes'
 import requirementRoutes from './routes/requirement.routes'
 import userDocumentRoutes from './routes/user-document.routes'
+import registrationRoutes from './routes/registration.routes'
 
 const app = express()
 
@@ -36,6 +37,7 @@ app.use('/api/locations', locationRoutes)
 app.use('/api/requirement-templates', requirementTemplateRoutes)
 app.use('/api/requirements', requirementRoutes)
 app.use('/api/user-documents', userDocumentRoutes)
+app.use('/api/registrations', registrationRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

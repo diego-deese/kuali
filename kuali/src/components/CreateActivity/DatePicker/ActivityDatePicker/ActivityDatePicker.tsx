@@ -6,13 +6,14 @@ import IconButton from '../../../shared/IconButton/IconButton'
 import { EditCalendarIcon } from '../../../shared/Icons/Icons'
 import colors from '../../../../constants/colors'
 import DatePickerModal from '../DatePickerModal/DatePickerModal'
+import { DateType } from 'react-native-ui-datepicker'
 
 interface ActivityDatePickerProps {
   title?: string
-  date?: Date
-  onDateChange?: (newDate: Date) => void
-  minDate?: Date
-  maxDate?: Date
+  date?: DateType
+  onDateChange?: (newDate: DateType) => void
+  minDate?: DateType
+  maxDate?: DateType
 }
 
 const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
