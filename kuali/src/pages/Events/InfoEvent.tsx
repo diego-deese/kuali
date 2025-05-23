@@ -173,16 +173,37 @@ const InfoEvent: React.FC = () => {
 
   const handleExit = async () => {
     try {
-      // const result = await activityService.unregisterFromActivity(activity_id)?
+      setLoading(true)
+      const result = await activityService.unregisterFromActivity(activity_id)
 
-      // if (result.success) {
-      //   setHasApplied(false)
-      // }
-
-      console.log('Saliendo de esta convocatoria')
-      router.back()
+      if (result.success) {
+        setHasApplied(false)
+        Toast.show({
+          type: 'success',
+          text1: 'Baja procesada',
+          text2: 'Te has dado de baja de la actividad correctamente',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+        router.back()
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          //text2: result.error || 'No se pudo procesar la baja',
+          position: 'top',
+        })
+      }
     } catch (error) {
       console.error('Error al darse de baja del evento:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Ocurrió un error al procesar tu solicitud',
+        position: 'top',
+      })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -192,17 +213,36 @@ const InfoEvent: React.FC = () => {
 
   const confirmApply = async () => {
     try {
-      // const result = await activityService.applyToActivity(activity_id)?
+      setLoading(true)
+      const result = await activityService.applyToActivity(activity_id)
 
-      // if (result.success) {
-      //   setHasApplied(true)
-      // }
-
-      console.log('Aplicando a la convocatoria')
-      setHasApplied(true)
-      setApplyModalVisible(false)
+      if (result.success) {
+        setHasApplied(true)
+        Toast.show({
+          type: 'success',
+          text1: 'Registro exitoso',
+          text2: 'Te has registrado correctamente a la actividad',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          //text2: result.error || 'No se pudo completar el registro',
+          position: 'top',
+        })
+      }
     } catch (error) {
       console.error('Error al aplicar a la convocatoria:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Ocurrió un error al procesar tu solicitud',
+        position: 'top',
+      })
+    } finally {
+      setLoading(false)
       setApplyModalVisible(false)
     }
   }
