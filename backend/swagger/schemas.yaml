@@ -14,6 +14,8 @@ components:
       required:
         - name
 
+    # User
+
     BaseUser:
       type: object
       properties:
@@ -156,34 +158,7 @@ components:
           maxLength: 255
           description: User identifier
 
-    RefreshToken:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-          description: Unique identifier for the refresh token
-        hashedToken:
-          type: string
-          description: Hashed version of the refresh token
-        user_id:
-          type: integer
-          format: int32
-          description: ID of the user this token belongs to
-        revoked:
-          type: boolean
-          description: Whether the token has been revoked
-        createdAt:
-          type: string
-          format: date-time
-          description: Token creation time
-        updatedAt:
-          type: string
-          format: date-time
-          description: Token last update time
-      required:
-        - hashedToken
-        - user_id
+    # Academic Program
 
     AcademicProgramWithStudents:
       type: object
@@ -228,6 +203,8 @@ components:
       required:
         - name
 
+    # Inscription
+
     Inscription:
       type: object
       properties:
@@ -261,6 +238,8 @@ components:
         - student_id
         - program_id
 
+    # Category
+
     Category:
       type: object
       properties:
@@ -275,6 +254,8 @@ components:
       required:
         - name
 
+    # Location
+
     Location:
       type: object
       properties:
@@ -288,6 +269,8 @@ components:
           description: Name of the location
       required:
         - name
+
+    # Activity
 
     BaseActivity:
       type: object
@@ -394,6 +377,8 @@ components:
               type: integer
               minimum: 1
 
+    # Requirement
+
     BaseRequirement:
       type: object
       properties:
@@ -477,6 +462,8 @@ components:
                   status:
                     $ref: '#/components/schemas/RevisionStatus'
 
+    # Template
+
     BaseTemplate:
       type: object
       properties:
@@ -494,6 +481,8 @@ components:
               minimum: 1
         - $ref: '#/components/schemas/BaseTemplate'
 
+    # Revision status
+
     RevisionStatus:
       type: object
       properties:
@@ -507,6 +496,8 @@ components:
           description: Name of the revision status
       required:
         - name
+
+    # User Document
 
     UserDocument:
       type: object
@@ -561,12 +552,70 @@ components:
         - registration_id
         - requirement_id
 
+    RequirementDocumentInfo:
+      type: object
+      properties:
+        user_document_id:
+          type: integer
+          format: int32
+          description: Unique identifier for the user document
+        status:
+          type: object
+          properties:
+            revision_status_id:
+              type: integer
+              format: int32
+            name:
+              type: string
+          required:
+            - revision_status_id
+            - name
+        user:
+          type: object
+          properties:
+            user_id:
+              type: integer
+              format: int32
+            name:
+              type: string
+            second_name:
+              type: string
+              nullable: true
+            paternal_lastname:
+              type: string
+            maternal_lastname:
+              type: string
+          required:
+            - user_id
+            - name
+            - paternal_lastname
+            - maternal_lastname
+      required:
+        - user_document_id
+        - status
+        - user
+
+    RequirementUserDocument:
+      type: object
+      properties:
+        requirement:
+          $ref: '#/components/schemas/BaseRequirement'
+        userDocuments:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequirementDocumentInfo'
+      required:
+        - requirement
+        - userDocuments
+
+    # Registration
+
     Registration:
       type: object
       properties:
         registration_id:
           type: integer
-          format: int32
+          minimum: 1
           description: Unique identifier for the registration
         registration_date:
           type: string
@@ -574,16 +623,47 @@ components:
           description: Date of registration
         user_id:
           type: integer
-          format: int32
+          minimum: 1
           description: ID of the user who registered
         activity_id:
           type: integer
-          format: int32
+          minimum: 1
           description: ID of the activity the user registered for
       required:
         - registration_date
         - user_id
         - activity_id
+
+    # Auth
+
+    RefreshToken:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: Unique identifier for the refresh token
+        hashedToken:
+          type: string
+          description: Hashed version of the refresh token
+        user_id:
+          type: integer
+          format: int32
+          description: ID of the user this token belongs to
+        revoked:
+          type: boolean
+          description: Whether the token has been revoked
+        createdAt:
+          type: string
+          format: date-time
+          description: Token creation time
+        updatedAt:
+          type: string
+          format: date-time
+          description: Token last update time
+      required:
+        - hashedToken
+        - user_id
 
     UserSession:
       type: object
@@ -602,6 +682,8 @@ components:
               type: integer
             role:
               $ref: '#/components/schemas/Role'
+
+    # Utils
 
     Error:
       type: object
