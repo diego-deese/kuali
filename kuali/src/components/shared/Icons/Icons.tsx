@@ -78,6 +78,17 @@ export const LogoutIcon = ({ fill = true, ...props }) => {
 export const ReverseIcon = ({ fill = true, ...props }) => {
   return <MaterialIcons name='touch-app' size={30} color='white' {...props} />
 }
+export const DropDownIcon = ({ fill = true, ...props }) => {
+  return (
+    <MaterialIcons name='arrow-drop-down' size={35} color='black' {...props} />
+  )
+}
+export const DropUpIcon = ({ fill = true, ...props }) => {
+  return (
+    <MaterialIcons name='arrow-drop-up' size={35} color='black' {...props} />
+  )
+}
+
 export const InfoIcon = ({ fill = true, ...props }) => {
   return (
     <MaterialIcons

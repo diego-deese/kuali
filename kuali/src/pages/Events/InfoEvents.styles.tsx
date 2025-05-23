@@ -118,6 +118,16 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
     color: '#666',
   },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginTop: 20,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.standardGray,
+  },
 })
 
 export default styles
