@@ -12,7 +12,7 @@ const DatePickersSection = () => {
       <ActivityDatePicker
         date={dates.activityDate}
         onDateChange={dates.onActivityDateChange}
-        title='Fecha del evento'
+        title='Fecha de la actividad'
       />
       <ActivityDatePicker
         date={dates.limitDate}

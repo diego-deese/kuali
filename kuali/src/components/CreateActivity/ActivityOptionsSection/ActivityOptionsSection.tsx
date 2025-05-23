@@ -42,8 +42,8 @@ const ActivityOptionsSection = () => {
           />
         </View>
         <Text style={styles.description}>
-          Si está habilitado, registrará automaticamente a todos los usuarios a
-          la actividad creada
+          Habilitalo para inscribir automaticamente a todos los usuarios para
+          los que esté disponible la actividad
         </Text>
       </View>
     </View>

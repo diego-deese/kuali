@@ -1,24 +1,18 @@
 import React, { useState } from 'react'
-import {
-  FlatList,
-  KeyboardAvoidingView,
-  View,
-  Platform,
-  ScrollView,
-} from 'react-native'
+import { FlatList, KeyboardAvoidingView, View, Platform } from 'react-native'
 import { styles } from './styles'
 import colors from '../../constants/colors'
+import { router } from 'expo-router'
 
 import ButtonsHeader from '../../components/shared/ButtonsHeader/ButtonsHeader'
 import IconButton from '../../components/shared/IconButton/IconButton'
 import CreateActivityForm from '../../components/CreateActivity/CreateActivityForm/CreateActivityForm'
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
+import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
 
 import { useCreateActivityContext } from '../../context/CreateActivityContext/CreateActivityContext'
-import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
-import { Redirect, router } from 'expo-router'
 
 const CreateActivity = () => {
   const { loading, createActivity } = useCreateActivityContext()
@@ -30,7 +24,7 @@ const CreateActivity = () => {
 
   const renderContent = () => (
     <View style={styles.container}>
-      <ButtonsHeader title='Crear Evento'>
+      <ButtonsHeader title='Crear Actividad'>
         <IconButton
           icon={
             <CloseIcon
