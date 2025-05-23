@@ -137,7 +137,6 @@ class ActivityService {
 
       // Manejo de imagen local
       const localUri = newActivityData.poster_image_uri
-      console.log(localUri)
       const posterFileInfo = getFileInfo(localUri)
 
       formData.append('poster_image', {
