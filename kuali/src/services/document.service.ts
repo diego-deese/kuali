@@ -39,6 +39,7 @@ class DocumentService {
       // Agregar datos adicionales
       formData.append('activity_id', activityId.toString())
       formData.append('requirement_id', requirementId.toString())
+      //formData.append('originalFileName', fileInfo.fileName)
 
       // Realizar la petición POST
       const response = await this.api.post(`/user-documents/upload`, formData, {

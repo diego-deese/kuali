@@ -14,6 +14,9 @@ import { getDocumentStatusFromString } from './InfoEvent.utils'
 import activityService from '../../services/activity.service'
 import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
 import documentService from '../../services/document.service'
+import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
+import Toast from 'react-native-toast-message'
+
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
@@ -31,6 +34,8 @@ const InfoEvent: React.FC = () => {
   const [hasApplied, setHasApplied] = useState(false)
   const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [documentToDelete, setDocumentToDelete] = useState<number | null>(null)
+  const [requirementsExpanded, setRequirementsExpanded] = useState(true)
+  const [plantillasExpanded, setPlantillasExpanded] = useState(true)
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -82,15 +87,21 @@ const InfoEvent: React.FC = () => {
       )
 
       if (!result.success && 'error' in result) {
-        setError(result.error || 'Error al subir documento')
-        console.error('Error:', result.error)
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: result.error || 'No se pudo subir el documento',
+          position: 'top',
+        })
       } else {
         // Actualizar la interfaz después de subir el documento
         // fetchEventDetails()
-        console.log('¡Documento subido correctamente!', {
-          activityId: activity_id,
-          requirementId: docId,
-          fileName: fileUri.split('/').pop(),
+        Toast.show({
+          type: 'success',
+          text1: 'Archivo subido',
+          text2: 'El documento se subió correctamente',
+          position: 'top',
+          visibilityTime: 3000,
         })
       }
     } catch (error) {
@@ -110,6 +121,7 @@ const InfoEvent: React.FC = () => {
     setDocumentToDelete(docId)
     setDeleteModalVisible(true)
   }
+
   const confirmDelete = async () => {
     try {
       if (!documentToDelete) {
@@ -124,14 +136,34 @@ const InfoEvent: React.FC = () => {
       if (!result.success && 'error' in result) {
         setError(result.error || 'Error al eliminar documento')
         console.error('Error:', result.error)
+
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: result.error || 'No se pudo eliminar el documento',
+          position: 'top',
+        })
       } else {
-        console.log('¡Documento eliminado correctamente!')
+        Toast.show({
+          type: 'success',
+          text1: 'Documento eliminado',
+          text2: 'El documento se eliminó correctamente',
+          position: 'top',
+          visibilityTime: 3000,
+        })
         // Refrescar los datos para actualizar la UI
         //fetchEventDetails()
       }
     } catch (error) {
       console.error('Error al eliminar documento:', error)
       setError('Error al eliminar el documento')
+
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No se pudo eliminar el documento',
+        position: 'top',
+      })
     } finally {
       setLoading(false)
       setDeleteModalVisible(false)
@@ -175,6 +207,14 @@ const InfoEvent: React.FC = () => {
     }
   }
 
+  const toggleRequirements = () => {
+    setRequirementsExpanded(!requirementsExpanded)
+  }
+
+  const togglePlantillas = () => {
+    setPlantillasExpanded(!plantillasExpanded)
+  }
+
   if (loading) {
     return (
       <SafeAreaView style={styles.container}>
@@ -216,55 +256,73 @@ const InfoEvent: React.FC = () => {
           }}
         />
 
-        {/* Requisitos/Documentos */}
-        <Text style={styles.sectionTitle}>Requisitos</Text>
-
+        {/* Mostrar el botón de Aplicar cuando NO ha aplicado */}
         {!hasApplied ? (
-          /* Solo mostrar el botón de Aplicar cuando no ha aplicado */
           <Button buttonText='Aplicar' onPress={handleApply} />
         ) : (
-          /* Mostrar los requisitos y botón de salir solo cuando ya ha aplicado */
+          /* Mostrar las secciones desplegables cuando ya ha aplicado */
           <>
-            {eventDetails.requirements &&
-            eventDetails.requirements.length > 0 ? (
-              // Si hay requisitos, mapearlos
-              eventDetails.requirements.map((req) => {
-                // Obtener el documento del usuario si existe
-                const userDocument =
-                  req.userDocuments && req.userDocuments.length > 0
-                    ? req.userDocuments[0]
-                    : undefined
+            {/* Sección de Plantillas */}
+            <Pressable style={styles.sectionHeader} onPress={togglePlantillas}>
+              <Text style={styles.sectionTitle}>Plantillas</Text>
+              {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
+            </Pressable>
 
-                // Determinar el estado del documento basado en el status
-                const documentStatus = userDocument?.status?.name
-                  ? getDocumentStatusFromString(userDocument.status.name)
-                  : DocumentStatus.Pendiente
+            {plantillasExpanded && <View></View>}
 
-                return (
-                  <DocumentCard
-                    key={req.requirement_id}
-                    document={{
-                      id: req.requirement_id,
-                      title: req.name,
-                      description: req.description,
-                      status: documentStatus,
-                      userDocumentId: userDocument?.user_document_id,
-                    }}
-                    onUpload={(docId, fileUri) => handleUpload(docId, fileUri)}
-                    onDelete={() =>
-                      handleDelete(userDocument?.user_document_id || 0)
-                    }
-                  />
-                )
-              })
-            ) : (
-              // Si NO hay requisitos, mostrar este mensaje
-              <Text style={styles.noRequirementsText}>
-                Esta actividad no tiene requisitos documentales.
-              </Text>
+            {/* Sección de Requisitos */}
+            <Pressable
+              style={styles.sectionHeader}
+              onPress={toggleRequirements}
+            >
+              <Text style={styles.sectionTitle}>Requisitos</Text>
+              {requirementsExpanded ? <DropUpIcon /> : <DropDownIcon />}
+            </Pressable>
+
+            {requirementsExpanded && (
+              <View>
+                {eventDetails.requirements &&
+                eventDetails.requirements.length > 0 ? (
+                  // Si hay requisitos, mapearlos
+                  eventDetails.requirements.map((req) => {
+                    const userDocument =
+                      req.userDocuments && req.userDocuments.length > 0
+                        ? req.userDocuments[0]
+                        : undefined
+
+                    const documentStatus = userDocument?.status?.name
+                      ? getDocumentStatusFromString(userDocument.status.name)
+                      : DocumentStatus.Pendiente
+
+                    return (
+                      <DocumentCard
+                        key={req.requirement_id}
+                        document={{
+                          id: req.requirement_id,
+                          title: req.name,
+                          description: req.description,
+                          status: documentStatus,
+                          userDocumentId: userDocument?.user_document_id,
+                        }}
+                        onUpload={(docId, fileUri) =>
+                          handleUpload(docId, fileUri)
+                        }
+                        onDelete={() =>
+                          handleDelete(userDocument?.user_document_id || 0)
+                        }
+                      />
+                    )
+                  })
+                ) : (
+                  // Si NO hay requisitos, mostrar este mensaje
+                  <Text style={styles.noRequirementsText}>
+                    Esta actividad no tiene requisitos.
+                  </Text>
+                )}
+              </View>
             )}
 
-            {/* Botón de salir */}
+            {/* Botón para darse de baja*/}
             <Pressable
               style={styles.exitButton}
               onPress={() => setModalVisible(true)}
