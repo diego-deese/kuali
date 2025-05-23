@@ -146,34 +146,42 @@ class ActivityService {
         type: posterFileInfo.mimeType,
       } as any)
 
-      const activityData = {
-        ...newActivityData,
-        requirements: newActivityData.requirements.map((req) => {
-          return {
-            name: req.name,
-            description: req.description,
-            template: req.template_uri
-              ? {
-                  name: `${req.name}_plantilla`,
-                }
-              : undefined,
-          }
-        }),
+      let activityData
+
+      if (
+        newActivityData.requirements &&
+        newActivityData.requirements.length > 0
+      ) {
+        activityData = {
+          ...newActivityData,
+          requirements: newActivityData.requirements.map((req) => {
+            return {
+              name: req.name,
+              description: req.description,
+              template: req.template_uri
+                ? {
+                    name: `${req.name}_plantilla`,
+                  }
+                : undefined,
+            }
+          }),
+        }
+        const requirementsWithTemplate = newActivityData.requirements.filter(
+          (req) => req.template_uri !== null,
+        )
+
+        requirementsWithTemplate.forEach((req) => {
+          const templateInfo = getFileInfo(req.template_uri!)
+
+          formData.append('template_files', {
+            uri: req.template_uri,
+            name: templateInfo.fileName,
+            type: templateInfo.mimeType,
+          } as any)
+        })
+      } else {
+        activityData = newActivityData
       }
-
-      const requirementsWithTemplate = newActivityData.requirements.filter(
-        (req) => req.template_uri !== null,
-      )
-
-      requirementsWithTemplate.forEach((req) => {
-        const templateInfo = getFileInfo(req.template_uri!)
-
-        formData.append('template_files', {
-          uri: req.template_uri,
-          name: templateInfo.fileName,
-          type: templateInfo.mimeType,
-        } as any)
-      })
 
       formData.append(
         'activityData',
