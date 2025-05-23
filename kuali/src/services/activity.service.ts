@@ -267,6 +267,90 @@ class ActivityService {
       }
     }
   }
+
+  // Para aplicar
+  async applyToActivity(
+    activityId: number,
+  ): Promise<Response<any> | ResponseError> {
+    try {
+      const response = await this.api.post(
+        `/registrations/activity/${activityId}`,
+      )
+
+      if (response.status === 201 || response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al registrarse en la actividad',
+        error: response.data.error || 'No se pudo completar el registro',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
+    }
+  }
+
+  // Darse de baja
+  async unregisterFromActivity(
+    activityId: number,
+  ): Promise<Response<any> | ResponseError> {
+    try {
+      const response = await this.api.delete(
+        `/registrations/activity/${activityId}`,
+      )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al darse de baja de la actividad',
+        error: response.data.error || 'No se pudo completar la baja',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
+    }
+  }
 }
 
 export default new ActivityService()
