@@ -6,7 +6,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import React from 'react'
+import React, { useRef } from 'react'
 import colors from '../../../../constants/colors'
 import InputText from '../../../shared/InputText/InputText'
 import Switch from '../../../shared/Switch/Switch'
@@ -31,6 +31,8 @@ const NewRequirementModal = ({
   const { errors, requirement, handleCancel, handleConfirm, pickDocument } =
     useNewRequirementModal(requirementInfo)
 
+  const descriptionRef = useRef(null)
+
   return (
     <Modal transparent visible={visible} animationType='fade'>
       <KeyboardAvoidingView
@@ -46,10 +48,12 @@ const NewRequirementModal = ({
             errorMessage={errors.name.errorMessage}
             value={requirement.requirementName}
             onChangeText={requirement.handleNameChange}
+            onSubmitEditing={() => descriptionRef.current?.focus()}
           />
           <InputText
             label='Descripción'
             placeholder='Descripción del requisito'
+            inputRef={descriptionRef}
             multiline
             error={errors.description.error}
             errorMessage={errors.description.errorMessage}
