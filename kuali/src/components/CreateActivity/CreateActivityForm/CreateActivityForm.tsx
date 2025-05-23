@@ -1,25 +1,26 @@
 import React from 'react'
+import { View } from 'react-native'
+import colors from '../../../constants/colors'
 
 import InputText from '../../shared/InputText/InputText'
 import DatePickersSection from '../DatePickersSection/DatePickersSection'
 import SelectInput from '../../shared/SelectInput'
 import RequirementsSection from '../RequirementsSection/RequirementsSection'
 import LoadingModal from '../../shared/LoadingModal/LoadingModal'
+import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
+import Button from '../../shared/Button/Button'
+
+import { ImagePlusIcon } from '../../shared/Icons/Icons'
 
 import { mapArrayToOptions } from '../../../utils/mappers'
-import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
 import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
-import { ScrollView, View } from 'react-native'
-import Button from '../../shared/Button/Button'
-import { ImagePlusIcon } from '../../shared/Icons/Icons'
-import colors from '../../../constants/colors'
 
 const CreateActivityForm = () => {
   const { location, loadingAction, posterImg, title, description, errors } =
     useCreateActivityContext()
 
   return (
-    <ScrollView nestedScrollEnabled>
+    <View>
       <InputText
         label='Título de la actividad'
         placeholder='Mi Actividad'
@@ -75,7 +76,7 @@ const CreateActivityForm = () => {
       <RequirementsSection />
 
       <LoadingModal visible={loadingAction} />
-    </ScrollView>
+    </View>
   )
 }
 

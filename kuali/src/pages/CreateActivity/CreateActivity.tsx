@@ -63,7 +63,6 @@ const CreateActivity = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 64} // Ajusta el offset según sea necesario
     >
       {/**
        
