@@ -45,32 +45,29 @@ const OptionsModal: React.FC<OptionsModalProps> = ({
     >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={styles.optionsOverlay}
       >
-        <TouchableWithoutFeedback /*onPress={Keyboard.dismiss}*/>
-          <View style={styles.optionsOverlay}>
-            <View style={styles.optionsContainer}>
-              {editable && (
-                <AddNewHeader
-                  inputTextPlaceholder={headerInputPlaceholder}
-                  onAddConfirm={handleAddOption}
-                />
-              )}
-              <ScrollView keyboardShouldPersistTaps='handled'>
-                {options.map((option) => (
-                  <OptionComponent
-                    label={option.label}
-                    onPress={() => handleOptionSelect(option)}
-                    editable={editable}
-                    onEdit={(newLabel) => onEditOption(option.id, newLabel)}
-                    onDelete={() => handleDeleteOption(option)}
-                    key={option.id}
-                  />
-                ))}
-              </ScrollView>
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
+        <View style={styles.optionsContainer}>
+          {editable && (
+            <AddNewHeader
+              inputTextPlaceholder={headerInputPlaceholder}
+              onAddConfirm={handleAddOption}
+            />
+          )}
+          <ScrollView keyboardShouldPersistTaps='handled'>
+            {options.map((option) => (
+              <OptionComponent
+                label={option.label}
+                onPress={() => handleOptionSelect(option)}
+                editable={editable}
+                onEdit={(newLabel) => onEditOption(option.id, newLabel)}
+                onDelete={() => handleDeleteOption(option)}
+                key={option.id}
+              />
+            ))}
+          </ScrollView>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   )

@@ -57,6 +57,7 @@ const AddNewHeader: React.FC<AddNewHeaderProps> = ({
               placeholder={inputTextPlaceholder}
               onChangeText={setNewOptionValue}
               onSubmitEditing={() => handleAddConfirm(newOptionValue)}
+              autoFocus
             />
           </View>
           <IconButton

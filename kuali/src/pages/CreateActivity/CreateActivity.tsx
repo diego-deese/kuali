@@ -77,6 +77,7 @@ const CreateActivity = () => {
         keyExtractor={(item) => item.key}
         keyboardShouldPersistTaps='never' // Asegura que los taps no cierren el teclado
         nestedScrollEnabled={true}
+        removeClippedSubviews={false}
       />
     </KeyboardAvoidingView>
   )
