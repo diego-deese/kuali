@@ -1,43 +1,30 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Pressable, View, Text, ScrollView } from 'react-native'
-import { assignedStudents } from '../../components/DataExample/Students'
-import { setStudents as setGlobalStudents } from '../../context/StudentsStored' // Renombrado para evitar conflicto
 import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard/StudentReviewCard'
 import styles from './reviewStudentDoc.styles'
 import Button from '../../components/shared/Button/Button'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import { useLocalSearchParams } from 'expo-router'
-import { useRegisteredUsers } from '../../hooks/ReviewDocs/useRegisteredUsers'
+import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useUserDocument'
 
 export default function ReviewStudentDoc() {
   const { activity_id } = useLocalSearchParams()
-  const {
-    users: students,
-    loading,
-    error,
-  } = useRegisteredUsers(Number(activity_id))
+  const { documentsByRequirement, loading } = useGroupedUserDocuments(
+    Number(activity_id),
+  )
 
   const updateStatus = (index: number, status: 'approved' | 'rejected') => {
-    const updated = [...students]
-    //updated[index].documentStatus = status
-    //setStudents(updated)
+    console.log(`Actualizar documento en índice ${index} a estado: ${status}`)
+    // Aquí iría la lógica para actualizar el estado en la base de datos
   }
 
   const handleChange = () => {
-    console.log('Cambio de vista a los documentos del primer estudiante')
-    const firstStudent = students[0]
-    setGlobalStudents(students) // Guardamos en memoria compartida
-    router.push({
-      pathname: '/documents/doc/[id]',
-      params: {
-        id: firstStudent.user_id.toString(),
-        index: '0',
-      },
-    })
+    // Lógica para cambiar de vista
   }
+
   const handleDownload = () => {
-    //Logica para descargar
+    // Lógica para descargar
   }
 
   return (
@@ -56,36 +43,42 @@ export default function ReviewStudentDoc() {
       <Pressable onPress={handleChange}>
         <Text style={styles.changeText}>Por documento {'>'}</Text>
       </Pressable>
-      {/* Por el momento el documento sera un texto, despues se debe ligar con el id del documento */}
-      <Text style={styles.docText}> Documento 1</Text>
-      <View style={styles.row}>
-        <Pressable onPress={handleDownload}>
-          <DownloadIcon name='download' />
-        </Pressable>
-        <Pressable onPress={handleDownload}>
-          <Text style={styles.dowload}> Descargar todos </Text>
-        </Pressable>
-      </View>
       <ScrollView contentContainerStyle={styles.list}>
-        {loading && <Text style={styles.title}>Cargando estudiantes...</Text>}
-        {error && <Text style={styles.title}>Error al cargar estudiantes</Text>}
-        {!loading && students.length === 0 && (
-          <Text style={styles.title}>No hay estudiantes registrados</Text>
-        )}
-
         {!loading &&
-          !error &&
-          students.map((student, index) => (
-            <StudentReviewCard
-              key={student.user_id}
-              student={{
-                ...student,
-                index,
-                documentStatus: null, // Temporal, hasta que se implemente el estado real
-              }}
-              onApprove={() => updateStatus(index, 'approved')}
-              onReject={() => updateStatus(index, 'rejected')}
-            />
+          documentsByRequirement.map((group, groupIndex) => (
+            <View key={groupIndex}>
+              <Text style={styles.docText}>
+                Documento requerido: {group.requirement.name}
+              </Text>
+              <View style={styles.row}>
+                <Pressable onPress={handleDownload}>
+                  <DownloadIcon name='download' />
+                </Pressable>
+                <Pressable onPress={handleDownload}>
+                  <Text style={styles.dowload}> Descargar todos </Text>
+                </Pressable>
+              </View>
+              {group.userDocuments?.map((doc, index) => {
+                const user = doc.user
+                if (!user) return null
+
+                return (
+                  <StudentReviewCard
+                    key={doc.user_document_id}
+                    student={{
+                      user_id: user.user_id,
+                      name: user.name,
+                      second_name: user.second_name,
+                      paternal_lastname: user.paternal_lastname,
+                      documentStatus: doc.status?.name || null,
+                      index,
+                    }}
+                    onApprove={() => updateStatus(index, 'approved')}
+                    onReject={() => updateStatus(index, 'rejected')}
+                  />
+                )
+              })}
+            </View>
           ))}
       </ScrollView>
     </View>
