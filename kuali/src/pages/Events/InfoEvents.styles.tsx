@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignContent: 'center',
-    marginBottom: 12,
+    marginBottom: 16,
   },
   content: {
     padding: 20,
@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     fontSize: 24,
     color: colors.fontBlack,
+    width: '90%',
   },
   eventInfoText: {
     fontFamily: 'monserratRegular',
