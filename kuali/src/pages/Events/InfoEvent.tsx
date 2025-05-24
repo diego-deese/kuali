@@ -28,7 +28,6 @@ const InfoEvent: React.FC = () => {
   const { user } = useAuth()
   const params = useLocalSearchParams()
   const activity_id = params.activity_id ? Number(params.activity_id) : 0
-
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -219,7 +218,7 @@ const InfoEvent: React.FC = () => {
             <>
               <Text style={styles.sectionTitle}>Panel Administrativo</Text>
               <Button
-                buttonText='Revisar por estudiantes'
+                buttonText='Revisar por documento'
                 onPress={() =>
                   router.push({
                     pathname: '/documents/student/studentsDoc',
@@ -227,20 +226,29 @@ const InfoEvent: React.FC = () => {
                   })
                 }
               />
-              {/*
-              <Button
-                buttonText='Revisar por documento'
-                onPress={() =>
-                  router.push({
-                    pathname: '/documents/doc/[id]',
-                    params: {
-                      id: '1', // usar ID real luego
-                      activity_id: activity_id.toString(),
-                    },
-                  })
-                }
-              />
-              */}
+              {(() => {
+                const firstUserId = (
+                  eventDetails.requirements?.[0]?.userDocuments?.[0] as any
+                )?.user?.user_id
+                return (
+                  <Button
+                    buttonText='Revisar por usuario'
+                    onPress={() => {
+                      if (firstUserId && activity_id !== 0) {
+                        router.push({
+                          pathname: '/documents/doc/[id]',
+                          params: {
+                            id: firstUserId.toString(),
+                            activity_id: activity_id.toString(),
+                          },
+                        })
+                      } else {
+                        alert('Faltan datos para ir a la revisión por usuario.')
+                      }
+                    }}
+                  />
+                )
+              })()}
             </>
           )}
         </WithRole>

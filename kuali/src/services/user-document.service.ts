@@ -48,6 +48,42 @@ class UserDocumentService {
       }
     }
   }
+  async getDocumentsGroupedBy(
+    activityId: number,
+    groupBy: 'requirement' | 'user',
+  ) {
+    try {
+      const response = await this.api.get(
+        `/user-documents/activity/${activityId}?groupBy=${groupBy}`,
+      )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data.groupedUserDocuments,
+        }
+      }
+
+      return {
+        success: false,
+        message: response.data.message,
+        error: response.data.error,
+      }
+    } catch (error: any) {
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: error.message,
+      }
+    }
+  }
+  async approveUserDocument(userDocumentId: number) {
+    return this.api.patch(`/user-documents/${userDocumentId}/approve`)
+  }
+
+  async rejectUserDocument(userDocumentId: number) {
+    return this.api.patch(`/user-documents/${userDocumentId}/reject`)
+  }
 }
 
 export default new UserDocumentService()

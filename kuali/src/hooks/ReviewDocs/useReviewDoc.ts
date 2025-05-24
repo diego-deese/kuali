@@ -1,18 +1,21 @@
 import { useEffect, useState } from 'react'
-import Toast from 'react-native-toast-message'
 import userDocumentService from '../../services/user-document.service'
+import Toast from 'react-native-toast-message'
 
-export const useGroupedUserDocuments = (activityId: number) => {
-  const [documentsByRequirement, setDocumentsByRequirement] = useState<any[]>(
-    [],
-  )
+export const useGroupedUserDocuments = (
+  activityId: number,
+  groupBy: 'requirement' | 'user' = 'requirement',
+) => {
   const [loading, setLoading] = useState(false)
+  const [documents, setDocuments] = useState<any[]>([])
 
-  const fetchDocuments = async () => {
+  const fetchGroupedDocuments = async () => {
     setLoading(true)
     try {
-      const result =
-        await userDocumentService.getDocumentsGroupedByRequirement(activityId)
+      const result = await userDocumentService.getDocumentsGroupedBy(
+        activityId,
+        groupBy,
+      )
 
       if (!result.success) {
         Toast.show({
@@ -20,30 +23,30 @@ export const useGroupedUserDocuments = (activityId: number) => {
           text1: 'Error al cargar documentos',
           text2: result.message ?? 'Ocurrió un error inesperado',
         })
-        setDocumentsByRequirement([])
+        setDocuments([])
       } else {
-        setDocumentsByRequirement(result.data)
+        setDocuments(result.data)
       }
     } catch (error: any) {
-      console.error('Error inesperado:', error)
       Toast.show({
         type: 'error',
         text1: 'Error inesperado',
         text2: error.message ?? 'No se pudieron cargar los documentos',
       })
-      setDocumentsByRequirement([])
+      setDocuments([])
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    if (activityId) fetchDocuments()
-  }, [activityId])
+    if (activityId) fetchGroupedDocuments()
+  }, [activityId, groupBy])
 
   return {
-    documentsByRequirement,
     loading,
-    refetch: fetchDocuments,
+    documentsByRequirement: groupBy === 'requirement' ? documents : [],
+    documentsByUser: groupBy === 'user' ? documents : [],
+    refetch: fetchGroupedDocuments,
   }
 }

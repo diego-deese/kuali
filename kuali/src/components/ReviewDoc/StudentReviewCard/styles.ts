@@ -29,8 +29,12 @@ export default StyleSheet.create({
     marginBottom: -10,
   },
   approved: {
-    color: '#4CAF50',
+    width: '30%',
+    color: colors.blueIcons,
     fontWeight: 'bold',
+    marginTop: 5,
+    marginBottom: 10,
+    fontSize: 17,
   },
   rejected: {
     color: '#F44336',

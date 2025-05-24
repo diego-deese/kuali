@@ -12,7 +12,7 @@ export default function DocReviewCard({ req }) {
   return (
     <View style={styles.card}>
       <View style={styles.row}>
-        <Text style={styles.docName}>{req.name}</Text>
+        <Text style={styles.docName}>{req.requirement?.name}</Text>
         <View style={styles.iconContainer}>
           <Pressable onPress={handleDownload}>
             <DownloadIcon />

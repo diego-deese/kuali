@@ -1,36 +1,67 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Pressable, View, Text, ScrollView } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
-import { getStudents } from '../../context/StudentsStored'
 import styles from './reviewDoc.Styles'
 import Button from '../../components/shared/Button/Button'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import DocReviewCard from '../../components/ReviewDoc/DocReviewcard/DocReviewCard'
+import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useReviewDoc'
+import NavButtons from '../../components/ReviewDoc/NavButtons/NavButtons'
 
 export default function ReviewDoc() {
-  const handleDownload = () => {
-    console.log('Descargando...')
-    // Aquí va tu lógica de descarga
+  const { activity_id } = useLocalSearchParams()
+  const actId = Number(activity_id)
+  console.log('Activity ID:', actId)
+  const { documentsByUser, loading } = useGroupedUserDocuments(actId, 'user')
+  console.log('documentsByUser', documentsByUser)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  if (loading || documentsByUser.length === 0) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>Cargando documentos del estudiante...</Text>
+      </View>
+    )
   }
-  const { index } = useLocalSearchParams()
-  const parsedIndex = parseInt(index as string)
-  const student = getStudents()[parsedIndex]
+  const student = documentsByUser[currentIndex]
+  const handleDownload = () => {
+    console.log(`Descargando documentos de ${student.user.name}`)
+    // Lógica de descarga (pendiente)
+  }
 
   return (
     <View style={styles.container}>
       <Button
         buttonText='Volver'
-        onPress={() => router.push('/documents/student/studentsDoc')}
+        onPress={() =>
+          router.push({
+            pathname: '/event/[activity_id]',
+            params: { activity_id: activity_id.toString() },
+          })
+        }
         style={{ width: '30%' }}
       />
 
       <Text style={styles.title}>Revisión de documentos</Text>
+
       <Pressable onPress={() => router.back()}>
-        <Text style={styles.changeText}>{'<'} Por alumno</Text>
+        <Text style={styles.changeText}>{'<'} Por usuario</Text>
       </Pressable>
-      {/* Por el momento el documento sera un texto, despues se debe ligar con el id del documento */}
-      <Text style={styles.docText}> Estudiante 1</Text>
+
+      <NavButtons
+        currentIndex={currentIndex}
+        total={documentsByUser.length}
+        onPrev={() => setCurrentIndex((i) => Math.max(i - 1, 0))}
+        onNext={() =>
+          setCurrentIndex((i) => Math.min(i + 1, documentsByUser.length - 1))
+        }
+        label='Usuario'
+      />
+
+      <Text style={styles.docText}>
+        Usuario: {student.user.name} {student.user.paternal_lastname}
+      </Text>
+
       <View style={styles.row}>
         <Pressable onPress={handleDownload}>
           <DownloadIcon name='download' />
@@ -39,9 +70,10 @@ export default function ReviewDoc() {
           <Text style={styles.dowload}> Descargar todos </Text>
         </Pressable>
       </View>
+
       <ScrollView contentContainerStyle={styles.list}>
-        {student.Requirements?.map((req, i) => (
-          <DocReviewCard key={req.requirement_id} req={req} />
+        {student.userDocuments.map((req) => (
+          <DocReviewCard key={req.user_document_id} req={req} />
         ))}
       </ScrollView>
     </View>
