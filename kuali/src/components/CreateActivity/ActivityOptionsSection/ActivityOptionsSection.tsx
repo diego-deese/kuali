@@ -14,20 +14,12 @@ const ActivityOptionsSection = () => {
         <SwitchComponent
           label='Estudiantes'
           enabled={activityOptions?.visibleStudents}
-          onChange={() =>
-            activityOptions?.setVisibleStudents(
-              !activityOptions.visibleStudents,
-            )
-          }
+          onChange={activityOptions.toggleVisibleStudents}
         />
         <SwitchComponent
           label='Investigadores'
           enabled={activityOptions?.visibleResearchers}
-          onChange={() =>
-            activityOptions?.setVisibleResearchers(
-              !activityOptions.visibleResearchers,
-            )
-          }
+          onChange={activityOptions.toggleVisibleResearchers}
         />
       </View>
       <View style={styles.registerContainer}>
@@ -36,14 +28,12 @@ const ActivityOptionsSection = () => {
           <SwitchComponent
             label='Obligatorio'
             enabled={activityOptions?.mandatory}
-            onChange={() =>
-              activityOptions?.setMandatory(!activityOptions.mandatory)
-            }
+            onChange={activityOptions.toggleMandatory}
           />
         </View>
         <Text style={styles.description}>
-          Habilitalo para inscribir automaticamente a todos los usuarios para
-          los que esté disponible la actividad
+          Habilitalo para inscribir automaticamente a todos los usuarios que
+          pueden ver la actividad
         </Text>
       </View>
     </View>

@@ -26,9 +26,9 @@ interface ActivityFormContextProps {
     visibleStudents: boolean
     visibleResearchers: boolean
     mandatory: boolean
-    setVisibleStudents: (value: boolean) => void
-    setVisibleResearchers: (value: boolean) => void
-    setMandatory: (value: boolean) => void
+    toggleVisibleStudents: () => void
+    toggleVisibleResearchers: () => void
+    toggleMandatory: () => void
   }
   requirements?: {
     requirements: ActivityRequirement[]
@@ -62,6 +62,7 @@ interface ActivityFormContextProps {
   setLoading?: (value: boolean) => void
   setLoadingAction?: (value: boolean) => void
   createActivity?: () => void
+  updateActivity?: () => void
   errors?: ActivityErrors
 }
 

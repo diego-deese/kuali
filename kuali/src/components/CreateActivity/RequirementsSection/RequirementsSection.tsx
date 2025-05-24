@@ -7,7 +7,13 @@ import NewRequirementModal from './NewRequirementModal/NewRequirementModal'
 import ActivityRequirementCard from '../../shared/ActivityRequirementCard/ActivityRequirementCard'
 import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
 
-const RequirementsSection = () => {
+interface RequirementsSectionProps {
+  mode: 'create' | 'edit'
+}
+
+const RequirementsSection: React.FC<RequirementsSectionProps> = ({
+  mode = 'create',
+}) => {
   const [showModal, setShowModal] = useState(false)
   const { requirements } = useActivityFormContext()
 

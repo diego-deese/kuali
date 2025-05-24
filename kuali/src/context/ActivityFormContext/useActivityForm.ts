@@ -1,10 +1,10 @@
 import { useLocations } from '../../hooks/ActivityForm/useLocations'
 import { useDates } from '../../hooks/ActivityForm/useDates'
 import { useRequirements } from '../../hooks/ActivityForm/useRequirements'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import activityService from '../../services/activity.service'
-import { NewActivityData } from '../../types/Activity'
+import { NewActivityData, UpdateActivityData } from '../../types/Activity'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
 import { useErrors } from '../../hooks/ActivityForm/useErrors'
@@ -31,6 +31,8 @@ export const useActivityForm = (
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
+  const editedActivityDataRef = useRef<UpdateActivityData>({})
+
   const loadActivityData = async (activityId: number) => {
     setLoading(true)
     try {
@@ -46,8 +48,6 @@ export const useActivityForm = (
       }
 
       const activity = result.data
-
-      console.log(activity)
 
       // Populate activity form fields
       setTitle(activity.title)
@@ -74,7 +74,6 @@ export const useActivityForm = (
     if (mode === 'edit' && activityId) {
       loadActivityData(activityId)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, activityId])
 
   const restartFields = (): void => {
@@ -88,6 +87,9 @@ export const useActivityForm = (
 
   const onTitleChange = (title: string) => {
     setTitle(title)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.title = title
+    }
     errorManagement.updateErrors({
       title: errorManagement.validateTitle(title),
     })
@@ -95,6 +97,9 @@ export const useActivityForm = (
 
   const onDescriptionChange = (description: string) => {
     setDescription(description)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.description = description
+    }
     errorManagement.updateErrors({
       description: errorManagement.validateDescription(description),
     })
@@ -102,6 +107,9 @@ export const useActivityForm = (
 
   const onLocationChange = (newLocation: Option) => {
     locationManagement.onLocationChange(newLocation)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.location_id = newLocation.id
+    }
     errorManagement.updateErrors({
       location: errorManagement.validateLocation(newLocation),
     })
@@ -122,13 +130,40 @@ export const useActivityForm = (
     if (!result.canceled) {
       const uri = result.assets[0].uri
       setPosterImg(uri)
+      if (mode === 'edit') {
+        editedActivityDataRef.current.poster_image_uri = uri
+      }
       errorManagement.updateErrors({
         posterImage: errorManagement.validatePosterImage(uri),
       })
-    } else {
+      return
+    }
+
+    if (mode !== 'edit') {
       errorManagement.updateErrors({
         posterImage: errorManagement.validatePosterImage(null),
       })
+    }
+  }
+
+  const toggleVisibleStudents = () => {
+    setVisibleStudents(!visibleStudents)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.visible_students = visibleStudents
+    }
+  }
+
+  const toggleVisibleResearchers = () => {
+    setVisibleResearchers(!visibleResearchers)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.visible_researchers = visibleResearchers
+    }
+  }
+
+  const toggleMandatory = () => {
+    setMandatory(!mandatory)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.mandatory = mandatory
     }
   }
 
@@ -193,6 +228,10 @@ export const useActivityForm = (
     }
   }
 
+  const updateActivity = async () => {
+    console.log(editedActivityDataRef.current)
+  }
+
   return {
     mode,
     activityId,
@@ -220,9 +259,9 @@ export const useActivityForm = (
       visibleStudents,
       visibleResearchers,
       mandatory,
-      setVisibleStudents,
-      setVisibleResearchers,
-      setMandatory,
+      toggleVisibleStudents,
+      toggleVisibleResearchers,
+      toggleMandatory,
     },
     posterImg: {
       posterImg,
@@ -240,6 +279,7 @@ export const useActivityForm = (
     loadingAction,
     errors: errorManagement.errors,
     createActivity,
+    updateActivity,
     setLoading,
     setLoadingAction,
   }

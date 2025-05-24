@@ -22,7 +22,7 @@ export default function NextEventsComponents({
         <WithRole role={Roles.ADMIN}>
           <IconButton
             icon={<PlusIcon />}
-            onPress={() => router.push('/event/manage/create')}
+            onPress={() => router.push('/event/create')}
           />
         </WithRole>
       </View>

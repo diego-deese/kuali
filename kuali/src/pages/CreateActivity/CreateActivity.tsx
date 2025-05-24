@@ -16,6 +16,7 @@ import { useActivityFormContext } from '../../context/ActivityFormContext/Activi
 
 const CreateActivity = () => {
   const {
+    mode,
     loading,
     loadingAction,
     createActivity,
@@ -53,6 +54,7 @@ const CreateActivity = () => {
       </ButtonsHeader>
 
       <CreateActivityForm
+        mode={mode}
         location={location}
         loadingAction={loadingAction}
         posterImg={posterImg}

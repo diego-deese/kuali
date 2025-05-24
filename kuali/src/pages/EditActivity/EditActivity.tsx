@@ -13,9 +13,10 @@ import { styles } from './styles'
 
 const EditActivity = () => {
   const {
+    mode,
     loading,
     loadingAction,
-    createActivity,
+    updateActivity,
     posterImg,
     title,
     description,
@@ -45,11 +46,12 @@ const EditActivity = () => {
         />
         <IconButton
           icon={<CheckIcon size={32} color={colors.selectionBlue} />}
-          onPress={createActivity}
+          onPress={updateActivity}
         />
       </ButtonsHeader>
 
       <CreateActivityForm
+        mode={mode}
         location={location}
         loadingAction={loadingAction}
         posterImg={posterImg}

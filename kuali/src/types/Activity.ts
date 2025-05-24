@@ -29,3 +29,5 @@ export type NewActivityData = {
   requirements?: ActivityRequirement[]
   poster_image_uri: string
 }
+
+export type UpdateActivityData = Partial<NewActivityData>

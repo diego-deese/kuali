@@ -19,6 +19,7 @@ import { Option } from '../../shared/SelectInput/interfaces'
 import { Location } from '../../../types/Location'
 
 interface CreateActivityFormProps {
+  mode: 'create' | 'edit'
   loadingAction: boolean
   posterImg: {
     posterImg: string
@@ -44,6 +45,7 @@ interface CreateActivityFormProps {
 }
 
 const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
+  mode = 'create',
   location,
   loadingAction,
   posterImg,
@@ -106,7 +108,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
 
       <ActivityOptionsSection />
 
-      <RequirementsSection />
+      <RequirementsSection mode={mode} />
 
       <LoadingModal visible={loadingAction} />
     </View>
