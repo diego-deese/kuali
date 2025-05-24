@@ -23,9 +23,9 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
   }
 
   return (
-    <>
-      <Pressable onPress={handlePress}>
-        <View style={styles.cardContainer}>
+    <View style={styles.cardContainer}>
+      <Pressable style={{ flex: 1 }} onPress={handlePress}>
+        <View style={{ flex: 1 }}>
           <ImageBackground
             style={styles.backgroundImage}
             source={
@@ -68,7 +68,7 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
       </Pressable>
       {/* Modal de carga */}
       <LoadingModal visible={isNavigating} />
-    </>
+    </View>
   )
 }
 

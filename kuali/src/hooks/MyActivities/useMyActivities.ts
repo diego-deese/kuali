@@ -13,6 +13,8 @@ export const useMyActivities = () => {
   const [pastActivities, setPastActivities] = useState<Activity[] | null>(null)
   const [loadingActivities, setLoadingActivities] = useState(false)
 
+  const [refreshing, setRefreshing] = useState(false)
+
   const { user } = useAuth()
 
   const handleTabChange = (tab) => {
@@ -37,7 +39,14 @@ export const useMyActivities = () => {
       if (upcomingActivities === null) getUpcomingActivities()
       if (pastActivities === null) getPastActivities()
     }
-  }, [upcomingActivities, pastActivities])
+  }, [upcomingActivities, pastActivities, user])
+
+  const handleRefresh = () => {
+    setRefreshing(true)
+    setUpcomingActivities(null)
+    setPastActivities(null)
+    setRefreshing(false)
+  }
 
   const getUpcomingActivities = async () => {
     try {
@@ -109,5 +118,7 @@ export const useMyActivities = () => {
       getUpcomingActivities,
     },
     showViewSelector: activeTab === 'upcoming',
+    refreshing,
+    handleRefresh,
   }
 }
