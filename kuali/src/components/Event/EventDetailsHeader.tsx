@@ -109,7 +109,7 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
                 />
               }
               onPress={() => {
-                router.navigate('/event/manage/edit')
+                router.navigate(`/event/${activity_id}/edit`)
               }}
             />
           </WithRole>

@@ -89,6 +89,7 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
         onDeleteOption={location.deleteLocation}
         onAddOption={location.createLocation}
         onSelect={location.onLocationChange}
+        value={location.location}
       />
 
       <View style={{ marginBottom: 16 }}>

@@ -227,7 +227,6 @@ class ActivityService {
     }
   }
 
-  // Método para obtener actividad por ID
   async getActivityById(
     activityId: number,
   ): Promise<Response<Activity> | ResponseError> {
@@ -268,7 +267,6 @@ class ActivityService {
     }
   }
 
-  // Para aplicar
   async applyToActivity(
     activityId: number,
   ): Promise<Response<any> | ResponseError> {
@@ -310,7 +308,6 @@ class ActivityService {
     }
   }
 
-  // Darse de baja
   async unregisterFromActivity(
     activityId: number,
   ): Promise<Response<any> | ResponseError> {

@@ -4,6 +4,7 @@ import Button from '../shared/Button/Button'
 import { FormattedDate } from '../shared/FormattedDate/FormattedDate'
 import LoadingModal from '../shared/LoadingModal/LoadingModal'
 import { useEventNavigation } from '../../hooks/NavigationActivity/useEventNavigation'
+import { router } from 'expo-router'
 export default function NextEventCard({
   title,
   event_date,
@@ -15,15 +16,10 @@ export default function NextEventCard({
   location: string
   activity_id: number
 }) {
-  const { isNavigating, navigateToEvent } = useEventNavigation()
+  const { isNavigating } = useEventNavigation()
 
   const handlePress = () => {
-    navigateToEvent({
-      pathname: `/event/${activity_id}`,
-      params: {
-        activity_id,
-      },
-    })
+    router.navigate(`/event/${activity_id}/info`)
   }
 
   return (

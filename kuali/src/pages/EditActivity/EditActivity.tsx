@@ -25,8 +25,6 @@ const EditActivity = () => {
 
   const [showModal, setShowModal] = useState(false)
 
-  console.log(title)
-
   if (loading) {
     return <LoadingScreen message='Cargando la información...' />
   }

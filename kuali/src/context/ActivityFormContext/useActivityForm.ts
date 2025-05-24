@@ -1,13 +1,14 @@
 import { useLocations } from '../../hooks/ActivityForm/useLocations'
 import { useDates } from '../../hooks/ActivityForm/useDates'
 import { useRequirements } from '../../hooks/ActivityForm/useRequirements'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import activityService from '../../services/activity.service'
 import { NewActivityData } from '../../types/Activity'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
 import { useErrors } from '../../hooks/ActivityForm/useErrors'
+import { mapToOption } from '../../utils/mappers'
 
 export const useActivityForm = (
   mode: 'create' | 'edit',
@@ -29,6 +30,52 @@ export const useActivityForm = (
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
+
+  const loadActivityData = async (activityId: number) => {
+    setLoading(true)
+    try {
+      const result = await activityService.getActivityById(activityId)
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        return
+      }
+
+      const activity = result.data
+
+      console.log(activity)
+
+      // Populate activity form fields
+      setTitle(activity.title)
+      setDescription(activity.description)
+      setVisibleStudents(activity?.visible_students)
+      setVisibleResearchers(activity?.visible_researchers)
+      setMandatory(activity?.mandatory)
+      locationManagement.onLocationChange(
+        mapToOption(activity.location, 'id_location', 'name'),
+      )
+      activity.requirements.forEach((req) => {
+        requirementsManagement.addRequirement(req.name, req.description)
+      })
+      dateManagement.onActivityDateChange(new Date(activity.event_date))
+      dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    if (mode === 'edit' && activityId) {
+      loadActivityData(activityId)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [mode, activityId])
 
   const restartFields = (): void => {
     setTitle('')
