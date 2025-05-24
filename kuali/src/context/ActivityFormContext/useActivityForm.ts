@@ -1,18 +1,22 @@
-import { useLocations } from '../../hooks/CreateActivity/useLocations'
-import { useDates } from '../../hooks/CreateActivity/useDates'
-import { useRequirements } from '../../hooks/CreateActivity/useRequirements'
+import { useLocations } from '../../hooks/ActivityForm/useLocations'
+import { useDates } from '../../hooks/ActivityForm/useDates'
+import { useRequirements } from '../../hooks/ActivityForm/useRequirements'
 import { useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import activityService from '../../services/activity.service'
 import { NewActivityData } from '../../types/Activity'
-import { ActivityErrors, InputError } from '../../types/Error'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
+import { useErrors } from '../../hooks/ActivityForm/useErrors'
 
-export const useCreateActivity = () => {
+export const useActivityForm = (
+  mode: 'create' | 'edit',
+  activityId?: number,
+) => {
   const locationManagement = useLocations()
   const dateManagement = useDates()
   const requirementsManagement = useRequirements()
+  const errorManagement = useErrors()
 
   const [visibleStudents, setVisibleStudents] = useState(true)
   const [visibleResearchers, setVisibleResearchers] = useState(true)
@@ -26,107 +30,6 @@ export const useCreateActivity = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const [errors, setErrors] = useState<ActivityErrors>({
-    title: {
-      error: false,
-      errorMessage: '',
-    },
-    description: {
-      error: false,
-      errorMessage: '',
-    },
-    location: {
-      error: false,
-      errorMessage: '',
-    },
-    posterImage: {
-      error: false,
-      errorMessage: '',
-    },
-  })
-
-  const validateTitle = (title: string) => {
-    if (title === '' || !title) {
-      return {
-        error: true,
-        errorMessage: 'El título del evento es requerido',
-      }
-    }
-
-    const letterRegex = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑ\s]+$/
-    if (!letterRegex.test(title)) {
-      return {
-        error: true,
-        errorMessage: 'Solo se permiten letras y números',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateDescription = (description: string) => {
-    if (description === '' || !description) {
-      return {
-        error: true,
-        errorMessage: 'La descripción del evento es requerida',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validatePosterImage = (posterImgUri: string): InputError => {
-    if (posterImgUri === null) {
-      return {
-        error: true,
-        errorMessage: 'El poster del evento es requerido',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateLocation = (location: Option | null): InputError => {
-    if (location === null) {
-      return {
-        error: true,
-        errorMessage: 'La ubicación del evento es requerida',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateAllFields = (): boolean => {
-    const newErrors: ActivityErrors = {
-      title: validateTitle(title),
-      description: validateDescription(description),
-      posterImage: validatePosterImage(posterImg),
-      location: validateLocation(locationManagement.location),
-    }
-
-    setErrors(newErrors)
-
-    return !(
-      newErrors.title.error ||
-      newErrors.description.error ||
-      newErrors.location.error ||
-      newErrors.posterImage.error
-    )
-  }
-
   const restartFields = (): void => {
     setTitle('')
     setDescription('')
@@ -138,31 +41,22 @@ export const useCreateActivity = () => {
 
   const onTitleChange = (title: string) => {
     setTitle(title)
-    setErrors((prevErrors) => {
-      return {
-        ...prevErrors,
-        title: validateTitle(title),
-      }
+    errorManagement.updateErrors({
+      title: errorManagement.validateTitle(title),
     })
   }
 
   const onDescriptionChange = (description: string) => {
     setDescription(description)
-    setErrors((prevErrors) => {
-      return {
-        ...prevErrors,
-        description: validateDescription(description),
-      }
+    errorManagement.updateErrors({
+      description: errorManagement.validateDescription(description),
     })
   }
 
   const onLocationChange = (newLocation: Option) => {
     locationManagement.onLocationChange(newLocation)
-    setErrors((prevErrors) => {
-      return {
-        ...prevErrors,
-        location: validateLocation(newLocation),
-      }
+    errorManagement.updateErrors({
+      location: errorManagement.validateLocation(newLocation),
     })
   }
 
@@ -181,18 +75,12 @@ export const useCreateActivity = () => {
     if (!result.canceled) {
       const uri = result.assets[0].uri
       setPosterImg(uri)
-      setErrors((prevErrors) => {
-        return {
-          ...prevErrors,
-          posterImage: validatePosterImage(uri),
-        }
+      errorManagement.updateErrors({
+        posterImage: errorManagement.validatePosterImage(uri),
       })
     } else {
-      setErrors((prevErrors) => {
-        return {
-          ...prevErrors,
-          posterImage: validatePosterImage(null),
-        }
+      errorManagement.updateErrors({
+        posterImage: errorManagement.validatePosterImage(null),
       })
     }
   }
@@ -200,7 +88,12 @@ export const useCreateActivity = () => {
   const createActivity = async () => {
     setLoadingAction(true)
     try {
-      const allFieldsCorrect = validateAllFields()
+      const allFieldsCorrect = errorManagement.validateAllFields(
+        title,
+        description,
+        posterImg,
+        locationManagement.location,
+      )
 
       if (allFieldsCorrect) {
         const activityData: NewActivityData = {
@@ -254,6 +147,8 @@ export const useCreateActivity = () => {
   }
 
   return {
+    mode,
+    activityId,
     dates: {
       activityDate: dateManagement.activityDate,
       onActivityDateChange: dateManagement.onActivityDateChange,
@@ -296,7 +191,7 @@ export const useCreateActivity = () => {
     },
     loading,
     loadingAction,
-    errors,
+    errors: errorManagement.errors,
     createActivity,
     setLoading,
     setLoadingAction,

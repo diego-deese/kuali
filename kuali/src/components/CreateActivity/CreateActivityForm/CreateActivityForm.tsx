@@ -13,12 +13,44 @@ import Button from '../../shared/Button/Button'
 import { ImagePlusIcon } from '../../shared/Icons/Icons'
 
 import { mapArrayToOptions } from '../../../utils/mappers'
-import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
 
-const CreateActivityForm = () => {
-  const { location, loadingAction, posterImg, title, description, errors } =
-    useCreateActivityContext()
+import { ActivityErrors } from '../../../types/Error'
+import { Option } from '../../shared/SelectInput/interfaces'
+import { Location } from '../../../types/Location'
 
+interface CreateActivityFormProps {
+  loadingAction: boolean
+  posterImg: {
+    posterImg: string
+    selectPosterImg?: () => void
+  }
+  title: {
+    title: string
+    onTitleChange: (title: string) => void
+  }
+  description: {
+    description: string
+    onDescriptionChange: (description: string) => void
+  }
+  location: {
+    location: Option
+    locations: Location[]
+    onLocationChange: (newLocation: Option) => void
+    updateLocationName: (location_id: number, newName: string) => Promise<void>
+    deleteLocation: (location_id: number) => Promise<void>
+    createLocation: (name: string) => Promise<Option | void>
+  }
+  errors: ActivityErrors
+}
+
+const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
+  location,
+  loadingAction,
+  posterImg,
+  title,
+  description,
+  errors,
+}) => {
   return (
     <View>
       <InputText

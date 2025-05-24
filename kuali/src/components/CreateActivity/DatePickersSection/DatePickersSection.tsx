@@ -2,10 +2,10 @@ import { View } from 'react-native'
 import React from 'react'
 import { styles } from './styles'
 import ActivityDatePicker from '../DatePicker/ActivityDatePicker/ActivityDatePicker'
-import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
 
 const DatePickersSection = () => {
-  const { dates } = useCreateActivityContext()
+  const { dates } = useActivityFormContext()
 
   return (
     <View style={styles.datePickersContainer}>

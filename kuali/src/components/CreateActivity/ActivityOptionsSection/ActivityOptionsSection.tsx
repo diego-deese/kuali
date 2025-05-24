@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import SwitchComponent from '../../shared/Switch/Switch'
 import colors from '../../../constants/colors'
-import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
 
 const ActivityOptionsSection = () => {
-  const { activityOptions } = useCreateActivityContext()
+  const { activityOptions } = useActivityFormContext()
 
   return (
     <View style={styles.container}>

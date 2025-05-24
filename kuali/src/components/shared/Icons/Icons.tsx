@@ -2,7 +2,6 @@ import { MaterialIcons } from '@expo/vector-icons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import { FontAwesome } from '@expo/vector-icons'
-import Fontisto from '@expo/vector-icons/Fontisto'
 import colors from '../../../constants/colors'
 
 export const BookmarkIcon = ({ fill = true, ...props }) => {
@@ -177,14 +176,30 @@ export const RightArrowIcon = (props) => {
   )
 }
 
-export const PlaceIcon = (props) => {
-  return <MaterialIcons name='place' size={24} color='black' {...props} />
+export const PlaceIcon = ({ fill = true, ...props }) => {
+  return fill ? (
+    <MaterialIcons name='place' size={24} color='black' {...props} />
+  ) : (
+    <MaterialCommunityIcons
+      name='map-marker-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
 }
 
-export const CalendarClockIcon = (props) => {
-  return (
+export const CalendarClockIcon = ({ fill = true, ...props }) => {
+  return fill ? (
     <MaterialCommunityIcons
       name='calendar-clock'
+      size={24}
+      color='black'
+      {...props}
+    />
+  ) : (
+    <MaterialCommunityIcons
+      name='calendar-clock-outline'
       size={24}
       color='black'
       {...props}

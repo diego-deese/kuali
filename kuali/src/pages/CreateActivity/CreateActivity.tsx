@@ -12,10 +12,20 @@ import ConfirmationModal from '../../components/shared/ConfirmationModal/Confirm
 
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
 
-import { useCreateActivityContext } from '../../context/CreateActivityContext/CreateActivityContext'
+import { useActivityFormContext } from '../../context/ActivityFormContext/ActivityFormContext'
 
 const CreateActivity = () => {
-  const { loading, createActivity } = useCreateActivityContext()
+  const {
+    loading,
+    loadingAction,
+    createActivity,
+    posterImg,
+    title,
+    description,
+    location,
+    errors,
+  } = useActivityFormContext()
+
   const [showModal, setShowModal] = useState(false)
 
   if (loading) {
@@ -42,7 +52,14 @@ const CreateActivity = () => {
         />
       </ButtonsHeader>
 
-      <CreateActivityForm />
+      <CreateActivityForm
+        location={location}
+        loadingAction={loadingAction}
+        posterImg={posterImg}
+        title={title}
+        description={description}
+        errors={errors}
+      />
 
       <ConfirmationModal
         title='Volver a la pantalla de inicio'

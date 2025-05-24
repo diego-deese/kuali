@@ -1,11 +1,20 @@
 import { View, Text } from 'react-native'
 import { useEffect, useState } from 'react'
-import { CalendarEvent, LocationIcon } from '../shared/Icons/Icons'
+import {
+  CalendarClockIcon,
+  PlaceIcon,
+  SquareEditIcon,
+} from '../shared/Icons/Icons'
 import { FormattedDate } from '../shared/FormattedDate/FormattedDate'
 import { Activity } from '../../types/Activity'
 import { parseValidDate } from '../../pages/Events/InfoEvent.utils'
 import activityService from '../../services/activity.service'
 import styles from '../../pages/Events/InfoEvents.styles'
+import colors from '../../constants/colors'
+import IconButton from '../shared/IconButton/IconButton'
+import { router } from 'expo-router'
+import WithRole from '../WithRole/WithRole'
+import { Roles } from '../../constants/roles'
 
 interface EventDetailsHeaderProps {
   activity_id: number
@@ -87,42 +96,64 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
   return (
     <>
       {/* Información del evento */}
-      <Text style={styles.eventTitle}>{eventDetails.title}</Text>
-      <View style={styles.eventInfoRow}>
-        <CalendarEvent style={styles.eventInfoIcon} />
-        <Text style={styles.eventInfoText}>
-          {parseValidDate(eventDetails.event_date) ? (
-            <FormattedDate
-              date={parseValidDate(eventDetails.event_date)!}
-              separator=', '
-              showWeekday={false}
+      <View style={styles.eventDetailsContainer}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.eventTitle}>{eventDetails.title}</Text>
+          <WithRole role={Roles.ADMIN}>
+            <IconButton
+              icon={
+                <SquareEditIcon
+                  fill={false}
+                  color={colors.selectionBlue}
+                  size={32}
+                />
+              }
+              onPress={() => {
+                router.navigate('/event/manage/edit')
+              }}
             />
-          ) : (
-            eventDetails.event_date
-          )}
-        </Text>
-      </View>
-      <View style={styles.eventInfoRow}>
-        <LocationIcon style={styles.eventInfoIcon} />
-        <Text style={styles.eventInfoText}>{eventDetails.location.name}</Text>
-      </View>
-      <Text style={styles.description}>{eventDetails.description}</Text>
-      {/* Fecha límite de registro */}
-      <View style={styles.registerLimitContainer}>
-        <Text style={styles.registerLimitLabel}>
-          Fecha límite de registro:{' '}
-        </Text>
-        <Text style={styles.registerLimitDate}>
-          {parseValidDate(eventDetails.register_date_limit) ? (
-            <FormattedDate
-              date={parseValidDate(eventDetails.register_date_limit)!}
-              separator=', '
-              showWeekday={false}
-            />
-          ) : (
-            eventDetails.register_date_limit
-          )}
-        </Text>
+          </WithRole>
+        </View>
+        <View style={styles.eventInfoRow}>
+          <CalendarClockIcon
+            fill={false}
+            color={colors.selectionBlue}
+            size={22}
+          />
+          <Text style={styles.eventInfoText}>
+            {parseValidDate(eventDetails.event_date) ? (
+              <FormattedDate
+                date={parseValidDate(eventDetails.event_date)!}
+                separator=', '
+                showWeekday={false}
+              />
+            ) : (
+              eventDetails.event_date
+            )}
+          </Text>
+        </View>
+        <View style={styles.eventInfoRow}>
+          <PlaceIcon fill={false} color={colors.selectionBlue} />
+          <Text style={styles.eventInfoText}>{eventDetails.location.name}</Text>
+        </View>
+        {/* Fecha límite de registro */}
+        <View style={styles.registerLimitContainer}>
+          <Text style={styles.registerLimitLabel}>
+            Fecha límite de registro:{' '}
+          </Text>
+          <Text style={styles.registerLimitDate}>
+            {parseValidDate(eventDetails.register_date_limit) ? (
+              <FormattedDate
+                date={parseValidDate(eventDetails.register_date_limit)!}
+                separator=', '
+                showWeekday={false}
+              />
+            ) : (
+              eventDetails.register_date_limit
+            )}
+          </Text>
+        </View>
+        <Text style={styles.description}>{eventDetails.description}</Text>
       </View>
     </>
   )

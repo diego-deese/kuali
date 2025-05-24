@@ -5,11 +5,11 @@ import { PlusIcon } from '../../shared/Icons/Icons'
 import { styles } from './styles'
 import NewRequirementModal from './NewRequirementModal/NewRequirementModal'
 import ActivityRequirementCard from '../../shared/ActivityRequirementCard/ActivityRequirementCard'
-import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
 
 const RequirementsSection = () => {
   const [showModal, setShowModal] = useState(false)
-  const { requirements } = useCreateActivityContext()
+  const { requirements } = useActivityFormContext()
 
   return (
     <>

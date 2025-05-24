@@ -1,12 +1,12 @@
 import React from 'react'
 import CreateActivity from '../../../pages/CreateActivity/CreateActivity'
-import { CreateActivityProvider } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { ActivityFormProvider } from '../../../context/ActivityFormContext/ActivityFormContext'
 
 const CreateActivityPage = () => {
   return (
-    <CreateActivityProvider>
+    <ActivityFormProvider mode='create'>
       <CreateActivity />
-    </CreateActivityProvider>
+    </ActivityFormProvider>
   )
 }
 
