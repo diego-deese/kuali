@@ -281,11 +281,6 @@ const InfoEvent: React.FC = () => {
 
   return (
     <ScrollView>
-      <Button
-        buttonText='Regresar'
-        style={styles.backButton}
-        onPress={() => router.back()}
-      />
       <View style={styles.content}>
         <EventDetailsHeader // Info del evento
           activity_id={activity_id}

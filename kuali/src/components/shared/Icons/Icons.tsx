@@ -287,3 +287,7 @@ export const ImagePlusIcon = (props) => {
     />
   )
 }
+
+export const ArrowBack = (props) => {
+  return <MaterialIcons name='arrow-back' size={24} color='black' {...props} />
+}
