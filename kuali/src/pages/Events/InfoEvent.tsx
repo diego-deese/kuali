@@ -29,13 +29,13 @@ const InfoEvent: React.FC = () => {
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [applyModalVisible, setApplyModalVisible] = useState(false)
   const [hasApplied, setHasApplied] = useState(false)
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [documentToDelete, setDocumentToDelete] = useState<number | null>(null)
   const [requirementsExpanded, setRequirementsExpanded] = useState(true)
   const [plantillasExpanded, setPlantillasExpanded] = useState(true)
+  const [activeModal, setActiveModal] = useState<
+    'none' | 'apply' | 'exit' | 'delete'
+  >('none') // Un solo state para los modales
 
   useEffect(() => {
     const fetchEventDetails = async () => {
@@ -119,7 +119,7 @@ const InfoEvent: React.FC = () => {
       return
     }
     setDocumentToDelete(docId)
-    setDeleteModalVisible(true)
+    setActiveModal('delete')
   }
 
   const confirmDelete = async () => {
@@ -166,7 +166,6 @@ const InfoEvent: React.FC = () => {
       })
     } finally {
       setLoading(false)
-      setDeleteModalVisible(false)
       setDocumentToDelete(null)
     }
   }
@@ -190,7 +189,6 @@ const InfoEvent: React.FC = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          //text2: result.error || 'No se pudo procesar la baja',
           position: 'top',
         })
       }
@@ -208,7 +206,7 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleApply = () => {
-    setApplyModalVisible(true)
+    setActiveModal('apply')
   }
 
   const confirmApply = async () => {
@@ -229,7 +227,6 @@ const InfoEvent: React.FC = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          //text2: result.error || 'No se pudo completar el registro',
           position: 'top',
         })
       }
@@ -243,7 +240,6 @@ const InfoEvent: React.FC = () => {
       })
     } finally {
       setLoading(false)
-      setApplyModalVisible(false)
     }
   }
 
@@ -360,7 +356,7 @@ const InfoEvent: React.FC = () => {
             {/* Botón para darse de baja*/}
             <Pressable
               style={styles.exitButton}
-              onPress={() => setModalVisible(true)}
+              onPress={() => setActiveModal('exit')}
             >
               <Text style={styles.exitButtonText}>
                 Darte de baja del evento
@@ -371,38 +367,44 @@ const InfoEvent: React.FC = () => {
 
         {/* Modal de confirmación para aplicar */}
         <ConfirmationModal
-          visible={applyModalVisible}
+          visible={activeModal === 'apply'}
           title='Confirmar aplicación'
           description='¿Estás seguro que deseas aplicar a esta convocatoria? Recibirás notificaciones y alertas sobre los requisitos y fechas importantes.'
           confirmButtonText='Aplicar'
           confirmButtonColor={colors.selectionBlue}
-          onCancel={() => setApplyModalVisible(false)}
-          onConfirm={confirmApply}
+          onCancel={() => setActiveModal('none')}
+          onConfirm={() => {
+            confirmApply()
+            setActiveModal('none')
+          }}
         />
         {/* Modal de confirmación para desuscribirse */}
         <ConfirmationModal
-          visible={modalVisible}
+          visible={activeModal === 'exit'}
           title='Confirmación'
           description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
           confirmButtonColor={colors.warningRed}
-          onCancel={() => setModalVisible(false)}
+          onCancel={() => setActiveModal('none')}
           onConfirm={() => {
             handleExit()
-            setModalVisible(false)
+            setActiveModal('none')
           }}
         />
         {/* Modal de confirmación para eliminar documento */}
         <ConfirmationModal
-          visible={deleteModalVisible}
+          visible={activeModal === 'delete'}
           title='Eliminar documento'
           description='¿Estás seguro que deseas eliminar este documento? Esta acción no se puede deshacer.'
           confirmButtonText='Eliminar'
           confirmButtonColor={colors.warningRed}
           onCancel={() => {
-            setDeleteModalVisible(false)
+            setActiveModal('none')
             setDocumentToDelete(null)
           }}
-          onConfirm={confirmDelete}
+          onConfirm={() => {
+            confirmDelete()
+            setActiveModal('none')
+          }}
         />
       </View>
     </ScrollView>
