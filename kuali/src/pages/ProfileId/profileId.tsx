@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import colors from '../../constants/colors'
 import {
   SafeAreaView,
   View,
@@ -7,40 +6,30 @@ import {
   Text,
   ActivityIndicator,
 } from 'react-native'
-import styles from './profileId.styles'
 import { LinearGradient } from 'expo-linear-gradient'
 import FlipCard from 'react-native-flip-card'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { calculateDimensions } from './profileIdutils'
 import { useUserProfile } from '../../hooks/useUserProfile'
+import { calculateDimensions } from './profileIdutils'
 import BlackBox from '../../components/ProfileId/ReverseBox'
 import { ReverseIcon } from '../../components/shared/Icons/Icons'
+import styles from './profileId.styles'
+import colors from '../../constants/colors'
 
-export default function ProfileId() {
+export default function ProfileIdCard({
+  extraFields = [],
+  frontFields = [],
+}: {
+  extraFields: { label: string; value: string | undefined }[]
+  frontFields: { label: string; value: string | undefined }[]
+}) {
   const [isFlipped, setIsFlipped] = useState(false)
-
   const [onUpdateImage, setOnUpdateImage] = useState(Math.random())
-
   const insets = useSafeAreaInsets()
   const { cardDimensions, imageSize, fontSize } = calculateDimensions(insets)
 
-  const {
-    userProfile,
-    imgUrl,
-    loading,
-    imageLoading,
-    setImageLoading,
-    getProgramName,
-  } = useUserProfile()
-
-  // if (loading) {
-  //   return (
-  //     <SafeAreaView style={[styles.container, styles.loadingContainer]}>
-  //       <ActivityIndicator size='large' color={colors.selectionBlue} />
-  //       <Text style={styles.loadingText}>Cargando información...</Text>
-  //     </SafeAreaView>
-  //   )
-  // }
+  const { userProfile, imgUrl, imageLoading, setImageLoading } =
+    useUserProfile()
 
   return (
     <SafeAreaView style={styles.container}>
@@ -55,12 +44,12 @@ export default function ProfileId() {
         ]}
       >
         <FlipCard
-          friction={200}
+          friction={20}
           onFlipEnd={() => {
-            setIsFlipped((prevState) => !prevState)
+            setIsFlipped((prev) => !prev)
           }}
         >
-          {/* Cara frontal */}
+          {/* Front */}
           <View
             style={[
               styles.card,
@@ -91,27 +80,14 @@ export default function ProfileId() {
                 <ActivityIndicator size='large' color={colors.selectionBlue} />
               )}
               <Image
-                source={{
-                  uri: imgUrl + '?' + onUpdateImage,
-                  cache: 'reload',
-                }}
+                source={{ uri: imgUrl + '?' + onUpdateImage, cache: 'reload' }}
                 style={[
                   styles.image,
                   { display: imageLoading ? 'none' : 'flex' },
                 ]}
-                onLoadStart={() => {
-                  // setImageLoading(true)
-                }}
-                onLoad={() => {
-                  setImageLoading(false)
-                }}
-                onLoadEnd={() => {
-                  setImageLoading(false)
-                }}
-                onError={(e) => {
-                  console.error('Error cargando imagen:', e.nativeEvent.error)
-                  setImageLoading(false)
-                }}
+                onLoad={() => setImageLoading(false)}
+                onLoadEnd={() => setImageLoading(false)}
+                onError={() => setImageLoading(false)}
               />
             </View>
             <View
@@ -142,24 +118,27 @@ export default function ProfileId() {
               >
                 {userProfile?.role?.name || 'Usuario'}
               </Text>
-              <Text
-                style={[
-                  styles.program,
-                  {
-                    fontSize: fontSize.program,
-                    marginTop: cardDimensions.height * 0.02,
-                  },
-                ]}
-              >
-                {getProgramName()}
-              </Text>
+              {frontFields.map((field, i) => (
+                <Text
+                  key={i}
+                  style={[
+                    styles.program,
+                    {
+                      fontSize: fontSize.program,
+                      marginTop: cardDimensions.height * 0.02,
+                    },
+                  ]}
+                >
+                  {field.value || 'No disponible'}
+                </Text>
+              ))}
             </View>
             <BlackBox cardDimensions={cardDimensions}>
               <ReverseIcon />
             </BlackBox>
           </View>
 
-          {/* Cara trasera */}
+          {/* Back */}
           <View
             style={[
               styles.card,
@@ -172,55 +151,16 @@ export default function ProfileId() {
                 { paddingVertical: cardDimensions.height * 0.04 },
               ]}
             >
-              <View style={styles.labelContainer}>
-                <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Nombre completo
-                </Text>
-                <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {userProfile?.name}{' '}
-                  {userProfile?.second_name
-                    ? `${userProfile.second_name} `
-                    : ''}
-                  {userProfile?.paternal_lastname}{' '}
-                  {userProfile?.maternal_lastname}
-                </Text>
-              </View>
-
-              <View style={styles.labelContainer}>
-                <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Programa Académico
-                </Text>
-                <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {getProgramName()}
-                </Text>
-              </View>
-
-              <View style={styles.labelContainer}>
-                <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Correo electrónico institucional
-                </Text>
-                <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {userProfile?.institutional_email}
-                </Text>
-              </View>
-
-              <View style={styles.labelContainer}>
-                <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  Correo electrónico personal
-                </Text>
-                <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {userProfile?.personal_email || 'No proporcionado'}
-                </Text>
-              </View>
-
-              <View style={styles.labelContainer}>
-                <Text style={[styles.label, { fontSize: fontSize.label }]}>
-                  CURP
-                </Text>
-                <Text style={[styles.value, { fontSize: fontSize.value }]}>
-                  {userProfile?.curp || 'No disponible'}
-                </Text>
-              </View>
+              {extraFields.map((field, i) => (
+                <View key={i} style={styles.labelContainer}>
+                  <Text style={[styles.label, { fontSize: fontSize.label }]}>
+                    {field.label}
+                  </Text>
+                  <Text style={[styles.value, { fontSize: fontSize.value }]}>
+                    {field.value || 'No disponible'}
+                  </Text>
+                </View>
+              ))}
             </View>
             <BlackBox cardDimensions={cardDimensions}>
               <ReverseIcon />
