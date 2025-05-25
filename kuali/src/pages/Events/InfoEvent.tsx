@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
-
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
@@ -37,37 +36,36 @@ const InfoEvent: React.FC = () => {
     'none' | 'apply' | 'exit' | 'delete'
   >('none') // Un solo state para los modales
 
-  useEffect(() => {
-    const fetchEventDetails = async () => {
-      try {
-        setLoading(true)
+  const fetchEventDetails = async () => {
+    try {
+      setLoading(true)
 
-        if (!activity_id) {
-          setError('ID de actividad no válido')
-          setLoading(false)
-          return
-        }
-
-        // Llamada al servicio para obtener detalles de la actividad
-        const result = await activityService.getActivityById(activity_id)
-
-        if (!result.success && 'error' in result) {
-          setError(result.error || 'No se pudo cargar la información')
-          setLoading(false)
-          return
-        }
-
-        setEventDetails(result.data)
-        // Verificar si el usuario ya está registrado en esta actividad
-        setHasApplied(result.data.isRegistered || false)
+      if (!activity_id) {
+        setError('ID de actividad no válido')
         setLoading(false)
-      } catch (err) {
-        setError('Error al cargar los detalles del evento')
-        setLoading(false)
-        console.error(err)
+        return
       }
-    }
 
+      // Llamada al servicio para obtener detalles de la actividad
+      const result = await activityService.getActivityById(activity_id)
+
+      if (!result.success && 'error' in result) {
+        setError(result.error || 'No se pudo cargar la información')
+        setLoading(false)
+        return
+      }
+
+      setEventDetails(result.data)
+      // Verificar si el usuario ya está registrado en esta actividad
+      setHasApplied(result.data.isRegistered || false)
+      setLoading(false)
+    } catch (err) {
+      setError('Error al cargar los detalles del evento')
+      setLoading(false)
+      console.error(err)
+    }
+  }
+  useEffect(() => {
     fetchEventDetails()
   }, [activity_id])
 
@@ -95,7 +93,7 @@ const InfoEvent: React.FC = () => {
         })
       } else {
         // Actualizar la interfaz después de subir el documento
-        // fetchEventDetails()
+        fetchEventDetails()
         Toast.show({
           type: 'success',
           text1: 'Archivo subido',
@@ -152,7 +150,7 @@ const InfoEvent: React.FC = () => {
           visibilityTime: 3000,
         })
         // Refrescar los datos para actualizar la UI
-        //fetchEventDetails()
+        fetchEventDetails()
       }
     } catch (error) {
       console.error('Error al eliminar documento:', error)
