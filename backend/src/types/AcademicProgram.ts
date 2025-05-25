@@ -20,3 +20,14 @@ const programName = Prisma.validator<Prisma.AcademicProgramsDefaultArgs>()({
 export type AcademicProgramWithStudents = Prisma.AcademicProgramsGetPayload<typeof programName> & {
   students: StudentInProgram[]
 }
+
+const newAcademicProgram = Prisma.validator<Prisma.AcademicProgramsDefaultArgs>()({
+  select: {
+    name: true,
+    researcher_id: true
+  }
+})
+
+export type NewAcademicProgram = Prisma.AcademicProgramsGetPayload<typeof newAcademicProgram>
+
+export type PatchAcademicProgram = Partial<NewAcademicProgram>
