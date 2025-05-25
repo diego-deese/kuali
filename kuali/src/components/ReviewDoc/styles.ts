@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native'
-import colors from '../../../constants/colors'
+import colors from '../../constants/colors'
 
 export default StyleSheet.create({
   card: {
+    minHeight: 80,
+    justifyContent: 'center',
     backgroundColor: colors.solidWhite,
-    marginBottom: 12,
     borderRadius: 10,
     elevation: 2,
   },
@@ -22,6 +23,11 @@ export default StyleSheet.create({
   actions: {
     flexDirection: 'column',
   },
+  iconContainer: {
+    //flex: 1,
+    alignItems: 'center',
+    marginRight: 15,
+  },
   buttonCompact: {
     width: '65%',
     alignSelf: 'center',
@@ -32,12 +38,12 @@ export default StyleSheet.create({
     width: '30%',
     color: colors.blueIcons,
     fontWeight: 'bold',
-    marginTop: 5,
-    marginBottom: 10,
     fontSize: 17,
   },
   rejected: {
+    width: '30%',
     color: '#F44336',
     fontWeight: 'bold',
+    fontSize: 17,
   },
 })

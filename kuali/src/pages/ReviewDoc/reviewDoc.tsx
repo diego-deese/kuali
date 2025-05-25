@@ -5,16 +5,19 @@ import styles from './reviewDoc.Styles'
 import Button from '../../components/shared/Button/Button'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
-import DocReviewCard from '../../components/ReviewDoc/DocReviewcard/DocReviewCard'
+import DocReviewCard from '../../components/ReviewDoc/DocReviewCard'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useReviewDoc'
 import NavButtons from '../../components/ReviewDoc/NavButtons/NavButtons'
 
 export default function ReviewDoc() {
   const { activity_id } = useLocalSearchParams()
   const actId = Number(activity_id)
-  console.log('Activity ID:', actId)
-  const { documentsByUser, loading } = useGroupedUserDocuments(actId, 'user')
-  console.log('documentsByUser', documentsByUser)
+  //console.log('Activity ID:', actId)
+  const { documentsByUser, loading, refetch } = useGroupedUserDocuments(
+    actId,
+    'user',
+  )
+  //console.log('documentsByUser', documentsByUser)
   const [currentIndex, setCurrentIndex] = useState(0)
   if (loading || documentsByUser.length === 0) {
     return (
@@ -28,7 +31,6 @@ export default function ReviewDoc() {
     console.log(`Descargando documentos de ${student.user.name}`)
     // Lógica de descarga (pendiente)
   }
-
   return (
     <View style={styles.container}>
       <Button
@@ -41,13 +43,10 @@ export default function ReviewDoc() {
         }
         style={{ width: '30%' }}
       />
-
       <Text style={styles.title}>Revisión de documentos</Text>
-
       <Pressable onPress={() => router.back()}>
         <Text style={styles.changeText}>{'<'} Por usuario</Text>
       </Pressable>
-
       <NavButtons
         currentIndex={currentIndex}
         total={documentsByUser.length}
@@ -57,11 +56,9 @@ export default function ReviewDoc() {
         }
         label='Usuario'
       />
-
       <Text style={styles.docText}>
-        Usuario: {student.user.name} {student.user.paternal_lastname}
+        Usuario: {student.user.name} {student.user.second_name} {student.user.paternal_lastname}
       </Text>
-
       <View style={styles.row}>
         <Pressable onPress={handleDownload}>
           <DownloadIcon name='download' />
@@ -70,10 +67,13 @@ export default function ReviewDoc() {
           <Text style={styles.dowload}> Descargar todos </Text>
         </Pressable>
       </View>
-
       <ScrollView contentContainerStyle={styles.list}>
         {student.userDocuments.map((req) => (
-          <DocReviewCard key={req.user_document_id} req={req} />
+          <DocReviewCard
+            key={req.user_document_id}
+            req={req}
+            onActionComplete={refetch}
+          />
         ))}
       </ScrollView>
     </View>

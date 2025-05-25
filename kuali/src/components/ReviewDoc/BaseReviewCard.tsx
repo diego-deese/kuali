@@ -1,38 +1,49 @@
 import React, { useState } from 'react'
-import { Pressable, View, Text } from 'react-native'
+import { View, Text, Pressable } from 'react-native'
 import styles from './styles'
-import Button from '../../shared/Button/Button'
-import { DownloadIcon } from '../../shared/Icons/Icons'
-import userDocumentService from '../../../services/user-document.service'
-import ConfirmationModal from '../../shared/ConfirmationModal/ConfirmationModal'
+import Button from '../shared/Button/Button'
+import { DownloadIcon } from '../shared/Icons/Icons'
+import userDocumentService from '../../services/user-document.service'
+import ConfirmationModal from '../shared/ConfirmationModal/ConfirmationModal'
 
-export default function StudentReviewCard({ student, onActionComplete }) {
+type Props = {
+  title: string
+  user_document_id: number
+  initialStatus?: string
+  onDownload: () => void
+  onActionComplete?: () => void
+}
+
+export default function BaseReviewCard({
+  title,
+  user_document_id,
+  initialStatus,
+  onDownload,
+  onActionComplete,
+}: Props) {
+  const [status, setStatus] = useState(initialStatus)
   const [modalVisible, setModalVisible] = useState(false)
   const [action, setAction] = useState<'approved' | 'rejected' | null>(null)
-  const [statusName, setStatusName] = useState(student.documentStatus?.name)
-  console.log('student recibido:', student)
-  const handleDownload = () => {
-    console.log('Descargando...')
-  }
+
   const handleApprove = () => {
     setAction('approved')
     setModalVisible(true)
   }
+
   const handleReject = () => {
     setAction('rejected')
     setModalVisible(true)
   }
+
   const confirmAction = async () => {
     if (!action) return
-
     try {
-      console.log('ID que se va a aprobar/rechazar:', student.user_document_id)
       if (action === 'approved') {
-        await userDocumentService.approveUserDocument(student.user_document_id)
-        setStatusName('Aprobado')
+        await userDocumentService.approveUserDocument(user_document_id)
+        setStatus('Aprobado')
       } else {
-        await userDocumentService.rejectUserDocument(student.user_document_id)
-        setStatusName('Rechazado')
+        await userDocumentService.rejectUserDocument(user_document_id)
+        setStatus('Rechazado')
       }
       onActionComplete?.()
     } catch (err) {
@@ -42,18 +53,17 @@ export default function StudentReviewCard({ student, onActionComplete }) {
       setAction(null)
     }
   }
+
   return (
     <View style={styles.card}>
       <View style={styles.row}>
-        <Text style={styles.name}>
-          {student.name} {student.second_name} {student.paternal_lastname}
-        </Text>
-        <Pressable onPress={handleDownload}>
-          <DownloadIcon name='download' />
+        <Text style={styles.name}>{title}</Text>
+        <Pressable onPress={onDownload} style={styles.iconContainer}>
+          <DownloadIcon />
         </Pressable>
-        {statusName === 'Aprobado' ? (
+        {status === 'Aprobado' ? (
           <Text style={styles.approved}>Aprobado</Text>
-        ) : statusName === 'Rechazado' ? (
+        ) : status === 'Rechazado' ? (
           <Text style={styles.rejected}>Rechazado</Text>
         ) : (
           <View style={styles.actions}>
@@ -74,7 +84,7 @@ export default function StudentReviewCard({ student, onActionComplete }) {
           </View>
         )}
       </View>
-      {/* Modal de confirmación */}
+
       <ConfirmationModal
         visible={modalVisible}
         title={`¿${action === 'approved' ? 'Aprobar' : 'Rechazar'} documento?`}

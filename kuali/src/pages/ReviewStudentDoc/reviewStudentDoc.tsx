@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Pressable, View, Text, ScrollView } from 'react-native'
-import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard/StudentReviewCard'
+import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard'
 import styles from './reviewStudentDoc.styles'
 import Button from '../../components/shared/Button/Button'
 import { router } from 'expo-router'
@@ -34,7 +34,7 @@ export default function ReviewStudentDoc() {
     const firstUser = group?.userDocuments?.[0]?.user
     if (firstUser) {
       router.push({
-        pathname: '/documents/doc/[id]',
+        pathname: '/documents/doc/doc',
         params: {
           id: firstUser.user_id.toString(),
           activity_id: activityId.toString(),
@@ -44,7 +44,6 @@ export default function ReviewStudentDoc() {
       alert('No se encontró un estudiante en este grupo.')
     }
   }
-
   return (
     <View style={styles.container}>
       <Button
@@ -57,13 +56,10 @@ export default function ReviewStudentDoc() {
         }
         style={{ width: '30%' }}
       />
-
       <Text style={styles.title}>Revisión de documentos</Text>
-
       <Pressable onPress={handleChange}>
         <Text style={styles.changeText}>Por documento {'>'}</Text>
       </Pressable>
-
       <NavButtons
         currentIndex={currentIndex}
         total={documentsByRequirement.length}
@@ -75,11 +71,9 @@ export default function ReviewStudentDoc() {
         }
         label='Documento'
       />
-
       <Text style={styles.docText}>
         Documento requerido: {group.requirement.name}
       </Text>
-
       <View style={styles.row}>
         <Pressable onPress={handleDownload}>
           <DownloadIcon name='download' />
@@ -88,7 +82,6 @@ export default function ReviewStudentDoc() {
           <Text style={styles.dowload}> Descargar todos </Text>
         </Pressable>
       </View>
-
       <ScrollView contentContainerStyle={styles.list}>
         {group.userDocuments?.map((doc, index) => {
           const user = doc.user

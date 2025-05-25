@@ -226,29 +226,17 @@ const InfoEvent: React.FC = () => {
                   })
                 }
               />
-              {(() => {
-                const firstUserId = (
-                  eventDetails.requirements?.[0]?.userDocuments?.[0] as any
-                )?.user?.user_id
-                return (
-                  <Button
-                    buttonText='Revisar por usuario'
-                    onPress={() => {
-                      if (firstUserId && activity_id !== 0) {
-                        router.push({
-                          pathname: '/documents/doc/[id]',
-                          params: {
-                            id: firstUserId.toString(),
-                            activity_id: activity_id.toString(),
-                          },
-                        })
-                      } else {
-                        alert('Faltan datos para ir a la revisión por usuario.')
-                      }
-                    }}
-                  />
-                )
-              })()}
+              <Button
+                buttonText='Revisar por usuario'
+                onPress={() => {
+                  router.push({
+                    pathname: '/documents/doc/doc',
+                    params: {
+                      activity_id: activity_id.toString(),
+                    },
+                  })
+                }}
+              />
             </>
           )}
         </WithRole>
