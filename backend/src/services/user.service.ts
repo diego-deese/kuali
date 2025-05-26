@@ -290,6 +290,34 @@ class UserService {
 
     return studentsWithPrograms
   }
+
+  async toggleStudentState (userId: number): Promise<ResponseMessage> {
+    const existing = await prisma.inscriptions.findMany({
+      where: {
+        student_id: userId
+      }
+    })
+
+    if (existing.length === 0) {
+      return { message: 'Student not found or has no inscriptions' }
+    }
+
+    const currentState = existing[0].active
+    const newState = !currentState
+
+    await prisma.inscriptions.updateMany({
+      where: {
+        student_id: userId
+      },
+      data: {
+        active: newState
+      }
+    })
+
+    return {
+      message: 'Estudiante desactivado con éxito'
+    }
+  }
 }
 
 export default new UserService()

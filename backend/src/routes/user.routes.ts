@@ -9,6 +9,7 @@ router.get('/', isAuthenticated, isAdmin, userController.getUsers)
 router.post('/', isAuthenticated, isAdmin, userController.createUser)
 
 router.get('/students', isAuthenticated, isResearcher, userController.getResearcherStudentsWithAcademicProgram)
+router.put('/students/:id', isAuthenticated, userController.toggleStudentState)
 
 router.get('/:id', isAuthenticated, userController.getUser)
 router.put('/:id', isAuthenticated, isAdmin, userController.updateUser)
