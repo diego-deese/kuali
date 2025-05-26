@@ -4,7 +4,6 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
-
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import Button from '../../components/shared/Button/Button'
 import colors from '../../constants/colors'
@@ -16,6 +15,8 @@ import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
 import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
+import TemplateCard from '../../components/TemplateCard/TemplateCard'
+import * as WebBrowser from 'expo-web-browser'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -29,45 +30,44 @@ const InfoEvent: React.FC = () => {
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [modalVisible, setModalVisible] = useState(false)
-  const [applyModalVisible, setApplyModalVisible] = useState(false)
   const [hasApplied, setHasApplied] = useState(false)
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false)
   const [documentToDelete, setDocumentToDelete] = useState<number | null>(null)
   const [requirementsExpanded, setRequirementsExpanded] = useState(true)
   const [plantillasExpanded, setPlantillasExpanded] = useState(true)
+  const [activeModal, setActiveModal] = useState<
+    'none' | 'apply' | 'exit' | 'delete'
+  >('none') // Un solo state para los modales
 
-  useEffect(() => {
-    const fetchEventDetails = async () => {
-      try {
-        setLoading(true)
+  const fetchEventDetails = async () => {
+    try {
+      setLoading(true)
 
-        if (!activity_id) {
-          setError('ID de actividad no válido')
-          setLoading(false)
-          return
-        }
-
-        // Llamada al servicio para obtener detalles de la actividad
-        const result = await activityService.getActivityById(activity_id)
-
-        if (!result.success && 'error' in result) {
-          setError(result.error || 'No se pudo cargar la información')
-          setLoading(false)
-          return
-        }
-
-        setEventDetails(result.data)
-        // Verificar si el usuario ya está registrado en esta actividad
-        setHasApplied(result.data.isRegistered || false)
+      if (!activity_id) {
+        setError('ID de actividad no válido')
         setLoading(false)
-      } catch (err) {
-        setError('Error al cargar los detalles del evento')
-        setLoading(false)
-        console.error(err)
+        return
       }
-    }
 
+      // Llamada al servicio para obtener detalles de la actividad
+      const result = await activityService.getActivityById(activity_id)
+
+      if (!result.success && 'error' in result) {
+        setError(result.error || 'No se pudo cargar la información')
+        setLoading(false)
+        return
+      }
+
+      setEventDetails(result.data)
+      // Verificar si el usuario ya está registrado en esta actividad
+      setHasApplied(result.data.isRegistered || false)
+      setLoading(false)
+    } catch (err) {
+      setError('Error al cargar los detalles del evento')
+      setLoading(false)
+      console.error(err)
+    }
+  }
+  useEffect(() => {
     fetchEventDetails()
   }, [activity_id])
 
@@ -95,7 +95,7 @@ const InfoEvent: React.FC = () => {
         })
       } else {
         // Actualizar la interfaz después de subir el documento
-        // fetchEventDetails()
+        fetchEventDetails()
         Toast.show({
           type: 'success',
           text1: 'Archivo subido',
@@ -119,7 +119,7 @@ const InfoEvent: React.FC = () => {
       return
     }
     setDocumentToDelete(docId)
-    setDeleteModalVisible(true)
+    setActiveModal('delete')
   }
 
   const confirmDelete = async () => {
@@ -152,7 +152,7 @@ const InfoEvent: React.FC = () => {
           visibilityTime: 3000,
         })
         // Refrescar los datos para actualizar la UI
-        //fetchEventDetails()
+        fetchEventDetails()
       }
     } catch (error) {
       console.error('Error al eliminar documento:', error)
@@ -166,7 +166,6 @@ const InfoEvent: React.FC = () => {
       })
     } finally {
       setLoading(false)
-      setDeleteModalVisible(false)
       setDocumentToDelete(null)
     }
   }
@@ -190,7 +189,6 @@ const InfoEvent: React.FC = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          //text2: result.error || 'No se pudo procesar la baja',
           position: 'top',
         })
       }
@@ -208,9 +206,36 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleApply = () => {
-    setApplyModalVisible(true)
+    setActiveModal('apply')
   }
 
+  const handleTemplateDownload = async (templateId: number) => {
+    // try {
+    //   // Mostrar indicador de carga
+    //   Toast.show({
+    //     type: 'info',
+    //     text1: 'Preparando documento...',
+    //     position: 'top',
+    //     autoHide: true,
+    //     visibilityTime: 2000,
+    //   })
+    //   // Obtener la URL de forma asíncrona
+    //   const downloadUrl =
+    //     await documentService.getTemplateDownloadUrl(templateId)
+    //   // Abrir el navegador con la URL
+    //   await WebBrowser.openBrowserAsync(downloadUrl)
+    // } catch (error) {
+    //   console.error('Error al obtener URL de descarga:', error)
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Error',
+    //     text2: 'No se pudo descargar la plantilla',
+    //     position: 'top',
+    //   })
+    // }
+
+    console.log('DESCARGANDO DOCUMENTO')
+  }
   const confirmApply = async () => {
     try {
       setLoading(true)
@@ -229,7 +254,6 @@ const InfoEvent: React.FC = () => {
         Toast.show({
           type: 'error',
           text1: 'Error',
-          //text2: result.error || 'No se pudo completar el registro',
           position: 'top',
         })
       }
@@ -243,7 +267,6 @@ const InfoEvent: React.FC = () => {
       })
     } finally {
       setLoading(false)
-      setApplyModalVisible(false)
     }
   }
 
@@ -303,7 +326,32 @@ const InfoEvent: React.FC = () => {
               {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
             </Pressable>
 
-            {plantillasExpanded && <View></View>}
+            {plantillasExpanded && (
+              <View>
+                {eventDetails.requirements &&
+                eventDetails.requirements.some((req) => req.template) ? (
+                  // Si hay plantillas, mapearlas
+                  eventDetails.requirements
+                    .filter((req) => req.template)
+                    .map((req) => (
+                      <TemplateCard
+                        key={`template-${req.requirement_id}`}
+                        template={{
+                          id: req.requirement_id,
+                          name: req.name,
+                          description: req.description,
+                        }}
+                        onDownload={handleTemplateDownload}
+                      />
+                    ))
+                ) : (
+                  // Si NO hay plantillas, mostrar este mensaje
+                  <Text style={styles.noRequirementsText}>
+                    Esta actividad no tiene plantillas disponibles.
+                  </Text>
+                )}
+              </View>
+            )}
 
             {/* Sección de Requisitos */}
             <Pressable
@@ -360,7 +408,7 @@ const InfoEvent: React.FC = () => {
             {/* Botón para darse de baja*/}
             <Pressable
               style={styles.exitButton}
-              onPress={() => setModalVisible(true)}
+              onPress={() => setActiveModal('exit')}
             >
               <Text style={styles.exitButtonText}>
                 Darte de baja del evento
@@ -371,38 +419,44 @@ const InfoEvent: React.FC = () => {
 
         {/* Modal de confirmación para aplicar */}
         <ConfirmationModal
-          visible={applyModalVisible}
+          visible={activeModal === 'apply'}
           title='Confirmar aplicación'
           description='¿Estás seguro que deseas aplicar a esta convocatoria? Recibirás notificaciones y alertas sobre los requisitos y fechas importantes.'
           confirmButtonText='Aplicar'
           confirmButtonColor={colors.selectionBlue}
-          onCancel={() => setApplyModalVisible(false)}
-          onConfirm={confirmApply}
+          onCancel={() => setActiveModal('none')}
+          onConfirm={() => {
+            confirmApply()
+            setActiveModal('none')
+          }}
         />
         {/* Modal de confirmación para desuscribirse */}
         <ConfirmationModal
-          visible={modalVisible}
+          visible={activeModal === 'exit'}
           title='Confirmación'
           description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
           confirmButtonColor={colors.warningRed}
-          onCancel={() => setModalVisible(false)}
+          onCancel={() => setActiveModal('none')}
           onConfirm={() => {
             handleExit()
-            setModalVisible(false)
+            setActiveModal('none')
           }}
         />
         {/* Modal de confirmación para eliminar documento */}
         <ConfirmationModal
-          visible={deleteModalVisible}
+          visible={activeModal === 'delete'}
           title='Eliminar documento'
           description='¿Estás seguro que deseas eliminar este documento? Esta acción no se puede deshacer.'
           confirmButtonText='Eliminar'
           confirmButtonColor={colors.warningRed}
           onCancel={() => {
-            setDeleteModalVisible(false)
+            setActiveModal('none')
             setDocumentToDelete(null)
           }}
-          onConfirm={confirmDelete}
+          onConfirm={() => {
+            confirmDelete()
+            setActiveModal('none')
+          }}
         />
       </View>
     </ScrollView>

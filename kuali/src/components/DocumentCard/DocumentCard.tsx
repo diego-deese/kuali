@@ -26,6 +26,8 @@ export default function DocumentCard({
 }: DocumentCardProps) {
   const { id, title, description, status } = document
 
+  const hasUploadedDocument = !!document.userDocumentId
+
   const pickDocument = async () => {
     try {
       const result = await DocumentPicker.getDocumentAsync({
@@ -79,25 +81,25 @@ export default function DocumentCard({
     if (status === DocumentStatus.Aprobado) {
       return null
     }
-    if (status === DocumentStatus.Rechazado) {
-      return (
-        <View style={styles.buttonContainer}>
-          <Button
-            buttonText='Subir documento'
-            onPress={pickDocument}
-            disabled={false}
-            size='small'
-          />
-        </View>
-      )
-    }
+    // if (status === DocumentStatus.Rechazado) {
+    //   return (
+    //     <View style={styles.buttonContainer}>
+    //       <Button
+    //         buttonText='Subir documento'
+    //         onPress={pickDocument}
+    //         disabled={false}
+    //         size='small'
+    //       />
+    //     </View>
+    //   )
+    // }
     // Si esta pendiente, se muestran ambos
     return (
       <View style={styles.buttonContainer}>
         <Button
           buttonText='Subir documento'
           onPress={pickDocument}
-          disabled={false}
+          disabled={hasUploadedDocument}
           size='small'
         />
         <Button
@@ -105,6 +107,7 @@ export default function DocumentCard({
           onPress={() => onDelete && onDelete(document.userDocumentId || 0)}
           size='small'
           variant='delete'
+          disabled={!hasUploadedDocument}
         />
       </View>
     )

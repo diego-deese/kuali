@@ -1,7 +1,7 @@
 export enum DocumentStatus {
-  'Pendiente',
-  'Aprobado',
-  'Rechazado',
+  Pendiente = 'Pendiente',
+  Aprobado = 'Aprobado',
+  Rechazado = 'Rechazado',
 }
 
 export type UserDocument = {

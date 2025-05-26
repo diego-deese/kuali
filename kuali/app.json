@@ -34,11 +34,11 @@
       "expo-secure-store",
       [
         "expo-image-picker",
-      
         {
           "photosPermission": "custom photos permission"
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "assetBundlePatterns": [
       "**/*"
