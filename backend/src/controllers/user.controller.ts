@@ -3,6 +3,7 @@ import userService from '../services/user.service'
 import { isNumber } from '../utils/validations'
 import { AppError } from '../types/Error'
 import { AuthRequest } from '../types/Request'
+import { parseId } from '../utils/parsing/shared'
 // import { AuthRequest } from '../types/Request'
 
 class UserController {
@@ -264,6 +265,28 @@ class UserController {
       } else {
         res.status(500).json({
           message: 'Error al actualizar la inscripción del usuario',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
+
+  assignStudent = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const studentId = parseId(req.body.student_id, 'El id del estudiante no fue proporcionado o tiene un formato incorrecto')
+      const academicProgramId = parseId(req.body.program_id, 'El id del programa académico no fue proporcionado o tiene un formato incorrecto')
+
+      await userService.assignStudent(academicProgramId, studentId)
+      res.status(200).json({ message: 'Se registró la inscripción correctamente' })
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al crear la inscripción',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al crear la inscripción',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }
