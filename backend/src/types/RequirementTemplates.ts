@@ -29,3 +29,10 @@ const newActivityRequirementTemplate = Prisma.validator<Prisma.RequirementTempla
 })
 
 export type NewActivityRequirementTemplate = Prisma.RequirementTemplatesGetPayload<typeof newActivityRequirementTemplate>
+
+export interface UpdateActivityRequirementTemplate {
+  requirement_template_id: number
+  name?: string
+  file_content?: Uint8Array
+  mimetype?: string
+}

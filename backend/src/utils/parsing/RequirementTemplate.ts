@@ -1,5 +1,5 @@
 import { ValidationError } from '../../types/Error'
-import { NewActivityRequirementTemplate, NewRequirementTemplate } from '../../types/RequirementTemplates'
+import { NewActivityRequirementTemplate, NewRequirementTemplate, UpdateActivityRequirementTemplate } from '../../types/RequirementTemplates'
 import { isString } from '../validations'
 import { parseId } from './shared'
 
@@ -67,4 +67,15 @@ export const toNewActivityRequirementTemplate = (object: any): NewActivityRequir
   }
 
   return newRequirementTemplate
+}
+
+export const toUpdateActivityRequirementTemplate = (object: any): UpdateActivityRequirementTemplate => {
+  const updateActivityRequirementTemplate: UpdateActivityRequirementTemplate = {
+    requirement_template_id: parseId(object.requirement_template_id, 'El formato del id proporcionado de la plantilla del requisito es inválido'),
+    name: object.name !== undefined ? parseFileName(object.name) : undefined,
+    file_content: object.file_content !== undefined ? parseFileContent(object.file_content) : undefined,
+    mimetype: object.mimetype !== undefined ? parseMimeType(object.mimetype) : undefined
+  }
+
+  return updateActivityRequirementTemplate
 }

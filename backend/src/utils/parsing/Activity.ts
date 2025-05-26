@@ -1,8 +1,8 @@
-import { NewActivity } from '../../types/Activities'
+import { NewActivity, UpdateActivity } from '../../types/Activities'
 import { ValidationError } from '../../types/Error'
-import { ActivityRequirement } from '../../types/Requirement'
+import { ActivityRequirement, UpdateActivityRequirement } from '../../types/Requirement'
 import { isDate, isString } from '../validations'
-import { toActivityRequirement } from './Requirement'
+import { toActivityRequirement, toUpdateActivityRequirement } from './Requirement'
 import { parseBoolean, parseId } from './shared'
 
 const parseTitle = (titleFromRequest: string): string => {
@@ -49,6 +49,14 @@ const parseRequirements = (requirementsFromRequest: any[]): ActivityRequirement[
   return requirementsFromRequest.map<ActivityRequirement>(req => toActivityRequirement(req))
 }
 
+const parseUpdateRequirements = (requirementsFromRequest: any[]): UpdateActivityRequirement[] => {
+  if (!Array.isArray(requirementsFromRequest)) {
+    throw new ValidationError('Los requisitos deben ser proporcionados dentro de un array')
+  }
+
+  return requirementsFromRequest.map<UpdateActivityRequirement>(req => toUpdateActivityRequirement(req))
+}
+
 const parseMimeType = (mimetypeFromRequest: string): string => {
   if (!isString(mimetypeFromRequest)) {
     throw new ValidationError('El formato del mimetype del archivo es inválido')
@@ -93,4 +101,24 @@ export const toNewActivity = (object: any): NewActivity => {
   }
 
   return newActivity
+}
+
+export const toUpdateActivity = (object: any): UpdateActivity => {
+  const updateActivity: UpdateActivity = {
+    activity_id: parseId(object.activity_id, 'El formato de la id del evento o convocatoria es inválido'),
+    title: object.title !== undefined ? parseTitle(object.title) : undefined,
+    description: object.description !== undefined ? parseDescription(object.description) : undefined,
+    event_date: object.event_date !== undefined ? parseEventDate(object.event_date) : undefined,
+    register_date_limit: object.register_date_limit !== undefined ? parseRegisterDate(object.register_date_limit) : undefined,
+    mandatory: object.mandatory !== undefined ? parseBoolean(object.mandatory, 'El formato del atributo obligatorio del evento o convocatoria es inválido') : undefined,
+    visible_researchers: object.visible_researchers !== undefined ? parseBoolean(object.visible_researchers, 'El fromato del atributo visible para investigadores del evento o convocatoria es inválido') : undefined,
+    visible_students: object.visible_students !== undefined ? parseBoolean(object.visible_students, 'El formato del atributo visible para estudiantes del evento o convocatoria es inválido') : undefined,
+    location_id: object.location_id !== undefined ? parseId(object.location_id, 'El formato de la id del lugar del evento o convocatoria es inválido') : undefined,
+    category_id: object.category_id !== undefined ? parseId(object.category_id, 'El formato del id de la categoría del evento o convocatoria es inválido') : undefined,
+    requirements: object.requirements !== undefined ? parseUpdateRequirements(object.requirements) : [],
+    poster_image: object.poster_image !== undefined ? parseFileContent(object.poster_image) : undefined,
+    poster_mimetype: object.poster_mimetype !== undefined ? parseMimeType(object.poster_mimetype) : undefined
+  }
+
+  return updateActivity
 }
