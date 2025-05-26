@@ -24,12 +24,21 @@ export default function UsersManagement() {
   const [showModal, setShowModal] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
 
-  const students = (users ?? []).filter(
-    (user) => user.role?.name === 'Estudiante',
-  )
-  const researchers = (users ?? []).filter(
-    (user) => user.role?.name === 'Investigador',
-  )
+  const students = (users ?? [])
+    .filter((user) => user.role?.name === 'Estudiante')
+    .map((user) => ({
+      ...user,
+      hasAcademicPrograms: user.academic_programs_as_student.length > 0,
+    }))
+
+  const researchers = (users ?? [])
+    .filter((user) => user.role?.name === 'Investigador')
+    .map((researcher) => ({
+      ...researcher,
+      hasAcademicPrograms:
+        researcher.academic_programs_as_researcher.length > 0,
+    }))
+
   const admins = (users ?? []).filter(
     (user) => user.role?.name === 'Administrador',
   )
@@ -108,7 +117,7 @@ export default function UsersManagement() {
                     second_name={user.second_name}
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
-                    state={true}
+                    state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={openConfirmationModal}
@@ -126,7 +135,7 @@ export default function UsersManagement() {
                     second_name={user.second_name}
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
-                    state={true}
+                    state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={openConfirmationModal}
