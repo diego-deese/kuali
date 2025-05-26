@@ -6,35 +6,44 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.backgroundWhite,
   },
+  eventDetailsContainer: {
+    marginBottom: 16,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignContent: 'center',
+    marginBottom: 16,
+  },
   content: {
     padding: 20,
     paddingBottom: 40,
   },
   eventTitle: {
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 12,
+    color: colors.fontBlack,
+    width: '90%',
+  },
+  eventInfoText: {
+    fontFamily: 'monserratRegular',
+    includeFontPadding: false,
+    fontSize: 16,
     color: colors.fontBlack,
   },
   eventInfoRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 6,
     marginBottom: 8,
   },
-  eventInfoIcon: {
-    fontSize: 16,
-    marginRight: 8,
-  },
-  eventInfoText: {
-    fontSize: 16,
-    color: '#555555',
-  },
   description: {
+    fontFamily: 'monserratRegular',
+    includeFontPadding: false,
     fontSize: 16,
     lineHeight: 24,
     color: colors.fontBlack,
-    marginTop: 16,
-    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 20,
@@ -97,18 +106,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   registerLimitContainer: {
-    marginTop: 10,
-    marginBottom: 20,
+    marginTop: 4,
+    marginBottom: 16,
     flexDirection: 'column',
     alignItems: 'flex-start',
   },
   registerLimitLabel: {
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 16,
     color: colors.fontBlack,
     marginBottom: 4,
   },
   registerLimitDate: {
+    fontFamily: 'monserratRegular',
+    includeFontPadding: false,
     fontSize: 16,
     color: colors.fontBlack,
   },
@@ -117,6 +129,16 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     fontStyle: 'italic',
     color: '#666',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginTop: 20,
+    marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.standardGray,
   },
 })
 

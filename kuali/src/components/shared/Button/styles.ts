@@ -2,9 +2,7 @@ import { StyleSheet } from 'react-native'
 import colors from '../../../constants/colors'
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-  },
+  container: {},
   button: {
     paddingVertical: 8,
     paddingHorizontal: 15, //Modifico para que quepan los botones
@@ -31,7 +29,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   buttonSmall: {
-    paddingVertical: 6,
+    paddingVertical: 12,
     paddingHorizontal: 10,
     flex: 1,
   },

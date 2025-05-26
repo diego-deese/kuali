@@ -1,18 +1,23 @@
-import { useLocations } from '../../hooks/CreateActivity/useLocations'
-import { useDates } from '../../hooks/CreateActivity/useDates'
-import { useRequirements } from '../../hooks/CreateActivity/useRequirements'
-import { useState } from 'react'
+import { useLocations } from '../../hooks/ActivityForm/useLocations'
+import { useDates } from '../../hooks/ActivityForm/useDates'
+import { useRequirements } from '../../hooks/ActivityForm/useRequirements'
+import { useEffect, useRef, useState } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import activityService from '../../services/activity.service'
-import { NewActivityData } from '../../types/Activity'
-import { ActivityErrors, InputError } from '../../types/Error'
+import { NewActivityData, UpdateActivityData } from '../../types/Activity'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
+import { useErrors } from '../../hooks/ActivityForm/useErrors'
+import { mapToOption } from '../../utils/mappers'
 
-export const useCreateActivity = () => {
+export const useActivityForm = (
+  mode: 'create' | 'edit',
+  activityId?: number,
+) => {
   const locationManagement = useLocations()
   const dateManagement = useDates()
   const requirementsManagement = useRequirements()
+  const errorManagement = useErrors()
 
   const [visibleStudents, setVisibleStudents] = useState(true)
   const [visibleResearchers, setVisibleResearchers] = useState(true)
@@ -26,106 +31,50 @@ export const useCreateActivity = () => {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const [errors, setErrors] = useState<ActivityErrors>({
-    title: {
-      error: false,
-      errorMessage: '',
-    },
-    description: {
-      error: false,
-      errorMessage: '',
-    },
-    location: {
-      error: false,
-      errorMessage: '',
-    },
-    posterImage: {
-      error: false,
-      errorMessage: '',
-    },
-  })
+  const editedActivityDataRef = useRef<UpdateActivityData>({})
 
-  const validateTitle = (title: string) => {
-    if (title === '' || !title) {
-      return {
-        error: true,
-        errorMessage: 'El título del evento es requerido',
+  const loadActivityData = async (activityId: number) => {
+    setLoading(true)
+    try {
+      const result = await activityService.getActivityById(activityId)
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        return
       }
-    }
 
-    const letterRegex = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/
-    if (!letterRegex.test(title)) {
-      return {
-        error: true,
-        errorMessage: 'Solo se permiten letras',
-      }
-    }
+      const activity = result.data
 
-    return {
-      error: false,
-      errorMessage: '',
+      // Populate activity form fields
+      setTitle(activity.title)
+      setDescription(activity.description)
+      setVisibleStudents(activity?.visible_students)
+      setVisibleResearchers(activity?.visible_researchers)
+      setMandatory(activity?.mandatory)
+      locationManagement.onLocationChange(
+        mapToOption(activity.location, 'id_location', 'name'),
+      )
+      activity.requirements.forEach((req) => {
+        requirementsManagement.addRequirement(req.name, req.description)
+      })
+      dateManagement.onActivityDateChange(new Date(activity.event_date))
+      dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const validateDescription = (description: string) => {
-    if (description === '' || !description) {
-      return {
-        error: true,
-        errorMessage: 'La descripción del evento es requerida',
-      }
+  useEffect(() => {
+    if (mode === 'edit' && activityId) {
+      loadActivityData(activityId)
     }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validatePosterImage = (posterImgUri: string): InputError => {
-    if (posterImgUri === null) {
-      return {
-        error: true,
-        errorMessage: 'El poster del evento es requerido',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateLocation = (location: Option | null): InputError => {
-    if (location === null) {
-      return {
-        error: true,
-        errorMessage: 'La ubicación del evento es requerida',
-      }
-    }
-
-    return {
-      error: false,
-      errorMessage: '',
-    }
-  }
-
-  const validateAllFields = (): boolean => {
-    const newErrors: ActivityErrors = {
-      title: validateTitle(title),
-      description: validateDescription(description),
-      posterImage: validatePosterImage(posterImg),
-      location: validateLocation(locationManagement.location),
-    }
-
-    setErrors(newErrors)
-
-    return !(
-      newErrors.title.error ||
-      newErrors.description.error ||
-      newErrors.location.error ||
-      newErrors.posterImage.error
-    )
-  }
+  }, [mode, activityId])
 
   const restartFields = (): void => {
     setTitle('')
@@ -138,31 +87,31 @@ export const useCreateActivity = () => {
 
   const onTitleChange = (title: string) => {
     setTitle(title)
-    setErrors((prevErrors) => {
-      return {
-        ...prevErrors,
-        title: validateTitle(title),
-      }
+    if (mode === 'edit') {
+      editedActivityDataRef.current.title = title
+    }
+    errorManagement.updateErrors({
+      title: errorManagement.validateTitle(title),
     })
   }
 
   const onDescriptionChange = (description: string) => {
     setDescription(description)
-    setErrors((prevErrors) => {
-      return {
-        ...prevErrors,
-        description: validateDescription(description),
-      }
+    if (mode === 'edit') {
+      editedActivityDataRef.current.description = description
+    }
+    errorManagement.updateErrors({
+      description: errorManagement.validateDescription(description),
     })
   }
 
   const onLocationChange = (newLocation: Option) => {
     locationManagement.onLocationChange(newLocation)
-    setErrors((prevErrors) => {
-      return {
-        ...prevErrors,
-        location: validateLocation(newLocation),
-      }
+    if (mode === 'edit') {
+      editedActivityDataRef.current.location_id = newLocation.id
+    }
+    errorManagement.updateErrors({
+      location: errorManagement.validateLocation(newLocation),
     })
   }
 
@@ -181,26 +130,52 @@ export const useCreateActivity = () => {
     if (!result.canceled) {
       const uri = result.assets[0].uri
       setPosterImg(uri)
-      setErrors((prevErrors) => {
-        return {
-          ...prevErrors,
-          posterImage: validatePosterImage(uri),
-        }
+      if (mode === 'edit') {
+        editedActivityDataRef.current.poster_image_uri = uri
+      }
+      errorManagement.updateErrors({
+        posterImage: errorManagement.validatePosterImage(uri),
       })
-    } else {
-      setErrors((prevErrors) => {
-        return {
-          ...prevErrors,
-          posterImage: validatePosterImage(null),
-        }
+      return
+    }
+
+    if (mode !== 'edit') {
+      errorManagement.updateErrors({
+        posterImage: errorManagement.validatePosterImage(null),
       })
+    }
+  }
+
+  const toggleVisibleStudents = () => {
+    setVisibleStudents(!visibleStudents)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.visible_students = visibleStudents
+    }
+  }
+
+  const toggleVisibleResearchers = () => {
+    setVisibleResearchers(!visibleResearchers)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.visible_researchers = visibleResearchers
+    }
+  }
+
+  const toggleMandatory = () => {
+    setMandatory(!mandatory)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.mandatory = mandatory
     }
   }
 
   const createActivity = async () => {
     setLoadingAction(true)
     try {
-      const allFieldsCorrect = validateAllFields()
+      const allFieldsCorrect = errorManagement.validateAllFields(
+        title,
+        description,
+        posterImg,
+        locationManagement.location,
+      )
 
       if (allFieldsCorrect) {
         const activityData: NewActivityData = {
@@ -212,8 +187,11 @@ export const useCreateActivity = () => {
           location_id: locationManagement.location.id,
           event_date: dateManagement.activityDate as Date,
           register_date_limit: dateManagement.limitDate as Date,
-          requirements: requirementsManagement.requirements,
           poster_image_uri: posterImg,
+          // If the activity has requirements then we pass them
+          ...(requirementsManagement.requirements.length > 0
+            ? { requirements: requirementsManagement.requirements }
+            : {}),
         }
 
         const result = await activityService.createActivity(activityData)
@@ -227,7 +205,7 @@ export const useCreateActivity = () => {
         } else {
           Toast.show({
             text1: 'Nueva actividad creada',
-            text2: 'Ahora puedes visualizar la actividad en el calendario',
+            text2: 'Ahora se puede visualizar la actividad en el calendario',
           })
           restartFields()
         }
@@ -250,7 +228,13 @@ export const useCreateActivity = () => {
     }
   }
 
+  const updateActivity = async () => {
+    console.log(editedActivityDataRef.current)
+  }
+
   return {
+    mode,
+    activityId,
     dates: {
       activityDate: dateManagement.activityDate,
       onActivityDateChange: dateManagement.onActivityDateChange,
@@ -275,9 +259,9 @@ export const useCreateActivity = () => {
       visibleStudents,
       visibleResearchers,
       mandatory,
-      setVisibleStudents,
-      setVisibleResearchers,
-      setMandatory,
+      toggleVisibleStudents,
+      toggleVisibleResearchers,
+      toggleMandatory,
     },
     posterImg: {
       posterImg,
@@ -293,8 +277,9 @@ export const useCreateActivity = () => {
     },
     loading,
     loadingAction,
-    errors,
+    errors: errorManagement.errors,
     createActivity,
+    updateActivity,
     setLoading,
     setLoadingAction,
   }

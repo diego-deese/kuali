@@ -44,9 +44,9 @@ export default function ProfileIdCard({
         ]}
       >
         <FlipCard
-          friction={20}
-          onFlipEnd={() => {
-            setIsFlipped((prev) => !prev)
+          friction={200}
+          onFlipStart={() => {
+            setIsFlipped((prevState) => !prevState)
           }}
         >
           {/* Front */}

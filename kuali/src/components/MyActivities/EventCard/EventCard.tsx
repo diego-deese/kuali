@@ -4,20 +4,16 @@ import { FormattedDate } from '../../shared/FormattedDate/FormattedDate'
 import { useEventNavigation } from '../../../hooks/NavigationActivity/useEventNavigation'
 import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 import { Activity } from '../../../types/Activity'
+import { router } from 'expo-router'
 
 interface ActivityCardProps {
   activity: Activity
 }
 
 const EventCard: React.FC<ActivityCardProps> = ({ activity }) => {
-  const { isNavigating, navigateToEvent } = useEventNavigation()
+  const { isNavigating } = useEventNavigation()
   const handlePress = () => {
-    navigateToEvent({
-      pathname: `/event/${activity.activity_id}`,
-      params: {
-        activity_id: activity.activity_id, // Cambiado a id para evitar warning
-      },
-    })
+    router.navigate(`/event/${activity.activity_id}/info`)
   }
 
   return (

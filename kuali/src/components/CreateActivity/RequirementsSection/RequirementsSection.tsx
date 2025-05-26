@@ -5,11 +5,17 @@ import { PlusIcon } from '../../shared/Icons/Icons'
 import { styles } from './styles'
 import NewRequirementModal from './NewRequirementModal/NewRequirementModal'
 import ActivityRequirementCard from '../../shared/ActivityRequirementCard/ActivityRequirementCard'
-import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
 
-const RequirementsSection = () => {
+interface RequirementsSectionProps {
+  mode: 'create' | 'edit'
+}
+
+const RequirementsSection: React.FC<RequirementsSectionProps> = ({
+  mode = 'create',
+}) => {
   const [showModal, setShowModal] = useState(false)
-  const { requirements } = useCreateActivityContext()
+  const { requirements } = useActivityFormContext()
 
   return (
     <>
@@ -29,7 +35,7 @@ const RequirementsSection = () => {
             requirementId={item.requirement_id}
             name={item.name}
             description={item.description}
-            templateUri={item.template_uri}
+            templateUri={item.template_uri && item.template_uri}
             onDeletePress={requirements.deleteRequirement}
             onEdit={requirements.editRequirement}
           />

@@ -71,12 +71,13 @@ export const useNewRequirementModal = (
     setRequirementDescription(text)
     setErrors((prev) => ({
       ...prev,
-      description: validateName(text),
+      description: validateDescription(text),
     }))
   }
 
   const handleWithTemplateChange = () => {
     setWithTemplate(!withTemplate)
+    setTemplateUri(null)
   }
 
   const validateName = (name: string) => {

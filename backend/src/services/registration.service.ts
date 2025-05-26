@@ -1,11 +1,11 @@
 import { Registrations } from '../generated/client'
 import prisma from '../lib/prisma'
-import { NotFoundError } from '../types/Error'
+import { NotFoundError, ValidationError } from '../types/Error'
 import activityService from './activity.service'
 import userService from './user.service'
 
 class RegistrationService {
-  async verifyRegistration (userId: number, activityId: number): Promise<Boolean> {
+  async verifyRegistration (userId: number, activityId: number): Promise<boolean> {
     await userService.getUser(userId)
 
     await activityService.getActivity(activityId)
@@ -35,17 +35,44 @@ class RegistrationService {
     return registration
   }
 
-  async getAllUsersByActivity (activityId: number): Promise<any[]> {
-    const registrations = await prisma.registrations.findMany({
-      where: {
+  async createRegistration (userId: number, activityId: number): Promise<Registrations> {
+    await userService.getUser(userId)
+
+    const alreadyRegistered = await this.verifyRegistration(userId, activityId)
+
+    if (alreadyRegistered) {
+      throw new ValidationError('El usuario ya está registrado en ese evento o convocatoria')
+    }
+
+    const registration = await prisma.registrations.create({
+      data: {
+        user_id: userId,
         activity_id: activityId
-      },
-      include: {
-        user: true
       }
     })
 
-    return registrations.map((r) => r.user)
+    return registration
+  }
+
+  async deleteRegistration (userId: number, activityId: number): Promise<boolean> {
+    return await prisma.$transaction(async (prisma) => {
+      const registration = await this.getRegistration(userId, activityId)
+
+      await prisma.userDocuments.deleteMany({
+        where: {
+          registration_id: registration.registration_id
+        }
+      })
+
+      await prisma.registrations.deleteMany({
+        where: {
+          user_id: userId,
+          activity_id: activityId
+        }
+      })
+
+      return true
+    })
   }
 }
 

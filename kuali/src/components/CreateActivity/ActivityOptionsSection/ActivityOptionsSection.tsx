@@ -2,10 +2,10 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import SwitchComponent from '../../shared/Switch/Switch'
 import colors from '../../../constants/colors'
-import { useCreateActivityContext } from '../../../context/CreateActivityContext/CreateActivityContext'
+import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
 
 const ActivityOptionsSection = () => {
-  const { activityOptions } = useCreateActivityContext()
+  const { activityOptions } = useActivityFormContext()
 
   return (
     <View style={styles.container}>
@@ -14,20 +14,12 @@ const ActivityOptionsSection = () => {
         <SwitchComponent
           label='Estudiantes'
           enabled={activityOptions?.visibleStudents}
-          onChange={() =>
-            activityOptions?.setVisibleStudents(
-              !activityOptions.visibleStudents,
-            )
-          }
+          onChange={activityOptions.toggleVisibleStudents}
         />
         <SwitchComponent
           label='Investigadores'
           enabled={activityOptions?.visibleResearchers}
-          onChange={() =>
-            activityOptions?.setVisibleResearchers(
-              !activityOptions.visibleResearchers,
-            )
-          }
+          onChange={activityOptions.toggleVisibleResearchers}
         />
       </View>
       <View style={styles.registerContainer}>
@@ -36,14 +28,12 @@ const ActivityOptionsSection = () => {
           <SwitchComponent
             label='Obligatorio'
             enabled={activityOptions?.mandatory}
-            onChange={() =>
-              activityOptions?.setMandatory(!activityOptions.mandatory)
-            }
+            onChange={activityOptions.toggleMandatory}
           />
         </View>
         <Text style={styles.description}>
-          Si está habilitado, registrará automaticamente a todos los usuarios a
-          la actividad creada
+          Habilitalo para inscribir automaticamente a todos los usuarios que
+          pueden ver la actividad
         </Text>
       </View>
     </View>

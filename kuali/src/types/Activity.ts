@@ -9,10 +9,12 @@ export type Activity = {
   event_date: string
   register_date_limit: string
   mandatory?: false
-  isRegistered?: boolean // Añade esta propiedad como opcional
+  isRegistered?: boolean
   location: Location
   category: Category
   requirements: Requirements[]
+  visible_researchers?: boolean
+  visible_students?: boolean
 }
 
 export type NewActivityData = {
@@ -24,6 +26,8 @@ export type NewActivityData = {
   visible_researchers: boolean
   visible_students: boolean
   location_id: number
-  requirements: ActivityRequirement[]
+  requirements?: ActivityRequirement[]
   poster_image_uri: string
 }
+
+export type UpdateActivityData = Partial<NewActivityData>

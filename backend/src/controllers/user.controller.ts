@@ -205,7 +205,6 @@ class UserController {
 
   getResearcherStudentsWithAcademicProgram = async (req: AuthRequest, res: Response): Promise<void> => {
     try {
-      // console.log('Entró a getResearcherStudentsWithAcademicProgram')
       if (req.user === undefined) {
         res.status(403).json({
           message: 'Error al obtener los estudiantes del investigador',
@@ -215,7 +214,6 @@ class UserController {
       }
 
       const researcherId = req.user.user_id
-      // console.log('Investigador autenticado:', researcherId)
 
       if (!isNumber(researcherId)) {
         res.status(400).json({
@@ -226,7 +224,6 @@ class UserController {
       }
 
       const studentsWithPrograms = await userService.getResearcherStudentsWithAcademicProgram(+researcherId)
-      // console.log('Estudiantes obtenidos del backend:', studentsWithPrograms)
 
       res.status(200).json({ studentsByAcademicProgram: studentsWithPrograms })
     } catch (error) {

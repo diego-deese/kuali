@@ -1,5 +1,12 @@
 import React, { useState } from 'react'
-import { View, Text, TextInput } from 'react-native'
+import {
+  View,
+  Text,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+} from 'react-native'
 
 import IconButton from '../../IconButton/IconButton'
 import colors from '../../../../constants/colors'
@@ -48,7 +55,9 @@ const AddNewHeader: React.FC<AddNewHeaderProps> = ({
               style={styles.input}
               value={newOptionValue}
               placeholder={inputTextPlaceholder}
-              onChangeText={(text) => setNewOptionValue(text)}
+              onChangeText={setNewOptionValue}
+              onSubmitEditing={() => handleAddConfirm(newOptionValue)}
+              autoFocus
             />
           </View>
           <IconButton

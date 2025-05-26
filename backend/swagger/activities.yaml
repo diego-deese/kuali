@@ -53,14 +53,30 @@ paths:
       tags:
         - Activities
       requestBody:
-        description: User attributes
+        required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              $ref: '#/components/schemas/NewActivity'
+              required:
+                - activityData
+                - poster_image
+              properties:
+                activityData:
+                  $ref: '#/components/schemas/NewActivity'
+                  description: JSON string containing activity details
+                poster_image:
+                  type: string
+                  format: binary
+                  description: Activity poster image file
+                template_files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: Optional template files for activity requirements (ordered by added requirements) 
       responses:
-        '200':
+        '201':
           content:
             application/json:
               schema:

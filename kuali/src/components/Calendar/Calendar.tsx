@@ -8,6 +8,7 @@ import EventCalendarCard from "../EventCalendarCard/EventCalendarCard";
 import { useEventNavigation } from "../../hooks/NavigationActivity/useEventNavigation";
 import LoadingModal from "../shared/LoadingModal/LoadingModal";
 import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities';
+import { router } from "expo-router";
 
 function getLimitedEvents(events: any[], limitPerDay: number) {
   const grouped: { [key: string]: any[] } = {};
@@ -27,7 +28,7 @@ function getLimitedEvents(events: any[], limitPerDay: number) {
 export default function CalendarComponent() {
   const [monthName, setMonthName] = useState(dayjs().format('MMMM'))
   const [monthNumber, setMonthNumber] = useState(dayjs().format('MM'))
-  const { isNavigating, navigateToEvent } = useEventNavigation()
+  const { isNavigating } = useEventNavigation()
   const { activities, error, loading } = useGetActivities()
 
   const calendarEvents = activities.map((activity) => ({
@@ -45,12 +46,7 @@ export default function CalendarComponent() {
   }
 
   const handleEventPress = (event: any) => {
-    console.log({event})
-    navigateToEvent({
-      pathname: `/event/${event.id}`,
-      params: { title: event.title, date: event.start.toISOString() },
-    });
-    
+    router.navigate(`/event/${event.id}/info`)
   }
 
   return (

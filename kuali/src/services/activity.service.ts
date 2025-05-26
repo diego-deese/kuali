@@ -137,7 +137,6 @@ class ActivityService {
 
       // Manejo de imagen local
       const localUri = newActivityData.poster_image_uri
-      console.log(localUri)
       const posterFileInfo = getFileInfo(localUri)
 
       formData.append('poster_image', {
@@ -146,34 +145,42 @@ class ActivityService {
         type: posterFileInfo.mimeType,
       } as any)
 
-      const activityData = {
-        ...newActivityData,
-        requirements: newActivityData.requirements.map((req) => {
-          return {
-            name: req.name,
-            description: req.description,
-            template: req.template_uri
-              ? {
-                  name: `${req.name}_plantilla`,
-                }
-              : undefined,
-          }
-        }),
+      let activityData
+
+      if (
+        newActivityData.requirements &&
+        newActivityData.requirements.length > 0
+      ) {
+        activityData = {
+          ...newActivityData,
+          requirements: newActivityData.requirements.map((req) => {
+            return {
+              name: req.name,
+              description: req.description,
+              template: req.template_uri
+                ? {
+                    name: `${req.name}_plantilla`,
+                  }
+                : undefined,
+            }
+          }),
+        }
+        const requirementsWithTemplate = newActivityData.requirements.filter(
+          (req) => req.template_uri !== null,
+        )
+
+        requirementsWithTemplate.forEach((req) => {
+          const templateInfo = getFileInfo(req.template_uri!)
+
+          formData.append('template_files', {
+            uri: req.template_uri,
+            name: templateInfo.fileName,
+            type: templateInfo.mimeType,
+          } as any)
+        })
+      } else {
+        activityData = newActivityData
       }
-
-      const requirementsWithTemplate = newActivityData.requirements.filter(
-        (req) => req.template_uri !== null,
-      )
-
-      requirementsWithTemplate.forEach((req) => {
-        const templateInfo = getFileInfo(req.template_uri!)
-
-        formData.append('template_files', {
-          uri: req.template_uri,
-          name: templateInfo.fileName,
-          type: templateInfo.mimeType,
-        } as any)
-      })
 
       formData.append(
         'activityData',
@@ -220,7 +227,6 @@ class ActivityService {
     }
   }
 
-  // Método para obtener actividad por ID
   async getActivityById(
     activityId: number,
   ): Promise<Response<Activity> | ResponseError> {
@@ -240,6 +246,88 @@ class ActivityService {
           response.data.message || 'Error al obtener los detalles del evento',
         error:
           response.data.error || 'No se pudo obtener la información del evento',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
+    }
+  }
+
+  async applyToActivity(
+    activityId: number,
+  ): Promise<Response<any> | ResponseError> {
+    try {
+      const response = await this.api.post(
+        `/registrations/activity/${activityId}`,
+      )
+
+      if (response.status === 201 || response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al registrarse en la actividad',
+        error: response.data.error || 'No se pudo completar el registro',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
+    }
+  }
+
+  async unregisterFromActivity(
+    activityId: number,
+  ): Promise<Response<any> | ResponseError> {
+    try {
+      const response = await this.api.delete(
+        `/registrations/activity/${activityId}`,
+      )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al darse de baja de la actividad',
+        error: response.data.error || 'No se pudo completar la baja',
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {

@@ -43,7 +43,7 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
     <View style={styles.cardContainer}>
       <View style={styles.textContainer}>
         <Text style={styles.name}>{name}</Text>
-        <Text>{description}</Text>
+        <Text style={styles.description}>{description}</Text>
       </View>
       <View
         style={[
@@ -123,9 +123,16 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     width: '50%',
+    gap: 4,
   },
   name: {
     fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 16,
+  },
+  description: {
+    fontFamily: 'monserratRegular',
+    includeFontPadding: false,
+    fontSize: 14,
   },
 })

@@ -1,12 +1,13 @@
 import { createContext, useContext } from 'react'
-import { useCreateActivity } from './useCreateActivity'
+import { useActivityForm } from './useActivityForm'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { Location } from '../../types/Location'
 import { DateType } from 'react-native-ui-datepicker'
 import { ActivityRequirement } from '../../types/Requirements'
 import { ActivityErrors } from '../../types/Error'
 
-interface CreateActivityContextProps {
+interface ActivityFormContextProps {
+  mode: 'create' | 'edit'
   dates?: {
     activityDate: DateType
     onActivityDateChange: (newDate: DateType) => void
@@ -25,9 +26,9 @@ interface CreateActivityContextProps {
     visibleStudents: boolean
     visibleResearchers: boolean
     mandatory: boolean
-    setVisibleStudents: (value: boolean) => void
-    setVisibleResearchers: (value: boolean) => void
-    setMandatory: (value: boolean) => void
+    toggleVisibleStudents: () => void
+    toggleVisibleResearchers: () => void
+    toggleMandatory: () => void
   }
   requirements?: {
     requirements: ActivityRequirement[]
@@ -61,20 +62,39 @@ interface CreateActivityContextProps {
   setLoading?: (value: boolean) => void
   setLoadingAction?: (value: boolean) => void
   createActivity?: () => void
+  updateActivity?: () => void
   errors?: ActivityErrors
 }
 
-const CreateActivityContext = createContext<CreateActivityContextProps>({})
+const ActivityFormContext = createContext<ActivityFormContextProps>({
+  mode: 'create',
+})
 
-export const useCreateActivityContext = () => {
-  return useContext(CreateActivityContext)
+export const useActivityFormContext = () => {
+  const context = useContext(ActivityFormContext)
+  if (context === undefined) {
+    throw new Error(
+      'useCreateActivityContext must be used within a CreateActivityProvider',
+    )
+  }
+  return context
 }
 
-export const CreateActivityProvider = ({ children }: any) => {
-  const value = useCreateActivity()
+interface ActivityFormProviderProps {
+  children: React.ReactNode
+  mode: 'create' | 'edit'
+  activityId?: number
+}
+
+export const ActivityFormProvider = ({
+  children,
+  mode,
+  activityId,
+}: ActivityFormProviderProps) => {
+  const value = useActivityForm(mode, activityId)
   return (
-    <CreateActivityContext.Provider value={value}>
+    <ActivityFormContext.Provider value={value}>
       {children}
-    </CreateActivityContext.Provider>
+    </ActivityFormContext.Provider>
   )
 }

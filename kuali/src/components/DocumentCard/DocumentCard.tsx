@@ -3,6 +3,7 @@ import styles from './DocumentCard.styles'
 import { PendingIcon, RejectedIcon, AcceptedIcon } from '../shared/Icons/Icons'
 import Button from '../shared/Button/Button'
 import { DocumentStatus } from '../../types/UserDocument'
+import * as DocumentPicker from 'expo-document-picker'
 
 export interface Document {
   id: number
@@ -14,7 +15,7 @@ export interface Document {
 
 interface DocumentCardProps {
   document: Document
-  onUpload?: (docId: number) => void
+  onUpload?: (docId: number, fileUri?: string) => void
   onDelete?: (docId: number) => void
 }
 
@@ -25,16 +26,38 @@ export default function DocumentCard({
 }: DocumentCardProps) {
   const { id, title, description, status } = document
 
+  const hasUploadedDocument = !!document.userDocumentId
+
+  const pickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: [
+          'application/pdf',
+          'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+          'application/msword',
+        ],
+        copyToCacheDirectory: true,
+      })
+
+      if (!result.canceled) {
+        // Llamar a onUpload con el ID del documento y la URI del archivo seleccionado
+        onUpload && onUpload(id, result.assets[0].uri)
+      }
+    } catch (error) {
+      console.error('Error al seleccionar el archivo:', error)
+    }
+  }
+
   const renderIcon = () => {
     switch (status) {
       case DocumentStatus.Pendiente:
-        return <PendingIcon />
+        return <PendingIcon size={32} />
       case DocumentStatus.Aprobado:
-        return <AcceptedIcon />
+        return <AcceptedIcon size={32} />
       case DocumentStatus.Rechazado:
-        return <RejectedIcon />
+        return <RejectedIcon size={32} />
       default:
-        return <PendingIcon />
+        return <PendingIcon size={32} />
     }
   }
 
@@ -42,7 +65,7 @@ export default function DocumentCard({
   const getDescription = () => {
     switch (status) {
       case DocumentStatus.Pendiente:
-        return 'El documento está pendiente de aprobación'
+        return 'Documento pendiente de aprobación'
       case DocumentStatus.Aprobado:
         return 'El documento ha sido aprobado'
       case DocumentStatus.Rechazado:
@@ -58,32 +81,33 @@ export default function DocumentCard({
     if (status === DocumentStatus.Aprobado) {
       return null
     }
-    if (status === DocumentStatus.Rechazado) {
-      return (
-        <View style={styles.buttonContainer}>
-          <Button
-            buttonText='Subir documento'
-            onPress={() => onUpload && onUpload(id)}
-            disabled={false}
-            size='small'
-          />
-        </View>
-      )
-    }
+    // if (status === DocumentStatus.Rechazado) {
+    //   return (
+    //     <View style={styles.buttonContainer}>
+    //       <Button
+    //         buttonText='Subir documento'
+    //         onPress={pickDocument}
+    //         disabled={false}
+    //         size='small'
+    //       />
+    //     </View>
+    //   )
+    // }
     // Si esta pendiente, se muestran ambos
     return (
       <View style={styles.buttonContainer}>
         <Button
           buttonText='Subir documento'
-          onPress={() => onUpload && onUpload(id)}
-          disabled={false}
+          onPress={pickDocument}
+          disabled={hasUploadedDocument}
           size='small'
         />
         <Button
           buttonText='Eliminar documento'
-          onPress={() => onDelete && onDelete(id)}
+          onPress={() => onDelete && onDelete(document.userDocumentId || 0)}
           size='small'
           variant='delete'
+          disabled={!hasUploadedDocument}
         />
       </View>
     )
@@ -93,9 +117,11 @@ export default function DocumentCard({
     <View style={styles.card}>
       <View style={styles.header}>
         {renderIcon()}
-        <Text style={styles.title}>{title}</Text>
+        <View style={styles.headerText}>
+          <Text style={styles.title}>{title}</Text>
+          <Text style={styles.description}>{getDescription()}</Text>
+        </View>
       </View>
-      <Text style={styles.description}>{getDescription()}</Text>
       {renderButtons()}
     </View>
   )

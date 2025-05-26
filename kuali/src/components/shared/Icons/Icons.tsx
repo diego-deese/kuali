@@ -2,7 +2,6 @@ import { MaterialIcons } from '@expo/vector-icons'
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons'
 import AntDesign from '@expo/vector-icons/AntDesign'
 import { FontAwesome } from '@expo/vector-icons'
-import Fontisto from '@expo/vector-icons/Fontisto'
 import colors from '../../../constants/colors'
 
 export const BookmarkIcon = ({ fill = true, ...props }) => {
@@ -31,6 +30,7 @@ export const EnableIcon = ({ fill = true, ...props }) => {
       name='eye-outline'
       size={24}
       color={colors.selectionBlue}
+      {...props}
     />
   )
 }
@@ -41,6 +41,7 @@ export const DisableIcon = ({ fill = true, ...props }) => {
       name='eye-off-outline'
       size={24}
       color={colors.warningRed}
+      {...props}
     />
   )
 }
@@ -76,9 +77,25 @@ export const LogoutIcon = ({ fill = true, ...props }) => {
 export const ReverseIcon = ({ fill = true, ...props }) => {
   return <MaterialIcons name='touch-app' size={30} color='white' {...props} />
 }
+export const DropDownIcon = ({ fill = true, ...props }) => {
+  return (
+    <MaterialIcons name='arrow-drop-down' size={35} color='black' {...props} />
+  )
+}
+export const DropUpIcon = ({ fill = true, ...props }) => {
+  return (
+    <MaterialIcons name='arrow-drop-up' size={35} color='black' {...props} />
+  )
+}
+
 export const InfoIcon = ({ fill = true, ...props }) => {
   return (
-    <MaterialIcons name='info-outline' size={24} color={colors.selectionBlue} />
+    <MaterialIcons
+      name='info-outline'
+      size={24}
+      color={colors.selectionBlue}
+      {...props}
+    />
   )
 }
 
@@ -93,12 +110,12 @@ export const EditIcon = ({ fill = true, ...props }) => {
   )
 }
 
-export const RejectedIcon = () => {
-  return <AntDesign name='close' size={24} color='black' />
+export const RejectedIcon = (props) => {
+  return <AntDesign name='close' size={24} color='black' {...props} />
 }
 
-export const AcceptedIcon = () => {
-  return <AntDesign name='check' size={24} color='black' />
+export const AcceptedIcon = (props) => {
+  return <AntDesign name='check' size={24} color='black' {...props} />
 }
 
 export const PlusIcon = (props) => {
@@ -112,8 +129,8 @@ export const PlusIcon = (props) => {
   )
 }
 
-export const PendingIcon = () => {
-  return <MaterialIcons name='schedule' size={24} color='black' />
+export const PendingIcon = (props) => {
+  return <MaterialIcons name='schedule' size={24} color='black' {...props} />
 }
 
 export const PersonSearch = ({ fill = true, ...props }) => {
@@ -159,14 +176,30 @@ export const RightArrowIcon = (props) => {
   )
 }
 
-export const PlaceIcon = (props) => {
-  return <MaterialIcons name='place' size={24} color='black' {...props} />
+export const PlaceIcon = ({ fill = true, ...props }) => {
+  return fill ? (
+    <MaterialIcons name='place' size={24} color='black' {...props} />
+  ) : (
+    <MaterialCommunityIcons
+      name='map-marker-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
 }
 
-export const CalendarClockIcon = (props) => {
-  return (
+export const CalendarClockIcon = ({ fill = true, ...props }) => {
+  return fill ? (
     <MaterialCommunityIcons
       name='calendar-clock'
+      size={24}
+      color='black'
+      {...props}
+    />
+  ) : (
+    <MaterialCommunityIcons
+      name='calendar-clock-outline'
       size={24}
       color='black'
       {...props}
@@ -259,4 +292,12 @@ export const ImagePlusIcon = (props) => {
       {...props}
     />
   )
+}
+
+export const ArrowBack = (props) => {
+  return <MaterialIcons name='arrow-back' size={24} color='black' {...props} />
+}
+
+export const DownloadIcon = (props) => {
+  return <MaterialIcons name='download' size={32} color='black' {...props} />
 }

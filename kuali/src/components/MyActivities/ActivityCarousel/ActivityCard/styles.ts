@@ -2,14 +2,12 @@ import { StyleSheet } from 'react-native'
 
 export const styles = StyleSheet.create({
   cardContainer: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
     borderRadius: 10,
     overflow: 'hidden',
   },
   backgroundImage: {
-    width: '100%',
-    height: '100%',
+    flex: 1,
   },
   gradient: {
     flex: 1,

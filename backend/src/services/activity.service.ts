@@ -72,6 +72,16 @@ class ActivityService {
           omit: {
             activity_id: true,
             last_updated: true
+          },
+          include: {
+            template: {
+              select: {
+                requirement_template_id: true,
+                last_updated: true,
+                name: true,
+                upload_date: true
+              }
+            }
           }
         }
       }
@@ -89,7 +99,7 @@ class ActivityService {
 
     let activity, isRegistered
 
-    if (registrationExists === true) {
+    if (registrationExists) {
       activity = await prisma.activities.findFirst({
         where: {
           activity_id: activityId
@@ -123,7 +133,14 @@ class ActivityService {
                   }
                 }
               },
-              template: true
+              template: {
+                select: {
+                  requirement_template_id: true,
+                  last_updated: true,
+                  name: true,
+                  upload_date: true
+                }
+              }
             }
           }
         }

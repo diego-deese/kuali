@@ -10,6 +10,7 @@ router.post('/', isAuthenticated, isAdmin, userController.createUser)
 
 router.get('/researcher/students', isAuthenticated, isResearcher, userController.getResearcherStudentsWithAcademicProgram)
 
+
 router.get('/:id', isAuthenticated, userController.getUser)
 router.put('/:id', isAuthenticated, isAdmin, userController.updateUser)
 router.delete('/:id', isAuthenticated, isAdmin, userController.deleteUser)

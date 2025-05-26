@@ -42,6 +42,7 @@ const Option: React.FC<OptionProps> = ({
               style={styles.input}
               value={inputValue}
               onChangeText={(text) => setInputValue(text)}
+              autoFocus
             />
           ) : (
             <Text style={styles.label}>{inputValue}</Text>
