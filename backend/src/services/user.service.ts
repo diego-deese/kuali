@@ -1,4 +1,5 @@
 import prisma from '../lib/prisma'
+import { STUDENT_ROLE_ID } from '../constants/roles'
 import { AcademicProgramWithStudents } from '../types/AcademicProgram'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
@@ -289,6 +290,65 @@ class UserService {
     }))
 
     return studentsWithPrograms
+  }
+
+  async toggleStudentState (userId: number): Promise<ResponseMessage> {
+    const existing = await prisma.inscriptions.findMany({
+      where: {
+        student_id: userId
+      }
+    })
+
+    if (existing.length === 0) {
+      return { message: 'Student not found or has no inscriptions' }
+    }
+
+    const currentState = existing[0].active
+    const newState = !currentState
+
+    await prisma.inscriptions.updateMany({
+      where: {
+        student_id: userId
+      },
+      data: {
+        active: newState
+      }
+    })
+
+    return {
+      message: 'Estudiante desactivado con éxito'
+    }
+  }
+
+  async assignStudent (academicProgramId: number, studentId: number): Promise<ResponseMessage> {
+    const user = await this.getUser(studentId)
+    if (user.role.role_id !== STUDENT_ROLE_ID) {
+      throw new ValidationError('El usuario con el id proporcionado no es un estudiante')
+    }
+
+    await prisma.inscriptions.updateMany({
+      where: {
+        student_id: studentId,
+        active: true
+      },
+      data: {
+        active: false,
+        end_date: new Date()
+      }
+    })
+    await prisma.inscriptions.create({
+      data: {
+        student_id: studentId,
+        program_id: academicProgramId,
+        active: true,
+        start_date: new Date(),
+        end_date: new Date('2099-12-31') // no c xd
+      }
+    })
+
+    return {
+      message: 'Estudiante inscrito con éxito'
+    }
   }
 }
 
