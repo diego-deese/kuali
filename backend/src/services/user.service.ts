@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma'
-// import { AcademicProgramWithStudents } from '../types/AcademicProgram'
+import { AcademicProgramWithStudents } from '../types/AcademicProgram'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
 import { NewUser, SafeUser, UserProfilePhoto } from '../types/Users'
@@ -258,38 +258,38 @@ class UserService {
     }
   }
 
-  // async getResearcherStudentsWithAcademicProgram (userId: number): Promise<AcademicProgramWithStudents[]> {
-  //   const studentsWithProgramsRaw = await prisma.academicPrograms.findMany({
-  //     where: {
-  //       researcher_id: userId
-  //     },
-  //     select: {
-  //       program_id: true,
-  //       name: true,
-  //       inscriptions: {
-  //         select: {
-  //           students: {
-  //             select: {
-  //               name: true,
-  //               second_name: true,
-  //               paternal_lastname: true,
-  //               maternal_lastname: true,
-  //               identifier: true,
-  //               institutional_email: true
-  //             }
-  //           }
-  //         }
-  //       }
-  //     }
-  //   })
+  async getResearcherStudentsWithAcademicProgram (userId: number): Promise<AcademicProgramWithStudents[]> {
+    const studentsWithProgramsRaw = await prisma.academicPrograms.findMany({
+      where: {
+        researcher_id: userId
+      },
+      select: {
+        program_id: true,
+        name: true,
+        inscriptions: {
+          select: {
+            students: {
+              select: {
+                name: true,
+                second_name: true,
+                paternal_lastname: true,
+                maternal_lastname: true,
+                identifier: true,
+                institutional_email: true
+              }
+            }
+          }
+        }
+      }
+    })
 
-  //   const studentsWithPrograms = studentsWithProgramsRaw.map(program => ({
-  //     name: program.name,
-  //     students: program.inscriptions.map(inscription => inscription.students)
-  //   }))
+    const studentsWithPrograms = studentsWithProgramsRaw.map(program => ({
+      name: program.name,
+      students: program.inscriptions.map(inscription => inscription.students)
+    }))
 
-  //   return studentsWithPrograms
-  // }
+    return studentsWithPrograms
+  }
 }
 
 export default new UserService()

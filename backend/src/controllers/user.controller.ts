@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import userService from '../services/user.service'
 import { isNumber } from '../utils/validations'
 import { AppError } from '../types/Error'
+import { AuthRequest } from '../types/Request'
 // import { AuthRequest } from '../types/Request'
 
 class UserController {
@@ -203,43 +204,43 @@ class UserController {
     }
   }
 
-  // getResearcherStudentsWithAcademicProgram = async (req: AuthRequest, res: Response): Promise<void> => {
-  //   try {
-  //     if (req.user === undefined) {
-  //       res.status(403).json({
-  //         message: 'Error al obtener los estudiantes del investigador',
-  //         error: 'Usuario no autenticado'
-  //       })
-  //       return
-  //     }
+  getResearcherStudentsWithAcademicProgram = async (req: AuthRequest, res: Response): Promise<void> => {
+    try {
+      if (req.user === undefined) {
+        res.status(403).json({
+          message: 'Error al obtener los estudiantes del investigador',
+          error: 'Usuario no autenticado'
+        })
+        return
+      }
 
-  //     const researcherId = req.user.user_id
+      const researcherId = req.user.user_id
 
-  //     if (!isNumber(researcherId)) {
-  //       res.status(400).json({
-  //         message: 'Error al obtener los estudiantes del investigador',
-  //         error: 'El id proporcionado en el token es inválido'
-  //       })
-  //       return
-  //     }
+      if (!isNumber(researcherId)) {
+        res.status(400).json({
+          message: 'Error al obtener los estudiantes del investigador',
+          error: 'El id proporcionado en el token es inválido'
+        })
+        return
+      }
 
-  //     const studentsWithPrograms = await userService.getResearcherStudentsWithAcademicProgram(+researcherId)
+      const studentsWithPrograms = await userService.getResearcherStudentsWithAcademicProgram(+researcherId)
 
-  //     res.status(200).json({ studentsByAcademicProgram: studentsWithPrograms })
-  //   } catch (error) {
-  //     if (error instanceof AppError) {
-  //       res.status(error.statusCode).json({
-  //         message: 'Error al obtener los estudiantes del investigador',
-  //         error: error.message
-  //       })
-  //     } else {
-  //       res.status(500).json({
-  //         message: 'Error al obtener los estudiantes del investigador',
-  //         error: error instanceof Error ? error.message : 'Error desconocido'
-  //       })
-  //     }
-  //   }
-  // }
+      res.status(200).json({ studentsByAcademicProgram: studentsWithPrograms })
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al obtener los estudiantes del investigador',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al obtener los estudiantes del investigador',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
 }
 
 export default new UserController()
