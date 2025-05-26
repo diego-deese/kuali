@@ -15,6 +15,8 @@ import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
 import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
+import TemplateCard from '../../components/TemplateCard/TemplateCard'
+import * as WebBrowser from 'expo-web-browser'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -207,6 +209,33 @@ const InfoEvent: React.FC = () => {
     setActiveModal('apply')
   }
 
+  const handleTemplateDownload = async (templateId: number) => {
+    // try {
+    //   // Mostrar indicador de carga
+    //   Toast.show({
+    //     type: 'info',
+    //     text1: 'Preparando documento...',
+    //     position: 'top',
+    //     autoHide: true,
+    //     visibilityTime: 2000,
+    //   })
+    //   // Obtener la URL de forma asíncrona
+    //   const downloadUrl =
+    //     await documentService.getTemplateDownloadUrl(templateId)
+    //   // Abrir el navegador con la URL
+    //   await WebBrowser.openBrowserAsync(downloadUrl)
+    // } catch (error) {
+    //   console.error('Error al obtener URL de descarga:', error)
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Error',
+    //     text2: 'No se pudo descargar la plantilla',
+    //     position: 'top',
+    //   })
+    // }
+
+    console.log('DESCARGANDO DOCUMENTO')
+  }
   const confirmApply = async () => {
     try {
       setLoading(true)
@@ -297,7 +326,32 @@ const InfoEvent: React.FC = () => {
               {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
             </Pressable>
 
-            {plantillasExpanded && <View></View>}
+            {plantillasExpanded && (
+              <View>
+                {eventDetails.requirements &&
+                eventDetails.requirements.some((req) => req.template) ? (
+                  // Si hay plantillas, mapearlas
+                  eventDetails.requirements
+                    .filter((req) => req.template)
+                    .map((req) => (
+                      <TemplateCard
+                        key={`template-${req.requirement_id}`}
+                        template={{
+                          id: req.requirement_id,
+                          name: req.name,
+                          description: req.description,
+                        }}
+                        onDownload={handleTemplateDownload}
+                      />
+                    ))
+                ) : (
+                  // Si NO hay plantillas, mostrar este mensaje
+                  <Text style={styles.noRequirementsText}>
+                    Esta actividad no tiene plantillas disponibles.
+                  </Text>
+                )}
+              </View>
+            )}
 
             {/* Sección de Requisitos */}
             <Pressable

@@ -81,18 +81,18 @@ export default function DocumentCard({
     if (status === DocumentStatus.Aprobado) {
       return null
     }
-    if (status === DocumentStatus.Rechazado) {
-      return (
-        <View style={styles.buttonContainer}>
-          <Button
-            buttonText='Subir documento'
-            onPress={pickDocument}
-            disabled={false}
-            size='small'
-          />
-        </View>
-      )
-    }
+    // if (status === DocumentStatus.Rechazado) {
+    //   return (
+    //     <View style={styles.buttonContainer}>
+    //       <Button
+    //         buttonText='Subir documento'
+    //         onPress={pickDocument}
+    //         disabled={false}
+    //         size='small'
+    //       />
+    //     </View>
+    //   )
+    // }
     // Si esta pendiente, se muestran ambos
     return (
       <View style={styles.buttonContainer}>

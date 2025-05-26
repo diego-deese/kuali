@@ -16,6 +16,8 @@ class DocumentService {
    * @param requirementId ID del requisito
    * @param fileUri URI del archivo local a subir
    * @returns Respuesta con información del resultado de la operación
+   * @param templateId ID de la plantilla a descargar
+   * @returns URL para descargar la plantilla
    */
   async uploadDocument(
     activityId: number,
@@ -123,12 +125,15 @@ class DocumentService {
   }
 
   /**
-   * Obtiene una URL para descargar un documento
-   * @param documentId ID del documento a descargar
-   * @returns URL para descargar el documento
+   * @param templateId ID de la plantilla a descargar
+   * @returns URL para descargar la plantilla
    */
-  getDocumentDownloadUrl(documentId: number): string {
-    return `${process.env.EXPO_PUBLIC_API_URL}/user-documents/${documentId}/download`
+  async getTemplateDownloadUrl(templateId: number): Promise<string> {
+    const token = await authService.getToken()
+    if (!token) {
+      throw new Error('No hay token de autenticación disponible')
+    }
+    return `${process.env.EXPO_PUBLIC_API_URL}/requirement-templates/download/${templateId}?token=${token}`
   }
 }
 
