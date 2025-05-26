@@ -38,6 +38,7 @@ const styles = StyleSheet.create({
     color: colors.selectionBlue,
   },
   list: {
+    gap: 12,
     paddingBottom: 20,
   },
 })

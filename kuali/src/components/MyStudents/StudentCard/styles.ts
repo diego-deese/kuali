@@ -7,7 +7,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     marginBottom: 12,
-    elevation: 2,
+    elevation: 3,
   },
   name: {
     fontWeight: 'bold',

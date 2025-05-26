@@ -16,17 +16,17 @@ export default function StudentCard({
   index,
 }: StudentCardProps) {
   const handlePress = () => {
-    setStudents(students) // aquí se guarda toda la lista
+    setStudents(students)
 
     router.push({
       pathname: '/students/[id]',
       params: {
         id: student.user_id.toString(),
         name: student.name,
+        second_name: student.second_name,
         paternal_lastname: student.paternal_lastname,
+        maternal_lastname: student.maternal_lastname,
         identifier: student.identifier,
-        role: student.role.name,
-        //project: student.project,
         institutional_email: student.institutional_email,
         index: index.toString(),
       },
@@ -37,10 +37,11 @@ export default function StudentCard({
     <Pressable onPress={handlePress}>
       <View style={styles.card}>
         <Text style={styles.name}>
-          {student.name} {student.paternal_lastname}
+          {student.name} {student.second_name} {student.paternal_lastname} {student.maternal_lastname}
         </Text>
-        {/*  Como aun no esta conectado a la base de datos, por el momento solo dira project */}
+        {/*
         <Text style={styles.project}>{'Investigacion x'}</Text>
+        */}
       </View>
     </Pressable>
   )
