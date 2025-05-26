@@ -1,30 +1,25 @@
 import { Text, View } from 'react-native'
 import styles from './NextEventCard.styles'
 import Button from '../shared/Button/Button'
-import { router } from 'expo-router'
 import { FormattedDate } from '../shared/FormattedDate/FormattedDate'
-
+import LoadingModal from '../shared/LoadingModal/LoadingModal'
+import { useEventNavigation } from '../../hooks/NavigationActivity/useEventNavigation'
+import { router } from 'expo-router'
 export default function NextEventCard({
   title,
   event_date,
   location,
-  activity_id: id,
+  activity_id,
 }: {
   title: string
   event_date: Date
   location: string
   activity_id: number
 }) {
+  const { isNavigating } = useEventNavigation()
+
   const handlePress = () => {
-    router.push({
-      pathname: `/event/${id}`,
-      params: {
-        title,
-        event_date: event_date.toISOString(),
-        location,
-        id,
-      },
-    })
+    router.navigate(`/event/${activity_id}/info`)
   }
 
   return (
@@ -39,9 +34,16 @@ export default function NextEventCard({
           <Text style={styles.eventMoreInfo}>{location}</Text>
         </View>
         <View style={styles.buttonContainer}>
-          <Button buttonText='Ver más' onPress={handlePress} />
+          <Button
+            buttonText='Ver más'
+            onPress={handlePress}
+            disabled={isNavigating} // Deshabilitar el botón durante la carga
+          />
         </View>
       </View>
+
+      {/* Modal de carga */}
+      <LoadingModal visible={isNavigating} />
     </View>
   )
 }

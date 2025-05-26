@@ -21,7 +21,9 @@ const Option: React.FC<OptionProps> = ({
 
   const handleSave = () => {
     if (onEdit) {
-      onEdit(inputValue)
+      if (inputValue !== label) {
+        onEdit(inputValue)
+      }
     }
     setIsEditting(false)
   }
@@ -33,19 +35,20 @@ const Option: React.FC<OptionProps> = ({
 
   return (
     <View style={styles.optionContainer}>
-      <View style={styles.labelContainer}>
-        {isEditting ? (
-          <TextInput
-            style={styles.input}
-            value={inputValue}
-            onChangeText={(text) => setInputValue(text)}
-          />
-        ) : (
-          <Pressable onPress={onPress}>
+      <Pressable style={styles.labelContainer} onPress={onPress}>
+        <View>
+          {isEditting ? (
+            <TextInput
+              style={styles.input}
+              value={inputValue}
+              onChangeText={(text) => setInputValue(text)}
+              autoFocus
+            />
+          ) : (
             <Text style={styles.label}>{inputValue}</Text>
-          </Pressable>
-        )}
-      </View>
+          )}
+        </View>
+      </Pressable>
       {editable && (
         <View style={styles.iconsContainer}>
           {isEditting ? (

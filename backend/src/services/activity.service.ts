@@ -1,6 +1,6 @@
-import { Activities } from '../generated/client'
+import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
-import { ActivityInfo, UserAccesibleActivity } from '../types/Activities'
+import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UserAccesibleActivity } from '../types/Activities'
 import { NotFoundError } from '../types/Error'
 import registrationService from './registration.service'
 
@@ -12,11 +12,39 @@ class ActivityService {
         last_updated: true,
         admin_creator_id: true,
         location_id: true,
-        category_id: true
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
       },
       include: {
         category: true,
         location: true
+      }
+    })
+
+    return activities
+  }
+
+  async getActivitiesByRole (roleId: number): Promise<UserAccesibleActivity[]> {
+    const activities = await prisma.activities.findMany({
+      omit: {
+        creation_date: true,
+        last_updated: true,
+        admin_creator_id: true,
+        location_id: true,
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
+      },
+      include: {
+        category: true,
+        location: true
+      },
+      where: {
+        OR: [
+          roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
+          roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
+        ]
       }
     })
 
@@ -33,7 +61,9 @@ class ActivityService {
         last_updated: true,
         admin_creator_id: true,
         location_id: true,
-        category_id: true
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
       },
       include: {
         category: true,
@@ -42,6 +72,16 @@ class ActivityService {
           omit: {
             activity_id: true,
             last_updated: true
+          },
+          include: {
+            template: {
+              select: {
+                requirement_template_id: true,
+                last_updated: true,
+                name: true,
+                upload_date: true
+              }
+            }
           }
         }
       }
@@ -59,7 +99,7 @@ class ActivityService {
 
     let activity, isRegistered
 
-    if (registrationExists === true) {
+    if (registrationExists) {
       activity = await prisma.activities.findFirst({
         where: {
           activity_id: activityId
@@ -69,7 +109,9 @@ class ActivityService {
           last_updated: true,
           admin_creator_id: true,
           location_id: true,
-          category_id: true
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
         },
         include: {
           category: true,
@@ -82,12 +124,21 @@ class ActivityService {
             include: {
               userDocuments: {
                 select: {
+                  user_document_id: true,
                   status: true
                 },
                 where: {
                   registration: {
                     user_id: userId
                   }
+                }
+              },
+              template: {
+                select: {
+                  requirement_template_id: true,
+                  last_updated: true,
+                  name: true,
+                  upload_date: true
                 }
               }
             }
@@ -108,25 +159,91 @@ class ActivityService {
     }
   }
 
-  async createActivity (activityData: Activities): Promise<UserAccesibleActivity> {
-    const newActivity = await prisma.activities.create({
-      data: {
-        ...activityData
-      },
-      omit: {
-        location_id: true,
-        category_id: true
-      },
-      include: {
-        category: true,
-        location: true
+  async createActivity (activityData: NewActivity): Promise<CreatedActivity> {
+    const { requirements, ...activityDetails } = activityData
+
+    const newActivity = await prisma.$transaction(async (prisma) => {
+      // Create the new activity
+      const activity = await prisma.activities.create({
+        data: {
+          ...activityDetails
+        },
+        omit: {
+          location_id: true,
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
+        },
+        include: {
+          category: true,
+          location: true,
+          requirements: true
+        }
+      })
+
+      // If the activity has requirements, then create them
+      if (requirements !== null && requirements.length > 0) {
+        for (const req of requirements) {
+          const { template, ...requirementDetails } = req
+
+          const newRequirement = await prisma.requirements.create({
+            data: {
+              ...requirementDetails,
+              activity_id: activity.activity_id
+            }
+          })
+
+          // If the requirement has a template, then create it
+          if (template !== null) {
+            await prisma.requirementTemplates.create({
+              data: {
+                ...template,
+                requirement_id: newRequirement.requirement_id
+              }
+            })
+          }
+        }
       }
+
+      // Retornar la actividad con todos sus datos
+      return await prisma.activities.findFirst({
+        where: { activity_id: activity.activity_id },
+        omit: {
+          location_id: true,
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
+        },
+        include: {
+          category: true,
+          location: true,
+          requirements: {
+            include: {
+              template: {
+                select: {
+                  requirement_template_id: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
+      })
     })
 
+    if (newActivity === null) {
+      throw new Error('No se pudo crear la actividad')
+    }
     return newActivity
   }
 
   async deleteActivity (activityId: number): Promise<Boolean> {
+    const activity = this.getActivity(activityId)
+
+    if (activity === null) {
+      throw new NotFoundError('No se encontró ninguna actividad con ese id')
+    }
+
     await prisma.$transaction([
       prisma.userDocuments.deleteMany({
         where: {
@@ -142,10 +259,14 @@ class ActivityService {
           }
         }
       }),
-      prisma.requirements.deleteMany({
-        where: { activity_id: activityId }
+      prisma.requirementTemplates.deleteMany({
+        where: {
+          requirement: {
+            activity_id: activityId
+          }
+        }
       }),
-      prisma.activityAttachedFiles.deleteMany({
+      prisma.requirements.deleteMany({
         where: { activity_id: activityId }
       }),
       prisma.registrations.deleteMany({
@@ -195,9 +316,7 @@ class ActivityService {
         }
       },
       where: {
-        user: {
-          user_id: userId
-        },
+        user_id: userId,
         activity: {
           event_date: {
             gte: new Date()
@@ -265,6 +384,11 @@ class ActivityService {
 
   async getUpcomingActivities (): Promise<ActivityInfo[]> {
     const activities = await prisma.activities.findMany({
+      where: {
+        event_date: {
+          gte: new Date()
+        }
+      },
       select: {
         activity_id: true,
         title: true,
@@ -274,15 +398,55 @@ class ActivityService {
         location: true,
         category: true,
         mandatory: true
-      },
-      where: {
-        event_date: {
-          gte: new Date()
-        }
       }
     })
 
     return activities
+  }
+
+  async getUpcomingActivitiesByRole (roleId: number): Promise<ActivityInfo[]> {
+    const activities = await prisma.activities.findMany({
+      where: {
+        OR: [
+          roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
+          roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
+        ]
+      },
+      select: {
+        activity_id: true,
+        title: true,
+        description: true,
+        event_date: true,
+        register_date_limit: true,
+        location: true,
+        category: true,
+        mandatory: true
+      }
+    })
+
+    return activities
+  }
+
+  async getActivityPoster (activityId: number): Promise<ActivityPoster> {
+    const activityPoster = await prisma.activities.findFirst({
+      where: {
+        activity_id: activityId
+      },
+      select: {
+        poster_image: true,
+        poster_mimetype: true
+      }
+    })
+
+    if (activityPoster === null) {
+      throw new NotFoundError('No se encontró ninguna actividad con ese id')
+    }
+
+    if (activityPoster.poster_image === null) {
+      throw new NotFoundError('Esta actividad no tiene un poster')
+    }
+
+    return activityPoster
   }
 }
 

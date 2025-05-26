@@ -1,19 +1,33 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { FlatList, KeyboardAvoidingView, View, Platform } from 'react-native'
 import { styles } from './styles'
 import colors from '../../constants/colors'
+import { router } from 'expo-router'
 
 import ButtonsHeader from '../../components/shared/ButtonsHeader/ButtonsHeader'
 import IconButton from '../../components/shared/IconButton/IconButton'
 import CreateActivityForm from '../../components/CreateActivity/CreateActivityForm/CreateActivityForm'
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
+import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
 
-import { useCreateActivity } from '../../hooks/CreateActivity/useCreateActivity'
+import { useActivityFormContext } from '../../context/ActivityFormContext/ActivityFormContext'
 
 const CreateActivity = () => {
-  const { loading } = useCreateActivity()
+  const {
+    mode,
+    loading,
+    loadingAction,
+    createActivity,
+    posterImg,
+    title,
+    description,
+    location,
+    errors,
+  } = useActivityFormContext()
+
+  const [showModal, setShowModal] = useState(false)
 
   if (loading) {
     return <LoadingScreen message='Cargando la información...' />
@@ -21,14 +35,46 @@ const CreateActivity = () => {
 
   const renderContent = () => (
     <View style={styles.container}>
-      <ButtonsHeader title='Crear Evento'>
-        <IconButton icon={<CloseIcon size={32} color={colors.warningRed} />} />
+      <ButtonsHeader title='Crear Actividad'>
+        <IconButton
+          icon={
+            <CloseIcon
+              size={32}
+              color={colors.warningRed}
+              onPress={() => {
+                setShowModal(true)
+              }}
+            />
+          }
+        />
         <IconButton
           icon={<CheckIcon size={32} color={colors.selectionBlue} />}
+          onPress={createActivity}
         />
       </ButtonsHeader>
 
-      <CreateActivityForm />
+      <CreateActivityForm
+        mode={mode}
+        location={location}
+        loadingAction={loadingAction}
+        posterImg={posterImg}
+        title={title}
+        description={description}
+        errors={errors}
+      />
+
+      <ConfirmationModal
+        title='Volver a la pantalla de inicio'
+        description='¿Estás seguro de que quieres salir de la pantalla de creación de actividad? Todos los datos que ya llenaste se perderán.'
+        confirmButtonColor={colors.warningRed}
+        visible={showModal}
+        onCancel={() => {
+          setShowModal(false)
+        }}
+        onConfirm={() => {
+          router.back()
+        }}
+      />
     </View>
   )
 
@@ -36,7 +82,6 @@ const CreateActivity = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0} // Ajusta el offset según sea necesario
     >
       {/**
        
@@ -49,7 +94,9 @@ const CreateActivity = () => {
         data={[{ key: 'content' }]}
         renderItem={renderContent}
         keyExtractor={(item) => item.key}
-        keyboardShouldPersistTaps='always' // Asegura que los taps no cierren el teclado
+        keyboardShouldPersistTaps='never' // Asegura que los taps no cierren el teclado
+        nestedScrollEnabled={true}
+        removeClippedSubviews={false}
       />
     </KeyboardAvoidingView>
   )

@@ -1,15 +1,7 @@
 import React from 'react'
-import {
-  View,
-  Text,
-  FlatList,
-  TouchableOpacity,
-  ScrollView,
-} from 'react-native'
+import { View, Text, TouchableOpacity } from 'react-native'
 
-import AddNewHeader from './AddNewHeader/AddNewHeader'
 import IconButton from '../IconButton/IconButton'
-import OptionComponent from './Option/Option'
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'
 import colors from '../../../constants/colors'
 import { styles } from './styles'
@@ -19,6 +11,7 @@ import { ArrowDownIcon, RightArrowIcon } from '../Icons/Icons'
 import { SelectInputProps } from './interfaces'
 
 import { useSelectInput } from './useSelectInput'
+import OptionsModal from './OptionsModal/OptionsModal'
 
 const SelectInput = ({
   label,
@@ -27,55 +20,19 @@ const SelectInput = ({
   options = [],
   editable = false,
   value,
+  error = false,
+  errorMessage = '',
   onSelect,
   onEditOption,
   onDeleteOption,
   onAddOption,
 }: SelectInputProps) => {
   const { state, actions } = useSelectInput({
-    options,
     value,
     onSelect,
-    onEditOption,
     onDeleteOption,
     onAddOption,
   })
-
-  const renderOptions = () => {
-    if (state.selectOptions.length === 0) {
-      return (
-        <View style={styles.optionsContainer}>
-          <Text style={styles.emptyText}>No hay opciones disponibles</Text>
-        </View>
-      )
-    }
-
-    return (
-      <View style={styles.optionsContainer}>
-        <AddNewHeader
-          inputTextPlaceholder={headerInputPlaceholder}
-          onAddConfirm={actions.handleAddOption}
-        />
-        <ScrollView>
-          <FlatList
-            data={state.selectOptions}
-            renderItem={({ item }) => (
-              <OptionComponent
-                label={item.label}
-                onPress={() => actions.handleOptionSelect(item)}
-                editable={editable}
-                onEdit={(newLabel) =>
-                  actions.handleEditOption(item.id, newLabel)
-                }
-                onDelete={() => actions.handleDeleteOption(item)}
-              />
-            )}
-            keyExtractor={(item) => item.id.toString()}
-          />
-        </ScrollView>
-      </View>
-    )
-  }
 
   return (
     <View style={styles.container}>
@@ -83,10 +40,7 @@ const SelectInput = ({
       <TouchableOpacity
         style={[
           styles.optionContainer,
-          state.isOpen && {
-            borderBottomEndRadius: 0,
-            borderBottomStartRadius: 0,
-          },
+          error && { borderColor: colors.warningRed },
         ]}
         onPress={() => actions.setIsOpen(!state.isOpen)}
         activeOpacity={0.7}
@@ -110,8 +64,19 @@ const SelectInput = ({
           onPress={() => actions.setIsOpen(!state.isOpen)}
         />
       </TouchableOpacity>
+      {error && <Text style={styles.errorLabel}>{errorMessage}</Text>}
 
-      {state.isOpen && <View>{renderOptions()}</View>}
+      <OptionsModal
+        visible={state.isOpen}
+        editable={editable}
+        onRequestClose={() => actions.setIsOpen(false)}
+        handleAddOption={actions.handleAddOption}
+        options={options}
+        headerInputPlaceholder={headerInputPlaceholder}
+        handleOptionSelect={actions.handleOptionSelect}
+        onEditOption={onEditOption}
+        handleDeleteOption={actions.handleDeleteOption}
+      />
 
       <ConfirmationModal
         visible={state.isModalVisible}

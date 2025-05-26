@@ -13,6 +13,8 @@ import FlipCard from 'react-native-flip-card'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { calculateDimensions } from './profileIdutils'
 import { useUserProfile } from '../../hooks/useUserProfile'
+import BlackBox from '../../components/ProfileId/ReverseBox'
+import { ReverseIcon } from '../../components/shared/Icons/Icons'
 
 export default function ProfileId() {
   const [isFlipped, setIsFlipped] = useState(false)
@@ -53,8 +55,8 @@ export default function ProfileId() {
         ]}
       >
         <FlipCard
-          friction={6}
-          onFlipEnd={() => {
+          friction={200}
+          onFlipStart={() => {
             setIsFlipped((prevState) => !prevState)
           }}
         >
@@ -152,6 +154,9 @@ export default function ProfileId() {
                 {getProgramName()}
               </Text>
             </View>
+            <BlackBox cardDimensions={cardDimensions}>
+              <ReverseIcon />
+            </BlackBox>
           </View>
 
           {/* Cara trasera */}
@@ -217,6 +222,9 @@ export default function ProfileId() {
                 </Text>
               </View>
             </View>
+            <BlackBox cardDimensions={cardDimensions}>
+              <ReverseIcon />
+            </BlackBox>
           </View>
         </FlipCard>
       </View>

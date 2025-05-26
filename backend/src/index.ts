@@ -8,6 +8,11 @@ import authRoutes from './routes/auth.routes'
 import userRoutes from './routes/user.routes'
 import activityRoutes from './routes/activity.routes'
 import locationRoutes from './routes/location.routes'
+import requirementTemplateRoutes from './routes/requirement-template.routes'
+import requirementRoutes from './routes/requirement.routes'
+import userDocumentRoutes from './routes/user-document.routes'
+import registrationRoutes from './routes/registration.routes'
+import academicProgramRoutes from './routes/academic-program.routes'
 
 const app = express()
 
@@ -15,6 +20,7 @@ const PORT = process.env.PORT ?? '3000'
 
 // Middlewares
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 // Swagger
@@ -29,6 +35,11 @@ app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
 app.use('/api/activities', activityRoutes)
 app.use('/api/locations', locationRoutes)
+app.use('/api/requirement-templates', requirementTemplateRoutes)
+app.use('/api/requirements', requirementRoutes)
+app.use('/api/user-documents', userDocumentRoutes)
+app.use('/api/registrations', registrationRoutes)
+app.use('/api/academic-programs', academicProgramRoutes)
 
 app.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`)

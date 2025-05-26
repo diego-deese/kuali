@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react'
-import { Location } from '../../types/Location'
-import locationService from '../../services/location.service'
+import { useState, useEffect } from 'react'
 import Toast from 'react-native-toast-message'
 import { Option } from '../../components/shared/SelectInput/interfaces'
+import { Location } from '../../types/Location'
+import locationService from '../../services/location.service'
 import { mapToOption } from '../../utils/mappers'
 
-export const useCreateActivity = () => {
-  const [eventDate, setEventDate] = useState(new Date())
-  const [limitDate, setLimitDate] = useState(eventDate)
+export const useLocations = () => {
   const [locations, setLocations] = useState<Location[] | null>(null)
   const [location, setLocation] = useState<Option | null>(null)
   const [loading, setLoading] = useState(false)
@@ -52,12 +50,13 @@ export const useCreateActivity = () => {
           text2: result.error,
         })
       } else {
-        setLocations((prevOptions) =>
-          prevOptions.map((option) => {
-            return option.location_id === location_id
-              ? { ...option, name: newName }
-              : option
-          }),
+        setLocations(
+          (prevOptions) =>
+            prevOptions?.map((option) =>
+              option.location_id === location_id
+                ? { ...option, name: newName }
+                : option,
+            ) ?? null,
         )
         Toast.show({
           type: 'success',
@@ -89,10 +88,11 @@ export const useCreateActivity = () => {
           text2: result.error,
         })
       } else {
-        setLocations((prevOptions) =>
-          prevOptions.filter(
-            (location) => location.location_id !== location_id,
-          ),
+        setLocations(
+          (prevOptions) =>
+            prevOptions?.filter(
+              (location) => location.location_id !== location_id,
+            ) ?? null,
         )
         Toast.show({
           type: 'success',
@@ -101,10 +101,10 @@ export const useCreateActivity = () => {
         })
       }
     } catch (error) {
-      console.error('Error al renombrar el lugar:', error)
+      console.error('Error al eliminar el lugar:', error)
       Toast.show({
         type: 'error',
-        text1: 'Error renombrar el lugar',
+        text1: 'Error al eliminar el lugar',
         text2: 'Por favor intenta de nuevo más tarde',
       })
     } finally {
@@ -144,27 +144,21 @@ export const useCreateActivity = () => {
     }
   }
 
+  const onLocationChange = (newLocation: Option) => {
+    setLocation(newLocation)
+  }
+
   useEffect(() => {
     getLocations()
   }, [])
 
   return {
-    eventDate: {
-      eventDate,
-      setEventDate,
-    },
-    limitDate: {
-      limitDate,
-      setLimitDate,
-    },
-    location: {
-      location,
-      setLocation,
-      locations,
-      updateLocationName,
-      deleteLocation,
-      createLocation,
-    },
+    location,
+    locations,
+    onLocationChange,
+    updateLocationName,
+    deleteLocation,
+    createLocation,
     loading,
     loadingAction,
   }

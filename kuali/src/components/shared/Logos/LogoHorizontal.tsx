@@ -12,7 +12,7 @@ const LogoHorizontal = (props) => (
   <Svg
     xmlns='http://www.w3.org/2000/svg'
     width={173}
-    height={62}
+    height={64}
     fill='none'
     {...props}
   >

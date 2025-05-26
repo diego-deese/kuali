@@ -14,6 +14,8 @@ export const styles = StyleSheet.create({
   },
   labelContainer: {
     flex: 1,
+    width: '100%',
+    textAlignVertical: 'center',
   },
   iconsContainer: {
     flexDirection: 'row',
@@ -33,6 +35,7 @@ export const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   label: {
+    textAlignVertical: 'center',
     fontFamily: 'monserratRegular',
     fontSize: 16,
     includeFontPadding: false,

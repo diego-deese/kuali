@@ -1,107 +1,281 @@
 import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import DocumentCard, {
-  Document,
-} from '../../components/DocumentCard/DocumentCard'
+import DocumentCard from '../../components/DocumentCard/DocumentCard'
 import { useEffect, useState } from 'react'
 import styles from './InfoEvents.styles'
-import {
-  CalendarEvent,
-  LocationIcon,
-} from '../../components/shared/Icons/Icons'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
-import { FormattedDate } from '../../components/shared/FormattedDate/FormattedDate'
-// Detalles completos de un evento académico.
-interface EventDetails {
-  id: number
-  title: string
-  event_date: Date
-  location: string
-  description: string
-  documents: Document[]
-}
+import Button from '../../components/shared/Button/Button'
+import colors from '../../constants/colors'
+import { DocumentStatus } from '../../types/UserDocument'
+import { Activity } from '../../types/Activity'
+import { getDocumentStatusFromString } from './InfoEvent.utils'
+import activityService from '../../services/activity.service'
+import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
+import documentService from '../../services/document.service'
+import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
+import Toast from 'react-native-toast-message'
+import TemplateCard from '../../components/TemplateCard/TemplateCard'
+import * as WebBrowser from 'expo-web-browser'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
   gestionar su participación.
  */
-export default function InfoEvent() {
+const InfoEvent: React.FC = () => {
   const params = useLocalSearchParams()
-  const eventId = params.id ? Number(params.id) : 0
+  const activity_id = params.activity_id ? Number(params.activity_id) : 0
 
-  const [eventDetails, setEventDetails] = useState<EventDetails | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [eventDetails, setEventDetails] = useState<Activity | null>(null)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [modalVisible, setModalVisible] = useState(false)
+  const [hasApplied, setHasApplied] = useState(false)
+  const [documentToDelete, setDocumentToDelete] = useState<number | null>(null)
+  const [requirementsExpanded, setRequirementsExpanded] = useState(true)
+  const [plantillasExpanded, setPlantillasExpanded] = useState(true)
+  const [activeModal, setActiveModal] = useState<
+    'none' | 'apply' | 'exit' | 'delete'
+  >('none') // Un solo state para los modales
 
-  useEffect(() => {
-    // Simular la llamada a una API
-    const fetchEventDetails = async () => {
-      try {
-        setLoading(true)
+  const fetchEventDetails = async () => {
+    try {
+      setLoading(true)
 
-        // Datos de ejemplo
-        const mockData: EventDetails = {
-          id: eventId,
-          title: (params.title as string) || 'Nombre del evento',
-          event_date: params.date
-            ? new Date(params.date as string)
-            : new Date(),
-          location: (params.location as string) || 'Lugar',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-          documents: [
-            {
-              id: 1,
-              title: 'Documento 1',
-              description: 'Solicita este documento en servicios escolares',
-              status: 'pending',
-            },
-            {
-              id: 2,
-              title: 'Documento 2',
-              description: 'Solicita este documento en servicios escolares',
-              status: 'completed',
-            },
-            {
-              id: 3,
-              title: 'Documento 3',
-              description: 'Descarga y llena el formulario',
-              status: 'rejected',
-            },
-          ],
-        }
-
-        // Simular un pequeño retraso como en una llamada real
-        setTimeout(() => {
-          setEventDetails(mockData)
-          setLoading(false)
-        }, 500)
-      } catch (err) {
-        setError('Error al cargar los detalles del evento')
+      if (!activity_id) {
+        setError('ID de actividad no válido')
         setLoading(false)
-        console.error(err)
+        return
       }
+
+      // Llamada al servicio para obtener detalles de la actividad
+      const result = await activityService.getActivityById(activity_id)
+
+      if (!result.success && 'error' in result) {
+        setError(result.error || 'No se pudo cargar la información')
+        setLoading(false)
+        return
+      }
+
+      setEventDetails(result.data)
+      // Verificar si el usuario ya está registrado en esta actividad
+      setHasApplied(result.data.isRegistered || false)
+      setLoading(false)
+    } catch (err) {
+      setError('Error al cargar los detalles del evento')
+      setLoading(false)
+      console.error(err)
     }
-
+  }
+  useEffect(() => {
     fetchEventDetails()
-  }, [eventId, params.title, params.date, params.location])
+  }, [activity_id])
 
-  const handleUpload = (docId: number) => {
-    // Lógica para subir documento - integrar con API en el futuro
-    console.log(`Subiendo documento ${docId}`)
+  const handleUpload = async (docId: number, fileUri?: string) => {
+    // Implementación de la llamada al servicio para subir documento
+    try {
+      if (!fileUri) {
+        console.error('No se proporcionó URI del archivo')
+        return
+      }
+
+      setLoading(true)
+      const result = await documentService.uploadDocument(
+        activity_id,
+        docId,
+        fileUri,
+      )
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: result.error || 'No se pudo subir el documento',
+          position: 'top',
+        })
+      } else {
+        // Actualizar la interfaz después de subir el documento
+        fetchEventDetails()
+        Toast.show({
+          type: 'success',
+          text1: 'Archivo subido',
+          text2: 'El documento se subió correctamente',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+      }
+    } catch (error) {
+      console.error('Error al subir documento:', error)
+      setError('Error al subir el documento')
+    } finally {
+      setLoading(false)
+    }
   }
 
-  const handleDelete = (docId: number) => {
-    // Lógica para eliminar documento - integrar con API en el futuro
-    console.log(`Eliminando documento ${docId}`)
+  const handleDelete = async (docId: number) => {
+    // Implementación de la llamada al servicio para eliminar documento
+    if (!docId) {
+      console.error('ID de documento inválido')
+      return
+    }
+    setDocumentToDelete(docId)
+    setActiveModal('delete')
   }
 
-  const handleExit = () => {
-    console.log('Saliendo de esta convocatoria')
-    router.push('/(tabs)/myactivities')
+  const confirmDelete = async () => {
+    try {
+      if (!documentToDelete) {
+        console.error('ID de documento inválido')
+        return
+      }
+
+      setLoading(true)
+      console.log('Eliminando documento:', documentToDelete)
+      const result = await documentService.deleteDocument(documentToDelete)
+
+      if (!result.success && 'error' in result) {
+        setError(result.error || 'Error al eliminar documento')
+        console.error('Error:', result.error)
+
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: result.error || 'No se pudo eliminar el documento',
+          position: 'top',
+        })
+      } else {
+        Toast.show({
+          type: 'success',
+          text1: 'Documento eliminado',
+          text2: 'El documento se eliminó correctamente',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+        // Refrescar los datos para actualizar la UI
+        fetchEventDetails()
+      }
+    } catch (error) {
+      console.error('Error al eliminar documento:', error)
+      setError('Error al eliminar el documento')
+
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'No se pudo eliminar el documento',
+        position: 'top',
+      })
+    } finally {
+      setLoading(false)
+      setDocumentToDelete(null)
+    }
+  }
+
+  const handleExit = async () => {
+    try {
+      setLoading(true)
+      const result = await activityService.unregisterFromActivity(activity_id)
+
+      if (result.success) {
+        setHasApplied(false)
+        Toast.show({
+          type: 'success',
+          text1: 'Baja procesada',
+          text2: 'Te has dado de baja de la actividad correctamente',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+        router.back()
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          position: 'top',
+        })
+      }
+    } catch (error) {
+      console.error('Error al darse de baja del evento:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Ocurrió un error al procesar tu solicitud',
+        position: 'top',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleApply = () => {
+    setActiveModal('apply')
+  }
+
+  const handleTemplateDownload = async (templateId: number) => {
+    // try {
+    //   // Mostrar indicador de carga
+    //   Toast.show({
+    //     type: 'info',
+    //     text1: 'Preparando documento...',
+    //     position: 'top',
+    //     autoHide: true,
+    //     visibilityTime: 2000,
+    //   })
+    //   // Obtener la URL de forma asíncrona
+    //   const downloadUrl =
+    //     await documentService.getTemplateDownloadUrl(templateId)
+    //   // Abrir el navegador con la URL
+    //   await WebBrowser.openBrowserAsync(downloadUrl)
+    // } catch (error) {
+    //   console.error('Error al obtener URL de descarga:', error)
+    //   Toast.show({
+    //     type: 'error',
+    //     text1: 'Error',
+    //     text2: 'No se pudo descargar la plantilla',
+    //     position: 'top',
+    //   })
+    // }
+
+    console.log('DESCARGANDO DOCUMENTO')
+  }
+  const confirmApply = async () => {
+    try {
+      setLoading(true)
+      const result = await activityService.applyToActivity(activity_id)
+
+      if (result.success) {
+        setHasApplied(true)
+        Toast.show({
+          type: 'success',
+          text1: 'Registro exitoso',
+          text2: 'Te has registrado correctamente a la actividad',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+      } else {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          position: 'top',
+        })
+      }
+    } catch (error) {
+      console.error('Error al aplicar a la convocatoria:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error',
+        text2: 'Ocurrió un error al procesar tu solicitud',
+        position: 'top',
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const toggleRequirements = () => {
+    setRequirementsExpanded(!requirementsExpanded)
+  }
+
+  const togglePlantillas = () => {
+    setPlantillasExpanded(!plantillasExpanded)
   }
 
   if (loading) {
@@ -129,60 +303,164 @@ export default function InfoEvent() {
   }
 
   return (
-    // <SafeAreaView style={styles.container}>
-
     <ScrollView>
-      <Pressable style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>Regresar</Text>
-      </Pressable>
       <View style={styles.content}>
-        {/* Información del evento */}
-        <Text style={styles.eventTitle}>{eventDetails.title}</Text>
-        <View style={styles.eventInfoRow}>
-          <CalendarEvent style={styles.eventInfoIcon} />
-          <FormattedDate
-            date={eventDetails.event_date}
-            style={styles.eventInfoText}
-          />
-        </View>
-        <View style={styles.eventInfoRow}>
-          <LocationIcon style={styles.eventInfoIcon} />
-          <Text style={styles.eventInfoText}>{eventDetails.location}</Text>
-        </View>
-        <Text style={styles.description}>{eventDetails.description}</Text>
+        <EventDetailsHeader // Info del evento
+          activity_id={activity_id}
+          existingData={eventDetails}
+          onDataLoaded={(data) => {
+            setEventDetails(data)
+            setHasApplied(data.isRegistered || false)
+          }}
+        />
 
-        {/* Requisitos/Documentos */}
-        <Text style={styles.sectionTitle}>Requisitos</Text>
-        {eventDetails.documents.map((doc) => (
-          <DocumentCard
-            key={doc.id}
-            document={doc}
-            onUpload={handleUpload}
-            onDelete={handleDelete}
-          />
-        ))}
+        {/* Mostrar el botón de Aplicar cuando NO ha aplicado */}
+        {!hasApplied ? (
+          <Button buttonText='Aplicar' onPress={handleApply} />
+        ) : (
+          /* Mostrar las secciones desplegables cuando ya ha aplicado */
+          <>
+            {/* Sección de Plantillas */}
+            <Pressable style={styles.sectionHeader} onPress={togglePlantillas}>
+              <Text style={styles.sectionTitle}>Plantillas</Text>
+              {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
+            </Pressable>
 
-        {/* Botón de salir */}
-        <Pressable
-          style={styles.exitButton}
-          onPress={() => setModalVisible(true)}
-        >
-          <Text style={styles.exitButtonText}>Salir de esta convocatoria</Text>
-        </Pressable>
+            {plantillasExpanded && (
+              <View>
+                {eventDetails.requirements &&
+                eventDetails.requirements.some((req) => req.template) ? (
+                  // Si hay plantillas, mapearlas
+                  eventDetails.requirements
+                    .filter((req) => req.template)
+                    .map((req) => (
+                      <TemplateCard
+                        key={`template-${req.requirement_id}`}
+                        template={{
+                          id: req.requirement_id,
+                          name: req.name,
+                          description: req.description,
+                        }}
+                        onDownload={handleTemplateDownload}
+                      />
+                    ))
+                ) : (
+                  // Si NO hay plantillas, mostrar este mensaje
+                  <Text style={styles.noRequirementsText}>
+                    Esta actividad no tiene plantillas disponibles.
+                  </Text>
+                )}
+              </View>
+            )}
 
-        {/* Modal de confirmación */}
+            {/* Sección de Requisitos */}
+            <Pressable
+              style={styles.sectionHeader}
+              onPress={toggleRequirements}
+            >
+              <Text style={styles.sectionTitle}>Requisitos</Text>
+              {requirementsExpanded ? <DropUpIcon /> : <DropDownIcon />}
+            </Pressable>
+
+            {requirementsExpanded && (
+              <View>
+                {eventDetails.requirements &&
+                eventDetails.requirements.length > 0 ? (
+                  // Si hay requisitos, mapearlos
+                  eventDetails.requirements.map((req) => {
+                    const userDocument =
+                      req.userDocuments && req.userDocuments.length > 0
+                        ? req.userDocuments[0]
+                        : undefined
+
+                    const documentStatus = userDocument?.status?.name
+                      ? getDocumentStatusFromString(userDocument.status.name)
+                      : DocumentStatus.Pendiente
+
+                    return (
+                      <DocumentCard
+                        key={req.requirement_id}
+                        document={{
+                          id: req.requirement_id,
+                          title: req.name,
+                          description: req.description,
+                          status: documentStatus,
+                          userDocumentId: userDocument?.user_document_id,
+                        }}
+                        onUpload={(docId, fileUri) =>
+                          handleUpload(docId, fileUri)
+                        }
+                        onDelete={() =>
+                          handleDelete(userDocument?.user_document_id || 0)
+                        }
+                      />
+                    )
+                  })
+                ) : (
+                  // Si NO hay requisitos, mostrar este mensaje
+                  <Text style={styles.noRequirementsText}>
+                    Esta actividad no tiene requisitos.
+                  </Text>
+                )}
+              </View>
+            )}
+
+            {/* Botón para darse de baja*/}
+            <Pressable
+              style={styles.exitButton}
+              onPress={() => setActiveModal('exit')}
+            >
+              <Text style={styles.exitButtonText}>
+                Darte de baja del evento
+              </Text>
+            </Pressable>
+          </>
+        )}
+
+        {/* Modal de confirmación para aplicar */}
         <ConfirmationModal
-          visible={modalVisible}
+          visible={activeModal === 'apply'}
+          title='Confirmar aplicación'
+          description='¿Estás seguro que deseas aplicar a esta convocatoria? Recibirás notificaciones y alertas sobre los requisitos y fechas importantes.'
+          confirmButtonText='Aplicar'
+          confirmButtonColor={colors.selectionBlue}
+          onCancel={() => setActiveModal('none')}
+          onConfirm={() => {
+            confirmApply()
+            setActiveModal('none')
+          }}
+        />
+        {/* Modal de confirmación para desuscribirse */}
+        <ConfirmationModal
+          visible={activeModal === 'exit'}
           title='Confirmación'
           description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
-          onCancel={() => setModalVisible(false)}
+          confirmButtonColor={colors.warningRed}
+          onCancel={() => setActiveModal('none')}
           onConfirm={() => {
             handleExit()
-            setModalVisible(false)
+            setActiveModal('none')
+          }}
+        />
+        {/* Modal de confirmación para eliminar documento */}
+        <ConfirmationModal
+          visible={activeModal === 'delete'}
+          title='Eliminar documento'
+          description='¿Estás seguro que deseas eliminar este documento? Esta acción no se puede deshacer.'
+          confirmButtonText='Eliminar'
+          confirmButtonColor={colors.warningRed}
+          onCancel={() => {
+            setActiveModal('none')
+            setDocumentToDelete(null)
+          }}
+          onConfirm={() => {
+            confirmDelete()
+            setActiveModal('none')
           }}
         />
       </View>
     </ScrollView>
-    //</SafeAreaView>
   )
 }
+
+export default InfoEvent

@@ -98,6 +98,7 @@ paths:
           type: integer
           minimum: 1
         description: Location id
+
     put:
       summary: Rename a location
       description: Operation only available for admins
@@ -121,6 +122,48 @@ paths:
                 properties:
                   location:
                     $ref: '#/components/schemas/Location'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Location not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+    delete:
+      summary: Soft-delete a location
+      description: Operation only available for admins
+      tags:
+        - Locations
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
         '400':
           description: Bad request
           content:

@@ -5,9 +5,8 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.solidWhite,
     borderRadius: 8,
-    padding: 16,
+    padding: 24,
     marginVertical: 8,
-    marginHorizontal: 16,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -19,19 +18,22 @@ const styles = StyleSheet.create({
   },
   header: {
     flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
+    gap: 8,
+    marginBottom: 16,
+  },
+  headerText: {
+    gap: 4,
   },
   title: {
     fontSize: 18,
-    fontFamily: 'monserratSemiBold',
-    marginLeft: 8,
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
   },
   description: {
     fontSize: 14,
     fontFamily: 'monserratRegular',
+    includeFontPadding: false,
     color: colors.standardGray,
-    marginBottom: 16,
   },
   buttonContainer: {
     flexDirection: 'row',

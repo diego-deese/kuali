@@ -338,22 +338,12 @@ paths:
               schema:
                 $ref: '#/components/schemas/Error'
 
-  /users/{id}/activities/upcoming:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          minimum: 1
-        description: User id
-    
+  /users/students:
     get:
-      summary: Retrieves user's upcoming activities
-      description: Operation available for everyone
+      summary: List all the resarcher's students group by academic program
+      description: Operation only available for researchers
       tags:
         - Users
-        - Activities
       responses:
         '200':
           content:
@@ -361,134 +351,18 @@ paths:
               schema:
                 type: object
                 properties:
-                  activities:
+                  studentsByAcademicProgram:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserActivity'
+                      $ref: '#/components/schemas/AcademicProgramWithStudents'
         '400':
           description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-
-  /users/{id}/activities/past:
-    parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-          minimum: 1
-        description: User id
-
-    get:
-      summary: Retrieves user's past activities
-      description: Operation available for everyone
-      tags:
-        - Users
-        - Activities
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  activities:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/UserActivity'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '403':
-          description: Forbidden
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '500':
-          description: Internal server error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-  /users/{userId}/activities/{activityId}:
-    parameters:
-      - name: userId
-        in: path
-        required: true
-        schema:
-          type: integer
-          minimum: 1
-        description: User id
-      - name: activityId
-        in: path
-        required: true
-        schema:
-          type: integer
-          minimum: 1
-        description: Activity id
-
-    get:
-      summary: Retrieves the specific activity the user is subscribed to
-      description: Operation available for everyone
-      tags:
-        - Users
-        - Activities
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  activity:
-                    $ref: '#/components/schemas/UserActivity'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-        '403':
-          description: Forbidden
+        '404':
+          description: User not found
           content:
             application/json:
               schema:

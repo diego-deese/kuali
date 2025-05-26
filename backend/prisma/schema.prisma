@@ -1,12 +1,6 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  output = "../src/generated/client"
+  provider      = "prisma-client-js"
+  output        = "../src/generated/client"
   binaryTargets = ["native", "linux-musl-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x"]
 }
 
@@ -16,166 +10,172 @@ datasource db {
 }
 
 model Roles {
-  role_id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-
-  users Users[]
+  role_id Int     @id @default(autoincrement())
+  name    String  @db.VarChar(255)
+  users   Users[]
 }
 
 model Users {
-  user_id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-  second_name String? @db.VarChar(255)
-  paternal_lastname String @db.VarChar(255)
-  maternal_lastname String @db.VarChar(255)
-  institutional_email String @db.VarChar(255) @unique
-  personal_email String? @db.VarChar(255) @unique
-  curp String? @db.VarChar(18)
-  profile_photo Bytes? @db.MediumBlob
-  photo_mime_type String? @db.VarChar(50)
-  identifier String @db.VarChar(255)
-  password String @db.VarChar(255)
-  creation_date DateTime @default(now())
-  role_id Int
-
-  refresh_tokens RefreshToken[]
-  role Roles @relation(fields: [role_id], references: [role_id])
-  academic_programs_as_student Inscriptions[]
+  user_id                         Int                @id @default(autoincrement())
+  name                            String             @db.VarChar(255)
+  second_name                     String?            @db.VarChar(255)
+  paternal_lastname               String             @db.VarChar(255)
+  maternal_lastname               String             @db.VarChar(255)
+  institutional_email             String             @unique @db.VarChar(255)
+  personal_email                  String?            @unique @db.VarChar(255)
+  curp                            String?            @db.VarChar(18)
+  profile_photo                   Bytes?             @db.MediumBlob
+  photo_mime_type                 String?            @db.VarChar(50)
+  identifier                      String             @db.VarChar(255)
+  password                        String             @db.VarChar(255)
+  creation_date                   DateTime           @default(now())
+  role_id                         Int
   academic_programs_as_researcher AcademicPrograms[]
-  created_activities Activities[]
-  activities Registrations[]
+  created_activities              Activities[]
+  academic_programs_as_student    Inscriptions[]
+  refresh_tokens                  RefreshToken[]
+  activities                      Registrations[]
+  role                            Roles              @relation(fields: [role_id], references: [role_id])
+
+  @@index([role_id], map: "Users_role_id_fkey")
 }
 
 model RefreshToken {
   id          String   @id @unique @default(uuid())
-  hashedToken String   @unique  
+  hashedToken String   @unique
   user_id     Int
   revoked     Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-  
   user        Users    @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  @@index([user_id], map: "RefreshToken_user_id_fkey")
 }
 
 model AcademicPrograms {
-  program_id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
+  program_id    Int            @id @default(autoincrement())
+  name          String         @db.VarChar(255)
   researcher_id Int?
+  researcher    Users?         @relation(fields: [researcher_id], references: [user_id])
+  inscriptions  Inscriptions[]
 
-  researcher Users? @relation(fields: [researcher_id], references: [user_id])
-  students Inscriptions[]
+  @@index([researcher_id], map: "AcademicPrograms_researcher_id_fkey")
 }
 
 model Inscriptions {
-  inscription_id Int @id @default(autoincrement())
-  start_date DateTime
-  end_date DateTime
-  active Boolean
-  student_id Int
-  program_id Int
-
-  students Users @relation(fields: [student_id], references: [user_id])
-  program AcademicPrograms @relation(fields: [program_id], references: [program_id])
+  inscription_id Int              @id @default(autoincrement())
+  start_date     DateTime
+  end_date       DateTime
+  active         Boolean
+  student_id     Int
+  program_id     Int
+  program        AcademicPrograms @relation(fields: [program_id], references: [program_id])
+  students       Users            @relation(fields: [student_id], references: [user_id])
 
   @@index([program_id])
   @@index([student_id])
 }
 
 model Categories {
-  category_id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-
-  activities Activities[]
+  category_id Int          @id @default(autoincrement())
+  name        String       @db.VarChar(255)
+  activities  Activities[]
 }
 
 model Locations {
-  location_id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-
-  activities Activities[]
+  location_id Int          @id @default(autoincrement())
+  name        String       @db.VarChar(255)
+  deleted     Boolean      @default(false)
+  activities  Activities[]
 }
 
 model Activities {
-  activity_id Int @id @default(autoincrement())
-  title String @db.VarChar(255)
-  description String @db.Text
-  event_date DateTime
+  activity_id         Int             @id @default(autoincrement())
+  title               String          @db.VarChar(255)
+  description         String          @db.Text
+  event_date          DateTime
   register_date_limit DateTime
-  poster_image Bytes? @db.MediumBlob
-  poster_mimetype String? @db.VarChar(50)
-  mandatory Boolean
-  creation_date DateTime @default(now())
-  last_updated DateTime? @updatedAt
-  visible_students Boolean
+  poster_image        Bytes?          @db.MediumBlob
+  poster_mimetype     String?         @db.VarChar(50)
+  mandatory           Boolean
+  creation_date       DateTime        @default(now())
+  last_updated        DateTime?       @updatedAt
+  visible_students    Boolean
   visible_researchers Boolean
-  admin_creator_id Int
-  location_id Int
-  category_id Int
+  admin_creator_id    Int
+  location_id         Int
+  category_id         Int
+  creator             Users           @relation(fields: [admin_creator_id], references: [user_id])
+  category            Categories      @relation(fields: [category_id], references: [category_id])
+  location            Locations       @relation(fields: [location_id], references: [location_id])
+  users               Registrations[]
+  requirements        Requirements[]
 
-  category Categories @relation(fields: [category_id], references: [category_id])
-  location Locations @relation(fields: [location_id], references: [location_id])
-  creator Users @relation(fields: [admin_creator_id], references: [user_id])
-  requirements Requirements[]
-  attachedFiles ActivityAttachedFiles[]
-  users Registrations[]
+  @@index([admin_creator_id], map: "Activities_admin_creator_id_fkey")
+  @@index([category_id], map: "Activities_category_id_fkey")
+  @@index([location_id], map: "Activities_location_id_fkey")
 }
 
 model Requirements {
-  requirement_id Int @id @default(autoincrement())
-  name String @db.VarChar(100)
-  description String @db.VarChar(100)
-  last_updated DateTime?
-  activity_id Int
+  requirement_id Int                   @id @default(autoincrement())
+  name           String                @db.VarChar(100)
+  description    String                @db.VarChar(100)
+  last_updated   DateTime?             @updatedAt
+  activity_id    Int
+  activity       Activities            @relation(fields: [activity_id], references: [activity_id])
+  userDocuments  UserDocuments[]
+  template       RequirementTemplates?
 
-  activity Activities @relation(fields: [activity_id], references: [activity_id])
-  userDocuments UserDocuments[]
+  @@index([activity_id], map: "Requirements_activity_id_fkey")
 }
 
-model ActivityAttachedFiles {
-  activity_attached_file_id Int @id @default(autoincrement())
-  name String @db.VarChar(100)
-  file_content Bytes @db.LongBlob
-  mimetype String @db.VarChar(50)
-  upload_date DateTime @default(now())
-  last_updated DateTime? @updatedAt
-  activity_id Int
+model RequirementTemplates {
+  requirement_template_id Int          @id @default(autoincrement())
+  name                    String       @db.VarChar(100)
+  file_content            Bytes
+  mimetype                String       @db.VarChar(50)
+  upload_date             DateTime     @default(now())
+  last_updated            DateTime?    @updatedAt
+  requirement_id          Int          @unique
+  requirement             Requirements @relation(fields: [requirement_id], references: [requirement_id])
 
-  activity Activities @relation(fields: [activity_id], references: [activity_id])
+  @@index([requirement_id], map: "RequirementTemplate_requirement_id_fkey")
 }
 
 model RevisionStatus {
-  revision_status_id Int @id @default(autoincrement())
-  name String @db.VarChar(255)
-
-  userDocuments UserDocuments[]
+  revision_status_id Int             @id @default(autoincrement())
+  name               String          @db.VarChar(255)
+  userDocuments      UserDocuments[]
 }
 
 model UserDocuments {
-  user_document_id Int @id @default(autoincrement())
-  file_name String @db.VarChar(255)
-  file_content Bytes @db.LongBlob
-  mimetype String @db.VarChar(50)
-  upload_date DateTime @default(now())
-  last_updated DateTime? @updatedAt
-  last_reviewed DateTime?
+  user_document_id   Int            @id @default(autoincrement())
+  file_name          String         @db.VarChar(255)
+  file_content       Bytes
+  mimetype           String         @db.VarChar(50)
+  upload_date        DateTime       @default(now())
+  last_updated       DateTime?      @updatedAt
+  last_reviewed      DateTime?
   revision_status_id Int
-  registration_id Int
-  requirement_id Int
+  registration_id    Int
+  requirement_id     Int
+  registration       Registrations  @relation(fields: [registration_id], references: [registration_id])
+  requirement        Requirements   @relation(fields: [requirement_id], references: [requirement_id])
+  status             RevisionStatus @relation(fields: [revision_status_id], references: [revision_status_id])
 
-  status RevisionStatus @relation(fields: [revision_status_id], references: [revision_status_id])
-  requirement Requirements @relation(fields: [requirement_id], references: [requirement_id])
-  registration Registrations @relation(fields: [registration_id], references: [registration_id])
+  @@index([registration_id], map: "UserDocuments_registration_id_fkey")
+  @@index([requirement_id], map: "UserDocuments_requirement_id_fkey")
+  @@index([revision_status_id], map: "UserDocuments_revision_status_id_fkey")
 }
 
 model Registrations {
-  registration_id Int @id @default(autoincrement())
-  registration_date DateTime
-  user_id Int
-  activity_id Int
-
-  userDocuments UserDocuments[]
-  activity Activities @relation(fields: [activity_id], references: [activity_id])
-  user Users @relation(fields: [user_id], references: [user_id])
+  registration_id   Int             @id @default(autoincrement())
+  registration_date DateTime        @default(now())
+  user_id           Int
+  activity_id       Int
+  activity          Activities      @relation(fields: [activity_id], references: [activity_id])
+  user              Users           @relation(fields: [user_id], references: [user_id])
+  userDocuments     UserDocuments[]
 
   @@index([user_id])
   @@index([activity_id])

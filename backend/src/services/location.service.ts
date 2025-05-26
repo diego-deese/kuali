@@ -5,7 +5,11 @@ import { ResponseMessage } from '../types/Message'
 
 class LocationService {
   async getAllLocations (): Promise<Locations[]> {
-    const locations = await prisma.locations.findMany()
+    const locations = await prisma.locations.findMany({
+      where: {
+        deleted: false
+      }
+    })
 
     return locations
   }
@@ -52,9 +56,12 @@ class LocationService {
   async deleteLocation (locationId: number): Promise<ResponseMessage> {
     await this.getLocation(locationId)
 
-    await prisma.locations.delete({
+    await prisma.locations.update({
       where: {
         location_id: locationId
+      },
+      data: {
+        deleted: true
       }
     })
 

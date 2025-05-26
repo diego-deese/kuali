@@ -1,4 +1,4 @@
-enum CategoryName {
+export enum CategoryName {
   'Evento',
   'Convocatoria',
 }

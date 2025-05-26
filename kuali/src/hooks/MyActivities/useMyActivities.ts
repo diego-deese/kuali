@@ -13,6 +13,8 @@ export const useMyActivities = () => {
   const [pastActivities, setPastActivities] = useState<Activity[] | null>(null)
   const [loadingActivities, setLoadingActivities] = useState(false)
 
+  const [refreshing, setRefreshing] = useState(false)
+
   const { user } = useAuth()
 
   const handleTabChange = (tab) => {
@@ -34,15 +36,22 @@ export const useMyActivities = () => {
 
   useEffect(() => {
     if (user && user.user_id) {
-      if (upcomingActivities === null) getUpcomingActivities(user.user_id)
-      if (pastActivities === null) getPastActivities(user.user_id)
+      if (upcomingActivities === null) getUpcomingActivities()
+      if (pastActivities === null) getPastActivities()
     }
-  }, [user, upcomingActivities, pastActivities])
+  }, [upcomingActivities, pastActivities, user])
 
-  const getUpcomingActivities = async (userId: number) => {
+  const handleRefresh = () => {
+    setRefreshing(true)
+    setUpcomingActivities(null)
+    setPastActivities(null)
+    setRefreshing(false)
+  }
+
+  const getUpcomingActivities = async () => {
     try {
       setLoadingActivities(true)
-      const result = await activityService.getUpcomingActivities(userId)
+      const result = await activityService.getUpcomingActivities()
 
       if (!result.success && 'error' in result) {
         Toast.show({
@@ -66,11 +75,11 @@ export const useMyActivities = () => {
     }
   }
 
-  const getPastActivities = async (userId: number) => {
+  const getPastActivities = async () => {
     try {
       setLoadingActivities(true)
 
-      const result = await activityService.getPastActivities(userId)
+      const result = await activityService.getPastActivities()
 
       if (!result.success && 'error' in result) {
         Toast.show({
@@ -109,5 +118,7 @@ export const useMyActivities = () => {
       getUpcomingActivities,
     },
     showViewSelector: activeTab === 'upcoming',
+    refreshing,
+    handleRefresh,
   }
 }

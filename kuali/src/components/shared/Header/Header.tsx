@@ -1,40 +1,29 @@
 import React from 'react'
-import { View, TouchableOpacity } from 'react-native'
+import { View } from 'react-native'
 import styles from './Header.styles'
 import colors from '../../../constants/colors'
 import LogoHorizontal from '../Logos/LogoHorizontal'
-import { NotificationNoneIcon, LogoutIcon } from '../Icons/Icons'
-import { usePathname } from 'expo-router'
+import { NotificationNoneIcon } from '../Icons/Icons'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import IconButton from '../IconButton/IconButton'
 
 interface HeaderProps {
-  onTabPress: (tabName: string) => void // Función que se ejecutará cuando se presione un tab
+  leftComponent?: React.ReactNode
+  rightComponent?: React.ReactNode
 }
 
-const Header: React.FC<HeaderProps> = ({ onTabPress }) => {
-  const pathname = usePathname()
-  const isProfileScreen = pathname.includes('profile')
-
-  const handleIconPress = () => {
-    if (isProfileScreen) {
-      onTabPress('logout') // Ejecuta logout solo si es el LogoutIcon
-    } else {
-      console.log('notificacion') // Muestra console.log si es el NotificationIcon
-    }
-  }
-
+const Header: React.FC<HeaderProps> = ({ leftComponent, rightComponent }) => {
   const insets = useSafeAreaInsets()
 
   return (
     <View style={[styles.container, { paddingTop: insets.top * 0.7 }]}>
-      <LogoHorizontal />
-      <TouchableOpacity style={styles.tabButton} onPress={handleIconPress}>
-        {isProfileScreen ? (
-          <LogoutIcon color={colors.warningRed} size={32} />
-        ) : (
-          <NotificationNoneIcon color={colors.selectionBlue} size={32} />
-        )}
-      </TouchableOpacity>
+      {leftComponent || <LogoHorizontal />}
+      {rightComponent || (
+        <IconButton
+          icon={<NotificationNoneIcon color={colors.selectionBlue} size={32} />}
+          onPress={() => console.log('notificacion')}
+        />
+      )}
     </View>
   )
 }
