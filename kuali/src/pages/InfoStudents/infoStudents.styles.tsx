@@ -8,6 +8,14 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingLeft: 25,
   },
+  profileImage: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    //alignSelf: 'center',
+    marginTop: 24,
+    marginBottom: 24,
+  },
   imagePlaceholder: {
     width: 140,
     height: 140,
@@ -33,7 +41,6 @@ const styles = StyleSheet.create({
   idText: {
     fontSize: 18,
     color: colors.solidWhite,
-    //fontWeight: 'bold',
   },
   role: {
     fontSize: 17,

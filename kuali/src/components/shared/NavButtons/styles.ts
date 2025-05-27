@@ -11,7 +11,7 @@ const styles = StyleSheet.create({
   },
   navText: {
     fontSize: 16,
-    color: colors.blueIcons, // azul
+    color: colors.blueIcons,
   },
   disabled: {
     opacity: 0.3,

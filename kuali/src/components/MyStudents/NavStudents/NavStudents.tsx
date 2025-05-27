@@ -1,7 +1,7 @@
 import React from 'react'
-import { View, Text, TouchableOpacity } from 'react-native'
 import { router } from 'expo-router'
-import { styles } from './styles'
+import NavButtons from '../../shared/NavButtons/NavButtons'
+
 export default function NavigationButtons({
   index,
   students,
@@ -26,17 +26,12 @@ export default function NavigationButtons({
   }
 
   return (
-    <View style={styles.container}>
-      {index > 0 && (
-        <TouchableOpacity onPress={() => navigateTo(index - 1)}>
-          <Text style={styles.text}>← Anterior</Text>
-        </TouchableOpacity>
-      )}
-      {index < students.length - 1 && (
-        <TouchableOpacity onPress={() => navigateTo(index + 1)}>
-          <Text style={styles.text}>Siguiente →</Text>
-        </TouchableOpacity>
-      )}
-    </View>
+    <NavButtons
+      currentIndex={index}
+      total={students.length}
+      onPrev={() => navigateTo(index - 1)}
+      onNext={() => navigateTo(index + 1)}
+      label='Estudiante'
+    />
   )
 }

@@ -30,9 +30,10 @@ export default StyleSheet.create({
   },
   buttonCompact: {
     width: '65%',
+    paddingVertical: 6,
     alignSelf: 'center',
     marginTop: 5,
-    marginBottom: -10,
+    marginBottom: 5,
   },
   approved: {
     width: '30%',

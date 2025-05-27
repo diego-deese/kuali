@@ -7,7 +7,7 @@ import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import DocReviewCard from '../../components/ReviewDoc/DocReviewCard'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useReviewDoc'
-import NavButtons from '../../components/ReviewDoc/NavButtons/NavButtons'
+import NavButtons from '../../components/shared/NavButtons/NavButtons'
 
 export default function ReviewDoc() {
   const { activity_id } = useLocalSearchParams()
@@ -37,7 +37,7 @@ export default function ReviewDoc() {
         buttonText='Volver'
         onPress={() =>
           router.push({
-            pathname: '/event/[activity_id]',
+            pathname: '/event/[activity_id]/info',
             params: { activity_id: activity_id.toString() },
           })
         }

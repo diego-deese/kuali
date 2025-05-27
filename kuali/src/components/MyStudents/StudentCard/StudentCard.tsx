@@ -21,7 +21,7 @@ export default function StudentCard({
     router.push({
       pathname: '/students/[id]',
       params: {
-        id: student.user_id.toString(),
+        user_id: student.user_id.toString(),
         name: student.name,
         second_name: student.second_name,
         paternal_lastname: student.paternal_lastname,
@@ -39,9 +39,6 @@ export default function StudentCard({
         <Text style={styles.name}>
           {student.name} {student.second_name} {student.paternal_lastname} {student.maternal_lastname}
         </Text>
-        {/*
-        <Text style={styles.project}>{'Investigacion x'}</Text>
-        */}
       </View>
     </Pressable>
   )

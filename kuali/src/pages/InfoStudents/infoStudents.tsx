@@ -1,17 +1,25 @@
-import { View, Text } from 'react-native'
+import { View, Text, Image } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import styles from './infoStudents.styles'
-import NavigationButtons from '../../components/MyStudents/NavigationButtons/NavigationButtons'
+import NavigationButtons from '../../components/MyStudents/NavStudents/NavStudents'
 import { getStudents } from '../../context/StudentsStored'
 import colors from '../../constants/colors'
 import Button from '../../components/shared/Button/Button'
+import userService from '../../services/user.service'
 
 export default function InfoStudents() {
-  const { name, paternal_lastname, identifier, institutional_email, index } =
-    useLocalSearchParams()
-
+  const {
+    user_id,
+    name,
+    paternal_lastname,
+    identifier,
+    institutional_email,
+    index,
+  } = useLocalSearchParams()
   const parsedIndex = parseInt(index as string)
   const parsedStudents = getStudents()
+
+  const profilePhotoUrl = userService.getProfilePhotoUrl(Number(user_id))
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.solidWhite }}>
@@ -21,8 +29,15 @@ export default function InfoStudents() {
           onPress={() => router.push('mystudents')}
         />
 
-        {/* Imagen circular simulada */}
-        <View style={styles.imagePlaceholder} />
+        {profilePhotoUrl ? (
+          <Image
+            source={{ uri: profilePhotoUrl }}
+            style={styles.profileImage}
+            resizeMode='cover'
+          />
+        ) : (
+          <View style={styles.imagePlaceholder} />
+        )}
 
         {/* Nombre completo */}
         <Text style={styles.name}>
@@ -40,7 +55,9 @@ export default function InfoStudents() {
         {/* Correo institucional */}
         <Text style={styles.info}>{institutional_email}</Text>
       </View>
-      <NavigationButtons students={parsedStudents} index={parsedIndex} />
+      <View style={{ marginBottom: 100 }}>
+        <NavigationButtons students={parsedStudents} index={parsedIndex} />
+      </View>
     </View>
   )
 }

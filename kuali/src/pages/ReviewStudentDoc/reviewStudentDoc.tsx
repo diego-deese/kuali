@@ -7,7 +7,7 @@ import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import { useLocalSearchParams } from 'expo-router'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useUserDocument'
-import NavButtons from '../../components/ReviewDoc/NavButtons/NavButtons'
+import NavButtons from '../../components/shared/NavButtons/NavButtons'
 
 export default function ReviewStudentDoc() {
   const { activity_id } = useLocalSearchParams()
@@ -50,7 +50,7 @@ export default function ReviewStudentDoc() {
         buttonText='Volver'
         onPress={() =>
           router.push({
-            pathname: '/event/[activity_id]',
+            pathname: '/event/[activity_id]/info',
             params: { activity_id: activity_id.toString() },
           })
         }
