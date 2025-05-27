@@ -17,19 +17,31 @@ import authService from '../../services/auth.service'
 import userService from '../../services/user.service'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import colors from '../../constants/colors'
+import AcademicProgramsModal from '../../components/shared/AcademicProgramsModal/AcademicProgramsModal'
 
 export default function UsersManagement() {
   const [activeTab, setActiveTab] = useState('Estudiantes')
   const { users, loading, error } = useGetUsers()
-  const [showModal, setShowModal] = useState(false)
+  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+  const [showProgramModal, setShowProgramModal] = useState(false)
   const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
 
-  const students = (users ?? []).filter(
-    (user) => user.role?.name === 'Estudiante',
-  )
-  const researchers = (users ?? []).filter(
-    (user) => user.role?.name === 'Investigador',
-  )
+  const students = (users ?? [])
+    .filter((user) => user.role?.name === 'Estudiante')
+    .map((user) => ({
+      ...user,
+      hasAcademicPrograms: user.academic_programs_as_student.length > 0,
+    }))
+
+  const researchers = (users ?? [])
+    .filter((user) => user.role?.name === 'Investigador')
+    .map((researcher) => ({
+      ...researcher,
+      hasAcademicPrograms:
+        researcher.academic_programs_as_researcher.length > 0,
+    }))
+
   const admins = (users ?? []).filter(
     (user) => user.role?.name === 'Administrador',
   )
@@ -46,27 +58,48 @@ export default function UsersManagement() {
     router.push(`/user/infouser/${userId}`)
   }
 
-  const openConfirmationModal = (user_id: number) => {
-    setSelectedUserId(user_id)
-    setShowModal(true)
+  const openConfirmationModal = (user: any) => {
+    setSelectedUser(user)
+    if (user.hasAcademicPrograms) {
+      setShowConfirmationModal(true)
+    } else {
+      setShowProgramModal(true)
+    }
   }
 
   const handleConfirmDeactivate = async () => {
-    if (selectedUserId !== null) {
-      const token = await authService.getToken()
-      if (!token) {
-        console.log('Token expirado o sin acceso')
-        return
-      }
-      const response = await userService.deactiveProfile(selectedUserId)
-      if ('success' in response && !response.success) {
-        console.error(response.error)
-      } else {
-        console.log('Usuario desactivado con éxito')
-      }
-      setShowModal(false)
-      setSelectedUserId(null)
+    if (!selectedUser) return
+    const token = await authService.getToken()
+    if (!token) return console.log('Token expirado o sin acceso')
+
+    const response = await userService.deactiveProfile(selectedUser.user_id)
+    if ('success' in response && !response.success) {
+      console.error(response.error)
+    } else {
+      console.log('Usuario desactivado con éxito')
     }
+
+    setSelectedUser(null)
+    setShowConfirmationModal(false)
+  }
+
+  const handleConfirmAssign = async (programId: number) => {
+    if (!selectedUser) return
+    const token = await authService.getToken()
+    if (!token) return console.log('Token expirado o sin acceso')
+
+    // const response = await userService.assignStudent(
+    //   programId,
+    //   selectedUser.user_id,
+    // )
+    // if ('success' in response && !response.success) {
+    //   console.error(response.error)
+    // } else {
+    //   console.log('Estudiante reactivado e inscrito')
+    // }
+
+    setSelectedUser(null)
+    setShowProgramModal(false)
   }
 
   return (
@@ -108,10 +141,10 @@ export default function UsersManagement() {
                     second_name={user.second_name}
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
-                    state={true}
+                    state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={openConfirmationModal}
+                    onDeactivatePress={() => openConfirmationModal(user)}
                   />
                 ))}
               </ScrollView>
@@ -126,7 +159,7 @@ export default function UsersManagement() {
                     second_name={user.second_name}
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
-                    state={true}
+                    state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={openConfirmationModal}
@@ -155,13 +188,19 @@ export default function UsersManagement() {
           </>
         )}
         <ConfirmationModal
-          visible={showModal}
+          visible={showConfirmationModal}
           title='Desactivar usuario'
           description='¿Estás seguro de que deseas desactivar este usuario?'
           confirmButtonText='Desactivar'
           confirmButtonColor={colors.warningRed}
           onConfirm={handleConfirmDeactivate}
-          onCancel={() => setShowModal(false)}
+          onCancel={() => setShowConfirmationModal(false)}
+        />
+
+        <AcademicProgramsModal
+          visible={showProgramModal}
+          onConfirm={handleConfirmAssign}
+          onCancel={() => setShowProgramModal(false)}
         />
       </SafeAreaView>
     </SafeAreaProvider>
