@@ -33,9 +33,7 @@ const updateRequirement = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
   }
 })
 
-export type UpdateRequirement = Prisma.RequirementsGetPayload<typeof updateRequirement>
-
-export type PatchRequirement = Partial<UpdateRequirement>
+export type UpdateRequirement = Partial<Prisma.RequirementsGetPayload<typeof updateRequirement>>
 
 const requirementInfo = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
   select: {

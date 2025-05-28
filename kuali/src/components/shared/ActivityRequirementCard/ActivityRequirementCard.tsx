@@ -5,12 +5,10 @@ import { DeleteIcon, DocumentIcon, EditIcon } from '../Icons/Icons'
 import IconButton from '../IconButton/IconButton'
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'
 import NewRequirementModal from '../../CreateActivity/RequirementsSection/NewRequirementModal/NewRequirementModal'
+import { ActivityRequirement } from '../../../types/Requirements'
 
 interface ActivityRequirementCardProps {
-  requirementId: number
-  name: string
-  description: string
-  templateUri?: string
+  requirementInfo: ActivityRequirement
   onDeletePress?: (requirementId: number) => void
   onEdit?: (
     requirementId: number,
@@ -21,10 +19,7 @@ interface ActivityRequirementCardProps {
 }
 
 const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
-  requirementId,
-  name,
-  description,
-  templateUri,
+  requirementInfo,
   onDeletePress,
   onEdit,
 }) => {
@@ -42,20 +37,24 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
   return (
     <View style={styles.cardContainer}>
       <View style={styles.textContainer}>
-        <Text style={styles.name}>{name}</Text>
-        <Text style={styles.description}>{description}</Text>
+        <Text style={styles.name}>{requirementInfo.name}</Text>
+        <Text style={styles.description}>{requirementInfo.description}</Text>
       </View>
       <View
         style={[
           styles.iconsContainer,
-          description.length > 24 && { alignSelf: 'flex-start' },
+          requirementInfo.description.length > 24 && {
+            alignSelf: 'flex-start',
+          },
         ]}
       >
-        {templateUri && <DocumentIcon color={colors.standardGray} size={28} />}
+        {requirementInfo.template !== null && (
+          <DocumentIcon color={colors.standardGray} size={28} />
+        )}
         <View
           style={[
             styles.actionIconsContainer,
-            templateUri && styles.actionIconsContainerWithLimit,
+            requirementInfo.template && styles.actionIconsContainerWithLimit,
           ]}
         >
           <IconButton
@@ -70,17 +69,12 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
       </View>
 
       <NewRequirementModal
-        requirementInfo={{
-          requirement_id: requirementId,
-          name,
-          description,
-          template_uri: templateUri,
-        }}
+        requirementInfo={requirementInfo}
         visible={showEditModal}
         onCancel={handleEditModalCancel}
         onConfirm={(name: string, description: string, templateUri: string) => {
           setShowEditModal(false)
-          onEdit(requirementId, name, description, templateUri)
+          onEdit(requirementInfo.requirement_id, name, description, templateUri)
         }}
       />
 
@@ -90,7 +84,7 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
         confirmButtonColor={colors.warningRed}
         visible={showConfirmationModal}
         onCancel={handleConfirmationModalCancel}
-        onConfirm={() => onDeletePress(requirementId)}
+        onConfirm={() => onDeletePress(requirementInfo.requirement_id)}
       />
     </View>
   )

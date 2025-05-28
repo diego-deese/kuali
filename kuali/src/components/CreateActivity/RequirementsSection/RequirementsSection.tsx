@@ -32,10 +32,7 @@ const RequirementsSection: React.FC<RequirementsSectionProps> = ({
         data={requirements.requirements}
         renderItem={({ item }) => (
           <ActivityRequirementCard
-            requirementId={item.requirement_id}
-            name={item.name}
-            description={item.description}
-            templateUri={item.template_uri && item.template_uri}
+            requirementInfo={item}
             onDeletePress={requirements.deleteRequirement}
             onEdit={requirements.editRequirement}
           />

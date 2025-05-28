@@ -30,4 +30,6 @@ export type NewActivityData = {
   poster_image_uri: string
 }
 
-export type UpdateActivityData = Partial<NewActivityData>
+export type UpdateActivityData = Partial<NewActivityData> & {
+  activity_id: number
+}

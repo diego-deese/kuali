@@ -1,8 +1,15 @@
 import { useState } from 'react'
 import { ActivityRequirement } from '../../types/Requirements'
+import { RequirementTemplate } from '../../types/RequirementTemplate'
 
 export const useRequirements = () => {
   const [requirements, setRequirements] = useState<ActivityRequirement[]>([])
+
+  const setInitialRequirements = (
+    requirements: ActivityRequirement[],
+  ): void => {
+    setRequirements(requirements)
+  }
 
   const addRequirement = (
     name: string,
@@ -10,10 +17,23 @@ export const useRequirements = () => {
     template_uri?: string,
   ) => {
     const newRequirementId = requirements.length + 1
-    setRequirements((prevRequirements) => [
-      ...prevRequirements,
-      { requirement_id: newRequirementId, name, description, template_uri },
-    ])
+    setRequirements((prevRequirements) => {
+      const requirementTemplate: RequirementTemplate =
+        template_uri !== null
+          ? { requirement_template_id: newRequirementId, template_uri }
+          : null
+      const newRequirements: ActivityRequirement[] = [
+        ...prevRequirements,
+        {
+          requirement_id: newRequirementId,
+          name,
+          description,
+          template: requirementTemplate,
+        },
+      ]
+
+      return newRequirements
+    })
   }
 
   const deleteRequirement = (requirementId: number) => {
@@ -41,6 +61,7 @@ export const useRequirements = () => {
 
   return {
     requirements,
+    setInitialRequirements,
     addRequirement,
     deleteRequirement,
     editRequirement,

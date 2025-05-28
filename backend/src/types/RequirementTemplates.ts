@@ -29,3 +29,13 @@ const newActivityRequirementTemplate = Prisma.validator<Prisma.RequirementTempla
 })
 
 export type NewActivityRequirementTemplate = Prisma.RequirementTemplatesGetPayload<typeof newActivityRequirementTemplate>
+
+const updateRequirementTemplate = Prisma.validator<Prisma.RequirementTemplatesDefaultArgs>()({
+  select: {
+    name: true,
+    file_content: true,
+    mimetype: true
+  }
+})
+
+export type UpdateRequirementTemplate = Partial<Prisma.RequirementTemplatesGetPayload<typeof updateRequirementTemplate>>

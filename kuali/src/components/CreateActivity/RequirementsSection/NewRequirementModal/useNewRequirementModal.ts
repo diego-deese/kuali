@@ -6,7 +6,7 @@ export const useNewRequirementModal = (
   requirementInfo: ActivityRequirement,
 ) => {
   const [withTemplate, setWithTemplate] = useState(
-    requirementInfo ? requirementInfo.template_uri !== null : false,
+    requirementInfo ? requirementInfo.template !== null : false,
   )
   const [requirementName, setRequirementName] = useState(
     requirementInfo ? requirementInfo.name : '',
@@ -15,7 +15,9 @@ export const useNewRequirementModal = (
     requirementInfo ? requirementInfo.description : '',
   )
   const [templateUri, setTemplateUri] = useState<string | null>(
-    requirementInfo ? requirementInfo.template_uri : null,
+    requirementInfo && requirementInfo.template !== null
+      ? requirementInfo.template.template_uri
+      : null,
   )
 
   const [errors, setErrors] = useState({
@@ -51,6 +53,15 @@ export const useNewRequirementModal = (
           template: {
             error: false,
             errorMessage: '',
+          },
+        }))
+      } else {
+        setTemplateUri(null)
+        setErrors((prev) => ({
+          ...prev,
+          template: {
+            error: true,
+            errorMessage: 'El documento para la plantilla es requerido',
           },
         }))
       }
@@ -125,7 +136,6 @@ export const useNewRequirementModal = (
 
   const validateTemplate = () => {
     if (withTemplate && templateUri === null) {
-      console.log('URI incorrecta')
       return {
         error: true,
         errorMessage: 'No se proporcionó el archivo de plantilla',
