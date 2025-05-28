@@ -3,6 +3,7 @@ import { ResponseError, Message, ApiResponse } from '../types/Request'
 import axios from 'axios'
 import { AcademicProgram } from '../types/AcademicProgram'
 import authService from './auth.service'
+import { InscriptionData } from '../types/AcademicProgram'
 
 class academicProgramService {
   private api: AxiosInstance
@@ -50,6 +51,42 @@ class academicProgramService {
         message: 'Error desconocido',
         error: error.message,
       } as ResponseError
+    }
+  }
+
+  async assignResearcher(
+    inscriptionData: InscriptionData,
+  ): Promise<Message | ResponseError> {
+    try {
+      const response = await this.api.patch(
+        `/${inscriptionData.program_id}/assign-researcher`,
+        inscriptionData,
+      )
+
+      if (response.status === 200) {
+        return response.data as Message
+      }
+
+      return {
+        success: false,
+        message: 'Error al reactivar la cuenta del usuario',
+        error: 'Respuesta inesperada del servidor',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message: errorResponse?.message || 'Error al reactivar la cuenta',
+          error:
+            errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
+        }
+      }
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: 'Por favor, verifica tu conexión o intenta más tarde',
+      }
     }
   }
 }
