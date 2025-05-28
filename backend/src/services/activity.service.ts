@@ -280,6 +280,8 @@ class ActivityService {
     return true
   }
 
+  // async updateActivity (activityData)
+
   async getUserUpcomingActivities (userId: number): Promise<UserAccesibleActivity[]> {
     const activities = await prisma.registrations.findMany({
       select: {

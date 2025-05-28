@@ -8,14 +8,16 @@ import NextEventsComponents from '../../components/NextEventsComponent/NextEvent
 import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities'
 
 export default function MyEvents() {
-  const { activities, error, loading } = useGetActivities()
+  const { activities, upcomingActivities, error, loading } = useGetActivities()
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <View style={styles.calendarContainer}>
           <CalendarComponent></CalendarComponent>
         </View>
-        <NextEventsComponents activities={activities}></NextEventsComponents>
+        <NextEventsComponents
+          activities={upcomingActivities}
+        ></NextEventsComponents>
       </SafeAreaView>
     </SafeAreaProvider>
   )

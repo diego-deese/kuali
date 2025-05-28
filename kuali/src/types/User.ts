@@ -16,6 +16,10 @@ export type User = {
     name: string
     researcher_id?: number
   }[]
+  academic_programs_as_researcher?: {
+    program_id: number
+    name: string
+  }[]
 }
 
 export type NewUser = {

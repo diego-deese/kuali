@@ -19,7 +19,7 @@ import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
 import TemplateCard from '../../components/TemplateCard/TemplateCard'
-import * as WebBrowser from 'expo-web-browser'
+//import * as WebBrowser from 'expo-web-browser'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
