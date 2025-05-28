@@ -1,34 +1,31 @@
-/* eslint-disable prettier/prettier */
-import React, { useState } from "react";
-import { View, Text, TouchableOpacity  } from "react-native";
-import { Calendar } from "react-native-big-calendar";
-import dayjs from "dayjs";
-import calendarTheme from "./Calendar.styles";
-import EventCalendarCard from "../EventCalendarCard/EventCalendarCard";
-import { useEventNavigation } from "../../hooks/NavigationActivity/useEventNavigation";
-import LoadingModal from "../shared/LoadingModal/LoadingModal";
-import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities';
-import { router } from "expo-router";
+import React, { useState } from 'react'
+import { View, Text } from 'react-native'
+import { Calendar } from 'react-native-big-calendar'
+import dayjs from 'dayjs'
+import calendarTheme from './Calendar.styles'
+import EventCalendarCard from '../EventCalendarCard/EventCalendarCard'
+import LoadingModal from '../shared/LoadingModal/LoadingModal'
+import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities'
+import { useAppActions } from '../../context/AppActionsContext'
 
 function getLimitedEvents(events: any[], limitPerDay: number) {
-  const grouped: { [key: string]: any[] } = {};
+  const grouped: { [key: string]: any[] } = {}
 
-  events.forEach(event => {
-    const dayKey = dayjs(event.start).format('YYYY-MM-DD');
-    if (!grouped[dayKey]) grouped[dayKey] = [];
+  events.forEach((event) => {
+    const dayKey = dayjs(event.start).format('YYYY-MM-DD')
+    if (!grouped[dayKey]) grouped[dayKey] = []
     if (grouped[dayKey].length < limitPerDay) {
-      grouped[dayKey].push(event);
+      grouped[dayKey].push(event)
     }
-  });
+  })
 
-  return Object.values(grouped).flat();
+  return Object.values(grouped).flat()
 }
-
 
 export default function CalendarComponent() {
   const [monthName, setMonthName] = useState(dayjs().format('MMMM'))
   const [monthNumber, setMonthNumber] = useState(dayjs().format('MM'))
-  const { isNavigating } = useEventNavigation()
+  const { navigation } = useAppActions()
   const { activities, error, loading } = useGetActivities()
 
   const calendarEvents = activities.map((activity) => ({
@@ -37,8 +34,7 @@ export default function CalendarComponent() {
     start: dayjs(activity.event_date).toDate(),
     end: dayjs(activity.event_date).add(30, 'minute').toDate(),
   }))
-  
-    
+
   const updateDisplayedMonth = (date: Date) => {
     const newDate = dayjs(date)
     setMonthName(newDate.format('MMMM'))
@@ -46,7 +42,8 @@ export default function CalendarComponent() {
   }
 
   const handleEventPress = (event: any) => {
-    router.navigate(`/event/${event.id}/info`)
+    if (navigation.isNavigating) return
+    navigation.navigate(`/event/${event.id}/info`)
   }
 
   return (
@@ -63,18 +60,17 @@ export default function CalendarComponent() {
         onChangeDate={([start]) => updateDisplayedMonth(start)}
         onSwipeEnd={(date) => updateDisplayedMonth(date)}
         renderEvent={(event) => (
-          <EventCalendarCard 
+          <EventCalendarCard
             id={event.id}
             title={event.title}
             date={dayjs(event.start).format('YYYY-MM-DD HH:mm')}
             onPress={() => handleEventPress(event)}
-            disabled={isNavigating}
+            disabled={navigation.isNavigating}
           />
         )}
       />
-       {/* Modal de carga */}
-      <LoadingModal visible={isNavigating} />
+      {/* Modal de carga */}
+      <LoadingModal visible={navigation.isNavigating} />
     </View>
-  );
+  )
 }
-
