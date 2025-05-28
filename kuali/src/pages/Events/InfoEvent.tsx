@@ -14,7 +14,6 @@ import activityService from '../../services/activity.service'
 import WithRole from '../../components/WithRole/WithRole'
 import { Roles } from '../../constants/roles'
 import { useAuth } from '../../context/AuthContext'
-import { CategoryName } from '../../types/Category'
 import EventDetailsHeader from '../../components/Event/EventDetailsHeader'
 import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
@@ -243,7 +242,9 @@ const InfoEvent: React.FC = () => {
   const confirmApply = async () => {
     try {
       setLoading(true)
+      console.log('Intentando aplicar a actividad con id:', activity_id)
       const result = await activityService.applyToActivity(activity_id)
+      console.log('Resultado del applyToActivity:', result)
 
       if (result.success) {
         setHasApplied(true)

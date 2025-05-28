@@ -5,12 +5,13 @@ import Button from '../shared/Button/Button'
 import { DownloadIcon } from '../shared/Icons/Icons'
 import userDocumentService from '../../services/user-document.service'
 import ConfirmationModal from '../shared/ConfirmationModal/ConfirmationModal'
+import { useDownloadDocument } from '../../hooks/ReviewDocs/useDownloadDoc'
 
 type Props = {
   title: string
   user_document_id: number
   initialStatus?: string
-  onDownload: () => void
+  fileName?: string
   onActionComplete?: () => void
 }
 
@@ -18,12 +19,13 @@ export default function BaseReviewCard({
   title,
   user_document_id,
   initialStatus,
-  onDownload,
+  fileName,
   onActionComplete,
 }: Props) {
   const [status, setStatus] = useState(initialStatus)
   const [modalVisible, setModalVisible] = useState(false)
   const [action, setAction] = useState<'approved' | 'rejected' | null>(null)
+  const { downloadDocument } = useDownloadDocument()
 
   const handleApprove = () => {
     setAction('approved')
@@ -33,6 +35,11 @@ export default function BaseReviewCard({
   const handleReject = () => {
     setAction('rejected')
     setModalVisible(true)
+  }
+
+  const handleDownload = () => {
+    const finalFileName = fileName || `documento_${user_document_id}.pdf`
+    downloadDocument(user_document_id, finalFileName)
   }
 
   const confirmAction = async () => {
@@ -58,7 +65,7 @@ export default function BaseReviewCard({
     <View style={styles.card}>
       <View style={styles.row}>
         <Text style={styles.name}>{title}</Text>
-        <Pressable onPress={onDownload} style={styles.iconContainer}>
+        <Pressable onPress={handleDownload} style={styles.iconContainer}>
           <DownloadIcon />
         </Pressable>
         {status === 'Aprobado' ? (

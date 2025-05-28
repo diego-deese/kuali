@@ -271,6 +271,9 @@ class ActivityService {
     activityId: number,
   ): Promise<Response<any> | ResponseError> {
     try {
+      console.log('baseURL usada:', this.api.defaults.baseURL)
+      console.log('Headers enviados:', this.api.defaults.headers)
+
       const response = await this.api.post(
         `/registrations/activity/${activityId}`,
       )

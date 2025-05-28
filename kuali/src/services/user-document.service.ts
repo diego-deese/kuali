@@ -84,6 +84,21 @@ class UserDocumentService {
   async rejectUserDocument(userDocumentId: number) {
     return this.api.patch(`/user-documents/${userDocumentId}/reject`)
   }
+  async downloadUserDocument(userDocumentId: number): Promise<Blob | null> {
+    try {
+      const response = await this.api.get(
+        `/user-documents/download/${userDocumentId}`,
+        {
+          responseType: 'blob',
+        },
+      )
+
+      return response.data
+    } catch (error) {
+      console.error('Error al descargar el documento:', error)
+      return null
+    }
+  }
 }
 
 export default new UserDocumentService()
