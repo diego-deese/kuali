@@ -38,7 +38,7 @@ app.use('/api/locations', locationRoutes)
 app.use('/api/requirement-templates', requirementTemplateRoutes)
 app.use('/api/requirements', requirementRoutes)
 app.use('/api/user-documents', userDocumentRoutes)
-app.use('/api/registration', registrationRoutes)
+app.use('/api/registrations', registrationRoutes)
 app.use('/api/academic-programs', academicProgramRoutes)
 
 app.listen(PORT, () => {
