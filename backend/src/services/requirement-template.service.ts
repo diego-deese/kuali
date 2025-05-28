@@ -6,6 +6,7 @@ import { CreatedRequirementTemplate, NewRequirementTemplate } from '../types/Req
 class RequirementTemplateService {
   async uploadFile (newRequirementTemplateData: NewRequirementTemplate): Promise<CreatedRequirementTemplate> {
     try {
+      // Guardar el archivo en la base de datos como datos binarios
       const newRequirementTemplate = await prisma.requirementTemplates.create({
         data: newRequirementTemplateData,
         omit: {

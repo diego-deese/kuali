@@ -1,10 +1,4 @@
-import {
-  View,
-  Text,
-  SafeAreaView,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native'
+import { View, Text, SafeAreaView } from 'react-native'
 import React, { useRef } from 'react'
 import styles from './login.styles'
 import Input from '../../components/shared/InputText/InputText'
@@ -41,10 +35,7 @@ export default function LogIn() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.formContainer}
-      >
+      <View style={styles.formContainer}>
         <View style={{ marginVertical: 24 }}>
           <Logo height={200} />
         </View>
@@ -71,7 +62,7 @@ export default function LogIn() {
         />
 
         <Button buttonText='Iniciar sesión' onPress={handleLogin} />
-      </KeyboardAvoidingView>
+      </View>
     </SafeAreaView>
   )
 }

@@ -129,7 +129,11 @@ class DocumentService {
    * @returns URL para descargar la plantilla
    */
   async getTemplateDownloadUrl(templateId: number): Promise<string> {
-    return `${process.env.EXPO_PUBLIC_API_URL}/requirement-templates/download/${templateId}`
+    const token = await authService.getToken()
+    if (!token) {
+      throw new Error('No hay token de autenticación disponible')
+    }
+    return `${process.env.EXPO_PUBLIC_API_URL}/requirement-templates/download/${templateId}?token=${token}`
   }
 }
 

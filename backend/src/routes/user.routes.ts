@@ -10,8 +10,6 @@ router.post('/', isAuthenticated, isAdmin, userController.createUser)
 
 router.get('/researcher/students', isAuthenticated, isResearcher, userController.getResearcherStudentsWithAcademicProgram)
 
-router.put('/students/:id', isAuthenticated, userController.toggleStudentState)
-router.post('/students', isAuthenticated, userController.assignStudent)
 
 router.get('/:id', isAuthenticated, userController.getUser)
 router.put('/:id', isAuthenticated, isAdmin, userController.updateUser)

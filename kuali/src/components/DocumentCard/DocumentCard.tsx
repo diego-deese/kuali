@@ -1,11 +1,6 @@
 import { View, Text } from 'react-native'
 import styles from './DocumentCard.styles'
-import {
-  PendingIcon,
-  RejectedIcon,
-  AcceptedIcon,
-  UploadIcon,
-} from '../shared/Icons/Icons'
+import { PendingIcon, RejectedIcon, AcceptedIcon } from '../shared/Icons/Icons'
 import Button from '../shared/Button/Button'
 import { DocumentStatus } from '../../types/UserDocument'
 import * as DocumentPicker from 'expo-document-picker'
@@ -62,23 +57,23 @@ export default function DocumentCard({
       case DocumentStatus.Rechazado:
         return <RejectedIcon size={32} />
       default:
-        return <UploadIcon size={32} />
+        return <PendingIcon size={32} />
     }
   }
 
   // Función para obtener la descripción según el status
-  // const getDescription = () => {
-  //   switch (status) {
-  //     case DocumentStatus.Pendiente:
-  //       return 'Documento pendiente de aprobación'
-  //     case DocumentStatus.Aprobado:
-  //       return 'El documento ha sido aprobado'
-  //     case DocumentStatus.Rechazado:
-  //       return 'El documento ha sido rechazado'
-  //     default:
-  //       return 'Estado del documento desconocido'
-  //   }
-  // }
+  const getDescription = () => {
+    switch (status) {
+      case DocumentStatus.Pendiente:
+        return 'Documento pendiente de aprobación'
+      case DocumentStatus.Aprobado:
+        return 'El documento ha sido aprobado'
+      case DocumentStatus.Rechazado:
+        return 'El documento ha sido rechazado'
+      default:
+        return 'Estado del documento desconocido'
+    }
+  }
 
   // Función para renderizar los botones según el status
   const renderButtons = () => {
@@ -124,7 +119,7 @@ export default function DocumentCard({
         {renderIcon()}
         <View style={styles.headerText}>
           <Text style={styles.title}>{title}</Text>
-          <Text style={styles.description}>{description}</Text>
+          <Text style={styles.description}>{getDescription()}</Text>
         </View>
       </View>
       {renderButtons()}

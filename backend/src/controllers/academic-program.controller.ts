@@ -11,7 +11,7 @@ class AcademicProgramController {
 
       let academicPrograms
 
-      if (hasResearcher === 'true') {
+      if (hasResearcher === 'false') {
         academicPrograms = await academicProgramService.getAcademicPrograms()
       } else {
         academicPrograms = await academicProgramService.getAcademicProgramsWithoutResearcher()

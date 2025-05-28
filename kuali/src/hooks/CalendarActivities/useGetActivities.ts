@@ -13,11 +13,8 @@ type CalendarEvent = {
 
 export function useGetActivities() {
   const [activities, setActivities] = useState<Activity[]>([])
-  const [upcomingActivities, setUpcomingActivities] = useState<Activity[]>([])
   const [error, setError] = useState<boolean>(false)
   const [loading, setLoading] = useState<string | null>(null)
-
-  const today = new Date()
 
   useEffect(() => {
     const initialize = async () => {
@@ -29,16 +26,7 @@ export function useGetActivities() {
 
       const response = await activityService.getAllActivities()
       if (response.success) {
-        const allActivities = response.activities
-
-        const upcoming = allActivities.filter((activity: Activity) => {
-          const now = dayjs()
-          const eventDate = dayjs(activity.event_date)
-          return eventDate.isAfter(now) && eventDate.isBefore(now.add(7, 'day'))
-        })
-
-        setActivities(allActivities)
-        setUpcomingActivities(upcoming)
+        setActivities(response.activities)
       } else {
         setError(true)
       }
@@ -46,5 +34,5 @@ export function useGetActivities() {
     initialize()
   }, [])
 
-  return { activities, upcomingActivities, error, loading }
+  return { activities, error, loading }
 }

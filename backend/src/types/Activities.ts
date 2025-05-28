@@ -1,5 +1,4 @@
 import { Activities, Prisma } from '../generated/client'
-import { UpdateActivityRequirement } from './Requirement'
 
 export type UserAccesibleActivity = Omit<Activities,
 'creation_date' |
@@ -56,22 +55,6 @@ const newActivity = Prisma.validator<Prisma.ActivitiesDefaultArgs>()({
 })
 
 export type NewActivity = Prisma.ActivitiesGetPayload<typeof newActivity>
-
-export interface UpdateActivity {
-  activity_id: number
-  title?: string
-  description?: string
-  event_date?: Date
-  register_date_limit?: Date
-  mandatory?: boolean
-  visible_researchers?: boolean
-  visible_students?: boolean
-  location_id?: number
-  category_id?: number
-  poster_image?: Uint8Array
-  poster_mimetype?: string
-  requirements?: UpdateActivityRequirement[]
-}
 
 const createdActivity = Prisma.validator<Prisma.ActivitiesDefaultArgs>()({
   omit: {

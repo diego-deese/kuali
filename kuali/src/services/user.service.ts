@@ -75,7 +75,7 @@ class UserService {
 
   async deactiveProfile(userId: number): Promise<Message | ResponseError> {
     try {
-      const response = await this.api.put(`/users/students/${userId}`)
+      const response = await this.api.delete(`/users/${userId}`)
 
       if (response.status === 200) {
         return response.data as Message
