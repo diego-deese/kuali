@@ -160,23 +160,24 @@ class ActivityService {
             return {
               name: req.name,
               description: req.description,
-              template: req.template_uri
-                ? {
-                    name: `${req.name}_plantilla`,
-                  }
-                : undefined,
+              template:
+                req.template !== null
+                  ? {
+                      name: `${req.name}_plantilla`,
+                    }
+                  : undefined,
             }
           }),
         }
         const requirementsWithTemplate = newActivityData.requirements.filter(
-          (req) => req.template_uri !== null,
+          (req) => req.template !== null,
         )
 
         requirementsWithTemplate.forEach((req) => {
-          const templateInfo = getFileInfo(req.template_uri!)
+          const templateInfo = getFileInfo(req.template.template_uri!)
 
           formData.append('template_files', {
-            uri: req.template_uri,
+            uri: req.template.template_uri,
             name: templateInfo.fileName,
             type: templateInfo.mimeType,
           } as any)

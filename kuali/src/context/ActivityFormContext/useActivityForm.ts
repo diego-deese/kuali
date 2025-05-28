@@ -9,6 +9,7 @@ import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
 import { useErrors } from '../../hooks/ActivityForm/useErrors'
 import { mapToOption } from '../../utils/mappers'
+import { ActivityRequirement } from '../../types/Requirements'
 
 export const useActivityForm = (
   mode: 'create' | 'edit',
@@ -58,9 +59,23 @@ export const useActivityForm = (
       locationManagement.onLocationChange(
         mapToOption(activity.location, 'id_location', 'name'),
       )
-      activity.requirements.forEach((req) => {
-        requirementsManagement.addRequirement(req.name, req.description)
-      })
+      requirementsManagement.setInitialRequirements(
+        activity.requirements.map<ActivityRequirement>((req) => {
+          return {
+            requirement_id: req.requirement_id,
+            name: req.name,
+            description: req.description,
+            template:
+              req.template !== null
+                ? {
+                    ...req.template,
+                    template_uri:
+                      req.template.requirement_template_id.toString(),
+                  }
+                : null,
+          }
+        }),
+      )
       dateManagement.onActivityDateChange(new Date(activity.event_date))
       dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
 
