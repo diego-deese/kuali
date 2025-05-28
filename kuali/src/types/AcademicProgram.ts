@@ -3,3 +3,8 @@ export type AcademicProgram = {
   name: string
   researcher_id: number
 }
+
+export type InscriptionData = {
+  student_id: number
+  program_id: number
+}

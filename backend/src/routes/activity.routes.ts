@@ -17,6 +17,7 @@ router.get('/upcoming', isAuthenticated, activityController.getUpcomingActivitie
 router.get('/past/user', isAuthenticated, activityController.getUserPastActivities)
 
 router.get('/:activityId', isAuthenticated, activityController.getActivity)
+router.patch('/:activityId', isAuthenticated, isAdmin, uploadMemory.single('poster_image'), activityController.updateActivity)
 router.delete('/:activityId', isAuthenticated, isAdmin, activityController.deleteActivity)
 
 router.get('/:activityId/poster', activityController.getActivityPoster)

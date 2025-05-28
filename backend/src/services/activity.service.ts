@@ -1,6 +1,6 @@
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
-import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UserAccesibleActivity } from '../types/Activities'
+import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UpdateActivity, UserAccesibleActivity } from '../types/Activities'
 import { NotFoundError } from '../types/Error'
 import registrationService from './registration.service'
 
@@ -280,7 +280,38 @@ class ActivityService {
     return true
   }
 
-  // async updateActivity (activityData)
+  async updateActivity (activityId: number, activityData: UpdateActivity): Promise<CreatedActivity> {
+    return await prisma.$transaction(async (prisma) => {
+      const updatedActivity = await prisma.activities.update({
+        where: {
+          activity_id: activityId
+        },
+        data: activityData,
+        omit: {
+          location_id: true,
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
+        },
+        include: {
+          category: true,
+          location: true,
+          requirements: {
+            include: {
+              template: {
+                select: {
+                  requirement_template_id: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
+      })
+
+      return updatedActivity
+    })
+  }
 
   async getUserUpcomingActivities (userId: number): Promise<UserAccesibleActivity[]> {
     const activities = await prisma.registrations.findMany({

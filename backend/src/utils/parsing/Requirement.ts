@@ -1,7 +1,7 @@
 import { ValidationError } from '../../types/Error'
-import { ActivityRequirement, NewRequirement, PatchRequirement, UpdateActivityRequirement, UpdateRequirement } from '../../types/Requirement'
+import { ActivityRequirement, NewRequirement, UpdateRequirement } from '../../types/Requirement'
 import { isString } from '../validations'
-import { toNewActivityRequirementTemplate, toUpdateActivityRequirementTemplate } from './RequirementTemplate'
+import { toNewActivityRequirementTemplate } from './RequirementTemplate'
 import { parseId } from './shared'
 
 const parseName = (nameFromRequest: string): string => {
@@ -48,32 +48,11 @@ export const toNewRequirement = (object: any): NewRequirement => {
 
 export const toRequirementUpdate = (object: any): UpdateRequirement => {
   const updatedRequirement: UpdateRequirement = {
-    name: parseName(object.name),
-    description: parseDescription(object.description)
+    name: object.name !== undefined ? parseName(object.name) : undefined,
+    description: object.description !== undefined ? parseDescription(object.description) : undefined
   }
 
   return updatedRequirement
-}
-
-export const toRequirementPatch = (object: any): PatchRequirement => {
-  const patchedRequirement: Partial<PatchRequirement> = {}
-  let somethingWasPatched = false
-
-  if (object.name !== undefined) {
-    somethingWasPatched = true
-    patchedRequirement.name = parseName(object.name)
-  }
-
-  if (object.description !== undefined) {
-    somethingWasPatched = true
-    patchedRequirement.description = parseDescription(object.description)
-  }
-
-  if (!somethingWasPatched) {
-    throw new ValidationError('No se proporcionó ningún atributo para actualizar')
-  }
-
-  return patchedRequirement
 }
 
 export const toActivityRequirement = (object: any): ActivityRequirement => {
@@ -86,11 +65,10 @@ export const toActivityRequirement = (object: any): ActivityRequirement => {
   return activityRequirement
 }
 
-export const toUpdateActivityRequirement = (object: any): UpdateActivityRequirement => {
-  const updateActivityRequirement: UpdateActivityRequirement = {
+export const toUpdateRequirement = (object: any): UpdateRequirement => {
+  const updateActivityRequirement: UpdateRequirement = {
     name: object.name !== undefined ? parseName(object.name) : undefined,
-    description: object.description !== undefined ? parseDescription(object.description) : undefined,
-    template: object.template !== undefined ? toUpdateActivityRequirementTemplate(object.template) : null
+    description: object.description !== undefined ? parseDescription(object.description) : undefined
   }
 
   return updateActivityRequirement

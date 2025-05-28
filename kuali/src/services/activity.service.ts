@@ -1,7 +1,11 @@
 import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
 import { ArrayResponse, ResponseError, Response } from '../types/Request'
-import { Activity, NewActivityData } from '../types/Activity'
+import {
+  Activity,
+  NewActivityData,
+  UpdateActivityData,
+} from '../types/Activity'
 import { getFileInfo } from '../utils/parsing'
 
 class ActivityService {
@@ -135,7 +139,6 @@ class ActivityService {
     try {
       const formData = new FormData()
 
-      // Manejo de imagen local
       const localUri = newActivityData.poster_image_uri
       const posterFileInfo = getFileInfo(localUri)
 
@@ -157,23 +160,24 @@ class ActivityService {
             return {
               name: req.name,
               description: req.description,
-              template: req.template_uri
-                ? {
-                    name: `${req.name}_plantilla`,
-                  }
-                : undefined,
+              template:
+                req.template !== null
+                  ? {
+                      name: `${req.name}_plantilla`,
+                    }
+                  : undefined,
             }
           }),
         }
         const requirementsWithTemplate = newActivityData.requirements.filter(
-          (req) => req.template_uri !== null,
+          (req) => req.template !== null,
         )
 
         requirementsWithTemplate.forEach((req) => {
-          const templateInfo = getFileInfo(req.template_uri!)
+          const templateInfo = getFileInfo(req.template.template_uri!)
 
           formData.append('template_files', {
-            uri: req.template_uri,
+            uri: req.template.template_uri,
             name: templateInfo.fileName,
             type: templateInfo.mimeType,
           } as any)
@@ -223,6 +227,67 @@ class ActivityService {
         success: false,
         message: 'Error desconocido',
         error: error.message,
+      }
+    }
+  }
+
+  async updateActivity(
+    activityData: UpdateActivityData,
+  ): Promise<Response<Activity> | ResponseError> {
+    try {
+      const formData = new FormData()
+
+      const { poster_image_uri, ...activityInfo } = activityData
+
+      if (poster_image_uri !== undefined) {
+        const posterFileInfo = getFileInfo(poster_image_uri)
+
+        formData.append('poster_image', {
+          uri: poster_image_uri,
+          name: posterFileInfo.fileName,
+          type: posterFileInfo.mimeType,
+        } as any)
+      }
+
+      formData.append(
+        'activityData',
+        JSON.stringify({
+          ...activityInfo,
+          poster_image_uri: undefined,
+        }),
+      )
+
+      const response = await this.api.patch(
+        `/activities/${activityInfo.activity_id}`,
+        formData,
+        {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        },
+      )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data.activity,
+        }
+      }
+
+      return {
+        success: false,
+        message: response.data.message || 'Error al crear la nueva actividad',
+        error: response.data.error || 'No se pudo crear la nueva actividad',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.log(error.response?.data)
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
       }
     }
   }

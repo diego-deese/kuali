@@ -5,7 +5,8 @@ import { isNumber } from '../utils/validations'
 import { AuthRequest } from '../types/Request'
 import { ADMIN_ROLE_ID } from '../constants/roles'
 import { ActivityRequirement } from '../types/Requirement'
-import { toNewActivity } from '../utils/parsing/Activity'
+import { toNewActivity, toUpdateActivity } from '../utils/parsing/Activity'
+import { parseId } from '../utils/parsing/shared'
 
 class ActivityController {
   async getActivities (req: AuthRequest, res: Response): Promise<void> {
@@ -232,6 +233,36 @@ class ActivityController {
       } else {
         res.status(500).json({
           message: 'Error al borrar el evento o convocatoria',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
+
+  async updateActivity (req: Request, res: Response): Promise<void> {
+    try {
+      const activityId = parseId(req.params.activityId, 'El id de la actividad no fue proporcionado o tiene un formato inválido')
+      const updateActivityDataJSON = JSON.parse(req.body.activityData)
+      let updateActivityData = toUpdateActivity(updateActivityDataJSON)
+
+      if (req.file !== undefined) {
+        const posterFile = req.file
+
+        updateActivityData = { ...updateActivityData, poster_image: posterFile.buffer, poster_mimetype: posterFile.mimetype }
+      }
+
+      const updatedActivity = await activityService.updateActivity(activityId, updateActivityData)
+
+      res.status(200).json({ activity: updatedActivity })
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al actualizar el evento o convocatoria',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al actualizar el evento o convocatoria',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }

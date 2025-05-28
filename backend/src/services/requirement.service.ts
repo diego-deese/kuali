@@ -1,7 +1,7 @@
 import { Requirements } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError } from '../types/Error'
-import { NewRequirement, PatchRequirement, UpdateRequirement } from '../types/Requirement'
+import { NewRequirement, UpdateRequirement } from '../types/Requirement'
 import activityService from './activity.service'
 
 class RequirementService {
@@ -33,26 +33,13 @@ class RequirementService {
     await this.getRequirement(requirementId)
 
     const updatedRequirement = await prisma.requirements.update({
-      data: requirementData,
       where: {
         requirement_id: requirementId
-      }
+      },
+      data: requirementData
     })
 
     return updatedRequirement
-  }
-
-  async patchRequirement (requirementId: number, requirementData: PatchRequirement): Promise<Requirements> {
-    await this.getRequirement(requirementId)
-
-    const patchedRequirement = await prisma.requirements.update({
-      data: requirementData,
-      where: {
-        requirement_id: requirementId
-      }
-    })
-
-    return patchedRequirement
   }
 }
 
