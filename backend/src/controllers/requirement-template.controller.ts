@@ -2,7 +2,8 @@ import { Request, Response } from 'express'
 import activityAttachedFileService from '../services/requirement-template.service'
 import { AppError } from '../types/Error'
 import { isNumber } from '../utils/validations'
-import { toNewRequirementTemplate } from '../utils/parsing/RequirementTemplate'
+import { toNewRequirementTemplate, toUpdateRequirementTemplate } from '../utils/parsing/RequirementTemplate'
+import { parseId } from '../utils/parsing/shared'
 
 class RequirementTemplateController {
   uploadFile = async (req: Request, res: Response): Promise<void> => {
@@ -69,6 +70,45 @@ class RequirementTemplateController {
       } else {
         res.status(500).json({
           message: 'Error al descargar el archivo',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
+
+  updateTemplateFile = async (req: Request, res: Response): Promise<void> => {
+    try {
+      console.log('update')
+      const file = req.file
+
+      const requirementTemplateId = parseId(req.params.requirementTemplateId, 'El id de la plantilla de requisito no fue porporcionado o tiene un formato inválido')
+
+      if (file === undefined) {
+        res.status(400).json({
+          message: 'Error al subir la plantilla del requisito',
+          error: 'No se proporcionó el archivo de la platilla'
+        })
+        return
+      }
+
+      const newRequirementTemplateData = toUpdateRequirementTemplate({
+        name: file.filename,
+        file_content: file.buffer,
+        mimetype: file.mimetype
+      })
+
+      await activityAttachedFileService.updateTemplateFile(requirementTemplateId, newRequirementTemplateData)
+
+      res.status(200).json({ message: 'La plantilla del requisito se subió con éxito' })
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al subir la plantilla del requisito',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al subir la plantilla del requisito',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }

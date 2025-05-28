@@ -31,9 +31,9 @@ export const useActivityForm = (
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const editedActivityDataRef = useRef<UpdateActivityData>({})
+  const editedActivityDataRef = useRef<UpdateActivityData>({ activity_id: 0 })
 
-  const loadActivityData = async (activityId: number) => {
+  const loadActivityData = async (activityId: number): Promise<void> => {
     setLoading(true)
     try {
       const result = await activityService.getActivityById(activityId)
@@ -63,6 +63,8 @@ export const useActivityForm = (
       })
       dateManagement.onActivityDateChange(new Date(activity.event_date))
       dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
+
+      editedActivityDataRef.current.activity_id = activity.activity_id
     } catch (error) {
       console.error(error)
     } finally {
@@ -229,7 +231,53 @@ export const useActivityForm = (
   }
 
   const updateActivity = async () => {
-    console.log(editedActivityDataRef.current)
+    setLoadingAction(true)
+    try {
+      const allFieldsCorrect = errorManagement.validateAllFields(
+        title,
+        description,
+        '',
+        locationManagement.location,
+      )
+
+      console.log(title)
+
+      if (!allFieldsCorrect) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error al actualizar la actividad',
+          text2: 'Corrige los errores e intentalo de nuevo',
+        })
+        return
+      }
+
+      const result = await activityService.updateActivity(
+        editedActivityDataRef.current,
+      )
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        return
+      }
+
+      Toast.show({
+        text1: 'Actividad actualizada',
+        text2: 'Los datos de la actividad se han actualizado',
+      })
+    } catch (error) {
+      console.error(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al crear la nueva actividad',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+    } finally {
+      setLoadingAction(false)
+    }
   }
 
   return {

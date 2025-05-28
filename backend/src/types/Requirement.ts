@@ -1,5 +1,4 @@
 import { Prisma } from '../generated/client'
-import { UpdateActivityRequirementTemplate } from './RequirementTemplates'
 
 const newRequirement = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
   select: {
@@ -27,13 +26,6 @@ const activityRequirement = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
 
 export type ActivityRequirement = Prisma.RequirementsGetPayload<typeof activityRequirement>
 
-export interface UpdateActivityRequirement {
-  requirement_id?: number
-  name?: string
-  description?: string
-  template: UpdateActivityRequirementTemplate | null
-}
-
 const updateRequirement = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
   select: {
     name: true,
@@ -41,9 +33,7 @@ const updateRequirement = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
   }
 })
 
-export type UpdateRequirement = Prisma.RequirementsGetPayload<typeof updateRequirement>
-
-export type PatchRequirement = Partial<UpdateRequirement>
+export type UpdateRequirement = Partial<Prisma.RequirementsGetPayload<typeof updateRequirement>>
 
 const requirementInfo = Prisma.validator<Prisma.RequirementsDefaultArgs>()({
   select: {

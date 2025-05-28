@@ -1,7 +1,7 @@
 import { RequirementTemplates } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError } from '../types/Error'
-import { CreatedRequirementTemplate, NewRequirementTemplate } from '../types/RequirementTemplates'
+import { CreatedRequirementTemplate, NewRequirementTemplate, UpdateRequirementTemplate } from '../types/RequirementTemplates'
 
 class RequirementTemplateService {
   async uploadFile (newRequirementTemplateData: NewRequirementTemplate): Promise<CreatedRequirementTemplate> {
@@ -38,6 +38,21 @@ class RequirementTemplateService {
       console.error('Error al obtener el documento:', error)
       throw new Error('No se pudo obtener el archivo')
     }
+  }
+
+  async updateTemplateFile (requirementTemplateId: number, requirementTemplateData: UpdateRequirementTemplate): Promise<CreatedRequirementTemplate> {
+    const updatedTemplate = prisma.requirementTemplates.update({
+      where: {
+        requirement_template_id: requirementTemplateId
+      },
+      data: requirementTemplateData,
+      omit: {
+        file_content: true,
+        mimetype: true
+      }
+    })
+
+    return await updatedTemplate
   }
 }
 

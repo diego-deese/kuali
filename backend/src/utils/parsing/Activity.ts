@@ -1,8 +1,8 @@
 import { NewActivity, UpdateActivity } from '../../types/Activities'
 import { ValidationError } from '../../types/Error'
-import { ActivityRequirement, UpdateActivityRequirement } from '../../types/Requirement'
+import { ActivityRequirement } from '../../types/Requirement'
 import { isDate, isString } from '../validations'
-import { toActivityRequirement, toUpdateActivityRequirement } from './Requirement'
+import { toActivityRequirement } from './Requirement'
 import { parseBoolean, parseId } from './shared'
 
 const parseTitle = (titleFromRequest: string): string => {
@@ -47,14 +47,6 @@ const parseRequirements = (requirementsFromRequest: any[]): ActivityRequirement[
   }
 
   return requirementsFromRequest.map<ActivityRequirement>(req => toActivityRequirement(req))
-}
-
-const parseUpdateRequirements = (requirementsFromRequest: any[]): UpdateActivityRequirement[] => {
-  if (!Array.isArray(requirementsFromRequest)) {
-    throw new ValidationError('Los requisitos deben ser proporcionados dentro de un array')
-  }
-
-  return requirementsFromRequest.map<UpdateActivityRequirement>(req => toUpdateActivityRequirement(req))
 }
 
 const parseMimeType = (mimetypeFromRequest: string): string => {
@@ -105,7 +97,6 @@ export const toNewActivity = (object: any): NewActivity => {
 
 export const toUpdateActivity = (object: any): UpdateActivity => {
   const updateActivity: UpdateActivity = {
-    activity_id: parseId(object.activity_id, 'El formato de la id del evento o convocatoria es inválido'),
     title: object.title !== undefined ? parseTitle(object.title) : undefined,
     description: object.description !== undefined ? parseDescription(object.description) : undefined,
     event_date: object.event_date !== undefined ? parseEventDate(object.event_date) : undefined,
@@ -115,7 +106,6 @@ export const toUpdateActivity = (object: any): UpdateActivity => {
     visible_students: object.visible_students !== undefined ? parseBoolean(object.visible_students, 'El formato del atributo visible para estudiantes del evento o convocatoria es inválido') : undefined,
     location_id: object.location_id !== undefined ? parseId(object.location_id, 'El formato de la id del lugar del evento o convocatoria es inválido') : undefined,
     category_id: object.category_id !== undefined ? parseId(object.category_id, 'El formato del id de la categoría del evento o convocatoria es inválido') : undefined,
-    requirements: object.requirements !== undefined ? parseUpdateRequirements(object.requirements) : [],
     poster_image: object.poster_image !== undefined ? parseFileContent(object.poster_image) : undefined,
     poster_mimetype: object.poster_mimetype !== undefined ? parseMimeType(object.poster_mimetype) : undefined
   }
