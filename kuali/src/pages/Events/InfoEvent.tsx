@@ -255,9 +255,20 @@ const InfoEvent: React.FC = () => {
           visibilityTime: 3000,
         })
 
-        // En iOS, compartir el archivo automáticamente
-        if (Platform.OS === 'ios') {
+        try {
           await documentService.shareFile(result.localUri)
+        } catch (shareError) {
+          console.warn(
+            'No se pudo compartir el archivo automáticamente:',
+            shareError,
+          )
+          // Toast adicional para informar al usuario sobre la ubicación del archivo
+          Toast.show({
+            type: 'info',
+            text1: 'Archivo guardado',
+            position: 'top',
+            visibilityTime: 4000,
+          })
         }
       } else {
         throw new Error(result.error || 'No se pudo descargar la plantilla')

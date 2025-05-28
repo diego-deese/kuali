@@ -152,12 +152,8 @@ class DocumentService {
       // Determinar la extensión del archivo
       const extension = this.getFileExtension(templateName)
 
-      // Crear nombre de archivo único
-      const timestamp = new Date().getTime()
-      const fileName = `${templateName.replace(/[^a-zA-Z0-9]/g, '_')}_${timestamp}.${extension}`
-
       // Ruta donde se guardará el archivo
-      const fileUri = `${FileSystem.documentDirectory}${fileName}`
+      const fileUri = `${FileSystem.documentDirectory}${templateName}.${extension}`
 
       // Descargar el archivo
       const downloadResult = await FileSystem.downloadAsync(
