@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, Platform } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
@@ -16,7 +16,6 @@ import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
 import TemplateCard from '../../components/TemplateCard/TemplateCard'
-//import * as WebBrowser from 'expo-web-browser'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -210,31 +209,75 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleTemplateDownload = async (templateId: number) => {
-    // try {
-    //   // Mostrar indicador de carga
-    //   Toast.show({
-    //     type: 'info',
-    //     text1: 'Preparando documento...',
-    //     position: 'top',
-    //     autoHide: true,
-    //     visibilityTime: 2000,
-    //   })
-    //   // Obtener la URL de forma asíncrona
-    //   const downloadUrl =
-    //     await documentService.getTemplateDownloadUrl(templateId)
-    //   // Abrir el navegador con la URL
-    //   await WebBrowser.openBrowserAsync(downloadUrl)
-    // } catch (error) {
-    //   console.error('Error al obtener URL de descarga:', error)
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Error',
-    //     text2: 'No se pudo descargar la plantilla',
-    //     position: 'top',
-    //   })
-    // }
+    try {
+      // Buscar el template en los requirements para obtener su nombre
+      const template = eventDetails?.requirements?.find(
+        (req) => req.requirement_id === templateId && req.template,
+      )
 
-    console.log('DESCARGANDO DOCUMENTO')
+      if (!template) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No se encontró la plantilla',
+          position: 'top',
+        })
+        return
+      }
+
+      // Mostrar indicador de carga
+      Toast.show({
+        type: 'info',
+        text1: 'Descargando documento...',
+        position: 'top',
+        autoHide: false,
+      })
+
+      // Descargar usando FileSystem
+      const result = await documentService.downloadTemplate(
+        templateId,
+        template.name,
+      )
+
+      // Ocultar toast de carga
+      Toast.hide()
+
+      if (result.success && result.localUri) {
+        // Mostrar toast de éxito
+        Toast.show({
+          type: 'success',
+          text1: 'Descarga completada',
+          text2:
+            Platform.OS === 'ios'
+              ? 'Documento guardado'
+              : 'Documento descargado',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+
+        // En iOS, compartir el archivo automáticamente
+        if (Platform.OS === 'ios') {
+          await documentService.shareFile(result.localUri)
+        }
+      } else {
+        throw new Error(result.error || 'No se pudo descargar la plantilla')
+      }
+    } catch (error) {
+      // Ocultar toast de carga en caso de error
+      Toast.hide()
+
+      console.error('Error al descargar plantilla:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error de descarga',
+        text2:
+          error instanceof Error
+            ? error.message
+            : 'No se pudo descargar la plantilla',
+        position: 'top',
+        visibilityTime: 4000,
+      })
+    }
   }
   const confirmApply = async () => {
     try {
