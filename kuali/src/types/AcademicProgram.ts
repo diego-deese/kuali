@@ -5,6 +5,7 @@ export type AcademicProgram = {
 }
 
 export type InscriptionData = {
-  student_id: number
+  student_id?: number
   program_id: number
+  researcher_id?: number
 }

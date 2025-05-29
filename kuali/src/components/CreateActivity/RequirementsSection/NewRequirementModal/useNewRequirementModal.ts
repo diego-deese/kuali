@@ -20,6 +20,8 @@ export const useNewRequirementModal = (
       : null,
   )
 
+  const [actionMade, setActionMade] = useState(false)
+
   const [errors, setErrors] = useState({
     name: {
       error: false,
@@ -65,6 +67,8 @@ export const useNewRequirementModal = (
           },
         }))
       }
+
+      setActionMade(true)
     } catch (error) {
       console.error('Error al seleccionar el archivo:', error)
     }
@@ -76,6 +80,7 @@ export const useNewRequirementModal = (
       ...prev,
       name: validateName(text),
     }))
+    setActionMade(true)
   }
 
   const handleDescriptionChange = (text: string) => {
@@ -84,11 +89,13 @@ export const useNewRequirementModal = (
       ...prev,
       description: validateDescription(text),
     }))
+    setActionMade(true)
   }
 
   const handleWithTemplateChange = () => {
     setWithTemplate(!withTemplate)
     setTemplateUri(null)
+    setActionMade(true)
   }
 
   const validateName = (name: string) => {
@@ -223,5 +230,6 @@ export const useNewRequirementModal = (
     handleCancel,
     handleConfirm,
     pickDocument,
+    actionMade,
   }
 }

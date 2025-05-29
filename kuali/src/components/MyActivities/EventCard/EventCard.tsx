@@ -1,19 +1,17 @@
 import { Pressable, Text, View } from 'react-native'
 import styles from './EventCard.styles'
 import { FormattedDate } from '../../shared/FormattedDate/FormattedDate'
-import { useEventNavigation } from '../../../hooks/NavigationActivity/useEventNavigation'
-import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 import { Activity } from '../../../types/Activity'
-import { router } from 'expo-router'
+import { useAppActions } from '../../../context/AppActionsContext'
 
 interface ActivityCardProps {
   activity: Activity
 }
 
 const EventCard: React.FC<ActivityCardProps> = ({ activity }) => {
-  const { isNavigating } = useEventNavigation()
+  const { navigation } = useAppActions()
   const handlePress = () => {
-    router.navigate(`/event/${activity.activity_id}/info`)
+    navigation.navigate(`/event/${activity.activity_id}/info`)
   }
 
   return (
@@ -27,8 +25,6 @@ const EventCard: React.FC<ActivityCardProps> = ({ activity }) => {
           ></FormattedDate>
         </View>
       </Pressable>
-      {/* Modal de carga */}
-      <LoadingModal visible={isNavigating} />
     </>
   )
 }

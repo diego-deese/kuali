@@ -7,6 +7,8 @@ import ViewModeSelector from '../../components/MyActivities/ViewModeSelector/Vie
 import TabSelector from '../../components/MyActivities/TabSelector/TabSelector'
 import ActivitiesList from '../../components/MyActivities/ActivitiesList/ActivitiesList'
 import colors from '../../constants/colors'
+import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
+import { useAppActions } from '../../context/AppActionsContext'
 
 export default function MyActivities() {
   const {
@@ -17,6 +19,8 @@ export default function MyActivities() {
     refreshing,
     handleRefresh,
   } = useMyActivities()
+
+  const { navigation } = useAppActions()
 
   return (
     <View style={styles.container}>
@@ -64,6 +68,8 @@ export default function MyActivities() {
           )}
         </View>
       </ScrollView>
+
+      <LoadingModal visible={navigation.isNavigating} />
     </View>
   )
 }

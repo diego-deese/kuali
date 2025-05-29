@@ -28,8 +28,14 @@ const NewRequirementModal = ({
   onConfirm,
   onCancel,
 }: NewRequirementModalProps) => {
-  const { errors, requirement, handleCancel, handleConfirm, pickDocument } =
-    useNewRequirementModal(requirementInfo)
+  const {
+    errors,
+    requirement,
+    handleCancel,
+    handleConfirm,
+    pickDocument,
+    actionMade,
+  } = useNewRequirementModal(requirementInfo)
 
   const descriptionRef = useRef(null)
 
@@ -113,7 +119,8 @@ const NewRequirementModal = ({
               variant='cancel'
             />
             <Button
-              buttonText='Agregar'
+              disabled={!actionMade}
+              buttonText={requirementInfo !== undefined ? 'Aceptar' : 'Agregar'}
               onPress={() => {
                 const canAdd = handleConfirm()
 

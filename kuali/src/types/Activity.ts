@@ -30,6 +30,18 @@ export type NewActivityData = {
   poster_image_uri: string
 }
 
-export type UpdateActivityData = Partial<NewActivityData> & {
+export type UpdateActivityData = {
   activity_id: number
+  title?: string
+  description?: string
+  event_date?: Date
+  register_date_limit?: Date
+  mandatory?: boolean
+  visible_researchers?: boolean
+  visible_students?: boolean
+  location_id?: number
+  requirementsToAdd?: ActivityRequirement[]
+  requirementsToDelete?: number[]
+  requirementsToEdit?: ActivityRequirement[]
+  poster_image_uri?: string
 }

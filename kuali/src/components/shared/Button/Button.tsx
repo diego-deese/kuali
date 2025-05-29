@@ -49,6 +49,7 @@ const Button: React.FC<CustomPressableProps> = ({
           backgroundColor: colors.borderGray,
           borderColor: colors.inactiveGray,
           borderWidth: 1.5,
+          paddingVertical: styles.button.paddingVertical - 1.5,
         }
       default:
         return styles.button
@@ -72,7 +73,9 @@ const Button: React.FC<CustomPressableProps> = ({
           style={[
             styles.buttonText,
             size === 'small' && styles.buttonTextSmall,
-            variant === 'cancel' && { color: colors.fontBlack },
+            variant === 'cancel' && {
+              color: colors.fontBlack,
+            },
           ]}
         >
           {buttonText}
