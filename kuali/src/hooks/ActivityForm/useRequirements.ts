@@ -16,7 +16,7 @@ export const useRequirements = () => {
     description: string,
     template_uri?: string,
   ) => {
-    const newRequirementId = requirements.length + 1
+    const newRequirementId = -(requirements.length + 1) // Negative ID to prevent collisions
     setRequirements((prevRequirements) => {
       const requirementTemplate: RequirementTemplate =
         template_uri !== null
@@ -34,6 +34,8 @@ export const useRequirements = () => {
 
       return newRequirements
     })
+
+    return newRequirementId
   }
 
   const deleteRequirement = (requirementId: number) => {
@@ -45,15 +47,23 @@ export const useRequirements = () => {
   }
 
   const editRequirement = (
-    requiremetId: number,
+    requirementId: number,
     name: string,
     description: string,
-    templateUri: string,
+    templateUri: string | null,
   ) => {
     setRequirements((prevRequirements) =>
       prevRequirements.map((requirement) =>
-        requirement.requirement_id === requiremetId
-          ? { ...requirement, name, description, template_uri: templateUri }
+        requirement.requirement_id === requirementId
+          ? {
+              ...requirement,
+              name,
+              description,
+              template:
+                templateUri !== null
+                  ? { requirement_template_id: 0, template_uri: templateUri }
+                  : null,
+            }
           : requirement,
       ),
     )

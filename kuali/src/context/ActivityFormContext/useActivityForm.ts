@@ -32,7 +32,12 @@ export const useActivityForm = (
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const editedActivityDataRef = useRef<UpdateActivityData>({ activity_id: 0 })
+  const editedActivityDataRef = useRef<UpdateActivityData>({
+    activity_id: 0,
+    requirementsToAdd: [],
+    requirementsToEdit: [],
+    requirementsToDelete: [],
+  })
 
   const loadActivityData = async (activityId: number): Promise<void> => {
     setLoading(true)
@@ -59,7 +64,8 @@ export const useActivityForm = (
       locationManagement.onLocationChange(
         mapToOption(activity.location, 'id_location', 'name'),
       )
-      requirementsManagement.setInitialRequirements(
+
+      const initialRequirements =
         activity.requirements.map<ActivityRequirement>((req) => {
           return {
             requirement_id: req.requirement_id,
@@ -74,8 +80,9 @@ export const useActivityForm = (
                   }
                 : null,
           }
-        }),
-      )
+        })
+      requirementsManagement.setInitialRequirements(initialRequirements)
+
       dateManagement.onActivityDateChange(new Date(activity.event_date))
       dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
 
@@ -160,6 +167,94 @@ export const useActivityForm = (
       errorManagement.updateErrors({
         posterImage: errorManagement.validatePosterImage(null),
       })
+    }
+  }
+
+  const onAddRequirement = (
+    name: string,
+    description: string,
+    template_uri?: string,
+  ) => {
+    const newRequirementId = requirementsManagement.addRequirement(
+      name,
+      description,
+      template_uri,
+    )
+    if (mode === 'edit') {
+      editedActivityDataRef.current.requirementsToAdd = [
+        ...editedActivityDataRef.current.requirementsToAdd,
+        {
+          requirement_id: newRequirementId,
+          name,
+          description,
+          template:
+            template_uri !== undefined
+              ? {
+                  requirement_template_id: 0,
+                  template_uri,
+                }
+              : null,
+        },
+      ]
+    }
+  }
+
+  const onDeleteRequirement = (requirementId: number) => {
+    requirementsManagement.deleteRequirement(requirementId)
+    if (mode === 'edit' && requirementId > 0) {
+      editedActivityDataRef.current.requirementsToDelete.push(requirementId)
+    }
+  }
+
+  const onEditRequirement = (
+    requirementId: number,
+    name: string,
+    description: string,
+    templateUri: string | null,
+  ) => {
+    requirementsManagement.editRequirement(
+      requirementId,
+      name,
+      description,
+      templateUri,
+    )
+    if (mode === 'edit' && requirementId > 0) {
+      if (editedActivityDataRef.current.requirementsToEdit.length === 0) {
+        editedActivityDataRef.current.requirementsToEdit.push({
+          requirement_id: requirementId,
+          name,
+          description,
+          template:
+            templateUri !== null
+              ? { requirement_template_id: 0, template_uri: templateUri }
+              : null,
+        })
+        return
+      }
+
+      const requirementsToEdit =
+        editedActivityDataRef.current.requirementsToEdit.map((req) =>
+          req.requirement_id === requirementId
+            ? {
+                ...req,
+                name,
+                description,
+                template:
+                  templateUri !== null
+                    ? { requirement_template_id: 0, template_uri: templateUri }
+                    : null,
+              }
+            : {
+                requirement_id: requirementId,
+                name,
+                description,
+                template:
+                  templateUri !== null
+                    ? { requirement_template_id: 0, template_uri: templateUri }
+                    : null,
+              },
+        )
+      editedActivityDataRef.current.requirementsToEdit = requirementsToEdit
     }
   }
 
@@ -255,8 +350,6 @@ export const useActivityForm = (
         locationManagement.location,
       )
 
-      console.log(title)
-
       if (!allFieldsCorrect) {
         Toast.show({
           type: 'error',
@@ -266,23 +359,25 @@ export const useActivityForm = (
         return
       }
 
-      const result = await activityService.updateActivity(
-        editedActivityDataRef.current,
-      )
+      console.log(editedActivityDataRef.current)
 
-      if (!result.success && 'error' in result) {
-        Toast.show({
-          type: 'error',
-          text1: result.message,
-          text2: result.error,
-        })
-        return
-      }
+      // const result = await activityService.updateActivity(
+      //   editedActivityDataRef.current,
+      // )
 
-      Toast.show({
-        text1: 'Actividad actualizada',
-        text2: 'Los datos de la actividad se han actualizado',
-      })
+      // if (!result.success && 'error' in result) {
+      //   Toast.show({
+      //     type: 'error',
+      //     text1: result.message,
+      //     text2: result.error,
+      //   })
+      //   return
+      // }
+
+      // Toast.show({
+      //   text1: 'Actividad actualizada',
+      //   text2: 'Los datos de la actividad se han actualizado',
+      // })
     } catch (error) {
       console.error(error)
       Toast.show({
@@ -314,9 +409,9 @@ export const useActivityForm = (
     },
     requirements: {
       requirements: requirementsManagement.requirements,
-      addRequirement: requirementsManagement.addRequirement,
-      deleteRequirement: requirementsManagement.deleteRequirement,
-      editRequirement: requirementsManagement.editRequirement,
+      addRequirement: onAddRequirement,
+      deleteRequirement: onDeleteRequirement,
+      editRequirement: onEditRequirement,
     },
     activityOptions: {
       visibleStudents,
