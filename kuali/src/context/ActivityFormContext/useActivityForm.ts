@@ -1,7 +1,7 @@
 import { useLocations } from '../../hooks/ActivityForm/useLocations'
 import { useDates } from '../../hooks/ActivityForm/useDates'
 import { useRequirements } from '../../hooks/ActivityForm/useRequirements'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import activityService from '../../services/activity.service'
 import { NewActivityData, UpdateActivityData } from '../../types/Activity'
@@ -39,35 +39,35 @@ export const useActivityForm = (
     requirementsToDelete: [],
   })
 
-  const loadActivityData = async (activityId: number): Promise<void> => {
-    setLoading(true)
-    try {
-      const result = await activityService.getActivityById(activityId)
+  const loadActivityData = useCallback(
+    async (activityId: number): Promise<void> => {
+      setLoading(true)
+      try {
+        const result = await activityService.getActivityById(activityId)
 
-      if (!result.success && 'error' in result) {
-        Toast.show({
-          type: 'error',
-          text1: result.message,
-          text2: result.error,
-        })
-        return
-      }
+        if (!result.success && 'error' in result) {
+          Toast.show({
+            type: 'error',
+            text1: result.message,
+            text2: result.error,
+          })
+          return
+        }
 
-      const activity = result.data
+        const activity = result.data
 
-      // Populate activity form fields
-      setTitle(activity.title)
-      setDescription(activity.description)
-      setVisibleStudents(activity?.visible_students)
-      setVisibleResearchers(activity?.visible_researchers)
-      setMandatory(activity?.mandatory)
-      locationManagement.onLocationChange(
-        mapToOption(activity.location, 'id_location', 'name'),
-      )
+        // Populate activity form fields
+        setTitle(activity.title)
+        setDescription(activity.description)
+        setVisibleStudents(activity?.visible_students)
+        setVisibleResearchers(activity?.visible_researchers)
+        setMandatory(activity?.mandatory)
+        locationManagement.onLocationChange(
+          mapToOption(activity.location, 'id_location', 'name'),
+        )
 
-      const initialRequirements =
-        activity.requirements.map<ActivityRequirement>((req) => {
-          return {
+        const initialRequirements =
+          activity.requirements.map<ActivityRequirement>((req) => ({
             requirement_id: req.requirement_id,
             name: req.name,
             description: req.description,
@@ -79,20 +79,31 @@ export const useActivityForm = (
                       req.template.requirement_template_id.toString(),
                   }
                 : null,
-          }
-        })
-      requirementsManagement.setInitialRequirements(initialRequirements)
+          }))
 
-      dateManagement.onActivityDateChange(new Date(activity.event_date))
-      dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
+        requirementsManagement.setInitialRequirements(initialRequirements)
+        dateManagement.onActivityDateChange(new Date(activity.event_date))
+        dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
 
-      editedActivityDataRef.current.activity_id = activity.activity_id
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+        editedActivityDataRef.current.activity_id = activity.activity_id
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [
+      locationManagement,
+      requirementsManagement,
+      dateManagement,
+      setTitle,
+      setDescription,
+      setVisibleStudents,
+      setVisibleResearchers,
+      setMandatory,
+      setLoading,
+    ],
+  )
 
   useEffect(() => {
     if (mode === 'edit' && activityId) {
