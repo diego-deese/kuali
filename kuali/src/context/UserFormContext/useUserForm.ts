@@ -63,6 +63,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
             }
           : null,
       )
+      setEmployeeNumber(userData.employeeNumber || '')
 
       setUser(userData)
       setError(null)

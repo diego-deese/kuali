@@ -20,6 +20,7 @@ export type User = {
     program_id: number
     name: string
   }[]
+  employeeNumber?: string
 }
 
 export type NewUser = {
