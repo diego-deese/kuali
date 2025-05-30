@@ -4,11 +4,13 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import Button from '../../components/shared/Button/Button'
 import CreateUserForm from '../../components/CreateUser/CreateUserForm'
 import { ScrollView } from 'react-native'
-import { useCreateUser } from '../../hooks/UsersManagement/useCreateUser'
+import { UserFormProvider } from '../../context/UserFormContext/UserFormContext'
+import { useUserForm } from '../../context/UserFormContext/useUserForm'
+import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
 import { router } from 'expo-router'
 
-export default function AddUser() {
-  const userForm = useCreateUser()
+const AddUserContent = () => {
+  const { createUser } = useUserFormContext()
 
   const handleGoingBack = () => {
     router.back()
@@ -22,20 +24,22 @@ export default function AddUser() {
         </View>
         <View style={styles.inputsContainer}>
           <ScrollView>
-            <CreateUserForm
-              {...userForm}
-              setRole={(role_id: number) =>
-                userForm.setRole((prev) => ({ ...prev, role_id }))
-              }
-              onEditing={false}
-            />
+            <CreateUserForm onEditing={false} />
           </ScrollView>
         </View>
         <View style={styles.buttonsContainer}>
           <Button buttonText='Cancelar' onPress={handleGoingBack} />
-          <Button buttonText='Crear usuario' onPress={userForm.createUser} />
+          <Button buttonText='Crear usuario' onPress={createUser} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
+  )
+}
+
+export default function AddUser() {
+  return (
+    <UserFormProvider mode='create'>
+      <AddUserContent />
+    </UserFormProvider>
   )
 }

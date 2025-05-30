@@ -1,50 +1,35 @@
 import React from 'react'
 import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
+import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
 
 interface CreateUserFormProps {
-  role?: number
-  name?: string
-  secondName?: string
-  paternalLastName?: string
-  maternalLastName?: string
-  email?: string
-  password?: string
-  identifier?: string
-  curp?: string
-  setRole: (role_id: number) => void
-  setName: (name: string) => void
-  setSecondName: (name: string) => void
-  setPaternalLastName: (name: string) => void
-  setMaternalLastName: (name: string) => void
-  setEmail: (email: string) => void
-  setPassword: (password: string) => void
-  setIdentifier: (id: string) => void
-  setCURP: (curp: string) => void
   onEditing: boolean
 }
 
-const CreateUserForm: React.FC<CreateUserFormProps> = ({
-  role,
-  name,
-  secondName,
-  paternalLastName,
-  maternalLastName,
-  email,
-  password,
-  identifier,
-  curp,
-  setRole,
-  setName,
-  setSecondName,
-  setPaternalLastName,
-  setMaternalLastName,
-  setEmail,
-  setPassword,
-  setIdentifier,
-  setCURP,
-  onEditing,
-}) => {
+const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
+  const {
+    name,
+    secondName,
+    paternalLastName,
+    maternalLastName,
+    email,
+    password,
+    identifier,
+    curp,
+    role,
+    onNameChange,
+    onSecondNameChange,
+    onPaternalLastNameChange,
+    onMaternalLastNameChange,
+    onEmailChange,
+    onPasswordChange,
+    onIdentifierChange,
+    onCurpChange,
+    onRoleChange,
+    errors,
+  } = useUserFormContext()
+
   const roleOptions = [
     { id: 2, label: 'Estudiante' },
     { id: 3, label: 'Investigador' },
@@ -56,44 +41,71 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({
       <SelectInput
         label='Tipo'
         options={roleOptions}
-        onSelect={(option) => setRole(option.id as number)}
+        value={role}
+        onSelect={onRoleChange}
+        error={errors.role.error}
+        errorMessage={errors.role.errorMessage}
       />
-      <InputText label='Primer nombre' onChangeText={setName} value={name} />
+      <InputText
+        label='Primer nombre'
+        onChangeText={onNameChange}
+        value={name}
+        error={errors.name.error}
+        errorMessage={errors.name.errorMessage}
+      />
       <InputText
         label='Segundo nombre'
-        onChangeText={setSecondName}
+        onChangeText={onSecondNameChange}
         value={secondName}
+        error={errors.secondName.error}
+        errorMessage={errors.secondName.errorMessage}
       />
       <InputText
         label='Apellido paterno'
-        onChangeText={setPaternalLastName}
+        onChangeText={onPaternalLastNameChange}
         value={paternalLastName}
+        error={errors.paternalLastName.error}
+        errorMessage={errors.paternalLastName.errorMessage}
       />
       <InputText
         label='Apellido materno'
-        onChangeText={setMaternalLastName}
+        onChangeText={onMaternalLastNameChange}
         value={maternalLastName}
+        error={errors.maternalLastName.error}
+        errorMessage={errors.maternalLastName.errorMessage}
       />
       <InputText
         label='Correo'
-        onChangeText={setEmail}
+        onChangeText={onEmailChange}
         inputMode='email'
         value={email}
+        error={errors.email.error}
+        errorMessage={errors.email.errorMessage}
       />
       {!onEditing && (
         <InputText
           label='Contraseña'
-          onChangeText={setPassword}
+          onChangeText={onPasswordChange}
           secureTextEntry
           value={password}
+          error={errors.password.error}
+          errorMessage={errors.password.errorMessage}
         />
       )}
       <InputText
         label='Matrícula'
-        onChangeText={setIdentifier}
+        onChangeText={onIdentifierChange}
         value={identifier}
+        error={errors.identifier.error}
+        errorMessage={errors.identifier.errorMessage}
       />
-      <InputText label='CURP' onChangeText={setCURP} value={curp} />
+      <InputText
+        label='CURP'
+        onChangeText={onCurpChange}
+        value={curp}
+        error={errors.curp.error}
+        errorMessage={errors.curp.errorMessage}
+      />
     </>
   )
 }
