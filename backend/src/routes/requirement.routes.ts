@@ -8,7 +8,5 @@ const router = Router()
 router.post('/', isAuthenticated, isAdmin, requirementController.createRequirement)
 
 router.get('/:requirementId', isAuthenticated, isAdmin, requirementController.getRequirement)
-router.put('/:requirementId', isAuthenticated, isAdmin, requirementController.updateRequirement)
-router.patch('/:requirementId', isAuthenticated, isAdmin, requirementController.patchRequirement)
 
 export default router

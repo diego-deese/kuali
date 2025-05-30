@@ -1,8 +1,10 @@
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
-import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UserAccesibleActivity } from '../types/Activities'
+import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UpdateActivity, UserAccesibleActivity } from '../types/Activities'
 import { NotFoundError } from '../types/Error'
 import registrationService from './registration.service'
+import requirementTemplateService from './requirement-template.service'
+import requirementService from './requirement.service'
 
 class ActivityService {
   async getActivities (): Promise<UserAccesibleActivity[]> {
@@ -205,7 +207,7 @@ class ActivityService {
         }
       }
 
-      // Retornar la actividad con todos sus datos
+      // Return the created activity
       return await prisma.activities.findFirst({
         where: { activity_id: activity.activity_id },
         omit: {
@@ -278,6 +280,90 @@ class ActivityService {
     ])
 
     return true
+  }
+
+  async updateActivity (activityId: number, activityData: UpdateActivity): Promise<CreatedActivity> {
+    return await prisma.$transaction(async (prisma) => {
+      // Deconstruct the object
+      const {
+        requirements_to_add: requirementsToAdd,
+        requirements_to_edit: requirementsToEdit, requirements_to_delete: requirementsToDelete,
+        ...activityInfo
+      } = activityData
+
+      // Process editted requirements and its templates
+      if (requirementsToEdit !== undefined) {
+        for (const requirement of requirementsToEdit) {
+          const requirementToUpdate = await requirementService.getRequirement(requirement.requirement_id)
+
+          // If the requirement had a template but a null template is passed we delete the template
+          if (requirementToUpdate.template !== null && requirement.template === null) {
+            await requirementTemplateService.deleteTemplateFile(requirementToUpdate.template.requirement_template_id)
+          }
+
+          // If the requirement didn't had a template and a template is passed we add the template
+          if (requirementToUpdate.template === null && requirement.template !== null) {
+            await requirementTemplateService.uploadFile({ ...requirement.template, requirement_id: requirement.requirement_id })
+          }
+
+          // If the requirement had a template and a template is passed we update the template
+          if (requirementToUpdate.template !== null && requirement.template !== null) {
+            await requirementTemplateService.updateTemplateFile(requirementToUpdate.template.requirement_template_id, requirement.template)
+          }
+
+          await requirementService.updateRequirement(requirement.requirement_id, requirement)
+        }
+      }
+
+      // Process added requirements and its templates
+      if (requirementsToAdd !== undefined) {
+        for (const requirement of requirementsToAdd) {
+          const { template: requirementTemplate, ...requirementInfo } = requirement
+
+          const addedRequirement = await requirementService.createRequirement({ ...requirementInfo, activity_id: activityId })
+
+          if (requirement.template !== null) {
+            await requirementTemplateService.uploadFile({ ...requirement.template, requirement_id: addedRequirement.requirement_id })
+          }
+        }
+      }
+
+      if (requirementsToDelete !== undefined) {
+        for (const requirementId of requirementsToDelete) {
+          await requirementService.deleteRequirement(requirementId)
+        }
+      }
+
+      // Process activity update
+      const updatedActivity = await prisma.activities.update({
+        where: {
+          activity_id: activityId
+        },
+        data: activityInfo,
+        omit: {
+          location_id: true,
+          category_id: true,
+          poster_image: true,
+          poster_mimetype: true
+        },
+        include: {
+          category: true,
+          location: true,
+          requirements: {
+            include: {
+              template: {
+                select: {
+                  requirement_template_id: true,
+                  name: true
+                }
+              }
+            }
+          }
+        }
+      })
+
+      return updatedActivity
+    })
   }
 
   async getUserUpcomingActivities (userId: number): Promise<UserAccesibleActivity[]> {

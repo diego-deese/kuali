@@ -1,5 +1,5 @@
 import { ValidationError } from '../../types/Error'
-import { ActivityRequirement, NewRequirement, PatchRequirement, UpdateRequirement } from '../../types/Requirement'
+import { ActivityRequirement, NewRequirement, UpdateRequirement } from '../../types/Requirement'
 import { isString } from '../validations'
 import { toNewActivityRequirementTemplate } from './RequirementTemplate'
 import { parseId } from './shared'
@@ -46,36 +46,6 @@ export const toNewRequirement = (object: any): NewRequirement => {
   return newRequirement
 }
 
-export const toRequirementUpdate = (object: any): UpdateRequirement => {
-  const updatedRequirement: UpdateRequirement = {
-    name: parseName(object.name),
-    description: parseDescription(object.description)
-  }
-
-  return updatedRequirement
-}
-
-export const toRequirementPatch = (object: any): PatchRequirement => {
-  const patchedRequirement: Partial<PatchRequirement> = {}
-  let somethingWasPatched = false
-
-  if (object.name !== undefined) {
-    somethingWasPatched = true
-    patchedRequirement.name = parseName(object.name)
-  }
-
-  if (object.description !== undefined) {
-    somethingWasPatched = true
-    patchedRequirement.description = parseDescription(object.description)
-  }
-
-  if (!somethingWasPatched) {
-    throw new ValidationError('No se proporcionó ningún atributo para actualizar')
-  }
-
-  return patchedRequirement
-}
-
 export const toActivityRequirement = (object: any): ActivityRequirement => {
   const activityRequirement: ActivityRequirement = {
     name: parseName(object.name),
@@ -84,4 +54,15 @@ export const toActivityRequirement = (object: any): ActivityRequirement => {
   }
 
   return activityRequirement
+}
+
+export const toUpdateRequirement = (object: any): UpdateRequirement => {
+  const updateActivityRequirement: UpdateRequirement = {
+    requirement_id: parseId(object.requirement_id, 'El id del requisito no fue proporcionado o tiene un formato inválido'),
+    name: object.name !== undefined ? parseName(object.name) : undefined,
+    description: object.description !== undefined ? parseDescription(object.description) : undefined,
+    template: object.template === null || object.template === undefined ? null : toNewActivityRequirementTemplate(object.template)
+  }
+
+  return updateActivityRequirement
 }

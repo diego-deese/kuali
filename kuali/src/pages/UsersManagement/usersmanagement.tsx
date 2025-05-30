@@ -4,109 +4,47 @@ import {
   SafeAreaView,
   ScrollView,
   TouchableOpacity,
+  RefreshControl,
 } from 'react-native'
-import { useState } from 'react'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
 import IconButton from '../../components/shared/IconButton/IconButton'
 import styles from './usersmanagement.styles'
 import UserCard from '../../components/UserCard/UserCard'
 import { PlusIcon } from '../../components/shared/Icons/Icons'
-import { router } from 'expo-router'
-import { useGetUsers } from '../../hooks/UsersManagement/useGetUsers'
-import authService from '../../services/auth.service'
-import userService from '../../services/user.service'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'
 import colors from '../../constants/colors'
 import AcademicProgramsModal from '../../components/shared/AcademicProgramsModal/AcademicProgramsModal'
+import useUsersManagement from '../../hooks/UsersManagement/useUsersManagement'
 
 export default function UsersManagement() {
-  const [activeTab, setActiveTab] = useState('Estudiantes')
-  const { users, loading, error } = useGetUsers()
-  const [showConfirmationModal, setShowConfirmationModal] = useState(false)
-  const [showProgramModal, setShowProgramModal] = useState(false)
-  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
-  const [selectedUser, setSelectedUser] = useState<any>(null)
-
-  const students = (users ?? [])
-    .filter((user) => user.role?.name === 'Estudiante')
-    .map((user) => ({
-      ...user,
-      hasAcademicPrograms: user.academic_programs_as_student.length > 0,
-    }))
-
-  const researchers = (users ?? [])
-    .filter((user) => user.role?.name === 'Investigador')
-    .map((researcher) => ({
-      ...researcher,
-      hasAcademicPrograms:
-        researcher.academic_programs_as_researcher.length > 0,
-    }))
-
-  const admins = (users ?? []).filter(
-    (user) => user.role?.name === 'Administrador',
-  )
-
-  const handleAddUser = () => {
-    router.push({ pathname: `/user/adduser` })
-  }
-
-  const handleOnEdit = (userId: number) => {
-    router.push(`/user/edituser/${userId}`)
-  }
-
-  const handleGetInfo = (userId: number) => {
-    router.push(`/user/infouser/${userId}`)
-  }
-
-  const openConfirmationModal = (user: any) => {
-    setSelectedUser(user)
-    if (user.hasAcademicPrograms) {
-      setShowConfirmationModal(true)
-    } else {
-      setShowProgramModal(true)
-    }
-  }
-
-  const handleConfirmDeactivate = async () => {
-    if (!selectedUser) return
-    const token = await authService.getToken()
-    if (!token) return console.log('Token expirado o sin acceso')
-
-    const response = await userService.deactiveProfile(selectedUser.user_id)
-    if ('success' in response && !response.success) {
-      console.error(response.error)
-    } else {
-      console.log('Usuario desactivado con éxito')
-    }
-
-    setSelectedUser(null)
-    setShowConfirmationModal(false)
-  }
-
-  const handleConfirmAssign = async (programId: number) => {
-    if (!selectedUser) return
-    const token = await authService.getToken()
-    if (!token) return console.log('Token expirado o sin acceso')
-
-    // const response = await userService.assignStudent(
-    //   programId,
-    //   selectedUser.user_id,
-    // )
-    // if ('success' in response && !response.success) {
-    //   console.error(response.error)
-    // } else {
-    //   console.log('Estudiante reactivado e inscrito')
-    // }
-
-    setSelectedUser(null)
-    setShowProgramModal(false)
-  }
+  const {
+    activeTab,
+    setActiveTab,
+    students,
+    researchers,
+    admins,
+    loading,
+    error,
+    handleAddUser,
+    handleOnEdit,
+    handleGetInfo,
+    openConfirmationModal,
+    handleConfirmDeactivate,
+    handleConfirmAssign,
+    showConfirmationModal,
+    setShowConfirmationModal,
+    showProgramModal,
+    setShowProgramModal,
+    refreshing,
+    setRefreshing,
+    handleRefresh,
+  } = useUsersManagement()
 
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
         <View style={styles.headerContainer}>
-          <Text style={styles.title}> Gestión de usuarios</Text>
+          <Text style={styles.title}> Gestión de usuarios </Text>
           <IconButton icon={<PlusIcon />} onPress={handleAddUser} />
         </View>
 
@@ -132,7 +70,16 @@ export default function UsersManagement() {
         ) : (
           <>
             {activeTab === 'Estudiantes' && (
-              <ScrollView>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    tintColor={colors.selectionBlue}
+                    colors={[colors.selectionBlue]}
+                  />
+                }
+              >
                 {students.map((user, i) => (
                   <UserCard
                     user_id={user.user_id}
@@ -150,7 +97,16 @@ export default function UsersManagement() {
               </ScrollView>
             )}
             {activeTab === 'Investigadores' && (
-              <ScrollView>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    tintColor={colors.selectionBlue}
+                    colors={[colors.selectionBlue]}
+                  />
+                }
+              >
                 {researchers.map((user, i) => (
                   <UserCard
                     user_id={user.user_id}
@@ -162,13 +118,22 @@ export default function UsersManagement() {
                     state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={openConfirmationModal}
+                    onDeactivatePress={() => openConfirmationModal(user)}
                   />
                 ))}
               </ScrollView>
             )}
             {activeTab === 'Administradores' && (
-              <ScrollView>
+              <ScrollView
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={handleRefresh}
+                    tintColor={colors.selectionBlue}
+                    colors={[colors.selectionBlue]}
+                  />
+                }
+              >
                 {admins.map((user, i) => (
                   <UserCard
                     user_id={user.user_id}

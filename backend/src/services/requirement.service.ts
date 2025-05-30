@@ -1,14 +1,17 @@
 import { Requirements } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError } from '../types/Error'
-import { NewRequirement, PatchRequirement, UpdateRequirement } from '../types/Requirement'
+import { NewRequirement, Requirement, UpdateRequirement } from '../types/Requirement'
 import activityService from './activity.service'
 
 class RequirementService {
-  async getRequirement (requirementId: number): Promise<Requirements> {
+  async getRequirement (requirementId: number): Promise<Requirement> {
     const requirement = await prisma.requirements.findFirst({
       where: {
         requirement_id: requirementId
+      },
+      include: {
+        template: true
       }
     })
 
@@ -33,26 +36,46 @@ class RequirementService {
     await this.getRequirement(requirementId)
 
     const updatedRequirement = await prisma.requirements.update({
-      data: requirementData,
       where: {
         requirement_id: requirementId
+      },
+      data: {
+        ...requirementData,
+        template: (requirementData.template !== null)
+          ? {
+              update: requirementData.template
+            }
+          : undefined
       }
     })
 
     return updatedRequirement
   }
 
-  async patchRequirement (requirementId: number, requirementData: PatchRequirement): Promise<Requirements> {
+  async deleteRequirement (requirementId: number): Promise<boolean> {
     await this.getRequirement(requirementId)
 
-    const patchedRequirement = await prisma.requirements.update({
-      data: requirementData,
-      where: {
-        requirement_id: requirementId
-      }
-    })
+    return await prisma.$transaction(async (prisma) => {
+      await prisma.requirementTemplates.deleteMany({
+        where: {
+          requirement_id: requirementId
+        }
+      })
 
-    return patchedRequirement
+      await prisma.userDocuments.deleteMany({
+        where: {
+          requirement_id: requirementId
+        }
+      })
+
+      await prisma.requirements.delete({
+        where: {
+          requirement_id: requirementId
+        }
+      })
+
+      return true
+    })
   }
 }
 
