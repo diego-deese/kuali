@@ -209,6 +209,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
           text1: 'Usuario creado con éxito',
           text2: `ID: ${result.data.user.user_id}`,
         })
+        restartFields()
       }
     }
   }
