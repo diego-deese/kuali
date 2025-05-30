@@ -5,9 +5,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formContainer: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
     paddingHorizontal: 40,
+    marginVertical: 24,
   },
   title: {
     fontFamily: 'monserratRegular',

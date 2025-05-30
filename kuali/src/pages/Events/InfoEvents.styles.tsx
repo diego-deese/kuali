@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     fontSize: 24,
     color: colors.fontBlack,
-    width: '90%',
+    width: '80%',
   },
   eventInfoText: {
     fontFamily: 'monserratRegular',

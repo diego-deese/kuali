@@ -2,6 +2,7 @@ import { View, Text } from 'react-native'
 import { useEffect, useState } from 'react'
 import {
   CalendarClockIcon,
+  DeleteIcon,
   PlaceIcon,
   SquareEditIcon,
 } from '../shared/Icons/Icons'
@@ -12,9 +13,11 @@ import activityService from '../../services/activity.service'
 import styles from '../../pages/Events/InfoEvents.styles'
 import colors from '../../constants/colors'
 import IconButton from '../shared/IconButton/IconButton'
-import { router } from 'expo-router'
 import WithRole from '../WithRole/WithRole'
 import { Roles } from '../../constants/roles'
+import ConfirmationModal from '../shared/ConfirmationModal/ConfirmationModal'
+import Toast from 'react-native-toast-message'
+import { useAppActions } from '../../context/AppActionsContext'
 
 interface EventDetailsHeaderProps {
   activity_id: number
@@ -34,6 +37,10 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
   // Si tenemos datos existentes, no necesitamos iniciar en estado de carga
   const [loading, setLoading] = useState(!existingData)
   const [error, setError] = useState<string | null>(null)
+
+  const [showModal, setShowModal] = useState(false)
+
+  const { navigation } = useAppActions()
 
   useEffect(() => {
     // Recibe los datos si los hay
@@ -75,6 +82,36 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
     fetchEventDetails()
   }, [activity_id, onDataLoaded, existingData])
 
+  const deleteActivity = async (activityId: number) => {
+    setShowModal(false)
+    try {
+      const result = await activityService.deleteActivity(activityId)
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        return
+      }
+
+      Toast.show({
+        text1: 'Actividad eliminada',
+        text2: 'La actividad y todos sus datos han sido eliminados',
+      })
+
+      navigation.navigate(`/`)
+    } catch (error) {
+      console.error(error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al eliminar la actividad',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+    }
+  }
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -101,6 +138,16 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
           <Text style={styles.eventTitle}>{eventDetails.title}</Text>
           <WithRole role={Roles.ADMIN}>
             <IconButton
+              disabled={navigation.isNavigating}
+              icon={
+                <DeleteIcon fill={false} color={colors.warningRed} size={32} />
+              }
+              onPress={() => {
+                setShowModal(true)
+              }}
+            />
+            <IconButton
+              disabled={navigation.isNavigating}
               icon={
                 <SquareEditIcon
                   fill={false}
@@ -109,7 +156,7 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
                 />
               }
               onPress={() => {
-                router.navigate(`/event/${activity_id}/edit`)
+                navigation.navigate(`/event/${activity_id}/edit`)
               }}
             />
           </WithRole>
@@ -155,6 +202,22 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
         </View>
         <Text style={styles.description}>{eventDetails.description}</Text>
       </View>
+
+      <ConfirmationModal
+        visible={showModal}
+        showWarning
+        variant='delete'
+        title='¿Estás seguro que deseas eliminar esta actividad?'
+        description='Todas las inscripciones, requisitos, plantillas de requisitos y documentos subidos por los usuarios serán eliminados también.'
+        confirmButtonColor={colors.warningRed}
+        confirmButtonText='Eliminar'
+        onConfirm={() => {
+          deleteActivity(activity_id)
+        }}
+        onCancel={() => {
+          setShowModal(false)
+        }}
+      />
     </>
   )
 }
