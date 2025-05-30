@@ -17,3 +17,10 @@ export type ActivityRequirement = {
   description: string
   template: RequirementTemplate | null
 }
+
+export type EditRequirement = {
+  requirement_id: number
+  name?: string
+  description?: string
+  template?: RequirementTemplate | null
+}

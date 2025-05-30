@@ -7,7 +7,8 @@ export const useDates = () => {
 
   const onActivityDateChange = (newDate: Date) => {
     setActivityDate(newDate)
-    setLimitDate(newDate)
+    if (new Date(limitDate.toString()) > new Date(newDate.toString()))
+      setLimitDate(newDate)
   }
 
   const onLimitDateChange = (newDate: Date) => {

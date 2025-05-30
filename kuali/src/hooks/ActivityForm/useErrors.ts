@@ -20,6 +20,10 @@ export const useErrors = () => {
       error: false,
       errorMessage: '',
     },
+    dates: {
+      error: false,
+      errorMessage: '',
+    },
   })
 
   const updateErrors = (newErrors: Partial<ActivityErrors>) => {
@@ -93,17 +97,34 @@ export const useErrors = () => {
     }
   }
 
+  const validateDates = (activityDate: Date, limitDate: Date): InputError => {
+    if (limitDate > activityDate) {
+      return {
+        error: true,
+        errorMessage: 'La fecha límite debe ser anterior al evento',
+      }
+    }
+
+    return {
+      error: false,
+      errorMessage: '',
+    }
+  }
+
   const validateAllFields = (
     title: string,
     description: string,
     posterImg: string | null,
     location: Option,
+    activityDate: Date,
+    limitDate: Date,
   ): boolean => {
     const newErrors: ActivityErrors = {
       title: validateTitle(title),
       description: validateDescription(description),
       posterImage: validatePosterImage(posterImg),
       location: validateLocation(location),
+      dates: validateDates(activityDate, limitDate),
     }
 
     setErrors(newErrors)
@@ -112,7 +133,8 @@ export const useErrors = () => {
       newErrors.title.error ||
       newErrors.description.error ||
       newErrors.location.error ||
-      newErrors.posterImage.error
+      newErrors.posterImage.error ||
+      newErrors.dates.error
     )
   }
 
@@ -122,6 +144,7 @@ export const useErrors = () => {
     validateDescription,
     validatePosterImage,
     validateLocation,
+    validateDates,
     validateAllFields,
     updateErrors,
   }

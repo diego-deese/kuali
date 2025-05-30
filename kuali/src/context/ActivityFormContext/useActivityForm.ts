@@ -1,7 +1,7 @@
 import { useLocations } from '../../hooks/ActivityForm/useLocations'
 import { useDates } from '../../hooks/ActivityForm/useDates'
 import { useRequirements } from '../../hooks/ActivityForm/useRequirements'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import * as ImagePicker from 'expo-image-picker'
 import activityService from '../../services/activity.service'
 import { NewActivityData, UpdateActivityData } from '../../types/Activity'
@@ -9,7 +9,7 @@ import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
 import { useErrors } from '../../hooks/ActivityForm/useErrors'
 import { mapToOption } from '../../utils/mappers'
-import { ActivityRequirement } from '../../types/Requirements'
+import { ActivityRequirement, EditRequirement } from '../../types/Requirements'
 
 export const useActivityForm = (
   mode: 'create' | 'edit',
@@ -32,36 +32,42 @@ export const useActivityForm = (
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
 
-  const editedActivityDataRef = useRef<UpdateActivityData>({ activity_id: 0 })
+  const editedActivityDataRef = useRef<UpdateActivityData>({
+    activity_id: 0,
+    requirements_to_add: [],
+    requirements_to_edit: [],
+    requirements_to_delete: [],
+  })
 
-  const loadActivityData = async (activityId: number): Promise<void> => {
-    setLoading(true)
-    try {
-      const result = await activityService.getActivityById(activityId)
+  const loadActivityData = useCallback(
+    async (activityId: number): Promise<void> => {
+      setLoading(true)
+      try {
+        const result = await activityService.getActivityById(activityId)
 
-      if (!result.success && 'error' in result) {
-        Toast.show({
-          type: 'error',
-          text1: result.message,
-          text2: result.error,
-        })
-        return
-      }
+        if (!result.success && 'error' in result) {
+          Toast.show({
+            type: 'error',
+            text1: result.message,
+            text2: result.error,
+          })
+          return
+        }
 
-      const activity = result.data
+        const activity = result.data
 
-      // Populate activity form fields
-      setTitle(activity.title)
-      setDescription(activity.description)
-      setVisibleStudents(activity?.visible_students)
-      setVisibleResearchers(activity?.visible_researchers)
-      setMandatory(activity?.mandatory)
-      locationManagement.onLocationChange(
-        mapToOption(activity.location, 'id_location', 'name'),
-      )
-      requirementsManagement.setInitialRequirements(
-        activity.requirements.map<ActivityRequirement>((req) => {
-          return {
+        // Populate activity form fields
+        setTitle(activity.title)
+        setDescription(activity.description)
+        setVisibleStudents(activity?.visible_students)
+        setVisibleResearchers(activity?.visible_researchers)
+        setMandatory(activity?.mandatory)
+        locationManagement.onLocationChange(
+          mapToOption(activity.location, 'id_location', 'name'),
+        )
+
+        const initialRequirements =
+          activity.requirements.map<ActivityRequirement>((req) => ({
             requirement_id: req.requirement_id,
             name: req.name,
             description: req.description,
@@ -73,19 +79,31 @@ export const useActivityForm = (
                       req.template.requirement_template_id.toString(),
                   }
                 : null,
-          }
-        }),
-      )
-      dateManagement.onActivityDateChange(new Date(activity.event_date))
-      dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
+          }))
 
-      editedActivityDataRef.current.activity_id = activity.activity_id
-    } catch (error) {
-      console.error(error)
-    } finally {
-      setLoading(false)
-    }
-  }
+        requirementsManagement.setInitialRequirements(initialRequirements)
+        dateManagement.onActivityDateChange(new Date(activity.event_date))
+        dateManagement.onLimitDateChange(new Date(activity.register_date_limit))
+
+        editedActivityDataRef.current.activity_id = activity.activity_id
+      } catch (error) {
+        console.error(error)
+      } finally {
+        setLoading(false)
+      }
+    },
+    [
+      locationManagement,
+      requirementsManagement,
+      dateManagement,
+      setTitle,
+      setDescription,
+      setVisibleStudents,
+      setVisibleResearchers,
+      setMandatory,
+      setLoading,
+    ],
+  )
 
   useEffect(() => {
     if (mode === 'edit' && activityId) {
@@ -100,6 +118,7 @@ export const useActivityForm = (
     setVisibleStudents(true)
     setVisibleResearchers(true)
     setMandatory(false)
+    requirementsManagement.restartRequirements()
   }
 
   const onTitleChange = (title: string) => {
@@ -163,24 +182,101 @@ export const useActivityForm = (
     }
   }
 
-  const toggleVisibleStudents = () => {
-    setVisibleStudents(!visibleStudents)
+  const onAddRequirement = (
+    name: string,
+    description: string,
+    template_uri: string | null,
+  ) => {
+    const newRequirementId = requirementsManagement.addRequirement(
+      name,
+      description,
+      template_uri,
+    )
     if (mode === 'edit') {
-      editedActivityDataRef.current.visible_students = visibleStudents
+      editedActivityDataRef.current.requirements_to_add = [
+        ...editedActivityDataRef.current.requirements_to_add,
+        {
+          requirement_id: newRequirementId,
+          name,
+          description,
+          template:
+            template_uri !== null
+              ? {
+                  requirement_template_id: 0,
+                  template_uri,
+                }
+              : null,
+        },
+      ]
+    }
+  }
+
+  const onDeleteRequirement = (requirementId: number) => {
+    requirementsManagement.deleteRequirement(requirementId)
+    if (mode === 'edit' && requirementId > 0) {
+      editedActivityDataRef.current.requirements_to_delete.push(requirementId)
+    }
+
+    if (requirementId < 0) {
+      editedActivityDataRef.current.requirements_to_add =
+        editedActivityDataRef.current.requirements_to_add.filter(
+          (req) => req.requirement_id !== requirementId,
+        )
+    }
+  }
+
+  const onEditRequirement = (requirementInfo: EditRequirement) => {
+    requirementsManagement.editRequirement(requirementInfo)
+    if (mode === 'edit' && requirementInfo.requirement_id > 0) {
+      if (editedActivityDataRef.current.requirements_to_edit.length === 0) {
+        editedActivityDataRef.current.requirements_to_edit.push(requirementInfo)
+        return
+      }
+
+      const requirements_to_edit =
+        editedActivityDataRef.current.requirements_to_edit.map((req) =>
+          req.requirement_id === requirementInfo.requirement_id
+            ? {
+                ...req,
+                ...requirementInfo,
+              }
+            : requirementInfo,
+        )
+      editedActivityDataRef.current.requirements_to_edit = requirements_to_edit
+    }
+  }
+
+  const onActivityDateChange = (activityDate: Date) => {
+    dateManagement.onActivityDateChange(activityDate)
+    editedActivityDataRef.current.event_date = activityDate
+  }
+
+  const onLimitDateChange = (limitDate: Date) => {
+    dateManagement.onLimitDateChange(limitDate)
+    editedActivityDataRef.current.register_date_limit = limitDate
+  }
+
+  const toggleVisibleStudents = () => {
+    const newVisibleStudents = !visibleStudents
+    setVisibleStudents(newVisibleStudents)
+    if (mode === 'edit') {
+      editedActivityDataRef.current.visible_students = newVisibleStudents
     }
   }
 
   const toggleVisibleResearchers = () => {
-    setVisibleResearchers(!visibleResearchers)
+    const newVisibleResearchers = !visibleResearchers
+    setVisibleResearchers(newVisibleResearchers)
     if (mode === 'edit') {
-      editedActivityDataRef.current.visible_researchers = visibleResearchers
+      editedActivityDataRef.current.visible_researchers = newVisibleResearchers
     }
   }
 
   const toggleMandatory = () => {
-    setMandatory(!mandatory)
+    const newMandatory = !mandatory
+    setMandatory(newMandatory)
     if (mode === 'edit') {
-      editedActivityDataRef.current.mandatory = mandatory
+      editedActivityDataRef.current.mandatory = newMandatory
     }
   }
 
@@ -192,6 +288,8 @@ export const useActivityForm = (
         description,
         posterImg,
         locationManagement.location,
+        new Date(dateManagement.activityDate.toString()),
+        new Date(dateManagement.limitDate.toString()),
       )
 
       if (allFieldsCorrect) {
@@ -253,9 +351,9 @@ export const useActivityForm = (
         description,
         '',
         locationManagement.location,
+        new Date(dateManagement.activityDate.toString()),
+        new Date(dateManagement.limitDate.toString()),
       )
-
-      console.log(title)
 
       if (!allFieldsCorrect) {
         Toast.show({
@@ -265,6 +363,8 @@ export const useActivityForm = (
         })
         return
       }
+
+      // console.log(editedActivityDataRef.current)
 
       const result = await activityService.updateActivity(
         editedActivityDataRef.current,
@@ -300,9 +400,9 @@ export const useActivityForm = (
     activityId,
     dates: {
       activityDate: dateManagement.activityDate,
-      onActivityDateChange: dateManagement.onActivityDateChange,
+      onActivityDateChange: onActivityDateChange,
       limitDate: dateManagement.limitDate,
-      onLimitDateChange: dateManagement.onLimitDateChange,
+      onLimitDateChange: onLimitDateChange,
     },
     location: {
       location: locationManagement.location,
@@ -314,9 +414,9 @@ export const useActivityForm = (
     },
     requirements: {
       requirements: requirementsManagement.requirements,
-      addRequirement: requirementsManagement.addRequirement,
-      deleteRequirement: requirementsManagement.deleteRequirement,
-      editRequirement: requirementsManagement.editRequirement,
+      addRequirement: onAddRequirement,
+      deleteRequirement: onDeleteRequirement,
+      editRequirement: onEditRequirement,
     },
     activityOptions: {
       visibleStudents,

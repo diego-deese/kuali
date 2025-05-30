@@ -249,6 +249,30 @@ class ActivityService {
         } as any)
       }
 
+      activityData.requirements_to_edit.forEach((req) => {
+        if (req.template?.template_uri) {
+          const templateFileInfo = getFileInfo(req.template.template_uri)
+
+          formData.append('added_template_file', {
+            uri: req.template.template_uri,
+            name: templateFileInfo.fileName,
+            type: templateFileInfo.mimeType,
+          } as any)
+        }
+      })
+
+      activityData.requirements_to_add.forEach((req) => {
+        if (req.template?.template_uri) {
+          const templateFileInfo = getFileInfo(req.template.template_uri)
+
+          formData.append('created_template_file', {
+            uri: req.template.template_uri,
+            name: templateFileInfo.fileName,
+            type: templateFileInfo.mimeType,
+          } as any)
+        }
+      })
+
       formData.append(
         'activityData',
         JSON.stringify({

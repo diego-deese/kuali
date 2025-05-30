@@ -302,3 +302,20 @@ export const ImagePlusIcon = (props) => {
 export const ArrowBack = (props) => {
   return <MaterialIcons name='arrow-back' size={24} color='black' {...props} />
 }
+
+export const DownloadIcon = (props) => {
+  return <MaterialIcons name='download' size={32} color='black' {...props} />
+}
+
+export const SaveIcon = ({ fill = true, ...props }) => {
+  return fill ? (
+    <MaterialIcons name='save' size={24} color='black' {...props} />
+  ) : (
+    <MaterialCommunityIcons
+      name='content-save-outline'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}

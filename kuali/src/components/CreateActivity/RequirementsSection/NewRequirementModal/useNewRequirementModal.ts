@@ -8,17 +8,18 @@ export const useNewRequirementModal = (
   const [withTemplate, setWithTemplate] = useState(
     requirementInfo ? requirementInfo.template !== null : false,
   )
-  const [requirementName, setRequirementName] = useState(
-    requirementInfo ? requirementInfo.name : '',
-  )
-  const [requirementDescription, setRequirementDescription] = useState(
-    requirementInfo ? requirementInfo.description : '',
-  )
-  const [templateUri, setTemplateUri] = useState<string | null>(
-    requirementInfo && requirementInfo.template !== null
-      ? requirementInfo.template.template_uri
-      : null,
-  )
+
+  const initialRequirement: ActivityRequirement = {
+    name: '',
+    description: '',
+    template: null,
+    ...requirementInfo,
+  }
+
+  const [requirement, setRequirement] =
+    useState<ActivityRequirement>(initialRequirement)
+
+  const [actionMade, setActionMade] = useState(false)
 
   const [errors, setErrors] = useState({
     name: {
@@ -47,7 +48,13 @@ export const useNewRequirementModal = (
       })
 
       if (!result.canceled) {
-        setTemplateUri(result.assets[0].uri)
+        setRequirement((prevRequirement) => ({
+          ...prevRequirement,
+          template: {
+            requirement_template_id: 0,
+            template_uri: result.assets[0].uri,
+          },
+        }))
         setErrors((prev) => ({
           ...prev,
           template: {
@@ -56,7 +63,10 @@ export const useNewRequirementModal = (
           },
         }))
       } else {
-        setTemplateUri(null)
+        setRequirement((prevRequirement) => ({
+          ...prevRequirement,
+          template: null,
+        }))
         setErrors((prev) => ({
           ...prev,
           template: {
@@ -65,30 +75,44 @@ export const useNewRequirementModal = (
           },
         }))
       }
+
+      setActionMade(true)
     } catch (error) {
       console.error('Error al seleccionar el archivo:', error)
     }
   }
 
-  const handleNameChange = (text: string) => {
-    setRequirementName(text)
+  const handleNameChange = (name: string) => {
+    setRequirement((prevRequirement) => ({
+      ...prevRequirement,
+      name,
+    }))
     setErrors((prev) => ({
       ...prev,
-      name: validateName(text),
+      name: validateName(name),
     }))
+    setActionMade(true)
   }
 
-  const handleDescriptionChange = (text: string) => {
-    setRequirementDescription(text)
+  const handleDescriptionChange = (description: string) => {
+    setRequirement((prevRequirement) => ({
+      ...prevRequirement,
+      description,
+    }))
     setErrors((prev) => ({
       ...prev,
-      description: validateDescription(text),
+      description: validateDescription(description),
     }))
+    setActionMade(true)
   }
 
   const handleWithTemplateChange = () => {
     setWithTemplate(!withTemplate)
-    setTemplateUri(null)
+    setRequirement((prevRequirement) => ({
+      ...prevRequirement,
+      template: null,
+    }))
+    setActionMade(true)
   }
 
   const validateName = (name: string) => {
@@ -135,7 +159,7 @@ export const useNewRequirementModal = (
   }
 
   const validateTemplate = () => {
-    if (withTemplate && templateUri === null) {
+    if (withTemplate && requirement.template === null) {
       return {
         error: true,
         errorMessage: 'No se proporcionó el archivo de plantilla',
@@ -150,8 +174,8 @@ export const useNewRequirementModal = (
 
   const validateFields = (): boolean => {
     const newErrors = {
-      name: validateName(requirementName),
-      description: validateDescription(requirementDescription),
+      name: validateName(requirement.name),
+      description: validateDescription(requirement.description),
       template: validateTemplate(),
     }
 
@@ -165,10 +189,13 @@ export const useNewRequirementModal = (
   }
 
   const resetFields = (): void => {
-    setRequirementName('')
-    setRequirementDescription('')
+    setRequirement((prevRequirement) => ({
+      ...prevRequirement,
+      name: '',
+      description: '',
+      template: null,
+    }))
     setWithTemplate(false)
-    setTemplateUri(null)
   }
 
   const resetErrors = (): void => {
@@ -211,17 +238,16 @@ export const useNewRequirementModal = (
 
   return {
     requirement: {
-      requirementName,
-      handleNameChange,
-      requirementDescription,
-      handleDescriptionChange,
-      templateUri,
+      requirement,
       withTemplate,
+      handleNameChange,
+      handleDescriptionChange,
       handleWithTemplateChange,
     },
     errors,
     handleCancel,
     handleConfirm,
     pickDocument,
+    actionMade,
   }
 }

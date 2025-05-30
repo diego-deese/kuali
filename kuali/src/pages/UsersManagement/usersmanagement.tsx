@@ -118,7 +118,7 @@ export default function UsersManagement() {
                     state={true}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={openConfirmationModal}
+                    onDeactivatePress={() => openConfirmationModal(user)}
                   />
                 ))}
               </ScrollView>

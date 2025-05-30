@@ -55,6 +55,18 @@ class RequirementTemplateService {
 
     return await updatedTemplate
   }
+
+  async deleteTemplateFile (requirementTemplateId: number): Promise<boolean> {
+    await this.getFile(requirementTemplateId)
+
+    await prisma.requirementTemplates.delete({
+      where: {
+        requirement_template_id: requirementTemplateId
+      }
+    })
+
+    return true
+  }
 }
 
 export default new RequirementTemplateService()

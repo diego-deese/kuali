@@ -7,22 +7,25 @@ import WithRole from '../WithRole/WithRole'
 import styles from './NextEventsComponent.styles'
 import IconButton from '../shared/IconButton/IconButton'
 import { PlusIcon } from '../shared/Icons/Icons'
-import { router } from 'expo-router'
 import { Activity } from '../../types/Activity'
+import { useAppActions } from '../../context/AppActionsContext'
 
 export default function NextEventsComponents({
   activities,
 }: {
   activities: Activity[]
 }) {
+  const { navigation } = useAppActions()
+
   return (
     <View style={styles.nextEventsContainer}>
       <View style={styles.nextEventsHeader}>
         <Text style={styles.textNextEvents}> Eventos próximos </Text>
         <WithRole role={Roles.ADMIN}>
           <IconButton
+            disabled={navigation.isNavigating}
             icon={<PlusIcon />}
-            onPress={() => router.push('/event/create')}
+            onPress={() => navigation.navigate('/event/create')}
           />
         </WithRole>
       </View>

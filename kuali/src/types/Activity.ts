@@ -1,6 +1,11 @@
 import { Category } from './Category'
 import { Location } from './Location'
-import { ActivityRequirement, Requirements } from './Requirements'
+import {
+  ActivityRequirement,
+  EditRequirement,
+  Requirements,
+} from './Requirements'
+import { RequirementTemplate } from './RequirementTemplate'
 
 export type Activity = {
   activity_id: number
@@ -30,6 +35,18 @@ export type NewActivityData = {
   poster_image_uri: string
 }
 
-export type UpdateActivityData = Partial<NewActivityData> & {
+export type UpdateActivityData = {
   activity_id: number
+  title?: string
+  description?: string
+  event_date?: Date
+  register_date_limit?: Date
+  mandatory?: boolean
+  visible_researchers?: boolean
+  visible_students?: boolean
+  location_id?: number
+  requirements_to_add?: ActivityRequirement[]
+  requirements_to_delete?: number[]
+  requirements_to_edit?: EditRequirement[]
+  poster_image_uri?: string
 }

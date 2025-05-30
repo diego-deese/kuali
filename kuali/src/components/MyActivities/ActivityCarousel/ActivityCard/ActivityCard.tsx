@@ -7,19 +7,17 @@ import colors from '../../../../constants/colors'
 import { CalendarClockIcon, PlaceIcon } from '../../../shared/Icons/Icons'
 import { FormattedDate } from '../../../shared/FormattedDate/FormattedDate'
 import activityService from '../../../../services/activity.service'
-import { useEventNavigation } from '../../../../hooks/NavigationActivity/useEventNavigation'
-import LoadingModal from '../../../shared/LoadingModal/LoadingModal'
-import { router } from 'expo-router'
+import { useAppActions } from '../../../../context/AppActionsContext'
 
 interface ActivityCardProps {
   activity: Activity
 }
 
 const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
-  const { isNavigating } = useEventNavigation()
+  const { navigation } = useAppActions()
 
   const handlePress = () => {
-    router.navigate(`/event/${activity.activity_id}/info`)
+    navigation.navigate(`/event/${activity.activity_id}/info`)
   }
 
   return (
@@ -66,8 +64,6 @@ const ActivityCard: React.FC<ActivityCardProps> = ({ activity }) => {
           </ImageBackground>
         </View>
       </Pressable>
-      {/* Modal de carga */}
-      <LoadingModal visible={isNavigating} />
     </View>
   )
 }

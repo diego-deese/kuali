@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ActivityRequirement } from '../../types/Requirements'
+import { ActivityRequirement, EditRequirement } from '../../types/Requirements'
 import { RequirementTemplate } from '../../types/RequirementTemplate'
 
 export const useRequirements = () => {
@@ -11,12 +11,16 @@ export const useRequirements = () => {
     setRequirements(requirements)
   }
 
+  const restartRequirements = () => {
+    setRequirements([])
+  }
+
   const addRequirement = (
     name: string,
     description: string,
-    template_uri?: string,
+    template_uri: string | null,
   ) => {
-    const newRequirementId = requirements.length + 1
+    const newRequirementId = -(requirements.length + 1) // Negative ID to prevent collisions
     setRequirements((prevRequirements) => {
       const requirementTemplate: RequirementTemplate =
         template_uri !== null
@@ -34,6 +38,8 @@ export const useRequirements = () => {
 
       return newRequirements
     })
+
+    return newRequirementId
   }
 
   const deleteRequirement = (requirementId: number) => {
@@ -44,16 +50,16 @@ export const useRequirements = () => {
     )
   }
 
-  const editRequirement = (
-    requiremetId: number,
-    name: string,
-    description: string,
-    templateUri: string,
-  ) => {
+  const editRequirement = (requirementInfo: EditRequirement) => {
     setRequirements((prevRequirements) =>
       prevRequirements.map((requirement) =>
-        requirement.requirement_id === requiremetId
-          ? { ...requirement, name, description, template_uri: templateUri }
+        requirement.requirement_id === requirementInfo.requirement_id
+          ? {
+              ...requirement,
+              name: requirementInfo.name,
+              description: requirementInfo.description,
+              template: requirementInfo.template,
+            }
           : requirement,
       ),
     )
@@ -65,5 +71,6 @@ export const useRequirements = () => {
     addRequirement,
     deleteRequirement,
     editRequirement,
+    restartRequirements,
   }
 }
