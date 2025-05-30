@@ -235,7 +235,7 @@ const InfoEvent: React.FC = () => {
 
       // Descargar usando FileSystem
       const result = await documentService.downloadTemplate(
-        templateId,
+        template.template.requirement_template_id, // Usar el ID correcto
         template.name,
       )
 
