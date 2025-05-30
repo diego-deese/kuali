@@ -1,6 +1,11 @@
 import { Category } from './Category'
 import { Location } from './Location'
-import { ActivityRequirement, Requirements } from './Requirements'
+import {
+  ActivityRequirement,
+  EditRequirement,
+  Requirements,
+} from './Requirements'
+import { RequirementTemplate } from './RequirementTemplate'
 
 export type Activity = {
   activity_id: number
@@ -40,8 +45,8 @@ export type UpdateActivityData = {
   visible_researchers?: boolean
   visible_students?: boolean
   location_id?: number
-  requirementsToAdd?: ActivityRequirement[]
-  requirementsToDelete?: number[]
-  requirementsToEdit?: ActivityRequirement[]
+  requirements_to_add?: ActivityRequirement[]
+  requirements_to_delete?: number[]
+  requirements_to_edit?: EditRequirement[]
   poster_image_uri?: string
 }

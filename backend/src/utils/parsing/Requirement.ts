@@ -46,15 +46,6 @@ export const toNewRequirement = (object: any): NewRequirement => {
   return newRequirement
 }
 
-export const toRequirementUpdate = (object: any): UpdateRequirement => {
-  const updatedRequirement: UpdateRequirement = {
-    name: object.name !== undefined ? parseName(object.name) : undefined,
-    description: object.description !== undefined ? parseDescription(object.description) : undefined
-  }
-
-  return updatedRequirement
-}
-
 export const toActivityRequirement = (object: any): ActivityRequirement => {
   const activityRequirement: ActivityRequirement = {
     name: parseName(object.name),
@@ -67,8 +58,10 @@ export const toActivityRequirement = (object: any): ActivityRequirement => {
 
 export const toUpdateRequirement = (object: any): UpdateRequirement => {
   const updateActivityRequirement: UpdateRequirement = {
+    requirement_id: parseId(object.requirement_id, 'El id del requisito no fue proporcionado o tiene un formato inválido'),
     name: object.name !== undefined ? parseName(object.name) : undefined,
-    description: object.description !== undefined ? parseDescription(object.description) : undefined
+    description: object.description !== undefined ? parseDescription(object.description) : undefined,
+    template: object.template === null || object.template === undefined ? null : toNewActivityRequirementTemplate(object.template)
   }
 
   return updateActivityRequirement

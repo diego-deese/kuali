@@ -1,14 +1,17 @@
 import { Requirements } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError } from '../types/Error'
-import { NewRequirement, UpdateRequirement } from '../types/Requirement'
+import { NewRequirement, Requirement, UpdateRequirement } from '../types/Requirement'
 import activityService from './activity.service'
 
 class RequirementService {
-  async getRequirement (requirementId: number): Promise<Requirements> {
+  async getRequirement (requirementId: number): Promise<Requirement> {
     const requirement = await prisma.requirements.findFirst({
       where: {
         requirement_id: requirementId
+      },
+      include: {
+        template: true
       }
     })
 
@@ -36,10 +39,43 @@ class RequirementService {
       where: {
         requirement_id: requirementId
       },
-      data: requirementData
+      data: {
+        ...requirementData,
+        template: (requirementData.template !== null)
+          ? {
+              update: requirementData.template
+            }
+          : undefined
+      }
     })
 
     return updatedRequirement
+  }
+
+  async deleteRequirement (requirementId: number): Promise<boolean> {
+    await this.getRequirement(requirementId)
+
+    return await prisma.$transaction(async (prisma) => {
+      await prisma.requirementTemplates.deleteMany({
+        where: {
+          requirement_id: requirementId
+        }
+      })
+
+      await prisma.userDocuments.deleteMany({
+        where: {
+          requirement_id: requirementId
+        }
+      })
+
+      await prisma.requirements.delete({
+        where: {
+          requirement_id: requirementId
+        }
+      })
+
+      return true
+    })
   }
 }
 

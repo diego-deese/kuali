@@ -14,6 +14,7 @@ interface ActivityDatePickerProps {
   onDateChange?: (newDate: DateType) => void
   minDate?: DateType
   maxDate?: DateType
+  error?: boolean
 }
 
 const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
@@ -22,11 +23,17 @@ const ActivityDatePicker: React.FC<ActivityDatePickerProps> = ({
   onDateChange,
   minDate = new Date(),
   maxDate,
+  error = false,
 }) => {
   const [showDatePicker, setShowDatePicker] = useState(false)
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        error ? { borderColor: colors.warningRed } : {},
+      ]}
+    >
       <View>
         <Text style={styles.header}>{title}</Text>
         <FormattedDate date={date as Date} separator=', ' />

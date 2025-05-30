@@ -3,7 +3,7 @@ import { useActivityForm } from './useActivityForm'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { Location } from '../../types/Location'
 import { DateType } from 'react-native-ui-datepicker'
-import { ActivityRequirement } from '../../types/Requirements'
+import { ActivityRequirement, EditRequirement } from '../../types/Requirements'
 import { ActivityErrors } from '../../types/Error'
 
 interface ActivityFormContextProps {
@@ -38,12 +38,7 @@ interface ActivityFormContextProps {
       templateUri?: string,
     ) => void
     deleteRequirement: (requirementId: number) => void
-    editRequirement: (
-      requirementId: number,
-      name: string,
-      description: string,
-      templateUri: string,
-    ) => void
+    editRequirement: (requirementInfo: EditRequirement) => void
   }
   title?: {
     title: string

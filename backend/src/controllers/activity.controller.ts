@@ -6,6 +6,7 @@ import { AuthRequest } from '../types/Request'
 import { ADMIN_ROLE_ID } from '../constants/roles'
 import { ActivityRequirement } from '../types/Requirement'
 import { toNewActivity, toUpdateActivity } from '../utils/parsing/Activity'
+import { toNewActivityRequirementTemplate } from '../utils/parsing/RequirementTemplate'
 import { parseId } from '../utils/parsing/shared'
 
 class ActivityController {
@@ -243,17 +244,66 @@ class ActivityController {
     try {
       const activityId = parseId(req.params.activityId, 'El id de la actividad no fue proporcionado o tiene un formato inválido')
       const updateActivityDataJSON = JSON.parse(req.body.activityData)
+
+      // Check if template files have been added to existent requirements or if the new requirements have templates
+      let addedTemplates: Express.Multer.File[] = []
+      let createdTemplates: Express.Multer.File[] = []
+
+      if (req.files !== undefined && 'added_template_file' in req.files) {
+        addedTemplates = req.files.added_template_file
+      }
+
+      if (req.files !== undefined && 'created_template_file' in req.files) {
+        createdTemplates = req.files.created_template_file
+      }
+
+      if (addedTemplates.length > 0) {
+        updateActivityDataJSON.requirements_to_edit =
+          updateActivityDataJSON.requirements_to_edit.map((req: ActivityRequirement, idx: number) => {
+            if (req.template !== null) {
+              return {
+                ...req,
+                template: toNewActivityRequirementTemplate({
+                  name: addedTemplates[idx].originalname,
+                  file_content: addedTemplates[idx].buffer,
+                  mimetype: addedTemplates[idx].mimetype
+                })
+              }
+            }
+
+            return req
+          })
+      }
+
+      if (createdTemplates.length > 0) {
+        updateActivityDataJSON.requirements_to_add =
+          updateActivityDataJSON.requirements_to_add.map((req: ActivityRequirement, idx: number) => {
+            if (req.template !== null) {
+              return {
+                ...req,
+                template: toNewActivityRequirementTemplate({
+                  name: addedTemplates[idx].originalname,
+                  file_content: addedTemplates[idx].buffer,
+                  mimetype: addedTemplates[idx].mimetype
+                })
+              }
+            }
+
+            return req
+          })
+      }
+
       let updateActivityData = toUpdateActivity(updateActivityDataJSON)
 
-      if (req.file !== undefined) {
-        const posterFile = req.file
+      if (req.files !== undefined && 'poster_image' in req.files) {
+        const posterFile = req.files.poster_image[0]
 
         updateActivityData = { ...updateActivityData, poster_image: posterFile.buffer, poster_mimetype: posterFile.mimetype }
       }
 
-      const updatedActivity = await activityService.updateActivity(activityId, updateActivityData)
+      /* const updatedActivity = */await activityService.updateActivity(activityId, updateActivityData)
 
-      res.status(200).json({ activity: updatedActivity })
+      res.status(200).json({})
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
