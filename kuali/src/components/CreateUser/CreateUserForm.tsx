@@ -38,14 +38,16 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
 
   return (
     <>
-      <SelectInput
-        label='Tipo'
-        options={roleOptions}
-        value={role}
-        onSelect={onRoleChange}
-        error={errors.role.error}
-        errorMessage={errors.role.errorMessage}
-      />
+      {!onEditing && (
+        <SelectInput
+          label='Tipo'
+          options={roleOptions}
+          value={role}
+          onSelect={onRoleChange}
+          error={errors.role.error}
+          errorMessage={errors.role.errorMessage}
+        />
+      )}
       <InputText
         label='Primer nombre'
         onChangeText={onNameChange}
