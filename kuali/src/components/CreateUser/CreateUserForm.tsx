@@ -2,6 +2,7 @@ import React from 'react'
 import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
 import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
+import { Text } from 'react-native'
 
 interface CreateUserFormProps {
   onEditing: boolean
@@ -18,6 +19,15 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     identifier,
     curp,
     role,
+    employeeNumber,
+    categoriaProfr,
+    sniDistinction,
+    namingNumber,
+    namingType,
+    cvuNumber,
+    researchLine,
+    socialSecurityNumber,
+    placementType,
     onNameChange,
     onSecondNameChange,
     onPaternalLastNameChange,
@@ -27,6 +37,15 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     onIdentifierChange,
     onCurpChange,
     onRoleChange,
+    onEmployeeNumberChange,
+    onCategoriaProfrChange,
+    onSniDistinctionChange,
+    onNamingNumberChange,
+    onNamingTypeChange,
+    onCvuNumberChange,
+    onResearchLineChange,
+    onSocialSecurityNumberChange,
+    onPlacementTypeChange,
     errors,
   } = useUserFormContext()
 
@@ -34,6 +53,33 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     { id: 2, label: 'Estudiante' },
     { id: 3, label: 'Investigador' },
     { id: 1, label: 'Administrador' },
+  ]
+
+  const categoriaOptions = [
+    { id: 1, label: 'Profesor titular' },
+    { id: 2, label: 'ES' },
+  ]
+
+  const sniDistinctioOptions = [
+    { id: 1, label: 'Candidato' },
+    { id: 2, label: 'Nivel 1' },
+    { id: 3, label: 'Nivel 2' },
+    { id: 4, label: 'Nivel 3' },
+  ]
+
+  const namingTypeOptions = [
+    { id: 1, label: 'Colegiado' },
+    { id: 2, label: 'Visitante' },
+    { id: 3, label: 'Asignatura' },
+    { id: 4, label: 'Asistente' },
+    { id: 5, label: 'Otro' },
+  ]
+
+  const placementTypeOptions = [
+    { id: 1, label: 'Base' },
+    { id: 2, label: 'Interinato' },
+    { id: 3, label: 'Confianza' },
+    { id: 4, label: 'Otro' },
   ]
 
   return (
@@ -95,7 +141,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         />
       )}
       <InputText
-        label='Matrícula'
+        label='Identificador'
         onChangeText={onIdentifierChange}
         value={identifier}
         error={errors.identifier.error}
@@ -108,6 +154,63 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         error={errors.curp.error}
         errorMessage={errors.curp.errorMessage}
       />
+      {role?.id === 3 && (
+        <>
+          <InputText
+            label='Número de empleado'
+            onChangeText={onEmployeeNumberChange}
+            value={employeeNumber}
+          />
+          <SelectInput
+            label='Categoría'
+            options={categoriaOptions}
+            onSelect={onCategoriaProfrChange}
+            error={errors.role.error}
+            errorMessage={errors.role.errorMessage}
+          />
+          <SelectInput
+            label='Distinción SNI'
+            options={sniDistinctioOptions}
+            onSelect={onSniDistinctionChange}
+            error={errors.role.error}
+            errorMessage={errors.role.errorMessage}
+          />
+          <InputText
+            label='Número de nombramiento'
+            onChangeText={onNamingNumberChange}
+            value={namingNumber}
+          />
+          <SelectInput
+            label='Naming Type'
+            options={namingTypeOptions}
+            onSelect={onNamingTypeChange}
+            error={errors.role.error}
+            errorMessage={errors.role.errorMessage}
+          />
+          <InputText
+            label='Número CVU'
+            onChangeText={onCvuNumberChange}
+            value={cvuNumber}
+          />
+          <InputText
+            label='Línea de investigación'
+            onChangeText={onResearchLineChange}
+            value={researchLine}
+          />
+          <InputText
+            label='Número de seguridad social'
+            onChangeText={onSocialSecurityNumberChange}
+            value={employeeNumber}
+          />
+          <SelectInput
+            label='Tipo de plaza'
+            options={placementTypeOptions}
+            onSelect={onPlacementTypeChange}
+            error={errors.role.error}
+            errorMessage={errors.role.errorMessage}
+          />
+        </>
+      )}
     </>
   )
 }

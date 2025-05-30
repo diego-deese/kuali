@@ -125,6 +125,45 @@ export const useErrors = (mode: string) => {
     return { error: false, errorMessage: '' }
   }
 
+  const validateEmployeeNumber = (employeeNumber: string): InputError => {
+    if (!employeeNumber || employeeNumber.trim() === '') {
+      return { error: true, errorMessage: 'El Número de empleado es requerido' }
+    }
+    const regex = /^[a-zA-Z0-9]{1,8}$/
+    if (!regex.test(employeeNumber.toUpperCase())) {
+      return { error: true, errorMessage: 'Número de empleado inválido' }
+    }
+    return { error: false, errorMessage: '' }
+  }
+
+  const validateNamingNumber = (namingNumber: string): InputError => {
+    if (!namingNumber || namingNumber.trim() === '') {
+      return {
+        error: true,
+        errorMessage: 'El número de nombramiento es requerido',
+      }
+    }
+    const regex = /^[a-zA-Z0-9]{1,13}$/
+    if (!regex.test(namingNumber.toUpperCase())) {
+      return { error: true, errorMessage: 'Número de nombramiento inválido' }
+    }
+    return { error: false, errorMessage: '' }
+  }
+
+  const validateCvuNumber = (cvuNumber: string): InputError => {
+    if (!cvuNumber || cvuNumber.trim() === '') {
+      return {
+        error: true,
+        errorMessage: 'El número de CVU es requerido',
+      }
+    }
+    const regex = /^[a-zA-Z0-9]{1,8}$/
+    if (!regex.test(cvuNumber.toUpperCase())) {
+      return { error: true, errorMessage: 'Número de CVU inválido' }
+    }
+    return { error: false, errorMessage: '' }
+  }
+
   const validateAllFields = (
     name: string,
     secondName: string,
@@ -169,6 +208,9 @@ export const useErrors = (mode: string) => {
     validateIdentifier,
     validateCurp,
     validateRole,
+    validateEmployeeNumber,
+    validateNamingNumber,
+    validateCvuNumber,
     validateAllFields,
   }
 }

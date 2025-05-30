@@ -47,6 +47,42 @@ interface UserFormContextProps {
   setRole: (role: Option | null) => void
   onRoleChange: (role: Option | null) => void
 
+  employeeNumber: string
+  setEmployeeNumber: (value: string) => void
+  onEmployeeNumberChange: (value: string) => void
+
+  categoriaProfr: Option | null
+  setCategoriaProfr: (value: Option | null) => void
+  onCategoriaProfrChange: (value: Option | null) => void
+
+  sniDistinction: string
+  setSniDistinction: (value: Option | null) => void
+  onSniDistinctionChange: (value: Option | null) => void
+
+  namingNumber: string
+  setNamingNumber: (value: string) => void
+  onNamingNumberChange: (value: string) => void
+
+  namingType: Option | null
+  setNamingType: (value: Option | null) => void
+  onNamingTypeChange: (value: Option | null) => void
+
+  cvuNumber: string
+  setCvuNumber: (value: string) => void
+  onCvuNumberChange: (value: string) => void
+
+  researchLine: string
+  setResearchLine: (value: string) => void
+  onResearchLineChange: (value: string) => void
+
+  socialSecurityNumber: string
+  setSocialSecurityNumber: (value: string) => void
+  onSocialSecurityNumberChange: (value: string) => void
+
+  placementType: Option | null
+  setPlacementType: (value: Option | null) => void
+  onPlacementTypeChange: (value: Option | null) => void
+
   errors: UserFormErrors
   updateErrors: (newErrors: Partial<UserFormErrors>) => void
   validateAllFields: (

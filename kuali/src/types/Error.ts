@@ -21,4 +21,7 @@ export type UserFormErrors = {
   identifier: InputError
   curp: InputError
   role: InputError
+  employeeNumber?: InputError
+  namingNumber?: InputError
+  cvuNumber?: InputError
 }

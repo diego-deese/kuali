@@ -22,6 +22,15 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const [loading, setLoading] = useState(mode === 'edit')
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
+  const [employeeNumber, setEmployeeNumber] = useState('')
+  const [categoriaProfr, setCategoriaProfr] = useState<Option | null>(null)
+  const [sniDistinction, setSniDistinction] = useState<Option | null>(null)
+  const [namingNumber, setNamingNumber] = useState('')
+  const [namingType, setNamingType] = useState<Option | null>(null)
+  const [cvuNumber, setCvuNumber] = useState('')
+  const [researchLine, setResearchLine] = useState('')
+  const [socialSecurityNumber, setSocialSecurityNumber] = useState('')
+  const [placementType, setPlacementType] = useState<Option | null>(null)
 
   const loadUserData = useCallback(async () => {
     if (!userId) return
@@ -91,6 +100,15 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setCurp('')
     setRole(null)
     setPassword('')
+    setEmployeeNumber('')
+    setCategoriaProfr(null)
+    setSniDistinction(null)
+    setNamingNumber('')
+    setNamingType(null)
+    setCvuNumber('')
+    setResearchLine('')
+    setSocialSecurityNumber('')
+    setPlacementType(null)
   }
 
   const onNameChange = (value: string) => {
@@ -161,6 +179,51 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     errorsManagement.updateErrors({
       role: errorsManagement.validateRole(value),
     })
+  }
+
+  const onEmployeeNumberChange = (value: string) => {
+    setEmployeeNumber(value)
+    errorsManagement.updateErrors({
+      employeeNumber: errorsManagement.validateEmployeeNumber(value),
+    })
+  }
+
+  const onCategoriaProfrChange = (value: Option | null) => {
+    setCategoriaProfr(value)
+  }
+
+  const onSniDistinctionChange = (value: Option | null) => {
+    setSniDistinction(value)
+  }
+
+  const onNamingNumberChange = (value: string) => {
+    setNamingNumber(value)
+    errorsManagement.updateErrors({
+      namingNumber: errorsManagement.validateNamingNumber(value),
+    })
+  }
+
+  const onNamingTypeChange = (value: Option | null) => {
+    setNamingType(value)
+  }
+
+  const onCvuChange = (value: string) => {
+    setCvuNumber(value)
+    errorsManagement.updateErrors({
+      cvuNumber: errorsManagement.validateCvuNumber(value),
+    })
+  }
+
+  const onResearchLineChange = (value: string) => {
+    setResearchLine(value)
+  }
+
+  const onSocialSecurityNumberChange = (value: string) => {
+    setSocialSecurityNumber(value)
+  }
+
+  const onPlacementTypeChange = (value: Option | null) => {
+    setPlacementType(value)
   }
 
   const createUser = async () => {
@@ -328,6 +391,33 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     role,
     setRole,
     onRoleChange,
+    employeeNumber,
+    setEmployeeNumber,
+    onEmployeeNumberChange,
+    categoriaProfr,
+    setCategoriaProfr,
+    onCategoriaProfrChange,
+    sniDistinction,
+    setSniDistinction,
+    onSniDistinctionChange,
+    namingNumber,
+    setNamingNumber,
+    onNamingNumberChange,
+    namingType,
+    setNamingType,
+    onNamingTypeChange,
+    cvuNumber,
+    setCvuNumber,
+    onCvuChange,
+    researchLine,
+    setResearchLine,
+    onResearchLineChange,
+    socialSecurityNumber,
+    setSocialSecurityNumber,
+    onSocialSecurityNumberChange,
+    placementType,
+    setPlacementType,
+    onPlacementTypeChange,
 
     loading,
     error,
