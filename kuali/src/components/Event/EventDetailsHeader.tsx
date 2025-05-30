@@ -101,7 +101,7 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
         text2: 'La actividad y todos sus datos han sido eliminados',
       })
 
-      navigation.navigate(`/`)
+      navigation.replace(`/calendar`)
     } catch (error) {
       console.error(error)
       Toast.show({
