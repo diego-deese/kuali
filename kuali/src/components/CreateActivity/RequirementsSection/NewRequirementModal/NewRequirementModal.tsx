@@ -13,12 +13,15 @@ import Switch from '../../../shared/Switch/Switch'
 import Button from '../../../shared/Button/Button'
 import { UploadIcon } from '../../../shared/Icons/Icons'
 import { useNewRequirementModal } from './useNewRequirementModal'
-import { ActivityRequirement } from '../../../../types/Requirements'
+import {
+  ActivityRequirement,
+  EditRequirement,
+} from '../../../../types/Requirements'
 
 interface NewRequirementModalProps {
   requirementInfo?: ActivityRequirement
   visible: boolean
-  onConfirm: (name: string, description: string, templateUri?: string) => void
+  onConfirm: (requirementInfo: EditRequirement) => void
   onCancel: () => void
 }
 
@@ -52,7 +55,7 @@ const NewRequirementModal = ({
             placeholder='Nombre del requisito'
             error={errors.name.error}
             errorMessage={errors.name.errorMessage}
-            value={requirement.requirementName}
+            value={requirement.requirement?.name}
             onChangeText={requirement.handleNameChange}
             onSubmitEditing={() => descriptionRef.current?.focus()}
           />
@@ -63,7 +66,7 @@ const NewRequirementModal = ({
             multiline
             error={errors.description.error}
             errorMessage={errors.description.errorMessage}
-            value={requirement.requirementDescription}
+            value={requirement.requirement?.description}
             onChangeText={requirement.handleDescriptionChange}
           />
           <View style={styles.switchContainer}>
@@ -91,7 +94,7 @@ const NewRequirementModal = ({
                     ? errors.template.errorMessage
                     : 'pdf / docx'}
                 </Text>
-                {requirement.templateUri && (
+                {requirement.requirement.template !== null && (
                   <Text
                     style={[
                       styles.uploadButtonLabel,
@@ -125,11 +128,7 @@ const NewRequirementModal = ({
                 const canAdd = handleConfirm()
 
                 if (canAdd) {
-                  onConfirm(
-                    requirement.requirementName,
-                    requirement.requirementDescription,
-                    requirement.templateUri,
-                  )
+                  onConfirm(requirement.requirement)
                 }
               }}
             />

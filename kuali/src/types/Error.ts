@@ -8,4 +8,5 @@ export type ActivityErrors = {
   description: InputError
   location: InputError
   posterImage: InputError
+  dates: InputError
 }

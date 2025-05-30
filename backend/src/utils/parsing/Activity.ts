@@ -1,8 +1,8 @@
 import { NewActivity, UpdateActivity } from '../../types/Activities'
 import { ValidationError } from '../../types/Error'
-import { ActivityRequirement } from '../../types/Requirement'
+import { ActivityRequirement, UpdateRequirement } from '../../types/Requirement'
 import { isDate, isString } from '../validations'
-import { toActivityRequirement } from './Requirement'
+import { toActivityRequirement, toUpdateRequirement } from './Requirement'
 import { parseBoolean, parseId } from './shared'
 
 const parseTitle = (titleFromRequest: string): string => {
@@ -47,6 +47,22 @@ const parseRequirements = (requirementsFromRequest: any[]): ActivityRequirement[
   }
 
   return requirementsFromRequest.map<ActivityRequirement>(req => toActivityRequirement(req))
+}
+
+const parseUpdateRequirements = (requirementsFromRequest: any[]): UpdateRequirement[] => {
+  if (!Array.isArray(requirementsFromRequest)) {
+    throw new ValidationError('Los requisitos deben ser proporcionados dentro de un array')
+  }
+
+  return requirementsFromRequest.map<UpdateRequirement>(req => toUpdateRequirement(req))
+}
+
+const parseRequirementsToDelete = (requirementsFromRequest: any[]): number[] => {
+  if (!Array.isArray(requirementsFromRequest)) {
+    throw new ValidationError('Las ids de los requisitos deben ser proporcionadas dentro de un array')
+  }
+
+  return requirementsFromRequest.map<number>(id => parseId(id, `El formato de la id "${id as string}" es inválido`))
 }
 
 const parseMimeType = (mimetypeFromRequest: string): string => {
@@ -107,7 +123,10 @@ export const toUpdateActivity = (object: any): UpdateActivity => {
     location_id: object.location_id !== undefined ? parseId(object.location_id, 'El formato de la id del lugar del evento o convocatoria es inválido') : undefined,
     category_id: object.category_id !== undefined ? parseId(object.category_id, 'El formato del id de la categoría del evento o convocatoria es inválido') : undefined,
     poster_image: object.poster_image !== undefined ? parseFileContent(object.poster_image) : undefined,
-    poster_mimetype: object.poster_mimetype !== undefined ? parseMimeType(object.poster_mimetype) : undefined
+    poster_mimetype: object.poster_mimetype !== undefined ? parseMimeType(object.poster_mimetype) : undefined,
+    requirements_to_add: object.requirements_to_add !== undefined ? parseRequirements(object.requirements_to_add) : undefined,
+    requirements_to_edit: object.requirements_to_edit !== undefined ? parseUpdateRequirements(object.requirements_to_edit) : undefined,
+    requirements_to_delete: object.requirements_to_delete !== undefined ? parseRequirementsToDelete(object.requirements_to_delete) : undefined
   }
 
   return updateActivity

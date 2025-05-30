@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ActivityRequirement } from '../../types/Requirements'
+import { ActivityRequirement, EditRequirement } from '../../types/Requirements'
 import { RequirementTemplate } from '../../types/RequirementTemplate'
 
 export const useRequirements = () => {
@@ -11,10 +11,14 @@ export const useRequirements = () => {
     setRequirements(requirements)
   }
 
+  const restartRequirements = () => {
+    setRequirements([])
+  }
+
   const addRequirement = (
     name: string,
     description: string,
-    template_uri?: string,
+    template_uri: string | null,
   ) => {
     const newRequirementId = -(requirements.length + 1) // Negative ID to prevent collisions
     setRequirements((prevRequirements) => {
@@ -46,23 +50,15 @@ export const useRequirements = () => {
     )
   }
 
-  const editRequirement = (
-    requirementId: number,
-    name: string,
-    description: string,
-    templateUri: string | null,
-  ) => {
+  const editRequirement = (requirementInfo: EditRequirement) => {
     setRequirements((prevRequirements) =>
       prevRequirements.map((requirement) =>
-        requirement.requirement_id === requirementId
+        requirement.requirement_id === requirementInfo.requirement_id
           ? {
               ...requirement,
-              name,
-              description,
-              template:
-                templateUri !== null
-                  ? { requirement_template_id: 0, template_uri: templateUri }
-                  : null,
+              name: requirementInfo.name,
+              description: requirementInfo.description,
+              template: requirementInfo.template,
             }
           : requirement,
       ),
@@ -75,5 +71,6 @@ export const useRequirements = () => {
     addRequirement,
     deleteRequirement,
     editRequirement,
+    restartRequirements,
   }
 }

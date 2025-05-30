@@ -6,6 +6,7 @@ import { styles } from './styles'
 import NewRequirementModal from './NewRequirementModal/NewRequirementModal'
 import ActivityRequirementCard from '../../shared/ActivityRequirementCard/ActivityRequirementCard'
 import { useActivityFormContext } from '../../../context/ActivityFormContext/ActivityFormContext'
+import { EditRequirement } from '../../../types/Requirements'
 
 interface RequirementsSectionProps {
   mode: 'create' | 'edit'
@@ -16,6 +17,17 @@ const RequirementsSection: React.FC<RequirementsSectionProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false)
   const { requirements } = useActivityFormContext()
+
+  const confirmAddRequirement = (requirementInfo: EditRequirement) => {
+    setShowModal(false)
+    requirements.addRequirement(
+      requirementInfo.name,
+      requirementInfo.description,
+      requirementInfo.template !== null
+        ? requirementInfo.template.template_uri
+        : null,
+    )
+  }
 
   return (
     <>
@@ -42,14 +54,7 @@ const RequirementsSection: React.FC<RequirementsSectionProps> = ({
       <NewRequirementModal
         visible={showModal}
         onCancel={() => setShowModal(false)}
-        onConfirm={(
-          name: string,
-          description: string,
-          template_uri?: string,
-        ) => {
-          setShowModal(false)
-          requirements.addRequirement(name, description, template_uri)
-        }}
+        onConfirm={confirmAddRequirement}
       />
     </>
   )

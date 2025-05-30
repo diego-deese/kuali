@@ -9,7 +9,7 @@ import { Option } from '../../components/shared/SelectInput/interfaces'
 import Toast from 'react-native-toast-message'
 import { useErrors } from '../../hooks/ActivityForm/useErrors'
 import { mapToOption } from '../../utils/mappers'
-import { ActivityRequirement } from '../../types/Requirements'
+import { ActivityRequirement, EditRequirement } from '../../types/Requirements'
 
 export const useActivityForm = (
   mode: 'create' | 'edit',
@@ -34,9 +34,9 @@ export const useActivityForm = (
 
   const editedActivityDataRef = useRef<UpdateActivityData>({
     activity_id: 0,
-    requirementsToAdd: [],
-    requirementsToEdit: [],
-    requirementsToDelete: [],
+    requirements_to_add: [],
+    requirements_to_edit: [],
+    requirements_to_delete: [],
   })
 
   const loadActivityData = useCallback(
@@ -118,6 +118,7 @@ export const useActivityForm = (
     setVisibleStudents(true)
     setVisibleResearchers(true)
     setMandatory(false)
+    requirementsManagement.restartRequirements()
   }
 
   const onTitleChange = (title: string) => {
@@ -184,7 +185,7 @@ export const useActivityForm = (
   const onAddRequirement = (
     name: string,
     description: string,
-    template_uri?: string,
+    template_uri: string | null,
   ) => {
     const newRequirementId = requirementsManagement.addRequirement(
       name,
@@ -192,14 +193,14 @@ export const useActivityForm = (
       template_uri,
     )
     if (mode === 'edit') {
-      editedActivityDataRef.current.requirementsToAdd = [
-        ...editedActivityDataRef.current.requirementsToAdd,
+      editedActivityDataRef.current.requirements_to_add = [
+        ...editedActivityDataRef.current.requirements_to_add,
         {
           requirement_id: newRequirementId,
           name,
           description,
           template:
-            template_uri !== undefined
+            template_uri !== null
               ? {
                   requirement_template_id: 0,
                   template_uri,
@@ -213,80 +214,69 @@ export const useActivityForm = (
   const onDeleteRequirement = (requirementId: number) => {
     requirementsManagement.deleteRequirement(requirementId)
     if (mode === 'edit' && requirementId > 0) {
-      editedActivityDataRef.current.requirementsToDelete.push(requirementId)
+      editedActivityDataRef.current.requirements_to_delete.push(requirementId)
+    }
+
+    if (requirementId < 0) {
+      editedActivityDataRef.current.requirements_to_add =
+        editedActivityDataRef.current.requirements_to_add.filter(
+          (req) => req.requirement_id !== requirementId,
+        )
     }
   }
 
-  const onEditRequirement = (
-    requirementId: number,
-    name: string,
-    description: string,
-    templateUri: string | null,
-  ) => {
-    requirementsManagement.editRequirement(
-      requirementId,
-      name,
-      description,
-      templateUri,
-    )
-    if (mode === 'edit' && requirementId > 0) {
-      if (editedActivityDataRef.current.requirementsToEdit.length === 0) {
-        editedActivityDataRef.current.requirementsToEdit.push({
-          requirement_id: requirementId,
-          name,
-          description,
-          template:
-            templateUri !== null
-              ? { requirement_template_id: 0, template_uri: templateUri }
-              : null,
-        })
+  const onEditRequirement = (requirementInfo: EditRequirement) => {
+    requirementsManagement.editRequirement(requirementInfo)
+    if (mode === 'edit' && requirementInfo.requirement_id > 0) {
+      if (editedActivityDataRef.current.requirements_to_edit.length === 0) {
+        editedActivityDataRef.current.requirements_to_edit.push(requirementInfo)
         return
       }
 
-      const requirementsToEdit =
-        editedActivityDataRef.current.requirementsToEdit.map((req) =>
-          req.requirement_id === requirementId
+      const requirements_to_edit =
+        editedActivityDataRef.current.requirements_to_edit.map((req) =>
+          req.requirement_id === requirementInfo.requirement_id
             ? {
                 ...req,
-                name,
-                description,
-                template:
-                  templateUri !== null
-                    ? { requirement_template_id: 0, template_uri: templateUri }
-                    : null,
+                ...requirementInfo,
               }
-            : {
-                requirement_id: requirementId,
-                name,
-                description,
-                template:
-                  templateUri !== null
-                    ? { requirement_template_id: 0, template_uri: templateUri }
-                    : null,
-              },
+            : requirementInfo,
         )
-      editedActivityDataRef.current.requirementsToEdit = requirementsToEdit
+      editedActivityDataRef.current.requirements_to_edit = requirements_to_edit
     }
   }
 
+  const onActivityDateChange = (activityDate: Date) => {
+    dateManagement.onActivityDateChange(activityDate)
+    editedActivityDataRef.current.event_date = activityDate
+  }
+
+  const onLimitDateChange = (limitDate: Date) => {
+    dateManagement.onLimitDateChange(limitDate)
+    editedActivityDataRef.current.register_date_limit = limitDate
+  }
+
   const toggleVisibleStudents = () => {
-    setVisibleStudents(!visibleStudents)
+    const newVisibleStudents = !visibleStudents
+    setVisibleStudents(newVisibleStudents)
     if (mode === 'edit') {
-      editedActivityDataRef.current.visible_students = visibleStudents
+      editedActivityDataRef.current.visible_students = newVisibleStudents
     }
   }
 
   const toggleVisibleResearchers = () => {
-    setVisibleResearchers(!visibleResearchers)
+    const newVisibleResearchers = !visibleResearchers
+    setVisibleResearchers(newVisibleResearchers)
     if (mode === 'edit') {
-      editedActivityDataRef.current.visible_researchers = visibleResearchers
+      editedActivityDataRef.current.visible_researchers = newVisibleResearchers
     }
   }
 
   const toggleMandatory = () => {
-    setMandatory(!mandatory)
+    const newMandatory = !mandatory
+    setMandatory(newMandatory)
     if (mode === 'edit') {
-      editedActivityDataRef.current.mandatory = mandatory
+      editedActivityDataRef.current.mandatory = newMandatory
     }
   }
 
@@ -298,6 +288,8 @@ export const useActivityForm = (
         description,
         posterImg,
         locationManagement.location,
+        new Date(dateManagement.activityDate.toString()),
+        new Date(dateManagement.limitDate.toString()),
       )
 
       if (allFieldsCorrect) {
@@ -359,6 +351,8 @@ export const useActivityForm = (
         description,
         '',
         locationManagement.location,
+        new Date(dateManagement.activityDate.toString()),
+        new Date(dateManagement.limitDate.toString()),
       )
 
       if (!allFieldsCorrect) {
@@ -370,25 +364,25 @@ export const useActivityForm = (
         return
       }
 
-      console.log(editedActivityDataRef.current)
+      // console.log(editedActivityDataRef.current)
 
-      // const result = await activityService.updateActivity(
-      //   editedActivityDataRef.current,
-      // )
+      const result = await activityService.updateActivity(
+        editedActivityDataRef.current,
+      )
 
-      // if (!result.success && 'error' in result) {
-      //   Toast.show({
-      //     type: 'error',
-      //     text1: result.message,
-      //     text2: result.error,
-      //   })
-      //   return
-      // }
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        return
+      }
 
-      // Toast.show({
-      //   text1: 'Actividad actualizada',
-      //   text2: 'Los datos de la actividad se han actualizado',
-      // })
+      Toast.show({
+        text1: 'Actividad actualizada',
+        text2: 'Los datos de la actividad se han actualizado',
+      })
     } catch (error) {
       console.error(error)
       Toast.show({
@@ -406,9 +400,9 @@ export const useActivityForm = (
     activityId,
     dates: {
       activityDate: dateManagement.activityDate,
-      onActivityDateChange: dateManagement.onActivityDateChange,
+      onActivityDateChange: onActivityDateChange,
       limitDate: dateManagement.limitDate,
-      onLimitDateChange: dateManagement.onLimitDateChange,
+      onLimitDateChange: onLimitDateChange,
     },
     location: {
       location: locationManagement.location,

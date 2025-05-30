@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { toNewRequirement, toRequirementUpdate } from '../utils/parsing/Requirement'
+import { toNewRequirement } from '../utils/parsing/Requirement'
 import requirementService from '../services/requirement.service'
 import { AppError } from '../types/Error'
 import { parseId } from '../utils/parsing/shared'
@@ -43,29 +43,6 @@ class RequirementController {
       } else {
         res.status(500).json({
           message: 'Error al crear el nuevo requisito',
-          error: error instanceof Error ? error.message : 'Error desconocido'
-        })
-      }
-    }
-  }
-
-  updateRequirement = async (req: Request, res: Response): Promise<void> => {
-    try {
-      const updatedRequirementData = toRequirementUpdate(req.body)
-      const requirementId = parseId(req.params.requirementId, 'El id porporcionado del requisito es inválido')
-
-      const updatedRequirement = await requirementService.updateRequirement(requirementId, updatedRequirementData)
-
-      res.status(200).json({ requirement: updatedRequirement })
-    } catch (error) {
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({
-          message: 'Error al actualizar el requisito',
-          error: error.message
-        })
-      } else {
-        res.status(500).json({
-          message: 'Error al actualizar el requisito',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }

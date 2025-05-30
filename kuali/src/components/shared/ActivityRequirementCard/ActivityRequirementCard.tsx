@@ -5,17 +5,15 @@ import { DeleteIcon, DocumentIcon, EditIcon } from '../Icons/Icons'
 import IconButton from '../IconButton/IconButton'
 import ConfirmationModal from '../ConfirmationModal/ConfirmationModal'
 import NewRequirementModal from '../../CreateActivity/RequirementsSection/NewRequirementModal/NewRequirementModal'
-import { ActivityRequirement } from '../../../types/Requirements'
+import {
+  ActivityRequirement,
+  EditRequirement,
+} from '../../../types/Requirements'
 
 interface ActivityRequirementCardProps {
   requirementInfo: ActivityRequirement
   onDeletePress?: (requirementId: number) => void
-  onEdit?: (
-    requirementId: number,
-    name: string,
-    description: string,
-    templateUri: string,
-  ) => void
+  onEdit?: (requirementInfo: EditRequirement) => void
 }
 
 const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
@@ -32,6 +30,11 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
 
   const handleEditModalCancel = () => {
     setShowEditModal(false)
+  }
+
+  const onConfirmEdit = (requirementInfo: EditRequirement) => {
+    setShowEditModal(false)
+    onEdit(requirementInfo)
   }
 
   return (
@@ -72,10 +75,7 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
         requirementInfo={requirementInfo}
         visible={showEditModal}
         onCancel={handleEditModalCancel}
-        onConfirm={(name: string, description: string, templateUri: string) => {
-          setShowEditModal(false)
-          onEdit(requirementInfo.requirement_id, name, description, templateUri)
-        }}
+        onConfirm={onConfirmEdit}
       />
 
       <ConfirmationModal
