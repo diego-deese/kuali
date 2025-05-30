@@ -16,7 +16,6 @@ import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
 import TemplateCard from '../../components/TemplateCard/TemplateCard'
-//import * as WebBrowser from 'expo-web-browser'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -36,7 +35,7 @@ const InfoEvent: React.FC = () => {
   const [plantillasExpanded, setPlantillasExpanded] = useState(true)
   const [activeModal, setActiveModal] = useState<
     'none' | 'apply' | 'exit' | 'delete'
-  >('none') // Un solo state para los modales
+  >('none')
 
   const fetchEventDetails = async () => {
     try {
@@ -48,7 +47,6 @@ const InfoEvent: React.FC = () => {
         return
       }
 
-      // Llamada al servicio para obtener detalles de la actividad
       const result = await activityService.getActivityById(activity_id)
 
       if (!result.success && 'error' in result) {
@@ -58,7 +56,7 @@ const InfoEvent: React.FC = () => {
       }
 
       setEventDetails(result.data)
-      // Verificar si el usuario ya está registrado en esta actividad
+      // Verificar si el usuario ya está registrado en la actividad
       setHasApplied(result.data.isRegistered || false)
       setLoading(false)
     } catch (err) {
@@ -72,7 +70,6 @@ const InfoEvent: React.FC = () => {
   }, [activity_id])
 
   const handleUpload = async (docId: number, fileUri?: string) => {
-    // Implementación de la llamada al servicio para subir documento
     try {
       if (!fileUri) {
         console.error('No se proporcionó URI del archivo')
@@ -94,8 +91,7 @@ const InfoEvent: React.FC = () => {
           position: 'top',
         })
       } else {
-        // Actualizar la interfaz después de subir el documento
-        fetchEventDetails()
+        fetchEventDetails() //si jalo
         Toast.show({
           type: 'success',
           text1: 'Archivo subido',
@@ -113,7 +109,6 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleDelete = async (docId: number) => {
-    // Implementación de la llamada al servicio para eliminar documento
     if (!docId) {
       console.error('ID de documento inválido')
       return
@@ -151,7 +146,6 @@ const InfoEvent: React.FC = () => {
           position: 'top',
           visibilityTime: 3000,
         })
-        // Refrescar los datos para actualizar la UI
         fetchEventDetails()
       }
     } catch (error) {
@@ -210,31 +204,77 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleTemplateDownload = async (templateId: number) => {
-    // try {
-    //   // Mostrar indicador de carga
-    //   Toast.show({
-    //     type: 'info',
-    //     text1: 'Preparando documento...',
-    //     position: 'top',
-    //     autoHide: true,
-    //     visibilityTime: 2000,
-    //   })
-    //   // Obtener la URL de forma asíncrona
-    //   const downloadUrl =
-    //     await documentService.getTemplateDownloadUrl(templateId)
-    //   // Abrir el navegador con la URL
-    //   await WebBrowser.openBrowserAsync(downloadUrl)
-    // } catch (error) {
-    //   console.error('Error al obtener URL de descarga:', error)
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Error',
-    //     text2: 'No se pudo descargar la plantilla',
-    //     position: 'top',
-    //   })
-    // }
+    try {
+      const template = eventDetails?.requirements?.find(
+        (req) => req.requirement_id === templateId && req.template,
+      )
 
-    console.log('DESCARGANDO DOCUMENTO')
+      if (!template) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No se encontró la plantilla',
+          position: 'top',
+        })
+        return
+      }
+
+      Toast.show({
+        type: 'info',
+        text1: 'Descargando documento...',
+        position: 'top',
+        autoHide: false,
+      })
+
+      // Descargar
+      const result = await documentService.downloadTemplate(
+        template.template.requirement_template_id,
+        template.name,
+      )
+
+      Toast.hide()
+
+      if (result.success && result.localUri) {
+        Toast.show({
+          type: 'success',
+          text1: 'Descarga completada',
+          text2: 'Documento descargado',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+
+        try {
+          await documentService.shareFile(result.localUri)
+        } catch (shareError) {
+          console.warn(
+            'No se pudo compartir el archivo automáticamente:',
+            shareError,
+          )
+          Toast.show({
+            type: 'info',
+            text1: 'Archivo guardado',
+            position: 'top',
+            visibilityTime: 4000,
+          })
+        }
+      } else {
+        throw new Error(result.error || 'No se pudo descargar la plantilla')
+      }
+    } catch (error) {
+      Toast.hide()
+
+      console.error('Error al descargar plantilla:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error de descarga',
+        text2:
+          error instanceof Error
+            ? error.message
+            : 'No se pudo descargar la plantilla',
+        position: 'top',
+        visibilityTime: 4000,
+      })
+    }
   }
   const confirmApply = async () => {
     try {
@@ -277,6 +317,14 @@ const InfoEvent: React.FC = () => {
   const togglePlantillas = () => {
     setPlantillasExpanded(!plantillasExpanded)
   }
+  const isRegistrationClosed = (): boolean => {
+    if (!eventDetails?.register_date_limit) return false
+
+    const now = new Date()
+    const limitDate = new Date(eventDetails.register_date_limit)
+
+    return now > limitDate
+  }
 
   if (loading) {
     return (
@@ -314,9 +362,15 @@ const InfoEvent: React.FC = () => {
           }}
         />
 
-        {/* Mostrar el botón de Aplicar cuando NO ha aplicado */}
-        {!hasApplied ? (
+        {!hasApplied && !isRegistrationClosed() ? (
           <Button buttonText='Aplicar' onPress={handleApply} />
+        ) : !hasApplied && isRegistrationClosed() ? (
+          // Mostrar mensaje si la fecha límite ya pasó
+          <View>
+            <Text style={styles.noRequirementsText}>
+              El período de registro para esta actividad ha finalizado
+            </Text>
+          </View>
         ) : (
           <>
             {/* Sección de Plantillas */}

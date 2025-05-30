@@ -1,9 +1,8 @@
-import { View, Text, Alert, Platform } from 'react-native'
+import { View, Text, Platform } from 'react-native'
 import { StyleSheet } from 'react-native'
 import colors from '../../constants/colors'
 import Button from '../shared/Button/Button'
 import { DownloadIcon } from '../shared/Icons/Icons'
-import * as WebBrowser from 'expo-web-browser'
 import Toast from 'react-native-toast-message'
 import documentService from '../../services/document.service'
 
@@ -25,56 +24,62 @@ export default function TemplateCard({
 }: TemplateCardProps) {
   const { id, name, description } = template
 
-  // Función para detectar la extensión del archivo basada en la URL
-  const getFileExtension = (url: string): string => {
-    // Primero intenta extraer la extensión de la URL
-    if (url.includes('.pdf')) return 'pdf'
-    if (url.includes('.doc') && !url.includes('.docx')) return 'doc'
-    if (url.includes('.docx')) return 'docx'
-
-    // Si no puede determinar por URL, verifica por el nombre del template
-    const nameLower = name.toLowerCase()
-    if (nameLower.includes('pdf')) return 'pdf'
-    if (nameLower.includes('word') || nameLower.includes('doc')) return 'docx'
-
-    // Valor por defecto
-    return 'pdf'
-  }
-
   const handleTemplateDownload = async () => {
     try {
       // Mostrar un indicador de carga
       Toast.show({
         type: 'info',
-        text1: 'Preparando documento...',
+        text1: 'Descargando documento...',
         position: 'top',
-        autoHide: true,
-        visibilityTime: 2000,
+        autoHide: false,
       })
 
-      // Verificar si debemos usar onDownload o template.id
+      // Verificar si debemos usar onDownload personalizado
       if (onDownload) {
         onDownload(id)
         return
       }
 
-      // Obtener la URL de descarga con el token incluido
-      const downloadUrl = await documentService.getTemplateDownloadUrl(id)
+      // Descargar usando FileSystem
+      const result = await documentService.downloadTemplate(id, name)
 
-      // Verificar que la URL se generó correctamente
-      if (!downloadUrl) {
-        throw new Error('No se pudo generar la URL de descarga')
+      // Ocultar toast de carga
+      Toast.hide()
+
+      if (result.success && result.localUri) {
+        // Mostrar toast de éxito
+        Toast.show({
+          type: 'success',
+          text1: 'Descarga completada',
+          text2:
+            Platform.OS === 'ios'
+              ? 'Documento guardado'
+              : 'Documento descargado',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+
+        // En iOS, compartir el archivo automáticamente
+        if (Platform.OS === 'ios') {
+          await documentService.shareFile(result.localUri)
+        }
+      } else {
+        throw new Error(result.error || 'No se pudo descargar la plantilla')
       }
-
-      // Abrir el navegador con la URL
-      await WebBrowser.openBrowserAsync(downloadUrl)
     } catch (error) {
-      console.error('Error al obtener URL de descarga:', error)
+      // Ocultar toast de carga en caso de error
+      Toast.hide()
+
+      console.error('Error al descargar plantilla:', error)
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: 'No se pudo descargar la plantilla',
+        text1: 'Error de descarga',
+        text2:
+          error instanceof Error
+            ? error.message
+            : 'No se pudo descargar la plantilla',
         position: 'top',
+        visibilityTime: 4000,
       })
     }
   }
@@ -90,9 +95,7 @@ export default function TemplateCard({
       </View>
       <View style={styles.buttonContainer}>
         <Button
-          buttonText={
-            Platform.OS === 'ios' ? 'Abrir documento' : 'Descargar documento'
-          }
+          buttonText={'Descargar documento'}
           onPress={handleTemplateDownload}
           size='small'
           variant='primary'

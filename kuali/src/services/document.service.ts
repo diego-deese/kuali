@@ -2,6 +2,8 @@ import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
 import { ResponseError, Response } from '../types/Request'
 import { getFileInfo } from '../utils/parsing'
+import * as FileSystem from 'expo-file-system'
+import * as Sharing from 'expo-sharing'
 
 class DocumentService {
   private api: AxiosInstance
@@ -123,13 +125,106 @@ class DocumentService {
       }
     }
   }
+  /**
+   * Descarga una plantilla y la guarda localmente
+   * @param templateId ID de la plantilla a descargar
+   * @param templateName Nombre de la plantilla para el archivo
+   * @returns Promise con el resultado de la descarga
+   */
+  async downloadTemplate(
+    templateId: number,
+    templateName: string,
+  ): Promise<{
+    success: boolean
+    localUri?: string
+    error?: string
+  }> {
+    try {
+      // Obtener el token de autenticación
+      const token = await authService.getToken()
+      if (!token) {
+        throw new Error('No se encontró token de autenticación')
+      }
+
+      // URL de descarga con token
+      const downloadUrl = `${process.env.EXPO_PUBLIC_API_URL}/requirement-templates/download/${templateId}`
+
+      // Determinar la extensión del archivo
+      const extension = this.getFileExtension(templateName)
+
+      // Ruta donde se guardará el archivo
+      const fileUri = `${FileSystem.documentDirectory}${templateName}.${extension}`
+
+      // Descargar el archivo
+      const downloadResult = await FileSystem.downloadAsync(
+        downloadUrl,
+        fileUri,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+
+      if (downloadResult.status === 200) {
+        return {
+          success: true,
+          localUri: downloadResult.uri,
+        }
+      } else {
+        throw new Error(`Error de descarga: ${downloadResult.status}`)
+      }
+    } catch (error) {
+      console.error('Error al descargar plantilla:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Error desconocido',
+      }
+    }
+  }
+
+  /**
+   * Comparte un archivo descargado
+   * @param fileUri URI local del archivo
+   * @returns Promise indicando si se pudo compartir
+   */
+  async shareFile(fileUri: string): Promise<boolean> {
+    try {
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(fileUri)
+        return true
+      } else {
+        console.log('Sharing no está disponible en este dispositivo')
+        return false
+      }
+    } catch (error) {
+      console.error('Error al compartir archivo:', error)
+      return false
+    }
+  }
+
+  /**
+   * Determina la extensión del archivo basado en el nombre
+   * @param templateName Nombre de la plantilla
+   * @returns Extensión del archivo
+   */
+  private getFileExtension(templateName: string): string {
+    const nameLower = templateName.toLowerCase()
+
+    if (nameLower.includes('pdf')) return 'pdf'
+    if (nameLower.includes('word') || nameLower.includes('doc')) return 'docx'
+
+    // Valor por defecto
+    return 'pdf'
+  }
 
   /**
    * @param templateId ID de la plantilla a descargar
    * @returns URL para descargar la plantilla
    */
   async getTemplateDownloadUrl(templateId: number): Promise<string> {
-    return `${process.env.EXPO_PUBLIC_API_URL}/requirement-templates/download/${templateId}`
+    const token = await authService.getToken()
+    return `${process.env.EXPO_PUBLIC_API_URL}/requirement-templates/download/${templateId}?token=${token}`
   }
 }
 
