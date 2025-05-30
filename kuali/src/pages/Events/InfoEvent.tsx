@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable, Platform } from 'react-native'
+import { View, Text, ScrollView, Pressable } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
@@ -35,7 +35,7 @@ const InfoEvent: React.FC = () => {
   const [plantillasExpanded, setPlantillasExpanded] = useState(true)
   const [activeModal, setActiveModal] = useState<
     'none' | 'apply' | 'exit' | 'delete'
-  >('none') // Un solo state para los modales
+  >('none')
 
   const fetchEventDetails = async () => {
     try {
@@ -47,7 +47,6 @@ const InfoEvent: React.FC = () => {
         return
       }
 
-      // Llamada al servicio para obtener detalles de la actividad
       const result = await activityService.getActivityById(activity_id)
 
       if (!result.success && 'error' in result) {
@@ -57,7 +56,7 @@ const InfoEvent: React.FC = () => {
       }
 
       setEventDetails(result.data)
-      // Verificar si el usuario ya está registrado en esta actividad
+      // Verificar si el usuario ya está registrado en la actividad
       setHasApplied(result.data.isRegistered || false)
       setLoading(false)
     } catch (err) {
@@ -71,7 +70,6 @@ const InfoEvent: React.FC = () => {
   }, [activity_id])
 
   const handleUpload = async (docId: number, fileUri?: string) => {
-    // Implementación de la llamada al servicio para subir documento
     try {
       if (!fileUri) {
         console.error('No se proporcionó URI del archivo')
@@ -93,8 +91,7 @@ const InfoEvent: React.FC = () => {
           position: 'top',
         })
       } else {
-        // Actualizar la interfaz después de subir el documento
-        fetchEventDetails()
+        fetchEventDetails() //si jalo
         Toast.show({
           type: 'success',
           text1: 'Archivo subido',
@@ -112,7 +109,6 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleDelete = async (docId: number) => {
-    // Implementación de la llamada al servicio para eliminar documento
     if (!docId) {
       console.error('ID de documento inválido')
       return
@@ -150,7 +146,6 @@ const InfoEvent: React.FC = () => {
           position: 'top',
           visibilityTime: 3000,
         })
-        // Refrescar los datos para actualizar la UI
         fetchEventDetails()
       }
     } catch (error) {
@@ -210,7 +205,6 @@ const InfoEvent: React.FC = () => {
 
   const handleTemplateDownload = async (templateId: number) => {
     try {
-      // Buscar el template en los requirements para obtener su nombre
       const template = eventDetails?.requirements?.find(
         (req) => req.requirement_id === templateId && req.template,
       )
@@ -225,7 +219,6 @@ const InfoEvent: React.FC = () => {
         return
       }
 
-      // Mostrar indicador de carga
       Toast.show({
         type: 'info',
         text1: 'Descargando documento...',
@@ -233,24 +226,19 @@ const InfoEvent: React.FC = () => {
         autoHide: false,
       })
 
-      // Descargar usando FileSystem
+      // Descargar
       const result = await documentService.downloadTemplate(
-        template.template.requirement_template_id, // Usar el ID correcto
+        template.template.requirement_template_id,
         template.name,
       )
 
-      // Ocultar toast de carga
       Toast.hide()
 
       if (result.success && result.localUri) {
-        // Mostrar toast de éxito
         Toast.show({
           type: 'success',
           text1: 'Descarga completada',
-          text2:
-            Platform.OS === 'ios'
-              ? 'Documento guardado'
-              : 'Documento descargado',
+          text2: 'Documento descargado',
           position: 'top',
           visibilityTime: 3000,
         })
@@ -262,7 +250,6 @@ const InfoEvent: React.FC = () => {
             'No se pudo compartir el archivo automáticamente:',
             shareError,
           )
-          // Toast adicional para informar al usuario sobre la ubicación del archivo
           Toast.show({
             type: 'info',
             text1: 'Archivo guardado',
@@ -274,7 +261,6 @@ const InfoEvent: React.FC = () => {
         throw new Error(result.error || 'No se pudo descargar la plantilla')
       }
     } catch (error) {
-      // Ocultar toast de carga en caso de error
       Toast.hide()
 
       console.error('Error al descargar plantilla:', error)
@@ -331,6 +317,14 @@ const InfoEvent: React.FC = () => {
   const togglePlantillas = () => {
     setPlantillasExpanded(!plantillasExpanded)
   }
+  const isRegistrationClosed = (): boolean => {
+    if (!eventDetails?.register_date_limit) return false
+
+    const now = new Date()
+    const limitDate = new Date(eventDetails.register_date_limit)
+
+    return now > limitDate
+  }
 
   if (loading) {
     return (
@@ -368,9 +362,15 @@ const InfoEvent: React.FC = () => {
           }}
         />
 
-        {/* Mostrar el botón de Aplicar cuando NO ha aplicado */}
-        {!hasApplied ? (
+        {!hasApplied && !isRegistrationClosed() ? (
           <Button buttonText='Aplicar' onPress={handleApply} />
+        ) : !hasApplied && isRegistrationClosed() ? (
+          // Mostrar mensaje si la fecha límite ya pasó
+          <View>
+            <Text style={styles.noRequirementsText}>
+              El período de registro para esta actividad ha finalizado
+            </Text>
+          </View>
         ) : (
           <>
             {/* Sección de Plantillas */}
