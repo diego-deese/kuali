@@ -23,6 +23,7 @@ export type User = {
   employeeNumber?: string
   categoriaProfr?: string
   sniDistinction?: string
+  ediLevel?: string
   namingNumber?: string
   namingType?: string
   cvuNumber?: string

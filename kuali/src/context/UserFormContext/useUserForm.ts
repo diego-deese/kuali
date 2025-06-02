@@ -26,6 +26,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
 
   const [categoriaProfr, setCategoriaProfr] = useState<Option | null>(null)
   const [sniDistinction, setSniDistinction] = useState<Option | null>(null)
+  const [ediLevel, setEdiLevel] = useState<Option | null>(null)
   const [namingType, setNamingType] = useState<Option | null>(null)
   const [researchLine, setResearchLine] = useState('')
   const [socialSecurityNumber, setSocialSecurityNumber] = useState('')
@@ -74,6 +75,9 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
           ? { id: 0, label: userData.sniDistinction }
           : null,
       )
+      setEdiLevel(
+        userData.ediLevel ? { id: 0, label: userData.ediLevel } : null,
+      )
       setNamingNumber(userData.namingNumber || '')
       setNamingType(
         userData.namingType ? { id: 0, label: userData.namingType } : null,
@@ -120,6 +124,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setEmployeeNumber('')
     setCategoriaProfr(null)
     setSniDistinction(null)
+    setEdiLevel(null)
     setNamingNumber('')
     setNamingType(null)
     setCvuNumber('')
@@ -263,6 +268,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setCategoriaProfr(value)
   const onSniDistinctionChange = (value: Option | null) =>
     setSniDistinction(value)
+  const onEdiChange = (value: Option | null) => setEdiLevel(value)
   const onNamingTypeChange = (value: Option | null) => setNamingType(value)
   const onResearchLineChange = (value: string) => setResearchLine(value)
   const onSocialSecurityNumberChange = (value: string) =>
@@ -315,6 +321,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         personal_email: personalEmail,
         employeeNumber,
         categoriaProfr: categoriaProfr?.label || '',
+        ediLevel: Number(ediLevel?.label) || '',
         sniDistinction: sniDistinction?.label || '',
         namingNumber,
         namingType: namingType?.label || '',
@@ -399,6 +406,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         employeeNumber,
         categoriaProfr: categoriaProfr?.label || '',
         sniDistinction: sniDistinction?.label || '',
+        ediLevel: ediLevel?.label || '',
         namingNumber,
         namingType: namingType?.label || '',
         cvuNumber,
@@ -455,6 +463,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     employeeNumber,
     categoriaProfr,
     sniDistinction,
+    ediLevel,
     namingNumber,
     namingType,
     cvuNumber,
@@ -475,6 +484,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setEmployeeNumber,
     setCategoriaProfr,
     setSniDistinction,
+    setEdiLevel,
     setNamingNumber,
     setNamingType,
     setCvuNumber,
@@ -495,6 +505,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     onEmployeeNumberChange,
     onCategoriaProfrChange,
     onSniDistinctionChange,
+    onEdiChange,
     onNamingNumberChange,
     onNamingTypeChange,
     onCvuNumberChange,

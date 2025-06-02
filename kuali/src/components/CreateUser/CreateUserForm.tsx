@@ -23,6 +23,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     employeeNumber,
     categoriaProfr,
     sniDistinction,
+    ediLevel,
     namingNumber,
     namingType,
     cvuNumber,
@@ -42,6 +43,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     onEmployeeNumberChange,
     onCategoriaProfrChange,
     onSniDistinctionChange,
+    onEdiChange,
     onNamingNumberChange,
     onNamingTypeChange,
     onCvuNumberChange,
@@ -82,6 +84,19 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     { id: 2, label: 'Interinato' },
     { id: 3, label: 'Confianza' },
     { id: 4, label: 'Otro' },
+  ]
+
+  const ediLevelOptions = [
+    { id: 1, label: '1' },
+    { id: 2, label: '2' },
+    { id: 3, label: '3' },
+    { id: 4, label: '4' },
+    { id: 5, label: '5' },
+    { id: 6, label: '6' },
+    { id: 7, label: '7' },
+    { id: 8, label: '8' },
+    { id: 9, label: '9' },
+    { id: 10, label: '10' },
   ]
 
   return (
@@ -185,6 +200,12 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             value={sniDistinction}
             onSelect={onSniDistinctionChange}
           />
+          <SelectInput
+            label='Nivel de EDI'
+            options={ediLevelOptions}
+            value={ediLevel}
+            onSelect={onEdiChange}
+          />
           <InputText
             label='Número de nombramiento'
             onChangeText={onNamingNumberChange}
@@ -204,6 +225,22 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             onChangeText={onCvuNumberChange}
             error={errors.cvuNumber.error}
             errorMessage={errors.cvuNumber.errorMessage}
+          />
+          <InputText
+            label='Línea de investigación'
+            value={researchLine}
+            onChangeText={onResearchLineChange}
+          />
+          <InputText
+            label='Número de seguro social'
+            value={socialSecurityNumber}
+            onChangeText={onSocialSecurityNumberChange}
+          />
+          <SelectInput
+            label='Tipo de plaza'
+            options={placementTypeOptions}
+            value={placementType}
+            onSelect={onPlacementTypeChange}
           />
         </>
       )}

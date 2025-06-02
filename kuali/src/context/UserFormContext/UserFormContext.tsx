@@ -59,6 +59,10 @@ interface UserFormContextProps {
   setSniDistinction: (value: Option | null) => void
   onSniDistinctionChange: (value: Option | null) => void
 
+  ediLevel: Option | null
+  setEdiLevel: (value: Option | null) => void
+  onEdiChange: (value: Option | null) => void
+
   namingNumber: string
   setNamingNumber: (value: string) => void
   onNamingNumberChange: (value: string) => void
