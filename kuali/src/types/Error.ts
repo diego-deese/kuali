@@ -16,7 +16,8 @@ export type UserFormErrors = {
   secondName: InputError
   paternalLastName: InputError
   maternalLastName: InputError
-  email: InputError
+  institutionalEmail: InputError
+  personalEmail: InputError
   password: InputError
   identifier: InputError
   curp: InputError

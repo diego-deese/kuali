@@ -95,10 +95,14 @@ interface UserFormContextProps {
     paternalLastName: string,
     maternalLastName: string,
     institutionalEmail: string,
+    personalEmail: string,
     password: string,
     identifier: string,
     curp: string,
-    role: Option | null,
+    role: { id: number; label: string } | null,
+    employeeNumber?: string,
+    namingNumber?: string,
+    cvuNumber?: string,
   ) => boolean
 
   loading: boolean
