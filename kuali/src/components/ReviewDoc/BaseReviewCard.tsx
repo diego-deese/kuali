@@ -95,7 +95,6 @@ export default function BaseReviewCard({
       <ConfirmationModal
         visible={modalVisible}
         title={`¿${action === 'approved' ? 'Aprobar' : 'Rechazar'} documento?`}
-        //description={`Esta acción marcará el documento como "${action === 'approved' ? 'Aprobado' : 'Rechazado'}".`}
         confirmButtonText={action === 'approved' ? 'Aprobar' : 'Rechazar'}
         confirmButtonColor={action === 'approved' ? '#2A4A91' : '#D32F2F'}
         onConfirm={confirmAction}

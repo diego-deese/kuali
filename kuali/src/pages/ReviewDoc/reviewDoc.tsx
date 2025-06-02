@@ -53,7 +53,7 @@ export default function ReviewDoc() {
         label='Usuario'
       />
       <Text style={styles.docText}>
-        Usuario:
+        Usuario: {''}
         {`${student.user.name} ${student.user.second_name} ${student.user.paternal_lastname}`}
       </Text>
       <View style={styles.row}>

@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     marginBottom: 16,
     marginTop: 8,
   },

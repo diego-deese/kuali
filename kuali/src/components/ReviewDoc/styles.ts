@@ -16,6 +16,8 @@ export default StyleSheet.create({
   },
   name: {
     flex: 1,
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     marginLeft: 10,
     fontSize: 16,
     marginBottom: 8,
@@ -38,13 +40,15 @@ export default StyleSheet.create({
   approved: {
     width: '30%',
     color: colors.blueIcons,
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 17,
   },
   rejected: {
     width: '30%',
     color: '#F44336',
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 17,
   },
 })

@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   name: {
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 16,
     color: colors.fontBlack,
   },

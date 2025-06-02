@@ -10,6 +10,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   navText: {
+    fontFamily: 'monserrat',
+    includeFontPadding: false,
     fontSize: 16,
     color: colors.blueIcons,
   },
@@ -17,6 +19,8 @@ const styles = StyleSheet.create({
     opacity: 0.3,
   },
   pageText: {
+    fontFamily: 'monserrat',
+    includeFontPadding: false,
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
