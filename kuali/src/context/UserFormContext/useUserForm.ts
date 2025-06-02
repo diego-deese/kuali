@@ -14,9 +14,9 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const [paternalLastName, setPaternalLastName] = useState('')
   const [maternalLastName, setMaternalLastName] = useState('')
   const [password, setPassword] = useState('')
-  const [institutionalEmail, setInstitutionalEmail] = useState('')
-  const [personalEmail, setPersonalEmail] = useState('')
-  const [curp, setCurp] = useState('')
+  const [institutionalEmail, setInstitutionalEmail] = useState(null)
+  const [personalEmail, setPersonalEmail] = useState(null)
+  const [curp, setCurp] = useState(null)
   const [identifier, setIdentifier] = useState('')
   const [role, setRole] = useState<Option | null>(null)
 
@@ -26,6 +26,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
 
   const [categoriaProfr, setCategoriaProfr] = useState<Option | null>(null)
   const [sniDistinction, setSniDistinction] = useState<Option | null>(null)
+  const [ediLevel, setEdiLevel] = useState<Option | null>(null)
   const [namingType, setNamingType] = useState<Option | null>(null)
   const [researchLine, setResearchLine] = useState('')
   const [socialSecurityNumber, setSocialSecurityNumber] = useState('')
@@ -54,16 +55,16 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setSecondName(userData.second_name || '')
       setPaternalLastName(userData.paternal_lastname || '')
       setMaternalLastName(userData.maternal_lastname || '')
-      setInstitutionalEmail(userData.institutional_email || '')
-      setPersonalEmail(userData.personal_email || '')
-      setIdentifier(userData.identifier || '')
+      setInstitutionalEmail(userData.institutional_email || null)
+      setPersonalEmail(userData.personal_email || null)
+      setIdentifier(userData.identifier || null)
       setCurp(userData.curp || '')
       setRole(
         userData.role
           ? { id: userData.role.role_id, label: userData.role.name }
           : null,
       )
-      setEmployeeNumber(userData.employeeNumber || '')
+      setEmployeeNumber(userData.employeeNumber || null)
       setCategoriaProfr(
         userData.categoriaProfr
           ? { id: 0, label: userData.categoriaProfr }
@@ -74,13 +75,16 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
           ? { id: 0, label: userData.sniDistinction }
           : null,
       )
-      setNamingNumber(userData.namingNumber || '')
+      setEdiLevel(
+        userData.ediLevel ? { id: 0, label: userData.ediLevel } : null,
+      )
+      setNamingNumber(userData.namingNumber || null)
       setNamingType(
         userData.namingType ? { id: 0, label: userData.namingType } : null,
       )
-      setCvuNumber(userData.cvuNumber || '')
-      setResearchLine(userData.researchLine || '')
-      setSocialSecurityNumber(userData.socialSecurityNumber || '')
+      setCvuNumber(userData.cvuNumber || null)
+      setResearchLine(userData.researchLine || null)
+      setSocialSecurityNumber(userData.socialSecurityNumber || null)
       setPlacementType(
         userData.placementType
           ? { id: 0, label: userData.placementType }
@@ -120,6 +124,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setEmployeeNumber('')
     setCategoriaProfr(null)
     setSniDistinction(null)
+    setEdiLevel(null)
     setNamingNumber('')
     setNamingType(null)
     setCvuNumber('')
@@ -132,7 +137,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       secondName: { error: false, errorMessage: '' },
       paternalLastName: { error: false, errorMessage: '' },
       maternalLastName: { error: false, errorMessage: '' },
-      email: { error: false, errorMessage: '' },
+      institutionalEmail: { error: false, errorMessage: '' },
+      personalEmail: { error: false, errorMessage: '' },
       password: { error: false, errorMessage: '' },
       identifier: { error: false, errorMessage: '' },
       curp: { error: false, errorMessage: '' },
@@ -174,14 +180,14 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const onInstitutionalEmailChange = (value: string) => {
     setInstitutionalEmail(value)
     errorsManagement.updateErrors({
-      email: errorsManagement.validateEmail(value),
+      institutionalEmail: errorsManagement.validateIEmail(value),
     })
   }
 
   const onPersonalEmailChange = (value: string) => {
     setPersonalEmail(value)
     errorsManagement.updateErrors({
-      email: errorsManagement.validateEmail(value),
+      personalEmail: errorsManagement.validatePEmail(value),
     })
   }
 
@@ -251,7 +257,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     })
   }
 
-  const onCvuChange = (value: string) => {
+  const onCvuNumberChange = (value: string) => {
     setCvuNumber(value)
     const isRequired = role?.id === 3
     errorsManagement.updateErrors({
@@ -263,6 +269,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setCategoriaProfr(value)
   const onSniDistinctionChange = (value: Option | null) =>
     setSniDistinction(value)
+  const onEdiChange = (value: Option | null) => setEdiLevel(value)
   const onNamingTypeChange = (value: Option | null) => setNamingType(value)
   const onResearchLineChange = (value: string) => setResearchLine(value)
   const onSocialSecurityNumberChange = (value: string) =>
@@ -282,7 +289,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         secondName,
         paternalLastName,
         maternalLastName,
-        email: institutionalEmail,
+        institutionalEmail,
+        personalEmail,
         password,
         identifier,
         curp,
@@ -308,23 +316,23 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         paternal_lastname: paternalLastName,
         maternal_lastname: maternalLastName,
         institutional_email: institutionalEmail,
-        personalEmail: personalEmail,
         password,
-        curp,
+        personal_email: personalEmail || null,
         identifier,
+        curp,
         role_id: role?.id,
-        personal_email: personalEmail,
-        employeeNumber,
-        categoriaProfr: categoriaProfr?.label || '',
-        sniDistinction: sniDistinction?.label || '',
-        namingNumber,
-        namingType: namingType?.label || '',
-        cvuNumber,
-        researchLine,
-        socialSecurityNumber,
+        employeeNumber: employeeNumber || null,
+        categoriaProfr: categoriaProfr?.label || null,
+        sniDistinction: sniDistinction?.label || null,
+        ediLevel: Number(ediLevel?.label) || null,
+        namingNumber: namingNumber || null,
+        namingType: namingType?.label || null,
+        cvuNumber: cvuNumber || null,
+        researchLine: researchLine || null,
+        socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
       }
-      console.log(newUser)
+      console.log(null)
       const result = await userService.createProfile(newUser)
       console.log(result)
       if (!result.success) {
@@ -367,7 +375,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         secondName,
         paternalLastName,
         maternalLastName,
-        email: institutionalEmail,
+        institutionalEmail,
+        personalEmail,
         password,
         identifier,
         curp,
@@ -393,18 +402,19 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         paternal_lastname: paternalLastName,
         maternal_lastname: maternalLastName,
         institutional_email: institutionalEmail,
-        personal_email: personalEmail,
+        personal_email: personalEmail || null,
         identifier,
         curp,
         role_id: role?.id,
-        employeeNumber,
-        categoriaProfr: categoriaProfr?.label || '',
-        sniDistinction: sniDistinction?.label || '',
-        namingNumber,
-        namingType: namingType?.label || '',
-        cvuNumber,
-        researchLine,
-        socialSecurityNumber,
+        employeeNumber: employeeNumber || null,
+        categoriaProfr: categoriaProfr?.label || null,
+        sniDistinction: sniDistinction?.label || null,
+        ediLevel: Number(ediLevel?.label) || null,
+        namingNumber: namingNumber || null,
+        namingType: namingType?.label || null,
+        cvuNumber: cvuNumber || null,
+        researchLine: researchLine || null,
+        socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
       }
       const response = await userService.updateProfile(
@@ -456,6 +466,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     employeeNumber,
     categoriaProfr,
     sniDistinction,
+    ediLevel,
     namingNumber,
     namingType,
     cvuNumber,
@@ -476,6 +487,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setEmployeeNumber,
     setCategoriaProfr,
     setSniDistinction,
+    setEdiLevel,
     setNamingNumber,
     setNamingType,
     setCvuNumber,
@@ -496,9 +508,10 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     onEmployeeNumberChange,
     onCategoriaProfrChange,
     onSniDistinctionChange,
+    onEdiChange,
     onNamingNumberChange,
     onNamingTypeChange,
-    onCvuChange,
+    onCvuNumberChange,
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,

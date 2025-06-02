@@ -73,16 +73,18 @@ class UserService {
   }
 
   async createUser (userData: NewUser): Promise<SafeUser> {
+    console.log(userData)
     const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { institutional_email: userData.institutional_email },
-          { personal_email: userData.personal_email }
+          userData.personal_email !== null ? { personal_email: userData.personal_email } : {}
         ]
       }
     })
 
     if (existingUser !== null) {
+      console.log(existingUser)
       throw new ConflictError('Ya existe un usuario con este correo institucional o personal')
     }
 
