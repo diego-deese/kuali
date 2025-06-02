@@ -1,12 +1,20 @@
-import React, { useState } from 'react'
-import { View, Text, ScrollView } from 'react-native'
+import React from 'react'
+import { View, Text, ScrollView, ActivityIndicator } from 'react-native'
 import styles from './myStudents.styles'
 import StudentCard from '../../components/MyStudents/StudentCard/StudentCard'
-import { assignedStudents } from '../../components/DataExample/Students'
-//import { setStudents } from '../../context/StudentsStored'
+import { useAssignedStudents } from '../../hooks/MyStudents/useAssignedStudents'
 
 export default function MyStudents() {
-  const [students] = useState(assignedStudents)
+  const { students, loading } = useAssignedStudents()
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator size='large' color='#007AFF' />
+        <Text style={styles.title}>Cargando estudiantes...</Text>
+      </View>
+    )
+  }
 
   return (
     <View style={styles.container}>

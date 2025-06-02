@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     color: colors.standardGray,
   },
   dowload: {
-    fontSize: 20,
+    fontSize: 17,
     marginBottom: 5,
     textAlign: 'left',
     color: colors.selectionBlue,

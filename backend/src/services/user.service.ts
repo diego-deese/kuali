@@ -271,6 +271,7 @@ class UserService {
           select: {
             students: {
               select: {
+                user_id: true,
                 name: true,
                 second_name: true,
                 paternal_lastname: true,
