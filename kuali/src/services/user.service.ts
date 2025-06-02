@@ -212,6 +212,36 @@ class UserService {
       }
     }
   }
+  async getResearcherStudents(): Promise<
+    { name: string; students: any[] }[] | ResponseError
+  > {
+    try {
+      const response = await this.api.get('/users/researcher/students')
+      if (response.status === 200 && response.data?.studentsByAcademicProgram) {
+        return response.data.studentsByAcademicProgram
+      }
+      return {
+        success: false,
+        message: 'Error al obtener los estudiantes asignados',
+        error: 'Respuesta inesperada del servidor',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message: errorResponse?.message || 'Error al obtener estudiantes',
+          error:
+            errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
+        }
+      }
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: 'Por favor, verifica tu conexión o intenta más tarde',
+      }
+    }
+  }
 }
 
 export default new UserService()

@@ -16,6 +16,10 @@ import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
 import TemplateCard from '../../components/TemplateCard/TemplateCard'
+import WithRole from '../../components/WithRole/WithRole'
+import { Roles } from '../../constants/roles'
+import { useAuth } from '../../context/AuthContext'
+
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -23,6 +27,7 @@ import TemplateCard from '../../components/TemplateCard/TemplateCard'
   gestionar su participación.
  */
 const InfoEvent: React.FC = () => {
+  const { user } = useAuth()
   const params = useLocalSearchParams()
   const activity_id = params.activity_id ? Number(params.activity_id) : 0
 
@@ -361,113 +366,142 @@ const InfoEvent: React.FC = () => {
             setHasApplied(data.isRegistered || false)
           }}
         />
+        {/* Panel Administrativo solo visible para ADMIN y cuando category_id === 1 */}
+        <WithRole role={Roles.ADMIN}>
+          {eventDetails.category.category_id === 1 && (
+            <>
+              <Text style={styles.sectionTitle}>Panel Administrativo</Text>
+              <Button
+                buttonText='Revisar por documento'
+                onPress={() =>
+                  router.push({
+                    pathname: '/review/student/student',
+                    params: { activity_id: activity_id.toString() },
+                  })
+                }
+                style={{ marginBottom: 12 }}
+              />
+              <Button
+                buttonText='Revisar por usuario'
+                onPress={() => {
+                  router.push({
+                    pathname: '/review/doc/doc',
+                    params: {
+                      activity_id: activity_id.toString(),
+                    },
+                  })
+                }}
+              />
+            </>
+          )}
+        </WithRole>
+        {user?.role.role_id !== Roles.ADMIN &&
+          (!hasApplied && !isRegistrationClosed() ? (
+            <Button buttonText='Aplicar' onPress={handleApply} />
+          ) : !hasApplied && isRegistrationClosed() ? (
+            // Mostrar mensaje si la fecha límite ya pasó
+            <View>
+              <Text style={styles.noRequirementsText}>
+                El período de registro para esta actividad ha finalizado
+              </Text>
+            </View>
+          ) : (
+            <>
+              {/* Sección de Plantillas */}
+              {eventDetails.requirements &&
+                eventDetails.requirements.some((req) => req.template) && (
+                  <>
+                    <Pressable
+                      style={styles.sectionHeader}
+                      onPress={togglePlantillas}
+                    >
+                      <Text style={styles.sectionTitle}>Plantillas</Text>
+                      {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
+                    </Pressable>
 
-        {!hasApplied && !isRegistrationClosed() ? (
-          <Button buttonText='Aplicar' onPress={handleApply} />
-        ) : !hasApplied && isRegistrationClosed() ? (
-          // Mostrar mensaje si la fecha límite ya pasó
-          <View>
-            <Text style={styles.noRequirementsText}>
-              El período de registro para esta actividad ha finalizado
-            </Text>
-          </View>
-        ) : (
-          <>
-            {/* Sección de Plantillas */}
-            {eventDetails.requirements &&
-              eventDetails.requirements.some((req) => req.template) && (
-                <>
-                  <Pressable
-                    style={styles.sectionHeader}
-                    onPress={togglePlantillas}
-                  >
-                    <Text style={styles.sectionTitle}>Plantillas</Text>
-                    {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
-                  </Pressable>
+                    {plantillasExpanded && (
+                      <View>
+                        {eventDetails.requirements
+                          .filter((req) => req.template)
+                          .map((req) => (
+                            <TemplateCard
+                              key={`template-${req.requirement_id}`}
+                              template={{
+                                id: req.requirement_id,
+                                name: req.name,
+                                description: req.description,
+                              }}
+                              onDownload={handleTemplateDownload}
+                            />
+                          ))}
+                      </View>
+                    )}
+                  </>
+                )}
 
-                  {plantillasExpanded && (
-                    <View>
-                      {eventDetails.requirements
-                        .filter((req) => req.template)
-                        .map((req) => (
-                          <TemplateCard
-                            key={`template-${req.requirement_id}`}
-                            template={{
-                              id: req.requirement_id,
-                              name: req.name,
-                              description: req.description,
-                            }}
-                            onDownload={handleTemplateDownload}
-                          />
-                        ))}
-                    </View>
+              {/* Sección de Requisitos */}
+              <Pressable
+                style={styles.sectionHeader}
+                onPress={toggleRequirements}
+              >
+                <Text style={styles.sectionTitle}>Requisitos</Text>
+                {requirementsExpanded ? <DropUpIcon /> : <DropDownIcon />}
+              </Pressable>
+
+              {requirementsExpanded && (
+                <View>
+                  {eventDetails.requirements &&
+                  eventDetails.requirements.length > 0 ? (
+                    // Si hay requisitos, mapearlos
+                    eventDetails.requirements.map((req) => {
+                      const userDocument =
+                        req.userDocuments && req.userDocuments.length > 0
+                          ? req.userDocuments[0]
+                          : undefined
+
+                      const documentStatus = userDocument?.status?.name
+                        ? getDocumentStatusFromString(userDocument.status.name)
+                        : DocumentStatus.Pendiente
+
+                      return (
+                        <DocumentCard
+                          key={req.requirement_id}
+                          document={{
+                            id: req.requirement_id,
+                            title: req.name,
+                            description: req.description,
+                            status: documentStatus,
+                            userDocumentId: userDocument?.user_document_id,
+                          }}
+                          onUpload={(docId, fileUri) =>
+                            handleUpload(docId, fileUri)
+                          }
+                          onDelete={() =>
+                            handleDelete(userDocument?.user_document_id || 0)
+                          }
+                        />
+                      )
+                    })
+                  ) : (
+                    // Si NO hay requisitos, mostrar este mensaje
+                    <Text style={styles.noRequirementsText}>
+                      Esta actividad no tiene requisitos.
+                    </Text>
                   )}
-                </>
+                </View>
               )}
 
-            {/* Sección de Requisitos */}
-            <Pressable
-              style={styles.sectionHeader}
-              onPress={toggleRequirements}
-            >
-              <Text style={styles.sectionTitle}>Requisitos</Text>
-              {requirementsExpanded ? <DropUpIcon /> : <DropDownIcon />}
-            </Pressable>
-
-            {requirementsExpanded && (
-              <View>
-                {eventDetails.requirements &&
-                eventDetails.requirements.length > 0 ? (
-                  // Si hay requisitos, mapearlos
-                  eventDetails.requirements.map((req) => {
-                    const userDocument =
-                      req.userDocuments && req.userDocuments.length > 0
-                        ? req.userDocuments[0]
-                        : undefined
-
-                    const documentStatus = userDocument?.status?.name
-                      ? getDocumentStatusFromString(userDocument.status.name)
-                      : DocumentStatus.Pendiente
-
-                    return (
-                      <DocumentCard
-                        key={req.requirement_id}
-                        document={{
-                          id: req.requirement_id,
-                          title: req.name,
-                          description: req.description,
-                          status: documentStatus,
-                          userDocumentId: userDocument?.user_document_id,
-                        }}
-                        onUpload={(docId, fileUri) =>
-                          handleUpload(docId, fileUri)
-                        }
-                        onDelete={() =>
-                          handleDelete(userDocument?.user_document_id || 0)
-                        }
-                      />
-                    )
-                  })
-                ) : (
-                  // Si NO hay requisitos, mostrar este mensaje
-                  <Text style={styles.noRequirementsText}>
-                    Esta actividad no tiene requisitos.
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {/* Botón para darse de baja*/}
-            <Pressable
-              style={styles.exitButton}
-              onPress={() => setActiveModal('exit')}
-            >
-              <Text style={styles.exitButtonText}>
-                Darte de baja del evento
-              </Text>
-            </Pressable>
-          </>
-        )}
+              {/* Botón para darse de baja*/}
+              <Pressable
+                style={styles.exitButton}
+                onPress={() => setActiveModal('exit')}
+              >
+                <Text style={styles.exitButtonText}>
+                  Darte de baja del evento
+                </Text>
+              </Pressable>
+            </>
+          ))}
 
         {/* Modal de confirmación para aplicar */}
         <ConfirmationModal
