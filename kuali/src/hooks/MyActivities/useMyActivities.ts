@@ -117,7 +117,10 @@ export const useMyActivities = () => {
       loadingActivities,
       getUpcomingActivities,
     },
-    showViewSelector: activeTab === 'upcoming',
+    showViewSelector:
+      activeTab === 'upcoming' &&
+      activitiesToDisplay !== null &&
+      activitiesToDisplay.length > 0,
     refreshing,
     handleRefresh,
   }

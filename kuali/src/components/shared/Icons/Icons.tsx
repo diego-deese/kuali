@@ -308,3 +308,14 @@ export const SaveIcon = ({ fill = true, ...props }) => {
     />
   )
 }
+
+export const CalendarPlusIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='calendar-plus'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}

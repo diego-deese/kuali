@@ -9,6 +9,7 @@ import ActivitiesList from '../../components/MyActivities/ActivitiesList/Activit
 import colors from '../../constants/colors'
 import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
 import { useAppActions } from '../../context/AppActionsContext'
+import EmptyActivityCard from '../../components/shared/EmptyActivityCard/EmptyActivityCard'
 
 export default function MyActivities() {
   const {
@@ -45,6 +46,11 @@ export default function MyActivities() {
             viewMode={viewMode.viewMode}
             onViewModeChange={viewMode.handleViewModeChange}
           />
+        )}
+
+        {(activities.activitiesToDisplay === null ||
+          activities.activitiesToDisplay.length === 0) && (
+          <EmptyActivityCard mode={activeTab.activeTab} />
         )}
 
         <View style={styles.container}>
