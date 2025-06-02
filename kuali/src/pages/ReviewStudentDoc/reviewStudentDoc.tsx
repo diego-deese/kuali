@@ -33,7 +33,7 @@ export default function ReviewStudentDoc() {
     const firstUser = group?.userDocuments?.[0]?.user
     if (firstUser) {
       router.push({
-        pathname: '/documents/doc/doc',
+        pathname: '/review/doc/doc',
         params: {
           id: firstUser.user_id.toString(),
           activity_id: activityId.toString(),

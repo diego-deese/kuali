@@ -33,7 +33,14 @@ export default function ReviewDoc() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Revisión de documentos</Text>
-      <Pressable onPress={() => router.back()}>
+      <Pressable
+        onPress={() =>
+          router.push({
+            pathname: '/review/student/student',
+            params: { activity_id: activity_id.toString() },
+          })
+        }
+      >
         <Text style={styles.changeText}>{'<'} Por usuario</Text>
       </Pressable>
       <NavButtons

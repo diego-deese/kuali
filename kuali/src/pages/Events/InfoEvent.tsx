@@ -20,7 +20,6 @@ import WithRole from '../../components/WithRole/WithRole'
 import { Roles } from '../../constants/roles'
 import { useAuth } from '../../context/AuthContext'
 
-
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
