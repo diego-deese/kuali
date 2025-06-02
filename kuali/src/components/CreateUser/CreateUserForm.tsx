@@ -14,7 +14,8 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     secondName,
     paternalLastName,
     maternalLastName,
-    email,
+    institutionalEmail,
+    personalEmail,
     password,
     identifier,
     curp,
@@ -32,7 +33,8 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     onSecondNameChange,
     onPaternalLastNameChange,
     onMaternalLastNameChange,
-    onEmailChange,
+    onInstitutionalEmailChange,
+    onPersonalEmailChange,
     onPasswordChange,
     onIdentifierChange,
     onCurpChange,
@@ -123,10 +125,18 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         errorMessage={errors.maternalLastName.errorMessage}
       />
       <InputText
-        label='Correo'
-        onChangeText={onEmailChange}
+        label='Correo institucional'
+        onChangeText={onInstitutionalEmailChange}
         inputMode='email'
-        value={email}
+        value={institutionalEmail}
+        error={errors.email.error}
+        errorMessage={errors.email.errorMessage}
+      />
+      <InputText
+        label='Correo personal'
+        onChangeText={onPersonalEmailChange}
+        inputMode='email'
+        value={personalEmail}
         error={errors.email.error}
         errorMessage={errors.email.errorMessage}
       />
@@ -160,55 +170,45 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             label='Número de empleado'
             onChangeText={onEmployeeNumberChange}
             value={employeeNumber}
+            error={errors.employeeNumber.error}
+            errorMessage={errors.employeeNumber.errorMessage}
           />
           <SelectInput
             label='Categoría'
             options={categoriaOptions}
+            value={categoriaProfr}
             onSelect={onCategoriaProfrChange}
-            error={errors.role.error}
-            errorMessage={errors.role.errorMessage}
+            // Remove error props if not validating, or add proper validation
           />
           <SelectInput
             label='Distinción SNI'
             options={sniDistinctioOptions}
+            value={sniDistinction}
             onSelect={onSniDistinctionChange}
-            error={errors.role.error}
-            errorMessage={errors.role.errorMessage}
+            // Remove error props if not validating, or add proper validation
           />
           <InputText
             label='Número de nombramiento'
             onChangeText={onNamingNumberChange}
             value={namingNumber}
+            error={errors.namingNumber.error}
+            errorMessage={errors.namingNumber.errorMessage}
           />
           <SelectInput
-            label='Naming Type'
+            label='Tipo de nombramiento'
             options={namingTypeOptions}
+            value={namingType}
             onSelect={onNamingTypeChange}
-            error={errors.role.error}
-            errorMessage={errors.role.errorMessage}
+            // Remove error props if not validating, or add proper validation
           />
           <InputText
             label='Número CVU'
             onChangeText={onCvuNumberChange}
             value={cvuNumber}
+            error={errors.cvuNumber.error}
+            errorMessage={errors.cvuNumber.errorMessage}
           />
-          <InputText
-            label='Línea de investigación'
-            onChangeText={onResearchLineChange}
-            value={researchLine}
-          />
-          <InputText
-            label='Número de seguridad social'
-            onChangeText={onSocialSecurityNumberChange}
-            value={employeeNumber}
-          />
-          <SelectInput
-            label='Tipo de plaza'
-            options={placementTypeOptions}
-            onSelect={onPlacementTypeChange}
-            error={errors.role.error}
-            errorMessage={errors.role.errorMessage}
-          />
+          {/* Other fields don't need error props if they're optional */}
         </>
       )}
     </>

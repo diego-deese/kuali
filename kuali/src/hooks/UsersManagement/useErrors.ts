@@ -12,6 +12,9 @@ export const useErrors = (mode: string) => {
     identifier: { error: false, errorMessage: '' },
     curp: { error: false, errorMessage: '' },
     role: { error: false, errorMessage: '' },
+    employeeNumber: { error: false, errorMessage: '' },
+    namingNumber: { error: false, errorMessage: '' },
+    cvuNumber: { error: false, errorMessage: '' },
   })
 
   const updateErrors = (newErrors: Partial<UserFormErrors>) => {
@@ -91,9 +94,13 @@ export const useErrors = (mode: string) => {
     if (!curp || curp.trim() === '') {
       return { error: true, errorMessage: 'El CURP es requerido' }
     }
-    const curpRegex = /^[\w.-]+$/
+    const curpRegex = /^[A-Z]{4}[0-9]{6}[HM][A-Z]{5}[A-Z0-9][0-9]$/
     if (!curpRegex.test(curp.toUpperCase())) {
-      return { error: true, errorMessage: 'CURP inválido' }
+      return {
+        error: true,
+        errorMessage:
+          'CURP inválido. Debe tener 18 caracteres en formato válido',
+      }
     }
     return { error: false, errorMessage: '' }
   }
@@ -102,12 +109,18 @@ export const useErrors = (mode: string) => {
     if (!password || password.trim() === '') {
       return { error: true, errorMessage: 'La contraseña es requerida' }
     }
+    if (password.length < 8) {
+      return {
+        error: true,
+        errorMessage: 'La contraseña debe tener al menos 8 caracteres',
+      }
+    }
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/
     if (!passwordRegex.test(password)) {
       return {
         error: true,
         errorMessage:
-          'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas, números y símbolos',
+          'La contraseña debe incluir mayúsculas, minúsculas, números y símbolos',
       }
     }
     return { error: false, errorMessage: '' }
@@ -125,57 +138,101 @@ export const useErrors = (mode: string) => {
     return { error: false, errorMessage: '' }
   }
 
-  const validateEmployeeNumber = (employeeNumber: string): InputError => {
-    if (!employeeNumber || employeeNumber.trim() === '') {
-      return { error: true, errorMessage: 'El Número de empleado es requerido' }
+  const validateEmployeeNumber = (
+    employeeNumber: string,
+    isRequired: boolean = false,
+  ): InputError => {
+    if (isRequired && (!employeeNumber || employeeNumber.trim() === '')) {
+      return { error: true, errorMessage: 'El número de empleado es requerido' }
     }
-    const regex = /^[a-zA-Z0-9]{1,8}$/
-    if (!regex.test(employeeNumber.toUpperCase())) {
-      return { error: true, errorMessage: 'Número de empleado inválido' }
+    if (employeeNumber && employeeNumber.trim() !== '') {
+      const regex = /^[a-zA-Z0-9]{1,8}$/
+      if (!regex.test(employeeNumber)) {
+        return {
+          error: true,
+          errorMessage:
+            'Número de empleado inválido (máximo 8 caracteres alfanuméricos)',
+        }
+      }
     }
     return { error: false, errorMessage: '' }
   }
 
-  const validateNamingNumber = (namingNumber: string): InputError => {
-    if (!namingNumber || namingNumber.trim() === '') {
+  const validateNamingNumber = (
+    namingNumber: string,
+    isRequired: boolean = false,
+  ): InputError => {
+    if (isRequired && (!namingNumber || namingNumber.trim() === '')) {
       return {
         error: true,
         errorMessage: 'El número de nombramiento es requerido',
       }
     }
-    const regex = /^[a-zA-Z0-9]{1,13}$/
-    if (!regex.test(namingNumber.toUpperCase())) {
-      return { error: true, errorMessage: 'Número de nombramiento inválido' }
-    }
-    return { error: false, errorMessage: '' }
-  }
-
-  const validateCvuNumber = (cvuNumber: string): InputError => {
-    if (!cvuNumber || cvuNumber.trim() === '') {
-      return {
-        error: true,
-        errorMessage: 'El número de CVU es requerido',
+    if (namingNumber && namingNumber.trim() !== '') {
+      const regex = /^[a-zA-Z0-9]{1,13}$/
+      if (!regex.test(namingNumber)) {
+        return {
+          error: true,
+          errorMessage:
+            'Número de nombramiento inválido (máximo 13 caracteres alfanuméricos)',
+        }
       }
     }
-    const regex = /^[a-zA-Z0-9]{1,8}$/
-    if (!regex.test(cvuNumber.toUpperCase())) {
-      return { error: true, errorMessage: 'Número de CVU inválido' }
+    return { error: false, errorMessage: '' }
+  }
+
+  const validateCvuNumber = (
+    cvuNumber: string,
+    isRequired: boolean = false,
+  ): InputError => {
+    if (isRequired && (!cvuNumber || cvuNumber.trim() === '')) {
+      return { error: true, errorMessage: 'El número de CVU es requerido' }
+    }
+    if (cvuNumber && cvuNumber.trim() !== '') {
+      const regex = /^[a-zA-Z0-9]{1,8}$/
+      if (!regex.test(cvuNumber)) {
+        return {
+          error: true,
+          errorMessage:
+            'Número de CVU inválido (máximo 8 caracteres alfanuméricos)',
+        }
+      }
     }
     return { error: false, errorMessage: '' }
   }
 
-  const validateAllFields = (
-    name: string,
-    secondName: string,
-    paternalLastName: string,
-    maternalLastName: string,
-    email: string,
-    password: string,
-    identifier: string,
-    curp: string,
-    role: { id: number; label: string } | null,
-  ): boolean => {
-    const newErrors: UserFormErrors = {
+  const validateAllFields = (formValues: {
+    name: string
+    secondName: string
+    paternalLastName: string
+    maternalLastName: string
+    email: string
+    password: string
+    identifier: string
+    curp: string
+    role: { id: number; label: string } | null
+    employeeNumber?: string
+    namingNumber?: string
+    cvuNumber?: string
+  }): boolean => {
+    const {
+      name,
+      secondName,
+      paternalLastName,
+      maternalLastName,
+      email,
+      password,
+      identifier,
+      curp,
+      role,
+      employeeNumber,
+      namingNumber,
+      cvuNumber,
+    } = formValues
+
+    const isRoleSpecificFieldsRequired = role?.id === 3
+
+    const allErrors: UserFormErrors = {
       name: validateName(name),
       secondName: validateSecondName(secondName),
       paternalLastName: validatePaternalLastName(paternalLastName),
@@ -188,16 +245,36 @@ export const useErrors = (mode: string) => {
       identifier: validateIdentifier(identifier),
       curp: validateCurp(curp),
       role: validateRole(role),
+      employeeNumber: validateEmployeeNumber(
+        employeeNumber || '',
+        isRoleSpecificFieldsRequired,
+      ),
+      namingNumber: validateNamingNumber(
+        namingNumber || '',
+        isRoleSpecificFieldsRequired,
+      ),
+      cvuNumber: validateCvuNumber(
+        cvuNumber || '',
+        isRoleSpecificFieldsRequired,
+      ),
     }
 
-    setErrors(newErrors)
+    setErrors(allErrors)
 
-    return !Object.values(newErrors).some((err) => err.error)
+    return !Object.values(allErrors).some((e) => e.error)
   }
 
+  const clearRoleSpecificErrors = () => {
+    updateErrors({
+      employeeNumber: { error: false, errorMessage: '' },
+      namingNumber: { error: false, errorMessage: '' },
+      cvuNumber: { error: false, errorMessage: '' },
+    })
+  }
   return {
     errors,
     updateErrors,
+    clearRoleSpecificErrors,
 
     validateName,
     validateSecondName,

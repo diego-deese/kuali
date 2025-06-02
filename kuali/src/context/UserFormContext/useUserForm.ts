@@ -19,28 +19,31 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const [curp, setCurp] = useState('')
   const [identifier, setIdentifier] = useState('')
   const [role, setRole] = useState<Option | null>(null)
-  const [loading, setLoading] = useState(mode === 'edit')
-  const [error, setError] = useState<string | null>(null)
-  const [user, setUser] = useState<User | null>(null)
+
   const [employeeNumber, setEmployeeNumber] = useState('')
+  const [namingNumber, setNamingNumber] = useState('')
+  const [cvuNumber, setCvuNumber] = useState('')
+
   const [categoriaProfr, setCategoriaProfr] = useState<Option | null>(null)
   const [sniDistinction, setSniDistinction] = useState<Option | null>(null)
-  const [namingNumber, setNamingNumber] = useState('')
   const [namingType, setNamingType] = useState<Option | null>(null)
-  const [cvuNumber, setCvuNumber] = useState('')
   const [researchLine, setResearchLine] = useState('')
   const [socialSecurityNumber, setSocialSecurityNumber] = useState('')
   const [placementType, setPlacementType] = useState<Option | null>(null)
+
+  const [loading, setLoading] = useState(mode === 'edit')
+  const [error, setError] = useState<string | null>(null)
+  const [user, setUser] = useState<User | null>(null)
 
   const loadUserData = useCallback(async () => {
     if (!userId) return
 
     try {
+      setLoading(true)
       const token = await authService.getToken()
       if (!token) throw new Error('Token expirado o sin acceso')
 
       const response = await userService.getUserProfile(userId)
-
       if ('success' in response && !response.success) {
         throw new Error(response.message)
       }
@@ -57,14 +60,32 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setCurp(userData.curp || '')
       setRole(
         userData.role
-          ? {
-              id: userData.role.role_id,
-              label: userData.role.name,
-            }
+          ? { id: userData.role.role_id, label: userData.role.name }
           : null,
       )
       setEmployeeNumber(userData.employeeNumber || '')
-
+      setCategoriaProfr(
+        userData.categoriaProfr
+          ? { id: 0, label: userData.categoriaProfr }
+          : null,
+      )
+      setSniDistinction(
+        userData.sniDistinction
+          ? { id: 0, label: userData.sniDistinction }
+          : null,
+      )
+      setNamingNumber(userData.namingNumber || '')
+      setNamingType(
+        userData.namingType ? { id: 0, label: userData.namingType } : null,
+      )
+      setCvuNumber(userData.cvuNumber || '')
+      setResearchLine(userData.researchLine || '')
+      setSocialSecurityNumber(userData.socialSecurityNumber || '')
+      setPlacementType(
+        userData.placementType
+          ? { id: 0, label: userData.placementType }
+          : null,
+      )
       setUser(userData)
       setError(null)
     } catch (err) {
@@ -72,13 +93,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         err instanceof Error
           ? err.message
           : 'Error desconocido al cargar el perfil'
-
       setError(errorMessage)
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: errorMessage,
-      })
+      Toast.show({ type: 'error', text1: 'Error', text2: errorMessage })
     } finally {
       setLoading(false)
     }
@@ -90,17 +106,17 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     }
   }, [mode, userId, loadUserData])
 
-  const restartFields = (): void => {
+  const restartFields = () => {
     setName('')
     setSecondName('')
     setPaternalLastName('')
     setMaternalLastName('')
     setInstitutionalEmail('')
     setPersonalEmail('')
-    setIdentifier('')
-    setCurp('')
-    setRole(null)
     setPassword('')
+    setCurp('')
+    setIdentifier('')
+    setRole(null)
     setEmployeeNumber('')
     setCategoriaProfr(null)
     setSniDistinction(null)
@@ -110,6 +126,21 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setResearchLine('')
     setSocialSecurityNumber('')
     setPlacementType(null)
+
+    errorsManagement.updateErrors({
+      name: { error: false, errorMessage: '' },
+      secondName: { error: false, errorMessage: '' },
+      paternalLastName: { error: false, errorMessage: '' },
+      maternalLastName: { error: false, errorMessage: '' },
+      email: { error: false, errorMessage: '' },
+      password: { error: false, errorMessage: '' },
+      identifier: { error: false, errorMessage: '' },
+      curp: { error: false, errorMessage: '' },
+      role: { error: false, errorMessage: '' },
+      employeeNumber: { error: false, errorMessage: '' },
+      namingNumber: { error: false, errorMessage: '' },
+      cvuNumber: { error: false, errorMessage: '' },
+    })
   }
 
   const onNameChange = (value: string) => {
@@ -156,13 +187,15 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
 
   const onPasswordChange = (value: string) => {
     setPassword(value)
-    errorsManagement.updateErrors({
-      password: errorsManagement.validatePassword(value),
-    })
+    if (mode === 'create') {
+      errorsManagement.updateErrors({
+        password: errorsManagement.validatePassword(value),
+      })
+    }
   }
 
   const onCurpChange = (value: string) => {
-    setCurp(value)
+    setCurp(value.toUpperCase())
     errorsManagement.updateErrors({
       curp: errorsManagement.validateCurp(value),
     })
@@ -180,101 +213,158 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     errorsManagement.updateErrors({
       role: errorsManagement.validateRole(value),
     })
+
+    if (value?.id !== 3) {
+      errorsManagement.clearRoleSpecificErrors()
+    } else {
+      const isRequired = value?.id === 3
+      errorsManagement.updateErrors({
+        employeeNumber: errorsManagement.validateEmployeeNumber(
+          employeeNumber,
+          isRequired,
+        ),
+        namingNumber: errorsManagement.validateNamingNumber(
+          namingNumber,
+          isRequired,
+        ),
+        cvuNumber: errorsManagement.validateCvuNumber(cvuNumber, isRequired),
+      })
+    }
   }
 
   const onEmployeeNumberChange = (value: string) => {
-    setEmployeeNumber(value)
+    setEmployeeNumber(value.toUpperCase())
+    const isRequired = role?.id === 3
     errorsManagement.updateErrors({
-      employeeNumber: errorsManagement.validateEmployeeNumber(value),
+      employeeNumber: errorsManagement.validateEmployeeNumber(
+        value,
+        isRequired,
+      ),
     })
-  }
-
-  const onCategoriaProfrChange = (value: Option | null) => {
-    setCategoriaProfr(value)
-  }
-
-  const onSniDistinctionChange = (value: Option | null) => {
-    setSniDistinction(value)
   }
 
   const onNamingNumberChange = (value: string) => {
-    setNamingNumber(value)
+    setNamingNumber(value.toUpperCase())
+    const isRequired = role?.id === 3
     errorsManagement.updateErrors({
-      namingNumber: errorsManagement.validateNamingNumber(value),
+      namingNumber: errorsManagement.validateNamingNumber(value, isRequired),
     })
-  }
-
-  const onNamingTypeChange = (value: Option | null) => {
-    setNamingType(value)
   }
 
   const onCvuChange = (value: string) => {
-    setCvuNumber(value)
+    setCvuNumber(value.toUpperCase())
+    const isRequired = role?.id === 3
     errorsManagement.updateErrors({
-      cvuNumber: errorsManagement.validateCvuNumber(value),
+      cvuNumber: errorsManagement.validateCvuNumber(value, isRequired),
     })
   }
 
-  const onResearchLineChange = (value: string) => {
-    setResearchLine(value)
-  }
-
-  const onSocialSecurityNumberChange = (value: string) => {
+  const onCategoriaProfrChange = (value: Option | null) =>
+    setCategoriaProfr(value)
+  const onSniDistinctionChange = (value: Option | null) =>
+    setSniDistinction(value)
+  const onNamingTypeChange = (value: Option | null) => setNamingType(value)
+  const onResearchLineChange = (value: string) => setResearchLine(value)
+  const onSocialSecurityNumberChange = (value: string) =>
     setSocialSecurityNumber(value)
-  }
-
-  const onPlacementTypeChange = (value: Option | null) => {
+  const onPlacementTypeChange = (value: Option | null) =>
     setPlacementType(value)
-  }
 
   const createUser = async () => {
-    const token = await authService.getToken()
-    if (!token) {
-      console.log('Token expirado o sin acceso')
-      return
-    }
+    try {
+      const token = await authService.getToken()
+      if (!token) {
+        Toast.show({ type: 'error', text1: 'Token expirado o sin acceso' })
+        return false
+      }
+      console.log('Form values before validation:', {
+        name,
+        secondName,
+        paternalLastName,
+        maternalLastName,
+        email: institutionalEmail,
+        password, // Check if this is empty or weak
+        identifier,
+        curp,
+        role,
+        employeeNumber,
+        namingNumber,
+        cvuNumber,
+      })
+      const allFieldsCorrect = errorsManagement.validateAllFields({
+        name,
+        secondName,
+        paternalLastName,
+        maternalLastName,
+        email: institutionalEmail,
+        password,
+        identifier,
+        curp,
+        role,
+        employeeNumber,
+        namingNumber,
+        cvuNumber,
+      })
 
-    const allFieldsCorrect = errorsManagement.validateAllFields(
-      name,
-      secondName,
-      paternalLastName,
-      maternalLastName,
-      institutionalEmail,
-      password,
-      curp,
-      identifier,
-      role ? { id: role.id, label: role.label } : null,
-    )
+      if (!allFieldsCorrect) {
+        Toast.show({
+          type: 'error',
+          text1: 'Por favor corrija los errores en el formulario',
+        })
+        return false
+      }
 
-    if (allFieldsCorrect) {
+      setLoading(true)
+
       const newUser = {
         name,
         second_name: secondName,
         paternal_lastname: paternalLastName,
         maternal_lastname: maternalLastName,
+        institutional_email: institutionalEmail,
+        personalEmail: personalEmail,
+        password,
         curp,
         identifier,
-        institutional_email: institutionalEmail,
-        password,
         role_id: role?.id,
+        personal_email: personalEmail,
+        employeeNumber,
+        categoriaProfr: categoriaProfr?.label || '',
+        sniDistinction: sniDistinction?.label || '',
+        namingNumber,
+        namingType: namingType?.label || '',
+        cvuNumber,
+        researchLine,
+        socialSecurityNumber,
+        placementType: placementType?.label || '',
       }
-
+      console.log(newUser)
       const result = await userService.createProfile(newUser)
-
-      if (result.success === false) {
+      console.log(result)
+      if (!result.success) {
         Toast.show({
           type: 'error',
-          text1: result.message,
-          text2: result.error,
+          text1: 'Error al crear usuario',
         })
+        return false
       } else {
         Toast.show({
           type: 'success',
-          text1: 'Usuario creado con éxito',
+          text1: 'Usuario creado',
           text2: `ID: ${result.data.user.user_id}`,
         })
         restartFields()
+        return true
       }
+    } catch (error) {
+      Toast.show({
+        type: 'error',
+        text1: 'Error inesperado',
+        text2: 'No se pudo crear el usuario',
+      })
+      return false
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -282,154 +372,130 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     try {
       const token = await authService.getToken()
       if (!token) {
-        console.log('Token expirado o sin acceso')
+        Toast.show({ type: 'error', text1: 'Token expirado o sin acceso' })
         return false
       }
 
-      const fieldsToValidate =
-        mode === 'edit'
-          ? [
-              name,
-              secondName,
-              paternalLastName,
-              maternalLastName,
-              institutionalEmail,
-              '',
-              identifier,
-              curp,
-              role,
-            ]
-          : [
-              name,
-              secondName,
-              paternalLastName,
-              maternalLastName,
-              institutionalEmail,
-              password,
-              identifier,
-              curp,
-              role,
-            ]
-
-      const allFieldsCorrect = errorsManagement.validateAllFields(
+      const allFieldsCorrect = errorsManagement.validateAllFields({
         name,
         secondName,
         paternalLastName,
         maternalLastName,
-        institutionalEmail,
-        mode === 'edit' ? '' : password,
+        email: institutionalEmail,
+        password,
         identifier,
         curp,
         role,
-      )
+        employeeNumber,
+        namingNumber,
+        cvuNumber,
+      })
 
-      if (allFieldsCorrect) {
-        const updatedUser = {
-          name,
-          second_name: secondName,
-          paternal_lastname: paternalLastName,
-          maternal_lastname: maternalLastName,
-          institutional_email: institutionalEmail,
-          personal_email: personalEmail,
-          identifier,
-          curp,
-          role_id: role?.id,
-        }
-
-        const response = await userService.updateProfile(
-          Number(userId),
-          updatedUser,
-        )
-
-        if (!response.success) {
-          Toast.show({
-            type: 'error',
-            text1: 'El usuario no se pudo actualizar',
-          })
-          return false
-        } else {
-          Toast.show({
-            type: 'success',
-            text1: 'Usuario actualizado con éxito',
-          })
-          return true
-        }
+      if (!allFieldsCorrect) {
+        Toast.show({
+          type: 'error',
+          text1: 'Por favor corrija los errores en el formulario',
+        })
+        return false
       }
-      return false
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : 'Error al actualizar el usuario'
+
+      setLoading(true)
+
+      const updatedUser = {
+        name,
+        second_name: secondName,
+        paternal_lastname: paternalLastName,
+        maternal_lastname: maternalLastName,
+        institutional_email: institutionalEmail,
+        personal_email: personalEmail,
+        identifier,
+        curp,
+        role_id: role?.id,
+        employeeNumber,
+        categoriaProfr: categoriaProfr?.label || '',
+        sniDistinction: sniDistinction?.label || '',
+        namingNumber,
+        namingType: namingType?.label || '',
+        cvuNumber,
+        researchLine,
+        socialSecurityNumber,
+        placementType: placementType?.label || '',
+      }
+      const response = await userService.updateProfile(
+        Number(userId),
+        updatedUser,
+      )
+      if (!response.success) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error al actualizar',
+          text2: 'No se pudo actualizar el usuario',
+        })
+        return false
+      }
+
+      Toast.show({ type: 'success', text1: 'Usuario actualizado con éxito' })
+      return true
+    } catch (error) {
       Toast.show({
         type: 'error',
-        text1: 'Error',
-        text2: errorMessage,
+        text1: 'Error inesperado',
+        text2: 'No se pudo actualizar el usuario',
       })
       return false
+    } finally {
+      setLoading(false)
     }
   }
 
+  const shouldShowRoleSpecificFields = role?.id === 3
+
   return {
     mode,
-    name,
-    setName,
-    secondName,
-    setSecondName,
-    paternalLastName,
-    setPaternalLastName,
-    maternalLastName,
-    setMaternalLastName,
-    password,
-    setPassword,
-    email: institutionalEmail,
-    setEmail: setInstitutionalEmail,
-    onEmailChange: onInstitutionalEmailChange,
-    personalEmail,
-    setPersonalEmail,
-    curp,
-    setCurp,
-    identifier,
-    setIdentifier,
-    role,
-    setRole,
-    onRoleChange,
-    employeeNumber,
-    setEmployeeNumber,
-    onEmployeeNumberChange,
-    categoriaProfr,
-    setCategoriaProfr,
-    onCategoriaProfrChange,
-    sniDistinction,
-    setSniDistinction,
-    onSniDistinctionChange,
-    namingNumber,
-    setNamingNumber,
-    onNamingNumberChange,
-    namingType,
-    setNamingType,
-    onNamingTypeChange,
-    cvuNumber,
-    setCvuNumber,
-    onCvuChange,
-    researchLine,
-    setResearchLine,
-    onResearchLineChange,
-    socialSecurityNumber,
-    setSocialSecurityNumber,
-    onSocialSecurityNumberChange,
-    placementType,
-    setPlacementType,
-    onPlacementTypeChange,
-
     loading,
     error,
     user,
+    shouldShowRoleSpecificFields,
 
-    errors: errorsManagement.errors,
-    updateErrors: errorsManagement.updateErrors,
-    validateAllFields: errorsManagement.validateAllFields,
+    name,
+    secondName,
+    paternalLastName,
+    maternalLastName,
+    institutionalEmail,
+    personalEmail,
+    password,
+    curp,
+    identifier,
+    role,
+    employeeNumber,
+    categoriaProfr,
+    sniDistinction,
+    namingNumber,
+    namingType,
+    cvuNumber,
+    researchLine,
+    socialSecurityNumber,
+    placementType,
 
-    loadUserData,
-    restartFields,
+    setName,
+    setSecondName,
+    setPaternalLastName,
+    setMaternalLastName,
+    setInstitutionalEmail,
+    setPersonalEmail,
+    setPassword,
+    setCurp,
+    setIdentifier,
+    setRole,
+    setEmployeeNumber,
+    setCategoriaProfr,
+    setSniDistinction,
+    setNamingNumber,
+    setNamingType,
+    setCvuNumber,
+    setResearchLine,
+    setSocialSecurityNumber,
+    setPlacementType,
 
     onNameChange,
     onSecondNameChange,
@@ -440,7 +506,24 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     onPasswordChange,
     onCurpChange,
     onIdentifierChange,
+    onRoleChange,
+    onEmployeeNumberChange,
+    onCategoriaProfrChange,
+    onSniDistinctionChange,
+    onNamingNumberChange,
+    onNamingTypeChange,
+    onCvuChange,
+    onResearchLineChange,
+    onSocialSecurityNumberChange,
+    onPlacementTypeChange,
+
     createUser,
     updateUser,
+    loadUserData,
+    restartFields,
+
+    errors: errorsManagement.errors,
+    updateErrors: errorsManagement.updateErrors,
+    validateAllFields: errorsManagement.validateAllFields,
   }
 }

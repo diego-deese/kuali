@@ -23,9 +23,9 @@ interface UserFormContextProps {
   setMaternalLastName: (value: string) => void
   onMaternalLastNameChange: (value: string) => void
 
-  email: string
-  setEmail: (value: string) => void
-  onEmailChange: (value: string) => void
+  institutionalEmail: string
+  setInstitutionalEmail: (value: string) => void
+  onInstitutionalEmailChange: (value: string) => void
 
   personalEmail: string
   setPersonalEmail: (value: string) => void
@@ -55,7 +55,7 @@ interface UserFormContextProps {
   setCategoriaProfr: (value: Option | null) => void
   onCategoriaProfrChange: (value: Option | null) => void
 
-  sniDistinction: string
+  sniDistinction: Option | null
   setSniDistinction: (value: Option | null) => void
   onSniDistinctionChange: (value: Option | null) => void
 
@@ -90,7 +90,7 @@ interface UserFormContextProps {
     secondName: string,
     paternalLastName: string,
     maternalLastName: string,
-    email: string,
+    institutionalEmail: string,
     password: string,
     identifier: string,
     curp: string,
