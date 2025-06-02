@@ -315,7 +315,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         maternal_lastname: maternalLastName,
         institutional_email: institutionalEmail,
         password,
-        personal_email: personalEmail,
+        personal_email: personalEmail || null,
         identifier,
         curp,
         role_id: role?.id,
