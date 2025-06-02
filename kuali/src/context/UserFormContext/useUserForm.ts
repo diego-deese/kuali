@@ -233,7 +233,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   }
 
   const onEmployeeNumberChange = (value: string) => {
-    setEmployeeNumber(value.toUpperCase())
+    setEmployeeNumber(value)
     const isRequired = role?.id === 3
     errorsManagement.updateErrors({
       employeeNumber: errorsManagement.validateEmployeeNumber(
@@ -244,7 +244,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   }
 
   const onNamingNumberChange = (value: string) => {
-    setNamingNumber(value.toUpperCase())
+    setNamingNumber(value)
     const isRequired = role?.id === 3
     errorsManagement.updateErrors({
       namingNumber: errorsManagement.validateNamingNumber(value, isRequired),
@@ -252,7 +252,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   }
 
   const onCvuChange = (value: string) => {
-    setCvuNumber(value.toUpperCase())
+    setCvuNumber(value)
     const isRequired = role?.id === 3
     errorsManagement.updateErrors({
       cvuNumber: errorsManagement.validateCvuNumber(value, isRequired),
@@ -277,20 +277,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         Toast.show({ type: 'error', text1: 'Token expirado o sin acceso' })
         return false
       }
-      console.log('Form values before validation:', {
-        name,
-        secondName,
-        paternalLastName,
-        maternalLastName,
-        email: institutionalEmail,
-        password, // Check if this is empty or weak
-        identifier,
-        curp,
-        role,
-        employeeNumber,
-        namingNumber,
-        cvuNumber,
-      })
       const allFieldsCorrect = errorsManagement.validateAllFields({
         name,
         secondName,

@@ -178,14 +178,12 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             options={categoriaOptions}
             value={categoriaProfr}
             onSelect={onCategoriaProfrChange}
-            // Remove error props if not validating, or add proper validation
           />
           <SelectInput
             label='Distinción SNI'
             options={sniDistinctioOptions}
             value={sniDistinction}
             onSelect={onSniDistinctionChange}
-            // Remove error props if not validating, or add proper validation
           />
           <InputText
             label='Número de nombramiento'
@@ -199,16 +197,14 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             options={namingTypeOptions}
             value={namingType}
             onSelect={onNamingTypeChange}
-            // Remove error props if not validating, or add proper validation
           />
           <InputText
             label='Número CVU'
-            onChangeText={onCvuNumberChange}
             value={cvuNumber}
+            onChangeText={onCvuNumberChange}
             error={errors.cvuNumber.error}
             errorMessage={errors.cvuNumber.errorMessage}
           />
-          {/* Other fields don't need error props if they're optional */}
         </>
       )}
     </>
