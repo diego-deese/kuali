@@ -137,7 +137,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       secondName: { error: false, errorMessage: '' },
       paternalLastName: { error: false, errorMessage: '' },
       maternalLastName: { error: false, errorMessage: '' },
-      email: { error: false, errorMessage: '' },
+      institutionalEmail: { error: false, errorMessage: '' },
+      personalEmail: { error: false, errorMessage: '' },
       password: { error: false, errorMessage: '' },
       identifier: { error: false, errorMessage: '' },
       curp: { error: false, errorMessage: '' },
@@ -179,14 +180,14 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const onInstitutionalEmailChange = (value: string) => {
     setInstitutionalEmail(value)
     errorsManagement.updateErrors({
-      email: errorsManagement.validateEmail(value),
+      institutionalEmail: errorsManagement.validateIEmail(value),
     })
   }
 
   const onPersonalEmailChange = (value: string) => {
     setPersonalEmail(value)
     errorsManagement.updateErrors({
-      email: errorsManagement.validateEmail(value),
+      personalEmail: errorsManagement.validatePEmail(value),
     })
   }
 
@@ -288,7 +289,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         secondName,
         paternalLastName,
         maternalLastName,
-        email: institutionalEmail,
+        institutionalEmail,
+        personalEmail,
         password,
         identifier,
         curp,
@@ -373,7 +375,8 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         secondName,
         paternalLastName,
         maternalLastName,
-        email: institutionalEmail,
+        institutionalEmail,
+        personalEmail,
         password,
         identifier,
         curp,
@@ -399,7 +402,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         paternal_lastname: paternalLastName,
         maternal_lastname: maternalLastName,
         institutional_email: institutionalEmail,
-        personal_email: personalEmail,
+        personal_email: personalEmail || null,
         identifier,
         curp,
         role_id: role?.id,

@@ -7,7 +7,8 @@ export const useErrors = (mode: string) => {
     secondName: { error: false, errorMessage: '' },
     paternalLastName: { error: false, errorMessage: '' },
     maternalLastName: { error: false, errorMessage: '' },
-    email: { error: false, errorMessage: '' },
+    institutionalEmail: { error: false, errorMessage: '' },
+    personalEmail: { error: false, errorMessage: '' },
     password: { error: false, errorMessage: '' },
     identifier: { error: false, errorMessage: '' },
     curp: { error: false, errorMessage: '' },
@@ -65,10 +66,17 @@ export const useErrors = (mode: string) => {
     return { error: false, errorMessage: '' }
   }
 
-  const validateEmail = (email: string): InputError => {
+  const validateIEmail = (email: string): InputError => {
     if (!email || email.trim() === '') {
       return { error: true, errorMessage: 'El correo electrónico es requerido' }
     }
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    if (!emailRegex.test(email)) {
+      return { error: true, errorMessage: 'Correo electrónico inválido' }
+    }
+    return { error: false, errorMessage: '' }
+  }
+  const validatePEmail = (email: string): InputError => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
     if (!emailRegex.test(email)) {
       return { error: true, errorMessage: 'Correo electrónico inválido' }
@@ -203,7 +211,8 @@ export const useErrors = (mode: string) => {
     secondName: string
     paternalLastName: string
     maternalLastName: string
-    email: string
+    institutionalEmail: string
+    personalEmail: string
     password: string
     identifier: string
     curp: string
@@ -217,7 +226,8 @@ export const useErrors = (mode: string) => {
       secondName,
       paternalLastName,
       maternalLastName,
-      email,
+      institutionalEmail,
+      personalEmail,
       password,
       identifier,
       curp,
@@ -234,7 +244,8 @@ export const useErrors = (mode: string) => {
       secondName: validateSecondName(secondName),
       paternalLastName: validatePaternalLastName(paternalLastName),
       maternalLastName: validateMaternalLastName(maternalLastName),
-      email: validateEmail(email),
+      institutionalEmail: validateIEmail(institutionalEmail),
+      personalEmail: validatePEmail(personalEmail),
       password:
         mode === 'create'
           ? validatePassword(password)
@@ -277,7 +288,8 @@ export const useErrors = (mode: string) => {
     validateSecondName,
     validatePaternalLastName,
     validateMaternalLastName,
-    validateEmail,
+    validateIEmail,
+    validatePEmail,
     validatePassword,
     validateIdentifier,
     validateCurp,

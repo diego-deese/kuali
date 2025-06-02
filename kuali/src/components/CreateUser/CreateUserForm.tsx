@@ -144,16 +144,16 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         onChangeText={onInstitutionalEmailChange}
         inputMode='email'
         value={institutionalEmail}
-        error={errors.email.error}
-        errorMessage={errors.email.errorMessage}
+        error={errors.institutionalEmail.error}
+        errorMessage={errors.institutionalEmail.errorMessage}
       />
       <InputText
         label='Correo personal'
         onChangeText={onPersonalEmailChange}
         inputMode='email'
         value={personalEmail}
-        error={errors.email.error}
-        errorMessage={errors.email.errorMessage}
+        error={errors.personalEmail.error}
+        errorMessage={errors.personalEmail.errorMessage}
       />
       {!onEditing && (
         <InputText
