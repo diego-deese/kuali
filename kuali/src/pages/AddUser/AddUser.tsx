@@ -1,15 +1,23 @@
-import { View, Text } from 'react-native'
+import {
+  View,
+  Text,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native'
 import styles from './AddUser.styles'
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context'
 import Button from '../../components/shared/Button/Button'
 import CreateUserForm from '../../components/CreateUser/CreateUserForm'
-import { ScrollView } from 'react-native'
-import { useCreateUser } from '../../hooks/UsersManagement/useCreateUser'
+import { UserFormProvider } from '../../context/UserFormContext/UserFormContext'
+import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
 import { router } from 'expo-router'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-export default function AddUser() {
-  const userForm = useCreateUser()
-
+const AddUserContent = () => {
+  const { createUser } = useUserFormContext()
   const handleGoingBack = () => {
     router.back()
   }
@@ -17,25 +25,38 @@ export default function AddUser() {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Crear usuario</Text>
-        </View>
-        <View style={styles.inputsContainer}>
-          <ScrollView>
-            <CreateUserForm
-              {...userForm}
-              setRole={(role_id: number) =>
-                userForm.setRole((prev) => ({ ...prev, role_id }))
-              }
-              onEditing={false}
-            />
-          </ScrollView>
-        </View>
-        <View style={styles.buttonsContainer}>
-          <Button buttonText='Cancelar' onPress={handleGoingBack} />
-          <Button buttonText='Crear usuario' onPress={userForm.createUser} />
-        </View>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <KeyboardAwareScrollView
+            extraScrollHeight={80}
+            enableOnAndroid
+            keyboardShouldPersistTaps='handled'
+            contentContainerStyle={{ flexGrow: 1, paddingBottom: 300 }}
+          >
+            <View style={styles.container}>
+              <View style={styles.headerContainer}>
+                <Text style={styles.title}>Crear usuario</Text>
+              </View>
+
+              <View style={styles.inputsContainer}>
+                <CreateUserForm onEditing={false} />
+              </View>
+
+              <View style={styles.buttonsContainer}>
+                <Button buttonText='Cancelar' onPress={handleGoingBack} />
+                <Button buttonText='Crear usuario' onPress={createUser} />
+              </View>
+            </View>
+          </KeyboardAwareScrollView>
+        </TouchableWithoutFeedback>
       </SafeAreaView>
     </SafeAreaProvider>
+  )
+}
+
+export default function AddUser() {
+  return (
+    <UserFormProvider mode='create'>
+      <AddUserContent />
+    </UserFormProvider>
   )
 }

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Option, UseSelectInputProps } from './interfaces'
+import { useEffect } from 'react'
 
 export const useSelectInput = ({
   value = null,
@@ -47,6 +48,10 @@ export const useSelectInput = ({
       }
     }
   }
+
+  useEffect(() => {
+    setSelectedOption(value || null)
+  }, [value])
 
   return {
     state: {

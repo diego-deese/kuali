@@ -20,6 +20,15 @@ export type User = {
     program_id: number
     name: string
   }[]
+  employeeNumber?: string
+  categoriaProfr?: string
+  sniDistinction?: string
+  namingNumber?: string
+  namingType?: string
+  cvuNumber?: string
+  researchLine?: string
+  socialSecurityNumber?: string
+  placementType?: string
 }
 
 export type NewUser = {
@@ -32,4 +41,13 @@ export type NewUser = {
   institutional_email: string
   password?: string
   role_id: number
+  employeeNumber?: string
+  categoriaProfr?: string
+  sniDistinction?: string
+  namingNumber?: string
+  namingType?: string
+  cvuNumber?: string
+  researchLine?: string
+  socialSecurityNumber?: string
+  placementType?: string
 }

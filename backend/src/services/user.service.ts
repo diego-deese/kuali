@@ -133,21 +133,6 @@ class UserService {
       }
     }
 
-    if (userData.personal_email !== undefined) {
-      const perEmailExists = await prisma.users.findFirst({
-        where: {
-          personal_email: userData.personal_email,
-          user_id: { not: userId }
-        }
-      })
-
-      console.log(perEmailExists)
-
-      if (perEmailExists !== null) {
-        throw new ConflictError('Ya existe un usuario con ese correo personal')
-      }
-    }
-
     const dataToUpdate = { ...userData }
 
     if (userData.password !== undefined) {
@@ -271,6 +256,7 @@ class UserService {
           select: {
             students: {
               select: {
+                user_id: true,
                 name: true,
                 second_name: true,
                 paternal_lastname: true,

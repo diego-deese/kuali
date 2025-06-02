@@ -8,7 +8,7 @@ const router = Router()
 router.get('/', isAuthenticated, isAdmin, userController.getUsers)
 router.post('/', isAuthenticated, isAdmin, userController.createUser)
 
-router.get('/students', isAuthenticated, isResearcher, userController.getResearcherStudentsWithAcademicProgram)
+router.get('/researcher/students', isAuthenticated, isResearcher, userController.getResearcherStudentsWithAcademicProgram)
 router.put('/students/:id', isAuthenticated, userController.toggleStudentState)
 router.post('/students', isAuthenticated, userController.assignStudent)
 

@@ -48,10 +48,7 @@ export function useEditUser(userId: string) {
         setPersonalEmail(userData.personal_email || '')
         setIdentifier(userData.identifier || '')
         setCurp(userData.curp || '')
-
-        if (userData.role) {
-          setRole(userData.role)
-        }
+        setRole(userData.role)
 
         setUser(userData)
         setError(null)
