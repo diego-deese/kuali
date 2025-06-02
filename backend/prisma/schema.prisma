@@ -30,6 +30,16 @@ model Users {
   password                        String             @db.VarChar(255)
   creation_date                   DateTime           @default(now())
   role_id                         Int
+  employeeNumber                  String?            @unique @db.VarChar(8)
+  categoriaProfr                  String?            @db.VarChar(20)
+  sniDistinction                  String?            @db.VarChar(20)
+  namingNumber                    String?            @db.VarChar(13)
+  namingType                      String?            @db.VarChar(20)
+  cvuNumber                       String?            @db.VarChar(8)
+  researchLine                    String?            @db.VarChar(255)
+  socialSecurityNumber            String?            @unique @db.VarChar(255)
+  placementType                   String?            @db.VarChar(50)
+  validity                        DateTime?  
   academic_programs_as_researcher AcademicPrograms[]
   created_activities              Activities[]
   academic_programs_as_student    Inscriptions[]
