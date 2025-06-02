@@ -36,9 +36,6 @@ export const useErrors = (mode: string) => {
   }
 
   const validateSecondName = (secondName: string): InputError => {
-    if (!secondName || secondName.trim() === '') {
-      return { error: true, errorMessage: 'El segundo nombre es requerido' }
-    }
     const letterRegex = /^[A-Za-zÁÉÍÓÚáéíóúÜüÑñ\s]+$/
     if (!letterRegex.test(secondName)) {
       return { error: true, errorMessage: 'Solo se permiten letras' }

@@ -14,9 +14,9 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const [paternalLastName, setPaternalLastName] = useState('')
   const [maternalLastName, setMaternalLastName] = useState('')
   const [password, setPassword] = useState('')
-  const [institutionalEmail, setInstitutionalEmail] = useState('')
-  const [personalEmail, setPersonalEmail] = useState('')
-  const [curp, setCurp] = useState('')
+  const [institutionalEmail, setInstitutionalEmail] = useState(null)
+  const [personalEmail, setPersonalEmail] = useState(null)
+  const [curp, setCurp] = useState(null)
   const [identifier, setIdentifier] = useState('')
   const [role, setRole] = useState<Option | null>(null)
 
@@ -55,16 +55,16 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setSecondName(userData.second_name || '')
       setPaternalLastName(userData.paternal_lastname || '')
       setMaternalLastName(userData.maternal_lastname || '')
-      setInstitutionalEmail(userData.institutional_email || '')
-      setPersonalEmail(userData.personal_email || '')
-      setIdentifier(userData.identifier || '')
+      setInstitutionalEmail(userData.institutional_email || null)
+      setPersonalEmail(userData.personal_email || null)
+      setIdentifier(userData.identifier || null)
       setCurp(userData.curp || '')
       setRole(
         userData.role
           ? { id: userData.role.role_id, label: userData.role.name }
           : null,
       )
-      setEmployeeNumber(userData.employeeNumber || '')
+      setEmployeeNumber(userData.employeeNumber || null)
       setCategoriaProfr(
         userData.categoriaProfr
           ? { id: 0, label: userData.categoriaProfr }
@@ -78,13 +78,13 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setEdiLevel(
         userData.ediLevel ? { id: 0, label: userData.ediLevel } : null,
       )
-      setNamingNumber(userData.namingNumber || '')
+      setNamingNumber(userData.namingNumber || null)
       setNamingType(
         userData.namingType ? { id: 0, label: userData.namingType } : null,
       )
-      setCvuNumber(userData.cvuNumber || '')
-      setResearchLine(userData.researchLine || '')
-      setSocialSecurityNumber(userData.socialSecurityNumber || '')
+      setCvuNumber(userData.cvuNumber || null)
+      setResearchLine(userData.researchLine || null)
+      setSocialSecurityNumber(userData.socialSecurityNumber || null)
       setPlacementType(
         userData.placementType
           ? { id: 0, label: userData.placementType }
@@ -315,22 +315,22 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         maternal_lastname: maternalLastName,
         institutional_email: institutionalEmail,
         password,
-        curp,
-        identifier,
-        role_id: role?.id,
         personal_email: personalEmail,
-        employeeNumber,
-        categoriaProfr: categoriaProfr?.label || '',
-        ediLevel: Number(ediLevel?.label) || '',
-        sniDistinction: sniDistinction?.label || '',
-        namingNumber,
-        namingType: namingType?.label || '',
-        cvuNumber,
-        researchLine,
-        socialSecurityNumber,
+        identifier,
+        curp,
+        role_id: role?.id,
+        employeeNumber: employeeNumber || null,
+        categoriaProfr: categoriaProfr?.label || null,
+        sniDistinction: sniDistinction?.label || null,
+        ediLevel: Number(ediLevel?.label) || null,
+        namingNumber: namingNumber || null,
+        namingType: namingType?.label || null,
+        cvuNumber: cvuNumber || null,
+        researchLine: researchLine || null,
+        socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
       }
-      console.log(newUser)
+      console.log(null)
       const result = await userService.createProfile(newUser)
       console.log(result)
       if (!result.success) {
@@ -403,15 +403,15 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         identifier,
         curp,
         role_id: role?.id,
-        employeeNumber,
-        categoriaProfr: categoriaProfr?.label || '',
-        sniDistinction: sniDistinction?.label || '',
-        ediLevel: Number(ediLevel?.label) || '',
-        namingNumber,
-        namingType: namingType?.label || '',
-        cvuNumber,
-        researchLine,
-        socialSecurityNumber,
+        employeeNumber: employeeNumber || null,
+        categoriaProfr: categoriaProfr?.label || null,
+        sniDistinction: sniDistinction?.label || null,
+        ediLevel: Number(ediLevel?.label) || null,
+        namingNumber: namingNumber || null,
+        namingType: namingType?.label || null,
+        cvuNumber: cvuNumber || null,
+        researchLine: researchLine || null,
+        socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
       }
       const response = await userService.updateProfile(

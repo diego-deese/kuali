@@ -60,6 +60,7 @@ class UserController {
   createUser = async (req: Request, res: Response): Promise<undefined> => {
     try {
       const user = req.body
+      console.log(user)
 
       const createdUser = await userService.createUser(user)
 
