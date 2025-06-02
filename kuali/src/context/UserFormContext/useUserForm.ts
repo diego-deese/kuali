@@ -251,7 +251,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     })
   }
 
-  const onCvuChange = (value: string) => {
+  const onCvuNumberChange = (value: string) => {
     setCvuNumber(value)
     const isRequired = role?.id === 3
     errorsManagement.updateErrors({
@@ -308,7 +308,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         paternal_lastname: paternalLastName,
         maternal_lastname: maternalLastName,
         institutional_email: institutionalEmail,
-        personalEmail: personalEmail,
         password,
         curp,
         identifier,
@@ -498,7 +497,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     onSniDistinctionChange,
     onNamingNumberChange,
     onNamingTypeChange,
-    onCvuChange,
+    onCvuNumberChange,
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,

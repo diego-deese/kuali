@@ -25,29 +25,32 @@ const AddUserContent = () => {
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-          <KeyboardAwareScrollView
-            extraScrollHeight={80}
-            enableOnAndroid
-            keyboardShouldPersistTaps='handled'
-            contentContainerStyle={{ flexGrow: 1, paddingBottom: 300 }}
-          >
-            <View style={styles.container}>
-              <View style={styles.headerContainer}>
-                <Text style={styles.title}>Crear usuario</Text>
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={{ flex: 1 }}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        >
+          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <ScrollView
+              contentContainerStyle={{ flexGrow: 1 }}
+              keyboardShouldPersistTaps='handled'
+              keyboardDismissMode='interactive'
+            >
+              <View style={styles.container}>
+                <View style={styles.headerContainer}>
+                  <Text style={styles.title}>Crear usuario</Text>
+                </View>
+                <View style={styles.inputsContainer}>
+                  <CreateUserForm onEditing={false} />
+                </View>
+                <View style={styles.buttonsContainer}>
+                  <Button buttonText='Cancelar' onPress={handleGoingBack} />
+                  <Button buttonText='Crear usuario' onPress={createUser} />
+                </View>
               </View>
-
-              <View style={styles.inputsContainer}>
-                <CreateUserForm onEditing={false} />
-              </View>
-
-              <View style={styles.buttonsContainer}>
-                <Button buttonText='Cancelar' onPress={handleGoingBack} />
-                <Button buttonText='Crear usuario' onPress={createUser} />
-              </View>
-            </View>
-          </KeyboardAwareScrollView>
-        </TouchableWithoutFeedback>
+            </ScrollView>
+          </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </SafeAreaProvider>
   )
