@@ -406,7 +406,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         employeeNumber,
         categoriaProfr: categoriaProfr?.label || '',
         sniDistinction: sniDistinction?.label || '',
-        ediLevel: ediLevel?.label || '',
+        ediLevel: Number(ediLevel?.label) || '',
         namingNumber,
         namingType: namingType?.label || '',
         cvuNumber,
