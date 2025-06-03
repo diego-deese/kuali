@@ -458,6 +458,26 @@ class ActivityController {
       }
     }
   }
+
+  async getActivitiesToReview (_req: Request, res: Response): Promise<void> {
+    try {
+      const activities = await activityService.getActivitiesToReview()
+
+      res.status(200).json({ activities })
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al obtener las convocatorias para revisión',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al obtener las convocatorias para revisión',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
 }
 
 export default new ActivityController()

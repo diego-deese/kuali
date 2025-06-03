@@ -534,6 +534,31 @@ class ActivityService {
 
     return activityPoster
   }
+
+  async getActivitiesToReview (): Promise<UserAccesibleActivity[]> {
+    const activities = await prisma.activities.findMany({
+      where: {
+        requirements: {
+          some: {
+            userDocuments: {
+              some: {}
+            }
+          }
+        }
+      },
+      omit: {
+        creation_date: true,
+        last_updated: true,
+        admin_creator_id: true,
+        location_id: true,
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
+      }
+    })
+
+    return activities
+  }
 }
 
 export default new ActivityService()
