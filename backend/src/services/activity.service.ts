@@ -1,3 +1,4 @@
+import { CALLS_CATEGORY_ID, EVENTS_CATEGORY_ID } from '../constants/activity-categories'
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
 import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UpdateActivity, UserAccesibleActivity } from '../types/Activities'
@@ -284,6 +285,8 @@ class ActivityService {
 
   async updateActivity (activityId: number, activityData: UpdateActivity): Promise<CreatedActivity> {
     return await prisma.$transaction(async (prisma) => {
+      await this.getActivity(activityId)
+
       // Deconstruct the object
       const {
         requirements_to_add: requirementsToAdd,
@@ -334,12 +337,24 @@ class ActivityService {
         }
       }
 
+      const activityToUpdate = await prisma.activities.findFirst({
+        where: {
+          activity_id: activityId
+        },
+        select: {
+          requirements: true
+        }
+      })
+
       // Process activity update
       const updatedActivity = await prisma.activities.update({
         where: {
           activity_id: activityId
         },
-        data: activityInfo,
+        data: {
+          ...activityInfo,
+          category_id: activityToUpdate?.requirements.length === 0 ? EVENTS_CATEGORY_ID : CALLS_CATEGORY_ID
+        },
         omit: {
           location_id: true,
           category_id: true,
@@ -533,6 +548,31 @@ class ActivityService {
     }
 
     return activityPoster
+  }
+
+  async getActivitiesToReview (): Promise<UserAccesibleActivity[]> {
+    const activities = await prisma.activities.findMany({
+      where: {
+        requirements: {
+          some: {
+            userDocuments: {
+              some: {}
+            }
+          }
+        }
+      },
+      omit: {
+        creation_date: true,
+        last_updated: true,
+        admin_creator_id: true,
+        location_id: true,
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
+      }
+    })
+
+    return activities
   }
 }
 

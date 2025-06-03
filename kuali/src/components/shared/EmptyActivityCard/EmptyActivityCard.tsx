@@ -66,7 +66,7 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
         </Text>
         <Text style={styles.text}>
           {mode === 'upcoming'
-            ? '¡Inscribete a un evento para comenzar!'
+            ? '¡Inscríbete a un evento para comenzar!'
             : '¡Aquí encontrarás los eventos a los que te inscribiste en el pasado!'}
         </Text>
       </View>
