@@ -24,7 +24,7 @@ export default function NextEventsComponents({
         <WithRole role={Roles.ADMIN}>
           <IconButton
             disabled={navigation.isNavigating}
-            icon={<PlusIcon />}
+            icon={<PlusIcon size={28} />}
             onPress={() => navigation.navigate('/event/create')}
           />
         </WithRole>
