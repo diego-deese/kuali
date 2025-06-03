@@ -10,6 +10,8 @@ router.get('/', isAuthenticated, activityController.getActivities)
 
 router.post('/', isAuthenticated, isAdmin, uploadMemory.fields([{ name: 'template_files' }, { name: 'poster_image', maxCount: 1 }]), activityController.createActivity)
 
+router.get('/to-review', isAuthenticated, isAdmin, activityController.getActivitiesToReview)
+
 router.get('/upcoming/user', isAuthenticated, activityController.getUserUpcomingActivities)
 
 router.get('/upcoming', isAuthenticated, activityController.getUpcomingActivities)
