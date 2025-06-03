@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Pressable, View, Text, ScrollView } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
-import styles from './reviewDoc.Styles'
+import styles from './styles'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import DocReviewCard from '../../components/ReviewDoc/DocReviewCard'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useReviewDoc'
 import NavButtons from '../../components/shared/NavButtons/NavButtons'
+import SelectInput from '../../components/shared/SelectInput'
+
 /**
  * ReviewDoc screen allows reviewing all documents submitted by users
  * (grouped by user) for a specific activity. Users can navigate between
@@ -23,7 +25,21 @@ export default function ReviewDoc() {
   )
   // Track the currently selected user index for navigation
   const [currentIndex, setCurrentIndex] = useState(0)
-  // Display loading message if data is being fetched or no documents are available
+  // SelectInput logic
+  const viewOptions = [
+    { id: 1, label: 'Por usuario' },
+    { id: 2, label: 'Por documento' },
+  ]
+  const [selectedView, setSelectedView] = useState(viewOptions[0])
+  useEffect(() => {
+    if (selectedView.id === 2) {
+      router.push({
+        pathname: '/review/student/student',
+        params: { activity_id: activity_id.toString() },
+      })
+    }
+  }, [selectedView])
+  // Display loading message if data is being fetched
   if (loading || documentsByUser.length === 0) {
     return (
       <View style={styles.container}>
@@ -41,17 +57,13 @@ export default function ReviewDoc() {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Revisión de documentos</Text>
-      {/* Link to switch to user-based review view */}
-      <Pressable
-        onPress={() =>
-          router.push({
-            pathname: '/review/student/student',
-            params: { activity_id: activity_id.toString() },
-          })
-        }
-      >
-        <Text style={styles.changeText}>{'<'} Por usuario</Text>
-      </Pressable>
+      {/* Selector de vista */}
+      <SelectInput
+        label='¿Cómo desea aprobar las inscripciones?'
+        value={selectedView}
+        options={viewOptions}
+        onSelect={setSelectedView}
+      />
       {/* Navigation buttons to switch between students */}
       <NavButtons
         currentIndex={currentIndex}

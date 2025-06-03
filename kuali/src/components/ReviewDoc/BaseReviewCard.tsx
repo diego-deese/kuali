@@ -43,7 +43,7 @@ export default function BaseReviewCard({
   }
 
   const handleDownload = () => {
-    const finalFileName = fileName || `documento_${user_document_id}.pdf`
+    const finalFileName = fileName || `${title}_${user_document_id}.pdf`
     downloadDocument(user_document_id, finalFileName)
   }
   // Confirm the selected action (approve or reject)
@@ -71,10 +71,14 @@ export default function BaseReviewCard({
   return (
     <View style={styles.card}>
       <View style={styles.row}>
-        <Text style={styles.name}>{title}</Text>
+        <Text style={styles.name} numberOfLines={2} ellipsizeMode='tail'>
+          {title}
+        </Text>
+
         <Pressable onPress={handleDownload} style={styles.iconContainer}>
           <DownloadIcon />
         </Pressable>
+
         {status === 'Aprobado' ? (
           <Text style={styles.approved}>Aprobado</Text>
         ) : status === 'Rechazado' ? (

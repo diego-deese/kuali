@@ -3,13 +3,14 @@ import colors from '../../constants/colors'
 
 export default StyleSheet.create({
   card: {
-    minHeight: 80,
+    minHeight: 87,
     justifyContent: 'center',
     backgroundColor: colors.solidWhite,
     borderRadius: 10,
     elevation: 2,
   },
   row: {
+    position: 'relative',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -19,36 +20,38 @@ export default StyleSheet.create({
     fontFamily: 'monserratBold',
     includeFontPadding: false,
     marginLeft: 10,
-    fontSize: 16,
-    marginBottom: 8,
+    fontSize: 15,
+    flexShrink: 1,
+    flexWrap: 'wrap',
+    paddingRight: 40,
   },
   actions: {
     flexDirection: 'column',
   },
   iconContainer: {
-    //flex: 1,
-    alignItems: 'center',
-    marginRight: 15,
+    position: 'absolute',
+    left: '50%',
+    zIndex: 1,
   },
   buttonCompact: {
-    width: '65%',
-    paddingVertical: 6,
+    width: '57%',
+    paddingVertical: 7,
     alignSelf: 'center',
     marginTop: 5,
     marginBottom: 5,
   },
   approved: {
-    width: '30%',
     color: colors.blueIcons,
     fontFamily: 'monserratBold',
     includeFontPadding: false,
     fontSize: 17,
+    marginRight: 30,
   },
   rejected: {
-    width: '30%',
     color: '#F44336',
     fontFamily: 'monserratBold',
     includeFontPadding: false,
     fontSize: 17,
+    marginRight: 30,
   },
 })

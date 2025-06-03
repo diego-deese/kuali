@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Pressable, View, Text, ScrollView } from 'react-native'
 import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard'
-import styles from './reviewStudentDoc.styles'
+import styles from './styles'
 import { router } from 'expo-router'
 import { DownloadIcon } from '../../components/shared/Icons/Icons'
 import { useLocalSearchParams } from 'expo-router'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useUserDocument'
 import NavButtons from '../../components/shared/NavButtons/NavButtons'
+import SelectInput from '../../components/shared/SelectInput'
+
 /**
  * ReviewStudentDoc displays documents grouped by required document type.
  * Allows reviewing which students submitted each required document for a given activity.
@@ -21,6 +23,29 @@ export default function ReviewStudentDoc() {
   )
   // Track the currently selected requirement index for navigation
   const [currentIndex, setCurrentIndex] = useState(0)
+  const viewOptions = [
+    { id: 1, label: 'Por documento' },
+    { id: 2, label: 'Por usuario' },
+  ]
+  const [selectedView, setSelectedView] = useState(viewOptions[0])
+  useEffect(() => {
+    if (selectedView.id === 2) {
+      const group = documentsByRequirement[currentIndex]
+      const firstUser = group?.userDocuments?.[0]?.user
+
+      if (firstUser) {
+        router.push({
+          pathname: '/review/doc/doc',
+          params: {
+            id: firstUser.user_id.toString(),
+            activity_id: activityId.toString(),
+          },
+        })
+      } else {
+        alert('No se encontró un estudiante en este grupo.')
+      }
+    }
+  }, [selectedView])
   // Placeholder for a download handler (e.g., download all documents for this requirement)
   const handleDownload = () => {}
   // Get the currently selected requirement group
@@ -35,28 +60,16 @@ export default function ReviewStudentDoc() {
       </View>
     )
   }
-  // Navigate to user-based review screen using the first student in the group
-  const handleChange = () => {
-    const firstUser = group?.userDocuments?.[0]?.user
-    if (firstUser) {
-      router.push({
-        pathname: '/review/doc/doc',
-        params: {
-          id: firstUser.user_id.toString(),
-          activity_id: activityId.toString(),
-        },
-      })
-    } else {
-      alert('No se encontró un estudiante en este grupo.')
-    }
-  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Revisión de documentos</Text>
-      {/* Button to switch to user-based document review */}
-      <Pressable onPress={handleChange}>
-        <Text style={styles.changeText}>Por documento {'>'}</Text>
-      </Pressable>
+      <SelectInput
+        label='¿Cómo desea aprobar las inscripciones?'
+        value={selectedView}
+        options={viewOptions}
+        onSelect={setSelectedView}
+      />
       {/* Navigation buttons to switch between document requirements */}
       <NavButtons
         currentIndex={currentIndex}
