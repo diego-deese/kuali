@@ -22,16 +22,21 @@ export default function BaseReviewCard({
   fileName,
   onActionComplete,
 }: Props) {
+  // Status to save the current status of the document (approved, rejected, or undefined)
   const [status, setStatus] = useState(initialStatus)
+  // Controls whether the confirmation modal is visible
   const [modalVisible, setModalVisible] = useState(false)
+  // Defines the action you want to confirm: 'approved', 'rejected' or null
   const [action, setAction] = useState<'approved' | 'rejected' | null>(null)
+  // Custom hook to handle document download
   const { downloadDocument } = useDownloadDocument()
 
+  // Handles the logic when pressing the "Approved" button
   const handleApprove = () => {
     setAction('approved')
     setModalVisible(true)
   }
-
+  // Handles the logic when pressing the "Reject" button
   const handleReject = () => {
     setAction('rejected')
     setModalVisible(true)
@@ -41,14 +46,15 @@ export default function BaseReviewCard({
     const finalFileName = fileName || `documento_${user_document_id}.pdf`
     downloadDocument(user_document_id, finalFileName)
   }
-
+  // Confirm the selected action (approve or reject)
   const confirmAction = async () => {
-    if (!action) return
+    if (!action) return // Do nothing if no action is defined
     try {
       if (action === 'approved') {
         await userDocumentService.approveUserDocument(user_document_id)
         setStatus('Aprobado')
       } else {
+        // Call the service to approve the document
         await userDocumentService.rejectUserDocument(user_document_id)
         setStatus('Rechazado')
       }
@@ -56,6 +62,7 @@ export default function BaseReviewCard({
     } catch (err) {
       console.error('Error actualizando estado', err)
     } finally {
+      // Calls the callback function if it was provided
       setModalVisible(false)
       setAction(null)
     }
