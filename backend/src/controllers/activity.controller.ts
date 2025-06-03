@@ -8,6 +8,7 @@ import { ActivityRequirement } from '../types/Requirement'
 import { toNewActivity, toUpdateActivity } from '../utils/parsing/Activity'
 import { toNewActivityRequirementTemplate } from '../utils/parsing/RequirementTemplate'
 import { parseId } from '../utils/parsing/shared'
+import { CALLS_CATEGORY_ID, EVENTS_CATEGORY_ID } from '../constants/activity-categories'
 
 class ActivityController {
   async getActivities (req: AuthRequest, res: Response): Promise<void> {
@@ -111,7 +112,7 @@ class ActivityController {
         const newActivityData = toNewActivity({
           ...newActivityDataRaw,
           admin_creator_id: req.user.user_id,
-          category_id: 2,
+          category_id: EVENTS_CATEGORY_ID,
           poster_image: posterFile.buffer,
           poster_mimetype: posterFile.mimetype
         })
@@ -130,7 +131,7 @@ class ActivityController {
         const newActivityData = toNewActivity({
           ...newActivityDataRaw,
           admin_creator_id: req.user.user_id,
-          category_id: 1,
+          category_id: CALLS_CATEGORY_ID,
           poster_image: posterFile.buffer,
           poster_mimetype: posterFile.mimetype
         })
