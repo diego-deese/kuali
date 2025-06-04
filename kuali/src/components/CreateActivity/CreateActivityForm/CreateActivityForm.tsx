@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { View } from 'react-native'
 import colors from '../../../constants/colors'
 
@@ -53,6 +53,8 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   description,
   errors,
 }) => {
+  const descriptionInputRef = useRef(null)
+
   return (
     <View>
       <InputText
@@ -62,9 +64,8 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
         onChangeText={title.onTitleChange}
         error={errors.title.error}
         errorMessage={errors.title.errorMessage}
+        onSubmitEditing={() => descriptionInputRef.current?.focus()}
       />
-
-      <DatePickersSection />
 
       <InputText
         label='Descripción de la actividad'
@@ -74,7 +75,10 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
         onChangeText={description.onDescriptionChange}
         error={errors.description.error}
         errorMessage={errors.description.errorMessage}
+        inputRef={descriptionInputRef}
       />
+
+      <DatePickersSection />
 
       <SelectInput
         label='Lugar'
