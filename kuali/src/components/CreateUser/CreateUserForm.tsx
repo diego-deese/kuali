@@ -2,7 +2,8 @@ import React from 'react'
 import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
 import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
-import { Text } from 'react-native'
+import { Text, View } from 'react-native'
+import ActivityDatePicker from '../CreateActivity/DatePicker/ActivityDatePicker/ActivityDatePicker'
 
 interface CreateUserFormProps {
   onEditing: boolean
@@ -30,6 +31,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     researchLine,
     socialSecurityNumber,
     placementType,
+    validity,
     onNameChange,
     onSecondNameChange,
     onPaternalLastNameChange,
@@ -50,6 +52,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,
+    onValidityDateChange,
     errors,
   } = useUserFormContext()
 
@@ -242,6 +245,13 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             value={placementType}
             onSelect={onPlacementTypeChange}
           />
+          <View>
+            <ActivityDatePicker
+              date={validity}
+              onDateChange={onValidityDateChange}
+              title='Fecha de vigencia'
+            />
+          </View>
         </>
       )}
     </>

@@ -5,9 +5,11 @@ import userService from '../../services/user.service'
 import Toast from 'react-native-toast-message'
 import { User } from '../../types/User'
 import { Option } from '../../components/shared/SelectInput/interfaces'
+import { useDate } from '../../hooks/UsersManagement/useDate'
 
 export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const errorsManagement = useErrors(mode)
+  const validityManagement = useDate()
 
   const [name, setName] = useState('')
   const [secondName, setSecondName] = useState('')
@@ -92,6 +94,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       )
       setUser(userData)
       setError(null)
+      validityManagement.onValidityDateChange(new Date(userData.validity))
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -110,7 +113,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     }
   }, [mode, userId, loadUserData])
 
-  const restartFields = () => {
+  const restartFields = (): void => {
     setName('')
     setSecondName('')
     setPaternalLastName('')
@@ -277,6 +280,10 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const onPlacementTypeChange = (value: Option | null) =>
     setPlacementType(value)
 
+  const onValidityDateChange = (validity: Date) => {
+    validityManagement.onValidityDateChange(validity)
+  }
+
   const createUser = async () => {
     try {
       const token = await authService.getToken()
@@ -331,6 +338,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         researchLine: researchLine || null,
         socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
+        validity: validityManagement.validityDate as Date,
       }
       console.log(null)
       const result = await userService.createProfile(newUser)
@@ -416,6 +424,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         researchLine: researchLine || null,
         socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
+        validity: validityManagement.validityDate as Date,
       }
       const response = await userService.updateProfile(
         Number(userId),
@@ -473,6 +482,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     researchLine,
     socialSecurityNumber,
     placementType,
+    validity: validityManagement.validityDate,
 
     setName,
     setSecondName,
@@ -515,6 +525,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,
+    onValidityDateChange,
 
     createUser,
     updateUser,
