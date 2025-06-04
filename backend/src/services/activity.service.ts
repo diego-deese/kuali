@@ -611,6 +611,10 @@ class ActivityService {
           }
         }
       },
+      include: {
+        location: true,
+        category: true
+      },
       omit: {
         creation_date: true,
         last_updated: true,
