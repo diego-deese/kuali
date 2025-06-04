@@ -138,6 +138,43 @@ class ActivityService {
     }
   }
 
+  async getActivitiesToReview(): Promise<
+    ArrayResponse<Activity> | ResponseError
+  > {
+    try {
+      const response = await this.api.get('activities/to-review')
+
+      if (response.status === 200) {
+        return { success: true, data: response.data.activities as Activity[] }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al obtener las actividades a revisar',
+        error:
+          response.data.error ||
+          'No se pudieron obtener las actividades a revisar',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        } as ResponseError
+      }
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      } as ResponseError
+    }
+  }
+
   async createActivity(
     newActivityData: NewActivityData,
   ): Promise<Response<Activity> | ResponseError> {

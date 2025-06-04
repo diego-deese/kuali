@@ -1,3 +1,4 @@
+import { CALLS_CATEGORY_ID, EVENTS_CATEGORY_ID } from '../constants/activity-categories'
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
 import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UpdateActivity, UserAccesibleActivity } from '../types/Activities'
@@ -236,6 +237,22 @@ class ActivityService {
     if (newActivity === null) {
       throw new Error('No se pudo crear la actividad')
     }
+
+    // Subscribe users if the activity is mandatory
+    if (activityDetails.mandatory) {
+      const rolesToSubscribe: number[] = []
+
+      if (activityDetails.visible_students) {
+        rolesToSubscribe.push(STUDENT_ROLE_ID)
+      }
+
+      if (activityDetails.visible_researchers) {
+        rolesToSubscribe.push(RESEARCHER_ROLE_ID)
+      }
+
+      await registrationService.registerUsersToActivity(rolesToSubscribe, newActivity.activity_id)
+    }
+
     return newActivity
   }
 
@@ -283,7 +300,9 @@ class ActivityService {
   }
 
   async updateActivity (activityId: number, activityData: UpdateActivity): Promise<CreatedActivity> {
-    return await prisma.$transaction(async (prisma) => {
+    const updatedActivity = await prisma.$transaction(async (prisma) => {
+      await this.getActivity(activityId)
+
       // Deconstruct the object
       const {
         requirements_to_add: requirementsToAdd,
@@ -334,12 +353,24 @@ class ActivityService {
         }
       }
 
-      // Process activity update
-      const updatedActivity = await prisma.activities.update({
+      const activityToUpdate = await prisma.activities.findFirst({
         where: {
           activity_id: activityId
         },
-        data: activityInfo,
+        select: {
+          requirements: true
+        }
+      })
+
+      // Process activity update
+      return await prisma.activities.update({
+        where: {
+          activity_id: activityId
+        },
+        data: {
+          ...activityInfo,
+          category_id: activityToUpdate?.requirements.length === 0 ? EVENTS_CATEGORY_ID : CALLS_CATEGORY_ID
+        },
         omit: {
           location_id: true,
           category_id: true,
@@ -361,9 +392,24 @@ class ActivityService {
           }
         }
       })
-
-      return updatedActivity
     })
+
+    // Subscribe users if the activity is mandatory
+    if (updatedActivity.mandatory) {
+      const rolesToSubscribe: number[] = []
+
+      if (updatedActivity.visible_students) {
+        rolesToSubscribe.push(STUDENT_ROLE_ID)
+      }
+
+      if (updatedActivity.visible_researchers) {
+        rolesToSubscribe.push(RESEARCHER_ROLE_ID)
+      }
+
+      await registrationService.registerUsersToActivity(rolesToSubscribe, updatedActivity.activity_id)
+    }
+
+    return updatedActivity
   }
 
   async getUserUpcomingActivities (userId: number): Promise<UserAccesibleActivity[]> {
@@ -407,6 +453,11 @@ class ActivityService {
           event_date: {
             gte: new Date()
           }
+        }
+      },
+      orderBy: {
+        activity: {
+          event_date: 'asc'
         }
       }
     })
@@ -460,6 +511,11 @@ class ActivityService {
             lt: new Date()
           }
         }
+      },
+      orderBy: {
+        activity: {
+          event_date: 'desc'
+        }
       }
     })
 
@@ -484,6 +540,9 @@ class ActivityService {
         location: true,
         category: true,
         mandatory: true
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 
@@ -496,7 +555,10 @@ class ActivityService {
         OR: [
           roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
           roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
-        ]
+        ],
+        event_date: {
+          gte: new Date()
+        }
       },
       select: {
         activity_id: true,
@@ -507,6 +569,9 @@ class ActivityService {
         location: true,
         category: true,
         mandatory: true
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 
@@ -533,6 +598,35 @@ class ActivityService {
     }
 
     return activityPoster
+  }
+
+  async getActivitiesToReview (): Promise<UserAccesibleActivity[]> {
+    const activities = await prisma.activities.findMany({
+      where: {
+        requirements: {
+          some: {
+            userDocuments: {
+              some: {}
+            }
+          }
+        }
+      },
+      include: {
+        location: true,
+        category: true
+      },
+      omit: {
+        creation_date: true,
+        last_updated: true,
+        admin_creator_id: true,
+        location_id: true,
+        category_id: true,
+        poster_image: true,
+        poster_mimetype: true
+      }
+    })
+
+    return activities
   }
 }
 

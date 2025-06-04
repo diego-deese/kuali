@@ -5,10 +5,15 @@ import userService from '../../services/user.service'
 import Toast from 'react-native-toast-message'
 import { User } from '../../types/User'
 import { Option } from '../../components/shared/SelectInput/interfaces'
+import { useDate } from '../../hooks/UsersManagement/useDate'
+import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 
 export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const errorsManagement = useErrors(mode)
+  const validityManagement = useDate()
 
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [secondName, setSecondName] = useState('')
   const [paternalLastName, setPaternalLastName] = useState('')
@@ -31,7 +36,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const [researchLine, setResearchLine] = useState('')
   const [socialSecurityNumber, setSocialSecurityNumber] = useState('')
   const [placementType, setPlacementType] = useState<Option | null>(null)
-
   const [loading, setLoading] = useState(mode === 'edit')
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
@@ -92,6 +96,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       )
       setUser(userData)
       setError(null)
+      validityManagement.onValidityDateChange(new Date(userData.validity))
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -110,7 +115,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     }
   }, [mode, userId, loadUserData])
 
-  const restartFields = () => {
+  const restartFields = (): void => {
     setName('')
     setSecondName('')
     setPaternalLastName('')
@@ -131,6 +136,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setResearchLine('')
     setSocialSecurityNumber('')
     setPlacementType(null)
+    setProfilePhoto(null)
 
     errorsManagement.updateErrors({
       name: { error: false, errorMessage: '' },
@@ -147,6 +153,25 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       namingNumber: { error: false, errorMessage: '' },
       cvuNumber: { error: false, errorMessage: '' },
     })
+  }
+
+  const selectProfilePhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    })
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri
+
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      })
+
+      setProfilePhoto(base64) // this is the base64 string
+    }
   }
 
   const onNameChange = (value: string) => {
@@ -277,6 +302,10 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const onPlacementTypeChange = (value: Option | null) =>
     setPlacementType(value)
 
+  const onValidityDateChange = (validity: Date) => {
+    validityManagement.onValidityDateChange(validity)
+  }
+
   const createUser = async () => {
     try {
       const token = await authService.getToken()
@@ -311,6 +340,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setLoading(true)
 
       const newUser = {
+        profile_photo: profilePhoto,
         name,
         second_name: secondName,
         paternal_lastname: paternalLastName,
@@ -331,6 +361,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         researchLine: researchLine || null,
         socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
+        validity: validityManagement.validityDate as Date,
       }
       console.log(null)
       const result = await userService.createProfile(newUser)
@@ -397,6 +428,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setLoading(true)
 
       const updatedUser = {
+        profile_photo: profilePhoto,
         name,
         second_name: secondName,
         paternal_lastname: paternalLastName,
@@ -416,6 +448,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         researchLine: researchLine || null,
         socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
+        validity: validityManagement.validityDate as Date,
       }
       const response = await userService.updateProfile(
         Number(userId),
@@ -452,7 +485,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     error,
     user,
     shouldShowRoleSpecificFields,
-
+    profilePhoto,
     name,
     secondName,
     paternalLastName,
@@ -473,7 +506,9 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     researchLine,
     socialSecurityNumber,
     placementType,
+    validity: validityManagement.validityDate,
 
+    setProfilePhoto,
     setName,
     setSecondName,
     setPaternalLastName,
@@ -495,6 +530,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setSocialSecurityNumber,
     setPlacementType,
 
+    selectProfilePhoto,
     onNameChange,
     onSecondNameChange,
     onPaternalLastNameChange,
@@ -515,6 +551,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,
+    onValidityDateChange,
 
     createUser,
     updateUser,

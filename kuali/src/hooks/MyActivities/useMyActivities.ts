@@ -3,6 +3,7 @@ import Toast from 'react-native-toast-message'
 import { useAuth } from '../../context/AuthContext'
 import activityService from '../../services/activity.service'
 import { Activity } from '../../types/Activity'
+import { Roles } from '../../constants/roles'
 
 export const useMyActivities = () => {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming')
@@ -35,10 +36,18 @@ export const useMyActivities = () => {
     activeTab === 'upcoming' ? upcomingActivities : pastActivities
 
   useEffect(() => {
-    if (user && user.user_id) {
-      if (upcomingActivities === null) getUpcomingActivities()
-      if (pastActivities === null) getPastActivities()
+    if (!user && user.user_id) {
+      return
     }
+
+    // When user is admin get activities to review
+    if (user.role.role_id === Roles.ADMIN) {
+      if (upcomingActivities === null) getActivitiesToReview()
+    } else {
+      if (upcomingActivities === null) getUpcomingActivities()
+    }
+
+    if (pastActivities === null) getPastActivities()
   }, [upcomingActivities, pastActivities, user])
 
   const handleRefresh = () => {
@@ -98,6 +107,36 @@ export const useMyActivities = () => {
         text2: 'Por favor intenta de nuevo más tarde',
       })
       setPastActivities([])
+    } finally {
+      setLoadingActivities(false)
+    }
+  }
+
+  const getActivitiesToReview = async () => {
+    try {
+      setLoadingActivities(true)
+
+      const result = await activityService.getActivitiesToReview()
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        setUpcomingActivities([])
+        return
+      }
+
+      setUpcomingActivities(result.data as Activity[])
+    } catch (error) {
+      console.error('Error al obtener actividades a revisar:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al cargar actividades a revisar',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+      setUpcomingActivities([])
     } finally {
       setLoadingActivities(false)
     }

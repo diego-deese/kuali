@@ -2,7 +2,11 @@ import React from 'react'
 import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
 import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
-import { Text } from 'react-native'
+import { Text, View } from 'react-native'
+import ActivityDatePicker from '../CreateActivity/DatePicker/ActivityDatePicker/ActivityDatePicker'
+import Button from '../shared/Button/Button'
+import { ImagePlusIcon } from '../shared/Icons/Icons'
+import colors from '../../constants/colors'
 
 interface CreateUserFormProps {
   onEditing: boolean
@@ -10,6 +14,8 @@ interface CreateUserFormProps {
 
 const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
   const {
+    profile_photo,
+    selectProfilePhoto,
     name,
     secondName,
     paternalLastName,
@@ -30,6 +36,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     researchLine,
     socialSecurityNumber,
     placementType,
+    validity,
     onNameChange,
     onSecondNameChange,
     onPaternalLastNameChange,
@@ -50,6 +57,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,
+    onValidityDateChange,
     errors,
   } = useUserFormContext()
 
@@ -111,6 +119,15 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
           errorMessage={errors.role.errorMessage}
         />
       )}
+      <View>
+        <Button
+          buttonText='Foto de perfil'
+          icon={<ImagePlusIcon color={colors.solidWhite} />}
+          onPress={selectProfilePhoto}
+          showLabel={profile_photo !== null}
+          label='Foto de perfil agregada'
+        />
+      </View>
       <InputText
         label='Primer nombre'
         onChangeText={onNameChange}
@@ -242,6 +259,13 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             value={placementType}
             onSelect={onPlacementTypeChange}
           />
+          <View>
+            <ActivityDatePicker
+              date={validity}
+              onDateChange={onValidityDateChange}
+              title='Fecha de vigencia'
+            />
+          </View>
         </>
       )}
     </>

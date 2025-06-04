@@ -1,10 +1,10 @@
 import { Animated, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import {
+  BookmarkIcon,
   CalendarClockIcon,
   CalendarIcon,
   CalendarPlusIcon,
-  UploadIcon,
 } from '../Icons/Icons'
 import colors from '../../../constants/colors'
 import Button from '../Button/Button'
@@ -66,8 +66,8 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
         </Text>
         <Text style={styles.text}>
           {mode === 'upcoming'
-            ? '¡Inscribete a un evento para comenzar!'
-            : '¡Aquí encontrarás los eventos a los que te inscribiste en el pasado!'}
+            ? '¡Inscríbete a un evento para comenzar!'
+            : '¡Aquí encontrarás los eventos a los que te inscribiste!'}
         </Text>
       </View>
 
@@ -86,8 +86,8 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
       </View>
 
       <View style={styles.tipsContainer}>
-        <UploadIcon color={colors.placeholderGray} />
-        <Text style={styles.tipText}>Sube los documentos necesarios</Text>
+        <BookmarkIcon color={colors.placeholderGray} />
+        <Text style={styles.tipText}>Mantente al día con las actividades</Text>
       </View>
     </View>
   )
