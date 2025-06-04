@@ -11,6 +11,9 @@ interface UserFormContextProps {
   profile_photo: string
   selectProfilePhoto?: () => void
 
+  profilePhotoUri: string
+  setProfilePhotoUri: (value: string) => void
+
   name: string
   setName: (value: string) => void
   onNameChange: (value: string) => void
