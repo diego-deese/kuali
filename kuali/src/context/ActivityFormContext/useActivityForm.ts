@@ -247,8 +247,12 @@ export const useActivityForm = (
   }
 
   const onActivityDateChange = (activityDate: Date) => {
+    // Convertir a UTC
+    const utcDate = new Date(
+      activityDate.getTime() - activityDate.getTimezoneOffset() * 60000,
+    )
     dateManagement.onActivityDateChange(activityDate)
-    editedActivityDataRef.current.event_date = activityDate
+    editedActivityDataRef.current.event_date = utcDate
   }
 
   const onLimitDateChange = (limitDate: Date) => {

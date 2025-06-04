@@ -1,7 +1,11 @@
 import { Text, TouchableOpacity, View } from 'react-native'
 import { styles } from './styles'
+import { useAuth } from '../../../context/AuthContext'
+import { Roles } from '../../../constants/roles'
 
 const TabSelector = ({ activeTab, onTabChange }) => {
+  const { user } = useAuth()
+
   return (
     <View style={styles.tabs}>
       <TouchableOpacity onPress={() => onTabChange('upcoming')}>
@@ -10,7 +14,9 @@ const TabSelector = ({ activeTab, onTabChange }) => {
             activeTab === 'upcoming' ? styles.activeTab : styles.inactiveTab
           }
         >
-          Mis eventos próximos
+          {user.role.role_id === Roles.ADMIN
+            ? 'Convocatorias a revisar'
+            : 'Mis eventos próximos'}
         </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={() => onTabChange('past')}>
