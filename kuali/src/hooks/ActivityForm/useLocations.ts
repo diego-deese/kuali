@@ -144,7 +144,7 @@ export const useLocations = () => {
     }
   }
 
-  const onLocationChange = (newLocation: Option) => {
+  const onLocationChange = (newLocation: Option | null) => {
     setLocation(newLocation)
   }
 
