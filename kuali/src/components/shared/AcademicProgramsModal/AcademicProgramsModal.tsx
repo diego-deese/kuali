@@ -19,7 +19,7 @@ export default function AcademicProgramsModal({
     { id: number; label: string }[]
   >([])
   const [selectedProgramId, setSelectedProgramId] = useState<number | null>(
-    null
+    null,
   )
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function AcademicProgramsModal({
           (program: AcademicProgram) => ({
             id: program.program_id,
             label: program.name,
-          })
+          }),
         )
         setProgramOptions(formattedOptions)
       } else {

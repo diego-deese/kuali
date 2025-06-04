@@ -101,8 +101,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setUser(userData)
       setError(null)
       validityManagement.onValidityDateChange(new Date(userData.validity))
-
-      console.log('AAAAA:')
     } catch (err) {
       const errorMessage =
         err instanceof Error

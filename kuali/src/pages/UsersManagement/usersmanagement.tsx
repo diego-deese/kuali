@@ -29,12 +29,16 @@ export default function UsersManagement() {
     handleOnEdit,
     handleGetInfo,
     openConfirmationModal,
+    openConfirmationModalResearcher,
     handleConfirmDeactivate,
     handleConfirmAssign,
+    handleConfirmAssignResearcher,
     showConfirmationModal,
     setShowConfirmationModal,
     showProgramModal,
     setShowProgramModal,
+    showProgramModalForResearchers,
+    setShowProgramModalForResearchers,
     refreshing,
     setRefreshing,
     handleRefresh,
@@ -118,7 +122,9 @@ export default function UsersManagement() {
                     state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={() => openConfirmationModal(user)}
+                    onDeactivatePress={() =>
+                      openConfirmationModalResearcher(user)
+                    }
                   />
                 ))}
               </ScrollView>
@@ -166,6 +172,11 @@ export default function UsersManagement() {
           visible={showProgramModal}
           onConfirm={handleConfirmAssign}
           onCancel={() => setShowProgramModal(false)}
+        />
+        <AcademicProgramsModal
+          visible={showProgramModalForResearchers}
+          onConfirm={handleConfirmAssignResearcher}
+          onCancel={() => setShowProgramModalForResearchers(false)}
         />
       </SafeAreaView>
     </SafeAreaProvider>
