@@ -237,6 +237,22 @@ class ActivityService {
     if (newActivity === null) {
       throw new Error('No se pudo crear la actividad')
     }
+
+    // Subscribe users if the activity is mandatory
+    if (activityDetails.mandatory) {
+      const rolesToSubscribe: number[] = []
+
+      if (activityDetails.visible_students) {
+        rolesToSubscribe.push(STUDENT_ROLE_ID)
+      }
+
+      if (activityDetails.visible_researchers) {
+        rolesToSubscribe.push(RESEARCHER_ROLE_ID)
+      }
+
+      await registrationService.registerUsersToActivity(rolesToSubscribe, newActivity.activity_id)
+    }
+
     return newActivity
   }
 
@@ -423,6 +439,11 @@ class ActivityService {
             gte: new Date()
           }
         }
+      },
+      orderBy: {
+        activity: {
+          event_date: 'asc'
+        }
       }
     })
 
@@ -475,6 +496,11 @@ class ActivityService {
             lt: new Date()
           }
         }
+      },
+      orderBy: {
+        activity: {
+          event_date: 'desc'
+        }
       }
     })
 
@@ -499,6 +525,9 @@ class ActivityService {
         location: true,
         category: true,
         mandatory: true
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 
@@ -522,6 +551,9 @@ class ActivityService {
         location: true,
         category: true,
         mandatory: true
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 

@@ -74,6 +74,24 @@ class RegistrationService {
       return true
     })
   }
+
+  async registerUsersToActivity (roleIds: number[], activityId: number): Promise<boolean> {
+    return await prisma.$transaction(async (prisma) => {
+      const users = await prisma.users.findMany({
+        where: {
+          role_id: {
+            in: roleIds
+          }
+        }
+      })
+
+      for (const user of users) {
+        await this.createRegistration(user.user_id, activityId)
+      }
+
+      return true
+    })
+  }
 }
 
 export default new RegistrationService()
