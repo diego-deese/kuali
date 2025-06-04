@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
   container: {},
   button: {
     paddingVertical: 8,
-    paddingHorizontal: 15, //Modifico para que quepan los botones
+    paddingHorizontal: 15,
     borderRadius: 8,
     backgroundColor: colors.selectionBlue,
     alignItems: 'center',

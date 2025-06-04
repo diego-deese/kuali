@@ -1,5 +1,5 @@
-import React, { useRef } from 'react'
-import { View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { Image, Modal, Text, View } from 'react-native'
 import colors from '../../../constants/colors'
 
 import InputText from '../../shared/InputText/InputText'
@@ -10,13 +10,14 @@ import LoadingModal from '../../shared/LoadingModal/LoadingModal'
 import ActivityOptionsSection from '../ActivityOptionsSection/ActivityOptionsSection'
 import Button from '../../shared/Button/Button'
 
-import { ImagePlusIcon } from '../../shared/Icons/Icons'
+import { ImagePlusIcon, VisibilityIcon } from '../../shared/Icons/Icons'
 
 import { mapArrayToOptions } from '../../../utils/mappers'
 
 import { ActivityErrors } from '../../../types/Error'
 import { Option } from '../../shared/SelectInput/interfaces'
 import { Location } from '../../../types/Location'
+import PosterModal from '../PosterModal/PosterModal'
 
 interface CreateActivityFormProps {
   mode: 'create' | 'edit'
@@ -54,6 +55,8 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   errors,
 }) => {
   const descriptionInputRef = useRef(null)
+
+  const [showPoster, setShowPoster] = useState(false)
 
   return (
     <View>
@@ -98,9 +101,16 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
         value={location.location}
       />
 
-      <View style={{ marginBottom: 16 }}>
+      <View
+        style={{
+          marginBottom: 16,
+          // flexDirection: 'row',
+          // justifyContent: 'space-evenly',
+          // gap: 8,
+        }}
+      >
         <Button
-          buttonText='Poster de la actividad'
+          buttonText='Agregar poster'
           icon={<ImagePlusIcon color={colors.solidWhite} />}
           onPress={posterImg.selectPosterImg}
           error={errors.posterImage.error}
@@ -108,11 +118,17 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
           showLabel={posterImg.posterImg !== null}
           label='Poster agregado'
         />
+        {/* <Button
+          buttonText='Ver poster'
+          icon={<VisibilityIcon color={colors.solidWhite} />}
+        /> */}
       </View>
 
       <ActivityOptionsSection />
 
       <RequirementsSection mode={mode} />
+
+      <PosterModal visible={showPoster} posterUri={posterImg.posterImg} />
 
       <LoadingModal visible={loadingAction} />
     </View>
