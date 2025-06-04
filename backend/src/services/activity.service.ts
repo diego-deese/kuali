@@ -540,7 +540,10 @@ class ActivityService {
         OR: [
           roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
           roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
-        ]
+        ],
+        event_date: {
+          gte: new Date()
+        }
       },
       select: {
         activity_id: true,

@@ -387,6 +387,7 @@ class ActivityController {
   }
 
   async getUpcomingActivities (req: AuthRequest, res: Response): Promise<undefined> {
+    console.log('upcoming')
     try {
       if (req.user === undefined) {
         res.status(403).json({
