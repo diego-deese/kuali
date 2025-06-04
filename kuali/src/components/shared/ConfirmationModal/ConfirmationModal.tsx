@@ -39,12 +39,20 @@ export default function ConfirmationModal({
             </Text>
           )}
           <View style={styles.buttons}>
-            <Button buttonText='Cancelar' variant='cancel' onPress={onCancel} />
-            <Button
-              buttonText={confirmButtonText}
-              variant={variant}
-              onPress={onConfirm}
-            />
+            <View>
+              <Button
+                buttonText='Cancelar'
+                variant='cancel'
+                onPress={onCancel}
+              />
+            </View>
+            <View>
+              <Button
+                buttonText={confirmButtonText}
+                variant={variant}
+                onPress={onConfirm}
+              />
+            </View>
           </View>
         </View>
       </View>

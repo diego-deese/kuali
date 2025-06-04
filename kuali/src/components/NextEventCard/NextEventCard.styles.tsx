@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   content: {
+    flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
@@ -32,13 +33,14 @@ const styles = StyleSheet.create({
   eventTitle: {
     fontSize: 18,
     fontFamily: 'monserratBold',
+    includeFontPadding: false,
   },
   eventMoreInfo: {
     fontSize: 14,
     fontFamily: 'monserratRegular',
+    includeFontPadding: false,
   },
   buttonContainer: {
-    flexDirection: 'row',
     gap: 10,
     alignContent: 'flex-end',
     flexShrink: 0,
