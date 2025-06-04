@@ -3,9 +3,13 @@ import { useUserForm } from './useUserForm'
 import { UserFormErrors } from '../../types/Error'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { User } from '../../types/User'
+import { DateType } from 'react-native-ui-datepicker'
 
 interface UserFormContextProps {
   mode: 'create' | 'edit'
+
+  profile_photo: string
+  selectProfilePhoto?: () => void
 
   name: string
   setName: (value: string) => void
@@ -86,6 +90,9 @@ interface UserFormContextProps {
   placementType: Option | null
   setPlacementType: (value: Option | null) => void
   onPlacementTypeChange: (value: Option | null) => void
+
+  validity: DateType
+  onValidityDateChange: (validity: DateType) => void
 
   errors: UserFormErrors
   updateErrors: (newErrors: Partial<UserFormErrors>) => void

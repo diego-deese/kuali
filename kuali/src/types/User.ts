@@ -30,6 +30,8 @@ export type User = {
   researchLine?: string
   socialSecurityNumber?: string
   placementType?: string
+  validity?: string
+  profile_photo?: string
 }
 
 export type NewUser = {
@@ -51,4 +53,5 @@ export type NewUser = {
   researchLine?: string
   socialSecurityNumber?: string
   placementType?: string
+  profile_photo?: string
 }
