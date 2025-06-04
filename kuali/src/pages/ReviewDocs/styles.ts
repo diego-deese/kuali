@@ -3,6 +3,7 @@ import colors from '../../constants/colors'
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     padding: 16,
     backgroundColor: colors.backgroundWhite,
   },
@@ -42,12 +43,18 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     fontSize: 20,
     marginBottom: 5,
-    textAlign: 'left',
     color: colors.selectionBlue,
   },
   list: {
     gap: 12,
     paddingBottom: 20,
+  },
+  noUser: {
+    fontFamily: 'monserrat',
+    includeFontPadding: false,
+    textAlign: 'center',
+    marginTop: 16,
+    fontSize: 20,
   },
 })
 

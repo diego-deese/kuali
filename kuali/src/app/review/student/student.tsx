@@ -1,4 +1,4 @@
-import ReviewStudentDoc from '../../../pages/ReviewDocs/reviewStudentDoc'
+import ReviewStudentDoc from '../../../pages/ReviewDocs/reviewByDoc'
 
 export default function EventPage() {
   return <ReviewStudentDoc />

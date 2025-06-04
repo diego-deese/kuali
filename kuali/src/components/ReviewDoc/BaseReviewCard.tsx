@@ -76,7 +76,7 @@ export default function BaseReviewCard({
         </Text>
 
         <Pressable onPress={handleDownload} style={styles.iconContainer}>
-          <DownloadIcon />
+          <DownloadIcon color='#2C4A90' />
         </Pressable>
 
         {status === 'Aprobado' ? (

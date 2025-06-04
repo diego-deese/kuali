@@ -33,14 +33,14 @@ export default function ReviewDoc() {
   const [selectedView, setSelectedView] = useState(viewOptions[0])
   useEffect(() => {
     if (selectedView.id === 2) {
-      router.push({
+      router.replace({
         pathname: '/review/student/student',
         params: { activity_id: activity_id.toString() },
       })
     }
   }, [selectedView])
   // Display loading message if data is being fetched
-  if (loading || documentsByUser.length === 0) {
+  if (loading) {
     return (
       <View style={styles.container}>
         <Text style={styles.title}>Cargando documentos del estudiante...</Text>
@@ -76,13 +76,15 @@ export default function ReviewDoc() {
       />
       {/* Display current user's full name */}
       <Text style={styles.docText}>
-        Usuario: {''}
-        {`${student.user.name} ${student.user.second_name} ${student.user.paternal_lastname}`}
+        Usuario:{' '}
+        {student?.user
+          ? `${student.user.name} ${student.user.second_name} ${student.user.paternal_lastname}`
+          : 'Sin usuarios'}
       </Text>
       {/* Download all documents section (icon + text button) */}
       <View style={styles.row}>
         <Pressable onPress={handleDownload}>
-          <DownloadIcon name='download' />
+          <DownloadIcon name='download' color='#2C4A90' />
         </Pressable>
         <Pressable onPress={handleDownload}>
           <Text style={styles.dowload}> Descargar todos </Text>
@@ -90,13 +92,17 @@ export default function ReviewDoc() {
       </View>
       {/* List of document cards for the selected student */}
       <ScrollView contentContainerStyle={styles.list}>
-        {student.userDocuments.map((req) => (
-          <DocReviewCard
-            key={req.user_document_id}
-            req={req}
-            onActionComplete={refetch}
-          />
-        ))}
+        {student?.userDocuments?.length ? (
+          student.userDocuments.map((req) => (
+            <DocReviewCard
+              key={req.user_document_id}
+              req={req}
+              onActionComplete={refetch}
+            />
+          ))
+        ) : (
+          <Text style={styles.noUser}>Aún no hay archivos para revisar</Text>
+        )}
       </ScrollView>
     </View>
   )

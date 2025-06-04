@@ -30,20 +30,12 @@ export default function ReviewStudentDoc() {
   const [selectedView, setSelectedView] = useState(viewOptions[0])
   useEffect(() => {
     if (selectedView.id === 2) {
-      const group = documentsByRequirement[currentIndex]
-      const firstUser = group?.userDocuments?.[0]?.user
-
-      if (firstUser) {
-        router.push({
-          pathname: '/review/doc/doc',
-          params: {
-            id: firstUser.user_id.toString(),
-            activity_id: activityId.toString(),
-          },
-        })
-      } else {
-        alert('No se encontró un estudiante en este grupo.')
-      }
+      router.replace({
+        pathname: '/review/doc/doc',
+        params: {
+          activity_id: activityId.toString(),
+        },
+      })
     }
   }, [selectedView])
   // Placeholder for a download handler (e.g., download all documents for this requirement)
@@ -54,9 +46,7 @@ export default function ReviewStudentDoc() {
   if (loading || !group || !group.requirement) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>
-          Cargando documentos o no hay datos disponibles.
-        </Text>
+        <Text style={styles.title}> Cargando documentos </Text>
       </View>
     )
   }
@@ -87,7 +77,7 @@ export default function ReviewStudentDoc() {
       </Text>
       <View style={styles.row}>
         <Pressable onPress={handleDownload}>
-          <DownloadIcon name='download' />
+          <DownloadIcon name='download' color='#2C4A90' />
         </Pressable>
         <Pressable onPress={handleDownload}>
           <Text style={styles.dowload}> Descargar todos </Text>
@@ -95,25 +85,29 @@ export default function ReviewStudentDoc() {
       </View>
       {/* Scrollable list of student review cards for this document requirement */}
       <ScrollView contentContainerStyle={styles.list}>
-        {group.userDocuments?.map((doc, index) => {
-          const user = doc.user
-          if (!user) return null
+        {group.userDocuments?.length ? (
+          group.userDocuments.map((doc, index) => {
+            const user = doc.user
+            if (!user) return null
 
-          return (
-            <StudentReviewCard
-              key={doc.user_document_id}
-              student={{
-                user_document_id: doc.user_document_id,
-                name: user.name,
-                second_name: user.second_name,
-                paternal_lastname: user.paternal_lastname,
-                documentStatus: { name: doc.status?.name || null },
-                index,
-              }}
-              onActionComplete={refetch}
-            />
-          )
-        })}
+            return (
+              <StudentReviewCard
+                key={doc.user_document_id}
+                student={{
+                  user_document_id: doc.user_document_id,
+                  name: user.name,
+                  second_name: user.second_name,
+                  paternal_lastname: user.paternal_lastname,
+                  documentStatus: { name: doc.status?.name || null },
+                  index,
+                }}
+                onActionComplete={refetch}
+              />
+            )
+          })
+        ) : (
+          <Text style={styles.noUser}>Aún no hay archivos para revisar</Text>
+        )}
       </ScrollView>
     </View>
   )
