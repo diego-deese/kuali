@@ -3,6 +3,7 @@ import { useGetUsers } from './useGetUsers'
 import { router } from 'expo-router'
 import authService from '../../services/auth.service'
 import userService from '../../services/user.service'
+import academicProgramService from '../../services/academicProgram.service'
 import Toast from 'react-native-toast-message'
 
 export default function useUsersManagement() {
@@ -10,6 +11,8 @@ export default function useUsersManagement() {
   const { users, loading, error, refetch } = useGetUsers()
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [showProgramModal, setShowProgramModal] = useState(false)
+  const [showProgramModalForResearchers, setShowProgramModalForResearchers] =
+    useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [refreshing, setRefreshing] = useState(false)
 
@@ -64,6 +67,15 @@ export default function useUsersManagement() {
     }
   }
 
+  const openConfirmationModalResearcher = (user: any) => {
+    setSelectedUser(user)
+    if (user.hasAcademicPrograms) {
+      setShowConfirmationModal(true)
+    } else {
+      setShowProgramModalForResearchers(true)
+    }
+  }
+
   const handleConfirmDeactivate = async () => {
     if (!selectedUser) return
     const token = await authService.getToken()
@@ -107,7 +119,7 @@ export default function useUsersManagement() {
     } else {
       Toast.show({
         type: 'success',
-        text1: 'Usuario reactivado con éxito',
+        text1: 'Usuario inscrito con éxito',
         text2: `Usuario con ID: ${selectedUser.user_id} correctamente inscrito en el programa ${programId}`,
       })
     }
@@ -116,22 +128,55 @@ export default function useUsersManagement() {
     setShowProgramModal(false)
   }
 
+  const handleConfirmAssignResearcher = async (programId: number) => {
+    if (!selectedUser) return
+    const token = await authService.getToken()
+    if (!token) return console.log('Token expirado o sin acceso')
+
+    const inscriptionData = {
+      researcher_id: selectedUser.user_id,
+      program_id: programId,
+    }
+    console.log(inscriptionData)
+    const response =
+      await academicProgramService.assignResearcher(inscriptionData)
+    if ('success' in response && !response.success) {
+      Toast.show({
+        type: 'error',
+        text1: response.message,
+        text2: response.error,
+      })
+    } else {
+      Toast.show({
+        type: 'success',
+        text1: 'Usuario inscrito con éxito',
+        text2: `Usuario con ID: ${selectedUser.user_id} correctamente inscrito en el programa ${programId}`,
+      })
+    }
+  }
+
   return {
-    activeTab,
-    setActiveTab,
     students,
     researchers,
     admins,
     loading,
     error,
+
     handleAddUser,
     handleOnEdit,
     handleGetInfo,
     openConfirmationModal,
+    openConfirmationModalResearcher,
     handleConfirmDeactivate,
     handleConfirmAssign,
+    handleConfirmAssignResearcher,
+
+    activeTab,
+    setActiveTab,
     showConfirmationModal,
     setShowConfirmationModal,
+    showProgramModalForResearchers,
+    setShowProgramModalForResearchers,
     showProgramModal,
     setShowProgramModal,
     refreshing,

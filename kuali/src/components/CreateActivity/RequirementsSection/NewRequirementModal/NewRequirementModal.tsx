@@ -113,25 +113,31 @@ const NewRequirementModal = ({
               requirement.withTemplate && { marginTop: 16 },
             ]}
           >
-            <Button
-              buttonText='Cancelar'
-              onPress={() => {
-                handleCancel()
-                onCancel()
-              }}
-              variant='cancel'
-            />
-            <Button
-              disabled={!actionMade}
-              buttonText={requirementInfo !== undefined ? 'Aceptar' : 'Agregar'}
-              onPress={() => {
-                const canAdd = handleConfirm()
-
-                if (canAdd) {
-                  onConfirm(requirement.requirement)
+            <View>
+              <Button
+                buttonText='Cancelar'
+                onPress={() => {
+                  handleCancel()
+                  onCancel()
+                }}
+                variant='cancel'
+              />
+            </View>
+            <View>
+              <Button
+                disabled={!actionMade}
+                buttonText={
+                  requirementInfo !== undefined ? 'Aceptar' : 'Agregar'
                 }
-              }}
-            />
+                onPress={() => {
+                  const canAdd = handleConfirm()
+
+                  if (canAdd) {
+                    onConfirm(requirement.requirement)
+                  }
+                }}
+              />
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>

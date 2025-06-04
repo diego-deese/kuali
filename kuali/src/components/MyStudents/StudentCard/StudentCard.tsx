@@ -3,23 +3,27 @@ import { router } from 'expo-router'
 import styles from './styles'
 import { setStudents } from '../../../context/StudentsStored'
 import { User } from '../../../types/User'
-
+// Props for the StudentCard component
 interface StudentCardProps {
-  student: User
-  index: number
-  students: User[]
+  student: User // Current student to display
+  index: number // Position of the student in the list
+  students: User[] // Full list of students for navigation
 }
-
+/**
+ * StudentCard represents an individual student in a list.
+ * On press, it stores the student list globally and navigates
+ * to the student's detailed information screen.
+ */
 export default function StudentCard({
   student,
   students,
   index,
 }: StudentCardProps) {
+  // When the card is pressed, store all students in context and navigate to the detail screen
   const handlePress = () => {
-    setStudents(students)
-
+    setStudents(students) // Stores full list of students in global state (used later in InfoStudents)
     router.push({
-      pathname: '/students/[id]',
+      pathname: '/students/[id]', // Navigates to the student's detail screen
       params: {
         user_id: student.user_id,
         name: student.name,
@@ -28,7 +32,7 @@ export default function StudentCard({
         maternal_lastname: student.maternal_lastname,
         identifier: student.identifier,
         institutional_email: student.institutional_email,
-        index: index.toString(),
+        index: index.toString(), // Used to track position in the student list
       },
     })
   }
@@ -37,7 +41,8 @@ export default function StudentCard({
     <Pressable onPress={handlePress}>
       <View style={styles.card}>
         <Text style={styles.name}>
-          {student.name} {student.second_name} {student.paternal_lastname} {student.maternal_lastname}
+          {student.name} {student.second_name} {student.paternal_lastname}
+          {''} {student.maternal_lastname}
         </Text>
       </View>
     </Pressable>

@@ -59,7 +59,7 @@ class academicProgramService {
   ): Promise<Message | ResponseError> {
     try {
       const response = await this.api.patch(
-        `/${inscriptionData.program_id}/assign-researcher`,
+        `/academic-programs/${inscriptionData.program_id}/assign-researcher`,
         inscriptionData,
       )
 

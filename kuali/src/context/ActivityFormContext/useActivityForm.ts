@@ -119,6 +119,7 @@ export const useActivityForm = (
     setVisibleResearchers(true)
     setMandatory(false)
     requirementsManagement.restartRequirements()
+    locationManagement.onLocationChange(null)
   }
 
   const onTitleChange = (title: string) => {
