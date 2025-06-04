@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     marginBottom: 20,
     color: colors.fontBlack,
   },

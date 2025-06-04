@@ -19,19 +19,29 @@ export default function NavButtons({
 }: Props) {
   return (
     <View style={styles.container}>
-      <Pressable onPress={onPrev} disabled={currentIndex === 0}>
-        <Text style={[styles.navText, currentIndex === 0 && styles.disabled]}>
+      <Pressable onPress={onPrev} disabled={currentIndex === 0 || total === 0}>
+        <Text
+          style={[
+            styles.navText,
+            (currentIndex === 0 || total === 0) && styles.disabled,
+          ]}
+        >
           {'← Anterior'}
         </Text>
       </Pressable>
       <Text style={styles.pageText}>
-        {`${label} ${currentIndex + 1} de ${total}`}
+        {total === 0
+          ? `${label} 0 de 0`
+          : `${label} ${currentIndex + 1} de ${total}`}
       </Text>
-      <Pressable onPress={onNext} disabled={currentIndex === total - 1}>
+      <Pressable
+        onPress={onNext}
+        disabled={currentIndex === total - 1 || total === 0}
+      >
         <Text
           style={[
             styles.navText,
-            currentIndex === total - 1 && styles.disabled,
+            (currentIndex === total - 1 || total === 0) && styles.disabled,
           ]}
         >
           {'Siguiente →'}

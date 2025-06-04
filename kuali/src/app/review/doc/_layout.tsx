@@ -9,7 +9,7 @@ export default function EventLayout() {
   const { activity_id } = useLocalSearchParams()
 
   const goBack = () => {
-    router.push(`/event/${activity_id}/info`)
+    router.back()
   }
 
   return (
