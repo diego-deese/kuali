@@ -2,11 +2,12 @@ import React from 'react'
 import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
 import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
-import { Text, View } from 'react-native'
+import { Image, View } from 'react-native'
 import ActivityDatePicker from '../CreateActivity/DatePicker/ActivityDatePicker/ActivityDatePicker'
 import Button from '../shared/Button/Button'
 import { ImagePlusIcon } from '../shared/Icons/Icons'
 import colors from '../../constants/colors'
+import styles from './CreateUserForm.styles'
 
 interface CreateUserFormProps {
   onEditing: boolean
@@ -16,6 +17,8 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
   const {
     profile_photo,
     selectProfilePhoto,
+    profilePhotoUri,
+    setProfilePhotoUri,
     name,
     secondName,
     paternalLastName,
@@ -109,6 +112,35 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
 
   return (
     <>
+      <View style={styles.imgSection}>
+        <View
+          style={[
+            styles.imgContainer,
+            {
+              width: 150,
+              height: 150,
+              borderRadius: 300 / 2,
+              overflow: 'hidden',
+            },
+          ]}
+        >
+          {profilePhotoUri && (
+            <Image
+              source={{ uri: profilePhotoUri }}
+              style={{ width: 150, height: 150, borderRadius: 75 }}
+              resizeMode='cover'
+            />
+          )}
+        </View>
+      </View>
+      <View style={styles.uploadBtnContainer}>
+        <Button
+          buttonText='Añadir foto de perfil'
+          icon={<ImagePlusIcon color={colors.solidWhite} />}
+          onPress={selectProfilePhoto}
+          showLabel={profile_photo !== null}
+        />
+      </View>
       {!onEditing && (
         <SelectInput
           label='Tipo'
@@ -119,15 +151,6 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
           errorMessage={errors.role.errorMessage}
         />
       )}
-      <View>
-        <Button
-          buttonText='Foto de perfil'
-          icon={<ImagePlusIcon color={colors.solidWhite} />}
-          onPress={selectProfilePhoto}
-          showLabel={profile_photo !== null}
-          label='Foto de perfil agregada'
-        />
-      </View>
       <InputText
         label='Primer nombre'
         onChangeText={onNameChange}
