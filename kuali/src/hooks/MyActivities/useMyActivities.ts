@@ -128,8 +128,6 @@ export const useMyActivities = () => {
         return
       }
 
-      console.log(result.data)
-
       setUpcomingActivities(result.data as Activity[])
     } catch (error) {
       console.error('Error al obtener actividades a revisar:', error)
