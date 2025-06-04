@@ -6,11 +6,14 @@ import Toast from 'react-native-toast-message'
 import { User } from '../../types/User'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { useDate } from '../../hooks/UsersManagement/useDate'
+import * as ImagePicker from 'expo-image-picker'
+import * as FileSystem from 'expo-file-system'
 
 export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const errorsManagement = useErrors(mode)
   const validityManagement = useDate()
 
+  const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [secondName, setSecondName] = useState('')
   const [paternalLastName, setPaternalLastName] = useState('')
@@ -33,7 +36,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const [researchLine, setResearchLine] = useState('')
   const [socialSecurityNumber, setSocialSecurityNumber] = useState('')
   const [placementType, setPlacementType] = useState<Option | null>(null)
-
   const [loading, setLoading] = useState(mode === 'edit')
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<User | null>(null)
@@ -134,6 +136,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setResearchLine('')
     setSocialSecurityNumber('')
     setPlacementType(null)
+    setProfilePhoto(null)
 
     errorsManagement.updateErrors({
       name: { error: false, errorMessage: '' },
@@ -150,6 +153,25 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       namingNumber: { error: false, errorMessage: '' },
       cvuNumber: { error: false, errorMessage: '' },
     })
+  }
+
+  const selectProfilePhoto = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.7,
+    })
+
+    if (!result.canceled) {
+      const uri = result.assets[0].uri
+
+      const base64 = await FileSystem.readAsStringAsync(uri, {
+        encoding: FileSystem.EncodingType.Base64,
+      })
+
+      setProfilePhoto(base64) // this is the base64 string
+    }
   }
 
   const onNameChange = (value: string) => {
@@ -318,6 +340,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setLoading(true)
 
       const newUser = {
+        profile_photo: profilePhoto,
         name,
         second_name: secondName,
         paternal_lastname: paternalLastName,
@@ -405,6 +428,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       setLoading(true)
 
       const updatedUser = {
+        profile_photo: profilePhoto,
         name,
         second_name: secondName,
         paternal_lastname: paternalLastName,
@@ -461,7 +485,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     error,
     user,
     shouldShowRoleSpecificFields,
-
+    profilePhoto,
     name,
     secondName,
     paternalLastName,
@@ -484,6 +508,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     placementType,
     validity: validityManagement.validityDate,
 
+    setProfilePhoto,
     setName,
     setSecondName,
     setPaternalLastName,
@@ -505,6 +530,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     setSocialSecurityNumber,
     setPlacementType,
 
+    selectProfilePhoto,
     onNameChange,
     onSecondNameChange,
     onPaternalLastNameChange,

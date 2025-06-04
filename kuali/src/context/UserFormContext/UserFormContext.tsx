@@ -8,6 +8,9 @@ import { DateType } from 'react-native-ui-datepicker'
 interface UserFormContextProps {
   mode: 'create' | 'edit'
 
+  profile_photo: string
+  selectProfilePhoto?: () => void
+
   name: string
   setName: (value: string) => void
   onNameChange: (value: string) => void
