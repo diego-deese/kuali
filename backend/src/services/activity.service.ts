@@ -300,7 +300,7 @@ class ActivityService {
   }
 
   async updateActivity (activityId: number, activityData: UpdateActivity): Promise<CreatedActivity> {
-    return await prisma.$transaction(async (prisma) => {
+    const updatedActivity = await prisma.$transaction(async (prisma) => {
       await this.getActivity(activityId)
 
       // Deconstruct the object
@@ -363,7 +363,7 @@ class ActivityService {
       })
 
       // Process activity update
-      const updatedActivity = await prisma.activities.update({
+      return await prisma.activities.update({
         where: {
           activity_id: activityId
         },
@@ -392,9 +392,24 @@ class ActivityService {
           }
         }
       })
-
-      return updatedActivity
     })
+
+    // Subscribe users if the activity is mandatory
+    if (updatedActivity.mandatory) {
+      const rolesToSubscribe: number[] = []
+
+      if (updatedActivity.visible_students) {
+        rolesToSubscribe.push(STUDENT_ROLE_ID)
+      }
+
+      if (updatedActivity.visible_researchers) {
+        rolesToSubscribe.push(RESEARCHER_ROLE_ID)
+      }
+
+      await registrationService.registerUsersToActivity(rolesToSubscribe, updatedActivity.activity_id)
+    }
+
+    return updatedActivity
   }
 
   async getUserUpcomingActivities (userId: number): Promise<UserAccesibleActivity[]> {

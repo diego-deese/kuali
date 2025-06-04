@@ -79,9 +79,22 @@ class RegistrationService {
     return await prisma.$transaction(async (prisma) => {
       const users = await prisma.users.findMany({
         where: {
-          role_id: {
-            in: roleIds
-          }
+          AND: [
+            {
+              role_id: {
+                in: roleIds
+              }
+            },
+            {
+              NOT: {
+                activities: {
+                  some: {
+                    activity_id: activityId
+                  }
+                }
+              }
+            }
+          ]
         }
       })
 
