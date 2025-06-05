@@ -33,6 +33,7 @@ export default function UsersManagement() {
     handleConfirmDeactivate,
     handleConfirmAssign,
     handleConfirmAssignResearcher,
+    handleConfirmDeactivateResearcher,
     showConfirmationModal,
     setShowConfirmationModal,
     showProgramModal,
@@ -169,11 +170,13 @@ export default function UsersManagement() {
         />
 
         <AcademicProgramsModal
+          available={true}
           visible={showProgramModal}
           onConfirm={handleConfirmAssign}
           onCancel={() => setShowProgramModal(false)}
         />
         <AcademicProgramsModal
+          available={false}
           visible={showProgramModalForResearchers}
           onConfirm={handleConfirmAssignResearcher}
           onCancel={() => setShowProgramModalForResearchers(false)}

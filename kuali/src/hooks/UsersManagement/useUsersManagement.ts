@@ -120,7 +120,7 @@ export default function useUsersManagement() {
       Toast.show({
         type: 'success',
         text1: 'Usuario inscrito con éxito',
-        text2: `Usuario con ID: ${selectedUser.user_id} correctamente inscrito en el programa ${programId}`,
+        text2: `Usuario ${selectedUser.name} correctamente inscrito`,
       })
     }
 
@@ -137,7 +137,6 @@ export default function useUsersManagement() {
       researcher_id: selectedUser.user_id,
       program_id: programId,
     }
-    console.log(inscriptionData)
     const response =
       await academicProgramService.assignResearcher(inscriptionData)
     if ('success' in response && !response.success) {
@@ -150,7 +149,33 @@ export default function useUsersManagement() {
       Toast.show({
         type: 'success',
         text1: 'Usuario inscrito con éxito',
-        text2: `Usuario con ID: ${selectedUser.user_id} correctamente inscrito en el programa ${programId}`,
+        text2: `Usuario ${selectedUser.name} correctamente inscrito`,
+      })
+    }
+  }
+
+  const handleConfirmDeactivateResearcher = async (programId: number) => {
+    if (!selectedUser) return
+    const token = await authService.getToken()
+    if (!token) return console.log('Token expirado o sin acceso')
+
+    const inscriptionData = {
+      researcher_id: selectedUser.user_id,
+      program_id: programId,
+    }
+    const response =
+      await academicProgramService.unassignResearcher(inscriptionData)
+    if ('success' in response && !response.success) {
+      Toast.show({
+        type: 'error',
+        text1: response.message,
+        text2: response.error,
+      })
+    } else {
+      Toast.show({
+        type: 'success',
+        text1: 'Usuario desactivado con éxito',
+        text2: `Usuario ${selectedUser.name} desactivado`,
       })
     }
   }
@@ -170,6 +195,7 @@ export default function useUsersManagement() {
     handleConfirmDeactivate,
     handleConfirmAssign,
     handleConfirmAssignResearcher,
+    handleConfirmDeactivateResearcher,
 
     activeTab,
     setActiveTab,
