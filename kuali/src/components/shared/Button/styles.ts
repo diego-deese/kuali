@@ -2,7 +2,9 @@ import { StyleSheet } from 'react-native'
 import colors from '../../../constants/colors'
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    width: '100%',
+  },
   button: {
     paddingVertical: 8,
     paddingHorizontal: 15,

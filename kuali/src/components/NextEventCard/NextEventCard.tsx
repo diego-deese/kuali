@@ -31,7 +31,7 @@ export default function NextEventCard({
           ></FormattedDate>
           <Text style={styles.eventMoreInfo}>{location}</Text>
         </View>
-        <View style={styles.buttonContainer}>
+        <View>
           <Button
             buttonText='Ver más'
             onPress={handlePress}

@@ -101,19 +101,23 @@ export default function DocumentCard({
     // Si esta pendiente, se muestran ambos
     return (
       <View style={styles.buttonContainer}>
-        <Button
-          buttonText='Subir documento'
-          onPress={pickDocument}
-          disabled={hasUploadedDocument}
-          size='small'
-        />
-        <Button
-          buttonText='Eliminar documento'
-          onPress={() => onDelete && onDelete(document.userDocumentId || 0)}
-          size='small'
-          variant='delete'
-          disabled={!hasUploadedDocument}
-        />
+        <View>
+          <Button
+            buttonText='Subir documento'
+            onPress={pickDocument}
+            disabled={hasUploadedDocument}
+            size='small'
+          />
+        </View>
+        <View>
+          <Button
+            buttonText='Eliminar documento'
+            onPress={() => onDelete && onDelete(document.userDocumentId || 0)}
+            size='small'
+            variant='delete'
+            disabled={!hasUploadedDocument}
+          />
+        </View>
       </View>
     )
   }

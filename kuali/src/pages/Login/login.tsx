@@ -74,7 +74,9 @@ export default function LogIn() {
               inputRef={passwordRef}
             />
 
-            <Button buttonText='Iniciar sesión' onPress={handleLogin} />
+            <View>
+              <Button buttonText='Iniciar sesión' onPress={handleLogin} />
+            </View>
           </ScrollView>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

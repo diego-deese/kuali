@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { Image, Modal, Text, View } from 'react-native'
+import { Image, Modal, StyleSheet, Text, View } from 'react-native'
 import colors from '../../../constants/colors'
 
 import InputText from '../../shared/InputText/InputText'
@@ -18,6 +18,8 @@ import { ActivityErrors } from '../../../types/Error'
 import { Option } from '../../shared/SelectInput/interfaces'
 import { Location } from '../../../types/Location'
 import PosterModal from '../PosterModal/PosterModal'
+import IconButton from '../../shared/IconButton/IconButton'
+import activityService from '../../../services/activity.service'
 
 interface CreateActivityFormProps {
   mode: 'create' | 'edit'
@@ -57,6 +59,10 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   const descriptionInputRef = useRef(null)
 
   const [showPoster, setShowPoster] = useState(false)
+
+  const toggleShowPosterModal = () => {
+    setShowPoster(!showPoster)
+  }
 
   return (
     <View>
@@ -101,34 +107,39 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
         value={location.location}
       />
 
-      <View
-        style={{
-          marginBottom: 16,
-          // flexDirection: 'row',
-          // justifyContent: 'space-evenly',
-          // gap: 8,
-        }}
-      >
-        <Button
-          buttonText='Agregar poster'
-          icon={<ImagePlusIcon color={colors.solidWhite} />}
-          onPress={posterImg.selectPosterImg}
-          error={errors.posterImage.error}
-          errorLabel={errors.posterImage.errorMessage}
-          showLabel={posterImg.posterImg !== null}
-          label='Poster agregado'
+      <View style={styles.posterButtonsContainer}>
+        <View style={{ flex: 1 }}>
+          <Button
+            buttonText='Agregar poster'
+            icon={<ImagePlusIcon color={colors.solidWhite} />}
+            onPress={posterImg.selectPosterImg}
+            error={errors.posterImage.error}
+            errorLabel={errors.posterImage.errorMessage}
+            showLabel={posterImg.posterImg !== null}
+            label='Poster agregado'
+          />
+        </View>
+        <IconButton
+          icon={
+            <VisibilityIcon
+              color={colors.solidWhite}
+              style={[styles.viewPosterButton]}
+            />
+          }
+          onPress={toggleShowPosterModal}
+          disabled={posterImg.posterImg === '' || posterImg.posterImg === null}
         />
-        {/* <Button
-          buttonText='Ver poster'
-          icon={<VisibilityIcon color={colors.solidWhite} />}
-        /> */}
       </View>
 
       <ActivityOptionsSection />
 
       <RequirementsSection mode={mode} />
 
-      <PosterModal visible={showPoster} posterUri={posterImg.posterImg} />
+      <PosterModal
+        visible={showPoster}
+        posterUri={posterImg.posterImg}
+        onCloseModal={toggleShowPosterModal}
+      />
 
       <LoadingModal visible={loadingAction} />
     </View>
@@ -136,3 +147,19 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
 }
 
 export default CreateActivityForm
+
+const styles = StyleSheet.create({
+  posterButtonsContainer: {
+    flex: 1,
+    marginBottom: 16,
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-evenly',
+    gap: 8,
+  },
+  viewPosterButton: {
+    backgroundColor: colors.highlightCyan,
+    padding: 8,
+    borderRadius: 8,
+  },
+})
