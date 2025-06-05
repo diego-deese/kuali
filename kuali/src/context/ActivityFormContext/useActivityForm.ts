@@ -393,7 +393,7 @@ export const useActivityForm = (
 
       // setLoadingAction(false)
 
-      navigation.replace('/calendar')
+      // navigation.replace('/calendar')
     } catch (error) {
       console.error(error)
       Toast.show({
