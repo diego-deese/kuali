@@ -81,11 +81,15 @@ const EditUserContent = () => {
                   <CreateUserForm onEditing={true} />
                 </View>
                 <View style={styles.buttonsContainer}>
-                  <Button buttonText='Cancelar' onPress={handleGoingBack} />
-                  <Button
-                    buttonText='Editar usuario'
-                    onPress={handleUpdateUser}
-                  />
+                  <View>
+                    <Button buttonText='Cancelar' onPress={handleGoingBack} />
+                  </View>
+                  <View>
+                    <Button
+                      buttonText='Editar usuario'
+                      onPress={handleUpdateUser}
+                    />
+                  </View>
                 </View>
               </View>
             </ScrollView>
