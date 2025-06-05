@@ -393,7 +393,9 @@ export const useActivityForm = (
 
       // setLoadingAction(false)
 
-      // navigation.replace('/calendar')
+      setTimeout(() => {
+        navigation.replace('/calendar')
+      }, 100)
     } catch (error) {
       console.error(error)
       Toast.show({
