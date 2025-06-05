@@ -14,7 +14,6 @@ import CreateUserForm from '../../components/CreateUser/CreateUserForm'
 import { UserFormProvider } from '../../context/UserFormContext/UserFormContext'
 import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
 import { router } from 'expo-router'
-import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 const AddUserContent = () => {
   const { createUser } = useUserFormContext()
@@ -44,8 +43,12 @@ const AddUserContent = () => {
                   <CreateUserForm onEditing={false} />
                 </View>
                 <View style={styles.buttonsContainer}>
-                  <Button buttonText='Cancelar' onPress={handleGoingBack} />
-                  <Button buttonText='Crear usuario' onPress={createUser} />
+                  <View>
+                    <Button buttonText='Cancelar' onPress={handleGoingBack} />
+                  </View>
+                  <View>
+                    <Button buttonText='Crear usuario' onPress={createUser} />
+                  </View>
                 </View>
               </View>
             </ScrollView>

@@ -74,8 +74,6 @@ export default function MyActivities() {
           )}
         </View>
       </ScrollView>
-
-      <LoadingModal visible={navigation.isNavigating} />
     </View>
   )
 }

@@ -19,6 +19,7 @@ import { Option } from '../../shared/SelectInput/interfaces'
 import { Location } from '../../../types/Location'
 import PosterModal from '../PosterModal/PosterModal'
 import IconButton from '../../shared/IconButton/IconButton'
+import activityService from '../../../services/activity.service'
 
 interface CreateActivityFormProps {
   mode: 'create' | 'edit'
@@ -58,6 +59,10 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
   const descriptionInputRef = useRef(null)
 
   const [showPoster, setShowPoster] = useState(false)
+
+  const toggleShowPosterModal = () => {
+    setShowPoster(!showPoster)
+  }
 
   return (
     <View>
@@ -118,9 +123,11 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
           icon={
             <VisibilityIcon
               color={colors.solidWhite}
-              style={styles.viewPosterButton}
+              style={[styles.viewPosterButton]}
             />
           }
+          onPress={toggleShowPosterModal}
+          disabled={posterImg.posterImg === '' || posterImg.posterImg === null}
         />
       </View>
 
@@ -128,7 +135,11 @@ const CreateActivityForm: React.FC<CreateActivityFormProps> = ({
 
       <RequirementsSection mode={mode} />
 
-      <PosterModal visible={showPoster} posterUri={posterImg.posterImg} />
+      <PosterModal
+        visible={showPoster}
+        posterUri={posterImg.posterImg}
+        onCloseModal={toggleShowPosterModal}
+      />
 
       <LoadingModal visible={loadingAction} />
     </View>
