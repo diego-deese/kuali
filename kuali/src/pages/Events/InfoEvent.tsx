@@ -402,10 +402,9 @@ const InfoEvent: React.FC = () => {
           (!hasApplied && !isRegistrationClosed() ? (
             <Button buttonText='Aplicar' onPress={handleApply} />
           ) : !hasApplied && isRegistrationClosed() ? (
-            // Mostrar mensaje si la fecha límite ya pasó
-            <View>
-              <Text style={styles.noRequirementsText}>
-                El período de registro para esta actividad ha finalizado
+            <View style={styles.registrationClosedContainer}>
+              <Text style={styles.registrationClosedText}>
+                El período de registro para este evento ha finalizado
               </Text>
             </View>
           ) : (
@@ -495,14 +494,11 @@ const InfoEvent: React.FC = () => {
               )}
 
               {/* Botón para darse de baja*/}
-              <Pressable
-                style={styles.exitButton}
+              <Button
+                buttonText='Darte de baja del evento'
                 onPress={() => setActiveModal('exit')}
-              >
-                <Text style={styles.exitButtonText}>
-                  Darte de baja del evento
-                </Text>
-              </Pressable>
+                style={styles.unsuscribedButton}
+              />
             </>
           ))}
 
