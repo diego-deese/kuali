@@ -394,7 +394,7 @@ export const useActivityForm = (
       // setLoadingAction(false)
 
       setTimeout(() => {
-        navigation.replace('/calendar')
+        navigation.goBack()
       }, 100)
     } catch (error) {
       console.error(error)
