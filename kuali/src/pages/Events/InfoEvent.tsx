@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, RefreshControl } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
@@ -30,7 +30,6 @@ const InfoEvent: React.FC = () => {
   const { user } = useAuth()
   const params = useLocalSearchParams()
   const activity_id = params.activity_id ? Number(params.activity_id) : 0
-
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,6 +41,7 @@ const InfoEvent: React.FC = () => {
     'none' | 'apply' | 'exit' | 'delete'
   >('none')
   const [showLoadingModal, setShowLoadingModal] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchEventDetails = async () => {
     try {
@@ -74,6 +74,12 @@ const InfoEvent: React.FC = () => {
   useEffect(() => {
     fetchEventDetails()
   }, [activity_id])
+
+  const onRefresh = async () => {
+    setRefreshing(true)
+    await fetchEventDetails()
+    setRefreshing(false)
+  }
 
   const handleUpload = async (docId: number, fileUri?: string) => {
     try {
@@ -359,7 +365,11 @@ const InfoEvent: React.FC = () => {
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.content}>
         <EventDetailsHeader // Info del evento
           activity_id={activity_id}
