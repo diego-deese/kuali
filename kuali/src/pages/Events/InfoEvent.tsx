@@ -19,6 +19,7 @@ import TemplateCard from '../../components/TemplateCard/TemplateCard'
 import WithRole from '../../components/WithRole/WithRole'
 import { Roles } from '../../constants/roles'
 import { useAuth } from '../../context/AuthContext'
+import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -40,6 +41,7 @@ const InfoEvent: React.FC = () => {
   const [activeModal, setActiveModal] = useState<
     'none' | 'apply' | 'exit' | 'delete'
   >('none')
+  const [showLoadingModal, setShowLoadingModal] = useState(false)
 
   const fetchEventDetails = async () => {
     try {
@@ -79,7 +81,7 @@ const InfoEvent: React.FC = () => {
         console.error('No se proporcionó URI del archivo')
         return
       }
-
+      setShowLoadingModal(true)
       setLoading(true)
       const result = await documentService.uploadDocument(
         activity_id,
@@ -109,6 +111,7 @@ const InfoEvent: React.FC = () => {
       setError('Error al subir el documento')
     } finally {
       setLoading(false)
+      setShowLoadingModal(false)
     }
   }
 
@@ -127,7 +130,7 @@ const InfoEvent: React.FC = () => {
         console.error('ID de documento inválido')
         return
       }
-
+      setShowLoadingModal(true)
       setLoading(true)
       console.log('Eliminando documento:', documentToDelete)
       const result = await documentService.deleteDocument(documentToDelete)
@@ -163,6 +166,7 @@ const InfoEvent: React.FC = () => {
         position: 'top',
       })
     } finally {
+      setShowLoadingModal(false)
       setLoading(false)
       setDocumentToDelete(null)
     }
@@ -398,10 +402,9 @@ const InfoEvent: React.FC = () => {
           (!hasApplied && !isRegistrationClosed() ? (
             <Button buttonText='Aplicar' onPress={handleApply} />
           ) : !hasApplied && isRegistrationClosed() ? (
-            // Mostrar mensaje si la fecha límite ya pasó
-            <View>
-              <Text style={styles.noRequirementsText}>
-                El período de registro para esta actividad ha finalizado
+            <View style={styles.registrationClosedContainer}>
+              <Text style={styles.registrationClosedText}>
+                El período de registro para este evento ha finalizado
               </Text>
             </View>
           ) : (
@@ -491,14 +494,11 @@ const InfoEvent: React.FC = () => {
               )}
 
               {/* Botón para darse de baja*/}
-              <Pressable
-                style={styles.exitButton}
+              <Button
+                buttonText='Darte de baja del evento'
                 onPress={() => setActiveModal('exit')}
-              >
-                <Text style={styles.exitButtonText}>
-                  Darte de baja del evento
-                </Text>
-              </Pressable>
+                style={styles.unsuscribedButton}
+              />
             </>
           ))}
 
@@ -543,6 +543,8 @@ const InfoEvent: React.FC = () => {
             setActiveModal('none')
           }}
         />
+        {/* Modal de carga */}
+        <LoadingModal visible={showLoadingModal} />
       </View>
     </ScrollView>
   )
