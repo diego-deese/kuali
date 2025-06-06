@@ -364,9 +364,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         placementType: placementType?.label || '',
         validity: validityManagement.validityDate as Date,
       }
-      console.log(null)
       const result = await userService.createProfile(newUser)
-      console.log(result)
       if (!result.success) {
         Toast.show({
           type: 'error',
@@ -451,7 +449,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         placementType: placementType?.label || '',
         validity: validityManagement.validityDate as Date,
       }
-
+      console.log(name)
       const response = await userService.updateProfile(
         Number(userId),
         updatedUser,

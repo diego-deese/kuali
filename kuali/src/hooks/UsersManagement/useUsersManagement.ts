@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useGetUsers } from './useGetUsers'
 import { router } from 'expo-router'
+import { User } from '../../types/User'
 import authService from '../../services/auth.service'
 import userService from '../../services/user.service'
 import academicProgramService from '../../services/academicProgram.service'
@@ -10,6 +11,8 @@ export default function useUsersManagement() {
   const [activeTab, setActiveTab] = useState('Estudiantes')
   const { users, loading, error, refetch } = useGetUsers()
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
+  const [showConfirmationModalResearcher, setShowConfirmationModalResearcher] =
+    useState(false)
   const [showProgramModal, setShowProgramModal] = useState(false)
   const [showProgramModalForResearchers, setShowProgramModalForResearchers] =
     useState(false)
@@ -70,7 +73,7 @@ export default function useUsersManagement() {
   const openConfirmationModalResearcher = (user: any) => {
     setSelectedUser(user)
     if (user.hasAcademicPrograms) {
-      setShowConfirmationModal(true)
+      setShowConfirmationModalResearcher(true)
     } else {
       setShowProgramModalForResearchers(true)
     }
@@ -152,17 +155,32 @@ export default function useUsersManagement() {
         text2: `Usuario ${selectedUser.name} correctamente inscrito`,
       })
     }
+
+    setSelectedUser(null)
+    setShowProgramModalForResearchers(false)
   }
 
-  const handleConfirmDeactivateResearcher = async (programId: number) => {
+  const handleConfirmDeactivateResearcher = async () => {
     if (!selectedUser) return
     const token = await authService.getToken()
     if (!token) return console.log('Token expirado o sin acceso')
+
+    const researcher = await userService.getUserProfile(selectedUser.user_id)
+
+    if ('success' in researcher && !researcher.success) {
+      console.log('Error getting user profile:', researcher.message)
+      return
+    }
+
+    const userProfile = researcher as User
+    const programId =
+      userProfile.academic_programs_as_researcher?.[0]?.program_id
 
     const inscriptionData = {
       researcher_id: selectedUser.user_id,
       program_id: programId,
     }
+
     const response =
       await academicProgramService.unassignResearcher(inscriptionData)
     if ('success' in response && !response.success) {
@@ -178,6 +196,9 @@ export default function useUsersManagement() {
         text2: `Usuario ${selectedUser.name} desactivado`,
       })
     }
+
+    setSelectedUser(null)
+    setShowConfirmationModalResearcher(false)
   }
 
   return {
@@ -201,6 +222,8 @@ export default function useUsersManagement() {
     setActiveTab,
     showConfirmationModal,
     setShowConfirmationModal,
+    showConfirmationModalResearcher,
+    setShowConfirmationModalResearcher,
     showProgramModalForResearchers,
     setShowProgramModalForResearchers,
     showProgramModal,

@@ -36,6 +36,8 @@ export default function UsersManagement() {
     handleConfirmDeactivateResearcher,
     showConfirmationModal,
     setShowConfirmationModal,
+    showConfirmationModalResearcher,
+    setShowConfirmationModalResearcher,
     showProgramModal,
     setShowProgramModal,
     showProgramModalForResearchers,
@@ -161,12 +163,22 @@ export default function UsersManagement() {
         )}
         <ConfirmationModal
           visible={showConfirmationModal}
-          title='Desactivar usuario'
-          description='¿Estás seguro de que deseas desactivar este usuario?'
+          title='Desactivar estudiante'
+          description='¿Estás seguro de que deseas realizar esta acción? Se desvinculara al estudiante de su programa académico.'
           confirmButtonText='Desactivar'
           confirmButtonColor={colors.warningRed}
           onConfirm={handleConfirmDeactivate}
           onCancel={() => setShowConfirmationModal(false)}
+        />
+
+        <ConfirmationModal
+          visible={showConfirmationModalResearcher}
+          title='Desactivar investigador'
+          description='¿Estás seguro de que deseas realizar esta acción? Se desvinculara al investigador de su programa académico.'
+          confirmButtonText='Desactivar'
+          confirmButtonColor={colors.warningRed}
+          onConfirm={handleConfirmDeactivateResearcher}
+          onCancel={() => setShowConfirmationModalResearcher(false)}
         />
 
         <AcademicProgramsModal
