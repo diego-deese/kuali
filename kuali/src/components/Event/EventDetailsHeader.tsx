@@ -5,6 +5,7 @@ import {
   DeleteIcon,
   PlaceIcon,
   SquareEditIcon,
+  VisibilityIcon,
 } from '../shared/Icons/Icons'
 import { FormattedDate } from '../shared/FormattedDate/FormattedDate'
 import { Activity } from '../../types/Activity'
@@ -18,6 +19,7 @@ import { Roles } from '../../constants/roles'
 import ConfirmationModal from '../shared/ConfirmationModal/ConfirmationModal'
 import Toast from 'react-native-toast-message'
 import { useAppActions } from '../../context/AppActionsContext'
+import PosterModal from '../CreateActivity/PosterModal/PosterModal'
 
 interface EventDetailsHeaderProps {
   activity_id: number
@@ -39,6 +41,7 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
   const [error, setError] = useState<string | null>(null)
 
   const [showModal, setShowModal] = useState(false)
+  const [showPosterModal, setShowPosterModal] = useState(false)
 
   const { navigation } = useAppActions()
 
@@ -81,6 +84,21 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
 
     fetchEventDetails()
   }, [activity_id, onDataLoaded, existingData])
+
+  const getPosterUrl = () => {
+    if (activity_id) {
+      return activityService.getActivityPosterUrl(activity_id)
+    }
+    return ''
+  }
+
+  const handleViewPoster = () => {
+    setShowPosterModal(true)
+  }
+
+  const handleClosePosterModal = () => {
+    setShowPosterModal(false)
+  }
 
   const deleteActivity = async (activityId: number) => {
     setShowModal(false)
@@ -201,6 +219,20 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
           </Text>
         </View>
         <Text style={styles.description}>{eventDetails.description}</Text>
+
+        {/* Card para ver poster */}
+        <View style={styles.posterCard}>
+          <Text style={styles.posterCardTitle}>Poster del evento</Text>
+          <IconButton
+            icon={
+              <VisibilityIcon
+                color={colors.solidWhite}
+                style={styles.viewPosterButton}
+              />
+            }
+            onPress={handleViewPoster}
+          />
+        </View>
       </View>
 
       <ConfirmationModal
@@ -217,6 +249,11 @@ const EventDetailsHeader: React.FC<EventDetailsHeaderProps> = ({
         onCancel={() => {
           setShowModal(false)
         }}
+      />
+      <PosterModal
+        visible={showPosterModal}
+        posterUri={getPosterUrl()}
+        onCloseModal={handleClosePosterModal}
       />
     </>
   )

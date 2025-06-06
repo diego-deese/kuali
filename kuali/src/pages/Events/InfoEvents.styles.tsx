@@ -166,6 +166,33 @@ const styles = StyleSheet.create({
     minWidth: 'auto',
     borderRadius: 6,
   },
+  posterCard: {
+    backgroundColor: colors.solidWhite,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  posterCardTitle: {
+    fontSize: 16,
+    fontFamily: 'monserratBold',
+    color: colors.fontBlack,
+  },
+  viewPosterButton: {
+    backgroundColor: colors.highlightCyan,
+    padding: 8,
+    borderRadius: 8,
+  },
 })
 
 export default styles
