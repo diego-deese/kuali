@@ -25,10 +25,15 @@ export default StyleSheet.create({
   },
   cancelText: {
     fontSize: 12,
-    fontFamily: 'monserratRegular',
+    fontFamily: 'monserratBold',
     textAlign: 'center',
     includeFontPadding: false,
     color: colors.warningRed,
     padding: 10,
+  },
+  infoText: {
+    fontSize: 14,
+    fontFamily: 'monserratItalic',
+    textAlign: 'center',
   },
 })

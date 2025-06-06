@@ -142,8 +142,9 @@ class AcademicProgramController {
   async unassignResearcher (req: Request, res: Response): Promise<void> {
     try {
       const academicProgramId = parseId(req.body.program_id, 'El id del programa académico no fue proporcionado o tiene un formato incorrecto')
+      const researcherId = parseId(req.body.researcher_id, 'El id del programa académico no fue proporcionado o tiene un formato incorrecto')
 
-      await academicProgramService.unassignResearcher(academicProgramId)
+      await academicProgramService.unassignResearcher(academicProgramId, researcherId)
 
       res.status(200).json({ message: 'Se quitó la asignación del investigador al programa académico' })
     } catch (error) {
