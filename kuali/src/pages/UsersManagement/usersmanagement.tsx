@@ -163,6 +163,7 @@ export default function UsersManagement() {
         )}
         <ConfirmationModal
           visible={showConfirmationModal}
+          variant='delete'
           title='Desactivar estudiante'
           description='¿Estás seguro de que deseas realizar esta acción? Se desvinculara al estudiante de su programa académico.'
           confirmButtonText='Desactivar'
@@ -173,6 +174,7 @@ export default function UsersManagement() {
 
         <ConfirmationModal
           visible={showConfirmationModalResearcher}
+          variant='delete'
           title='Desactivar investigador'
           description='¿Estás seguro de que deseas realizar esta acción? Se desvinculara al investigador de su programa académico.'
           confirmButtonText='Desactivar'

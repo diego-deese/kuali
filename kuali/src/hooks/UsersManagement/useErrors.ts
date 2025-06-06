@@ -37,6 +37,11 @@ export const useErrors = (mode: string) => {
   }
 
   const validateSecondName = (secondName: string): InputError => {
+    // If empty, it's valid (optional field)
+    if (!secondName || secondName.trim() === '') {
+      return { error: false, errorMessage: '' }
+    }
+    // Only validate format if there's content
     const letterRegex = /^[A-Za-zÁÉÍÓÚáéíóúÜüÑñ\s]+$/
     if (!letterRegex.test(secondName)) {
       return { error: true, errorMessage: 'Solo se permiten letras' }

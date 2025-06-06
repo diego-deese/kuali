@@ -47,10 +47,13 @@ export default function useUsersManagement() {
     } finally {
       setRefreshing(false)
     }
+
+    setSelectedUser(null)
   }
 
   const handleAddUser = () => {
     router.push({ pathname: `/user/adduser` })
+    setSelectedUser(null)
   }
 
   const handleOnEdit = (userId: number) => {
