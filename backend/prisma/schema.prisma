@@ -48,6 +48,7 @@ model Users {
   refresh_tokens                  RefreshToken[]
   activities                      Registrations[]
   role                            Roles              @relation(fields: [role_id], references: [role_id])
+  Notification                    Notification[]
 
   @@index([role_id], map: "Users_role_id_fkey")
 }
@@ -122,6 +123,7 @@ model Activities {
   location            Locations       @relation(fields: [location_id], references: [location_id])
   users               Registrations[]
   requirements        Requirements[]
+  Notification        Notification[]
 
   @@index([admin_creator_id], map: "Activities_admin_creator_id_fkey")
   @@index([category_id], map: "Activities_category_id_fkey")
@@ -174,6 +176,7 @@ model UserDocuments {
   registration       Registrations  @relation(fields: [registration_id], references: [registration_id])
   requirement        Requirements   @relation(fields: [requirement_id], references: [requirement_id])
   status             RevisionStatus @relation(fields: [revision_status_id], references: [revision_status_id])
+  Notification       Notification[]
 
   @@index([registration_id], map: "UserDocuments_registration_id_fkey")
   @@index([requirement_id], map: "UserDocuments_requirement_id_fkey")
@@ -191,4 +194,33 @@ model Registrations {
 
   @@index([user_id])
   @@index([activity_id])
+}
+
+model NotificationType {
+  notification_type_id Int            @id @default(autoincrement())
+  name                 String         @db.VarChar(100)
+  description          String?        @db.VarChar(255)
+  active               Boolean        @default(true)
+  notifications        Notification[]
+
+  @@map("NotificationTypes")
+}
+
+model Notification {
+  notification_id      Int              @id @default(autoincrement())
+  title                String           @db.VarChar(255)
+  message              String           @db.Text
+  read_status          Boolean          @default(false)
+  creation_date        DateTime         @default(now())
+  read_date            DateTime?
+  activity_id          Int?
+  user_document_id     Int?
+  reciever_id          Int
+  notification_type_id Int
+  reciever             Users            @relation(fields: [reciever_id], references: [user_id], onDelete: Cascade)
+  notification_type    NotificationType @relation(fields: [notification_type_id], references: [notification_type_id])
+  activity             Activities?      @relation(fields: [activity_id], references: [activity_id])
+  user_document        UserDocuments?   @relation(fields: [user_document_id], references: [user_document_id])
+
+  @@map("Notifications")
 }
