@@ -255,6 +255,7 @@ class ActivityService {
     } catch (error) {
       console.error(error)
       if (axios.isAxiosError(error)) {
+        console.log(error.response.data)
         const errorResponse = error.response?.data as ResponseError
         return {
           success: false,

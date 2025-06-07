@@ -213,11 +213,13 @@ model Notification {
   read_status          Boolean          @default(false)
   creation_date        DateTime         @default(now())
   read_date            DateTime?
+  visible_students     Boolean          @default(true)
+  visible_researchers  Boolean          @default(true)
   activity_id          Int?
   user_document_id     Int?
-  reciever_id          Int
+  reciever_id          Int?
   notification_type_id Int
-  reciever             Users            @relation(fields: [reciever_id], references: [user_id], onDelete: Cascade)
+  reciever             Users?            @relation(fields: [reciever_id], references: [user_id], onDelete: Cascade)
   notification_type    NotificationType @relation(fields: [notification_type_id], references: [notification_type_id])
   activity             Activities?      @relation(fields: [activity_id], references: [activity_id])
   user_document        UserDocuments?   @relation(fields: [user_document_id], references: [user_document_id])
