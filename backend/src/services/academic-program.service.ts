@@ -121,6 +121,17 @@ class AcademicProgramService {
 
     return updatedAcademicProgram
   }
+
+  async unassignResearcherFromAllPrograms (userId: number): Promise<void> {
+    await prisma.academicPrograms.updateMany({
+      where: {
+        researcher_id: userId
+      },
+      data: {
+        researcher_id: null
+      }
+    })
+  }
 }
 
 export default new AcademicProgramService()

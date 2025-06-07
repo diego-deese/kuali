@@ -7,6 +7,7 @@ import Header from '../../components/shared/Header/Header'
 import IconButton from '../../components/shared/IconButton/IconButton'
 import { LogoutIcon } from '../../components/shared/Icons/Icons'
 import colors from '../../constants/colors'
+import { Drawer } from 'expo-router/drawer'
 
 export default function TabsLayout() {
   const { authenticated, loading, onLogout, user } = useAuth()
@@ -48,6 +49,7 @@ export default function TabsLayout() {
         redirect={user.role.role_id !== Roles.TEACHER}
       />
       <Tabs.Screen name='myprofile' />
+      <Drawer />
     </Tabs>
   )
 }
