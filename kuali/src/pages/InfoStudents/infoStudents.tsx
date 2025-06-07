@@ -1,10 +1,11 @@
 import { View, Text, Image } from 'react-native'
-import { useLocalSearchParams, router } from 'expo-router'
+import { useLocalSearchParams } from 'expo-router'
 import styles from './infoStudents.styles'
 import NavStudents from '../../components/MyStudents/NavStudents/NavStudents'
 import { getStudents } from '../../context/StudentsStored'
 import colors from '../../constants/colors'
-import userService from '../../services/user.service'
+import { useProfilePhotoCheck } from '../../hooks/MyStudents/useProfilePhoto'
+
 /**
  * InfoStudents screen displays detailed information about a selected student,
  * including profile photo, name, ID, email, and navigation between students.
@@ -24,20 +25,23 @@ export default function InfoStudents() {
   // Get the full list of stored students (used for navigation)
   const parsedStudents = getStudents()
   // Build the profile image URL from the user service
-  const profilePhotoUrl = userService.getProfilePhotoUrl(Number(user_id))
+  const userIdNumber = Number(user_id)
+  const { profilePhotoUrl, showPlaceholder } =
+    useProfilePhotoCheck(userIdNumber)
+  console.log('Foto de perfil URL:', profilePhotoUrl)
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.solidWhite }}>
       <View style={styles.container}>
         {/* Display profile photo if available, otherwise show a placeholder */}
-        {profilePhotoUrl ? (
+        {showPlaceholder || !profilePhotoUrl ? (
+          <View style={styles.imagePlaceholder} />
+        ) : (
           <Image
             source={{ uri: profilePhotoUrl }}
             style={styles.profileImage}
             resizeMode='cover'
           />
-        ) : (
-          <View style={styles.imagePlaceholder} />
         )}
 
         {/* Nombre completo */}

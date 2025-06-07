@@ -373,9 +373,8 @@ const InfoEvent: React.FC = () => {
         <WithRole role={Roles.ADMIN}>
           {eventDetails.category.category_id === 1 && (
             <>
-              <Text style={styles.sectionTitle}>Panel Administrativo</Text>
               <Button
-                buttonText='Revisar por documento'
+                buttonText='Revisión de documentos'
                 onPress={() =>
                   router.push({
                     pathname: '/review/student/student',
@@ -383,17 +382,6 @@ const InfoEvent: React.FC = () => {
                   })
                 }
                 style={{ marginBottom: 12 }}
-              />
-              <Button
-                buttonText='Revisar por usuario'
-                onPress={() => {
-                  router.push({
-                    pathname: '/review/doc/doc',
-                    params: {
-                      activity_id: activity_id.toString(),
-                    },
-                  })
-                }}
               />
             </>
           )}

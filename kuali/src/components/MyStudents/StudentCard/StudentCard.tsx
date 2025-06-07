@@ -3,6 +3,7 @@ import { router } from 'expo-router'
 import styles from './styles'
 import { setStudents } from '../../../context/StudentsStored'
 import { User } from '../../../types/User'
+import { buildStudentParams } from '../../../utils/navigation'
 // Props for the StudentCard component
 interface StudentCardProps {
   student: User // Current student to display
@@ -22,18 +23,9 @@ export default function StudentCard({
   // When the card is pressed, store all students in context and navigate to the detail screen
   const handlePress = () => {
     setStudents(students) // Stores full list of students in global state (used later in InfoStudents)
-    router.push({
-      pathname: '/students/[id]', // Navigates to the student's detail screen
-      params: {
-        user_id: student.user_id,
-        name: student.name,
-        second_name: student.second_name,
-        paternal_lastname: student.paternal_lastname,
-        maternal_lastname: student.maternal_lastname,
-        identifier: student.identifier,
-        institutional_email: student.institutional_email,
-        index: index.toString(), // Used to track position in the student list
-      },
+    router.replace({
+      pathname: '/students/[id]',
+      params: buildStudentParams(student, index),
     })
   }
 

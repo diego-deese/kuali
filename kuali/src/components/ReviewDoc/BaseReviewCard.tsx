@@ -108,6 +108,7 @@ export default function BaseReviewCard({
         title={`¿${action === 'approved' ? 'Aprobar' : 'Rechazar'} documento?`}
         confirmButtonText={action === 'approved' ? 'Aprobar' : 'Rechazar'}
         confirmButtonColor={action === 'approved' ? '#2A4A91' : '#D32F2F'}
+        variant={action === 'approved' ? 'primary' : 'delete'}
         onConfirm={confirmAction}
         onCancel={() => {
           setModalVisible(false)
