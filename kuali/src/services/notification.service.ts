@@ -1,6 +1,7 @@
 import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
-import { ResponseError } from '../types/Request'
+import { ArrayResponse, ResponseError } from '../types/Request'
+import { Notification } from '../types/Notification'
 
 class NotificationService {
   private api: AxiosInstance
@@ -9,14 +10,16 @@ class NotificationService {
     this.api = authService.getApiClient()
   }
 
-  async getUserNotifications() {
+  async getUserNotifications(): Promise<
+    ArrayResponse<Notification> | ResponseError
+  > {
     try {
       const response = await this.api.get('/notifications')
 
       if (response.status === 200) {
         return {
           success: true,
-          data: response.data,
+          data: response.data.notifications as Notification[],
         }
       }
 

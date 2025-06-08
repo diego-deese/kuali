@@ -9,7 +9,7 @@ class NotificationController {
     try {
       const userId = parseId(req.user?.user_id, 'El usuario no está autenticado o su id tiene un formato inválido')
 
-      const notifications = notificationService.getUserNotifications(userId)
+      const notifications = await notificationService.getUserNotifications(userId)
 
       res.status(200).json({ notifications })
     } catch (error) {

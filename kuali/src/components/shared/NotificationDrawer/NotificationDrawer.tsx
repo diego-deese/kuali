@@ -1,212 +1,131 @@
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import {
+  FlatList,
+  Modal,
+  StyleSheet,
+  Text,
+  TouchableWithoutFeedback,
+  View,
+  Animated,
+} from 'react-native'
+import React, { useEffect, useRef } from 'react'
+import { useNotificationsContext } from '../../../context/NotificationsContext/NotificationsContext'
+import Notification from './Notification'
+import { NotificationClearAllIcon } from '../Icons/Icons'
+import colors from '../../../constants/colors'
+import IconButton from '../IconButton/IconButton'
 
-const NotificationItem = ({ notification }) => (
-  <View style={styles.notificationItem}>
-    <View
-      style={[
-        styles.statusDot,
-        { backgroundColor: notification.isActive ? '#4CAF50' : '#CCCCCC' },
-      ]}
-    />
-    <View style={styles.notificationContent}>
-      <Text
-        style={[
-          styles.timeText,
-          { color: notification.isActive ? '#4CAF50' : '#CCCCCC' },
-        ]}
-      >
-        {notification.time}
-      </Text>
-      <Text
-        style={[
-          styles.titleText,
-          { color: notification.isActive ? '#333333' : '#CCCCCC' },
-        ]}
-      >
-        {notification.title}
-      </Text>
-    </View>
-  </View>
-)
+interface NotificationDrawerProps {
+  visible: boolean
+}
 
-const NotificationDrawer = () => {
-  const [notifications] = useState([
-    {
-      id: 1,
-      time: 'Hoy, 9:00 hrs',
-      title: 'Evento ejemplo',
-      isActive: true,
-    },
-    {
-      id: 2,
-      time: 'Antes del 20 de marzo, 15:00 hrs',
-      title: 'Subir documentos para evento ejemplo',
-      isActive: true,
-    },
-    {
-      id: 3,
-      time: '22 de marzo, 11:00 hrs',
-      title: 'Evento ejemplo',
-      isActive: true,
-    },
-  ])
+const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
+  visible = false,
+}) => {
+  const { notifications, notificationsDrawer } = useNotificationsContext()
+  const slideAnim = useRef(new Animated.Value(1000)).current
 
-  const [pastNotifications] = useState([
-    {
-      id: 4,
-      time: '09 de marzo, 18:00 hrs',
-      title: 'Evento ejemplo',
-      isActive: false,
-    },
-  ])
+  const handleClose = () => {
+    Animated.timing(slideAnim, {
+      toValue: 1000,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => {
+      notificationsDrawer.toggleShowDrawer()
+    })
+  }
+
+  useEffect(() => {
+    if (visible) {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }).start()
+    } else {
+      slideAnim.setValue(1000)
+    }
+  }, [visible, slideAnim])
 
   return (
-    <View style={styles.contentContainer}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Notificaciones</Text>
-      </View>
+    <Modal transparent visible={visible}>
+      <View style={styles.background}>
+        <TouchableWithoutFeedback onPress={handleClose}>
+          <View style={styles.backdrop} />
+        </TouchableWithoutFeedback>
 
-      <ScrollView
-        style={styles.notificationsList}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Notificaciones activas */}
-        {notifications.map((notification) => (
-          <NotificationItem key={notification.id} notification={notification} />
-        ))}
-
-        {/* Sección de notificaciones pasadas */}
-        <View style={styles.pastNotificationsSection}>
-          <Text style={styles.pastNotificationsTitle}>
-            Notificaciones pasadas
-          </Text>
-          {pastNotifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              notification={notification}
+        <Animated.View
+          style={[
+            styles.contentContainer,
+            {
+              transform: [{ translateX: slideAnim }],
+            },
+          ]}
+        >
+          <View style={styles.header}>
+            <Text style={styles.headerTitle}>Notificaciones</Text>
+            <IconButton
+              icon={
+                <NotificationClearAllIcon
+                  size={28}
+                  color={colors.highlightCyan}
+                />
+              }
+              onPress={() => console.log('clear')}
             />
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+          </View>
+
+          <View style={styles.notificationsContainer}>
+            <FlatList
+              data={notifications}
+              keyExtractor={(item) => item.notification_id.toString()}
+              renderItem={({ item }) => (
+                <Notification notificationInfo={item} />
+              )}
+            />
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
   )
 }
 
 export default NotificationDrawer
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    alignItems: 'flex-end',
   },
-  mainContainer: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  sidebar: {
-    width: 120,
-    backgroundColor: '#8E9AAF',
-    justifyContent: 'space-between',
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-  },
-  logoContainer: {
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  logoIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
-  logoText: {
-    fontSize: 20,
-    color: '#8E9AAF',
-  },
-  logoTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
-    marginBottom: 2,
-  },
-  logoSubtitle: {
-    fontSize: 12,
-    color: '#FFFFFF',
-    opacity: 0.8,
-  },
-  bookmarkContainer: {
-    alignItems: 'center',
-  },
-  bookmarkIcon: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  bookmarkText: {
-    fontSize: 24,
-    color: '#FFFFFF',
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
   contentContainer: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: colors.backgroundWhite,
+    width: '65%',
+    alignSelf: 'flex-end',
+    height: '100%',
+    padding: 8,
+  },
+  notificationsContainer: {
+    paddingBottom: 8,
+    borderBottomWidth: 1,
+    borderColor: colors.borderGray,
   },
   header: {
-    paddingHorizontal: 20,
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
+    flexDirection: 'row',
+    gap: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginVertical: 16,
   },
   headerTitle: {
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333333',
-  },
-  notificationsList: {
-    flex: 1,
-    paddingHorizontal: 20,
-  },
-  notificationItem: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F5F5F5',
-  },
-  statusDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginTop: 6,
-    marginRight: 12,
-  },
-  notificationContent: {
-    flex: 1,
-  },
-  timeText: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 4,
-  },
-  titleText: {
-    fontSize: 16,
-    lineHeight: 20,
-  },
-  pastNotificationsSection: {
-    marginTop: 20,
-    paddingTop: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#F0F0F0',
-  },
-  pastNotificationsTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#CCCCCC',
-    marginBottom: 15,
   },
 })
