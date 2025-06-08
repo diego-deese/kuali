@@ -257,6 +257,9 @@ class UserService {
         program_id: true,
         name: true,
         inscriptions: {
+          where: {
+            active: true
+          },
           select: {
             students: {
               select: {
