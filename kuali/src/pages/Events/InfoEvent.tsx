@@ -491,6 +491,7 @@ const InfoEvent: React.FC = () => {
                           onDelete={() =>
                             handleDelete(userDocument?.user_document_id || 0)
                           }
+                          showButtons={!isRegistrationClosed()}
                         />
                       )
                     })
@@ -504,11 +505,13 @@ const InfoEvent: React.FC = () => {
               )}
 
               {/* Botón para darse de baja*/}
-              <Button
-                buttonText='Darte de baja del evento'
-                onPress={() => setActiveModal('exit')}
-                style={styles.unsuscribedButton}
-              />
+              {!isRegistrationClosed() && (
+                <Button
+                  buttonText='Darte de baja del evento'
+                  onPress={() => setActiveModal('exit')}
+                  style={styles.unsuscribedButton}
+                />
+              )}
             </>
           ))}
 
