@@ -341,3 +341,14 @@ export const NotificationClearAllIcon = (props) => {
     />
   )
 }
+
+export const AddAcademicPrograms = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='book-plus'
+      size={24}
+      color={colors.selectionBlue}
+      {...props}
+    />
+  )
+}

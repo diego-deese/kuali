@@ -13,6 +13,8 @@ export default function useUsersManagement() {
   const [showConfirmationModal, setShowConfirmationModal] = useState(false)
   const [showConfirmationModalResearcher, setShowConfirmationModalResearcher] =
     useState(false)
+  const [showConfirmationModalAdmin, setShowConfirmationModalAdmin] =
+    useState(false)
   const [showProgramModal, setShowProgramModal] = useState(false)
   const [showProgramModalForResearchers, setShowProgramModalForResearchers] =
     useState(false)
@@ -64,22 +66,27 @@ export default function useUsersManagement() {
     router.push(`/user/infouser/${userId}`)
   }
 
-  const openConfirmationModal = (user: any) => {
+  const openConfirmationModal = (user: any, add: boolean) => {
     setSelectedUser(user)
-    if (user.hasAcademicPrograms) {
+    if (user.hasAcademicPrograms && !add) {
       setShowConfirmationModal(true)
     } else {
       setShowProgramModal(true)
     }
   }
 
-  const openConfirmationModalResearcher = (user: any) => {
+  const openConfirmationModalResearcher = (user: any, add: boolean) => {
     setSelectedUser(user)
-    if (user.hasAcademicPrograms) {
+    if (user.hasAcademicPrograms && !add) {
       setShowConfirmationModalResearcher(true)
     } else {
       setShowProgramModalForResearchers(true)
     }
+  }
+
+  const openConfirmationModalAdmin = (user: any) => {
+    setSelectedUser(user)
+    setShowConfirmationModalAdmin(true)
   }
 
   const handleConfirmDeactivate = async () => {
@@ -206,6 +213,30 @@ export default function useUsersManagement() {
     setShowConfirmationModalResearcher(false)
   }
 
+  const handleDeleteAdmin = async () => {
+    if (!selectedUser) return
+    const token = await authService.getToken()
+    if (!token) return console.log('Token expirado o sin acceso')
+
+    const response = await userService.deleteAdmin(selectedUser.user_id)
+    if ('success' in response && !response.success) {
+      Toast.show({
+        type: 'error',
+        text1: response.message,
+        text2: response.error,
+      })
+    } else {
+      Toast.show({
+        type: 'success',
+        text1: 'Cuenta de administrador eliminada con éxito',
+        text2: `Cuenta de ${selectedUser.name} desactivada`,
+      })
+    }
+
+    setSelectedUser(null)
+    setShowConfirmationModalAdmin(false)
+  }
+
   return {
     students,
     researchers,
@@ -218,10 +249,12 @@ export default function useUsersManagement() {
     handleGetInfo,
     openConfirmationModal,
     openConfirmationModalResearcher,
+    openConfirmationModalAdmin,
     handleConfirmDeactivate,
     handleConfirmAssign,
     handleConfirmAssignResearcher,
     handleConfirmDeactivateResearcher,
+    handleDeleteAdmin,
 
     activeTab,
     setActiveTab,
@@ -229,6 +262,8 @@ export default function useUsersManagement() {
     setShowConfirmationModal,
     showConfirmationModalResearcher,
     setShowConfirmationModalResearcher,
+    showConfirmationModalAdmin,
+    setShowConfirmationModalAdmin,
     showProgramModalForResearchers,
     setShowProgramModalForResearchers,
     showProgramModal,
