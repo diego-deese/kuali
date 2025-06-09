@@ -7,6 +7,7 @@ import {
   InfoIcon,
   EditIcon,
 } from '../shared/Icons/Icons'
+import { AddAcademicPrograms } from '../shared/Icons/Icons'
 
 export default function UserCard({
   user_id,
@@ -15,9 +16,11 @@ export default function UserCard({
   paternal_lastname,
   maternal_lastname,
   state,
+  isAdmin,
   onGetInfoPress,
   onEditPress,
   onDeactivatePress,
+  onAddProgramPress,
 }: {
   user_id: number
   name: string
@@ -25,8 +28,10 @@ export default function UserCard({
   paternal_lastname: string
   maternal_lastname: string
   state: boolean
+  isAdmin: boolean
   onGetInfoPress: (user_id: number) => void
   onEditPress: (user_id: number) => void
+  onAddProgramPress?: (user_id: number) => void
   onDeactivatePress: (user_id: number) => void
 }) {
   return (
@@ -48,6 +53,12 @@ export default function UserCard({
             icon={<EditIcon />}
             onPress={() => onEditPress(user_id)}
           />
+          {state && !isAdmin && (
+            <IconButton
+              icon={<AddAcademicPrograms />}
+              onPress={() => onAddProgramPress(user_id)}
+            />
+          )}
           <IconButton
             icon={state ? <DisableIcon /> : <EnableIcon />}
             onPress={() => onDeactivatePress(user_id)}

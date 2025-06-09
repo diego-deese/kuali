@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma'
-import { STUDENT_ROLE_ID, ADMIN_ROLE_ID, RESEARCHER_ROLE_ID} from '../constants/roles'
+import { STUDENT_ROLE_ID, ADMIN_ROLE_ID, RESEARCHER_ROLE_ID } from '../constants/roles'
 import { AcademicProgramWithStudents } from '../types/AcademicProgram'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'

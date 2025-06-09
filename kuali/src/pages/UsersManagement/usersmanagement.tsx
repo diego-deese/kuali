@@ -100,9 +100,11 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={user.hasAcademicPrograms}
+                    isAdmin={false}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={() => openConfirmationModal(user)}
+                    onAddProgramPress={() => openConfirmationModal(user, true)}
+                    onDeactivatePress={() => openConfirmationModal(user, false)}
                   />
                 ))}
               </ScrollView>
@@ -127,10 +129,14 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={user.hasAcademicPrograms}
+                    isAdmin={false}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
+                    onAddProgramPress={() =>
+                      openConfirmationModalResearcher(user, true)
+                    }
                     onDeactivatePress={() =>
-                      openConfirmationModalResearcher(user)
+                      openConfirmationModalResearcher(user, false)
                     }
                   />
                 ))}
@@ -156,6 +162,7 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    isAdmin={true}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
                     onDeactivatePress={() => openConfirmationModalAdmin(user)}

@@ -66,18 +66,18 @@ export default function useUsersManagement() {
     router.push(`/user/infouser/${userId}`)
   }
 
-  const openConfirmationModal = (user: any) => {
+  const openConfirmationModal = (user: any, add: boolean) => {
     setSelectedUser(user)
-    if (user.hasAcademicPrograms) {
+    if (user.hasAcademicPrograms && !add) {
       setShowConfirmationModal(true)
     } else {
       setShowProgramModal(true)
     }
   }
 
-  const openConfirmationModalResearcher = (user: any) => {
+  const openConfirmationModalResearcher = (user: any, add: boolean) => {
     setSelectedUser(user)
-    if (user.hasAcademicPrograms) {
+    if (user.hasAcademicPrograms && !add) {
       setShowConfirmationModalResearcher(true)
     } else {
       setShowProgramModalForResearchers(true)
