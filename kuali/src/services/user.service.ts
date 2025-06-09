@@ -242,6 +242,37 @@ class UserService {
       }
     }
   }
+
+  async deleteAdmin(adminId: number): Promise<Message | ResponseError> {
+    try {
+      const response = await this.api.delete(`/users/Admin/${adminId}`)
+      if (response.status === 200) {
+        return response.data as Message
+      }
+      return {
+        success: false,
+        message: 'Error al eliminar al usuario administrador',
+        error: 'Respuesta inesperada del servidor',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse.message ||
+            'Error al eliminar al usuario administrador',
+          error:
+            errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
+        }
+      }
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: 'Por favor verifica tu conexión e intenta de nuevo más tarde',
+      }
+    }
+  }
 }
 
 export default new UserService()

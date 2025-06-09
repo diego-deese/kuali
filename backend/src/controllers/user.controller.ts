@@ -293,6 +293,28 @@ class UserController {
       }
     }
   }
+
+  deleteAdmin = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { id } = req.params
+
+      await userService.deleteAdmin(Number(id))
+
+      res.status(200).json({ message: 'Se eliminó la cuenta del administrador permanentemente' })
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al eliminar al usuario administrador',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al eliminar al usuario administrador',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
 }
 
 export default new UserController()

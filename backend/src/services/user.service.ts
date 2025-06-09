@@ -1,5 +1,5 @@
 import prisma from '../lib/prisma'
-import { STUDENT_ROLE_ID } from '../constants/roles'
+import { ADMIN_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import { AcademicProgramWithStudents } from '../types/AcademicProgram'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
@@ -336,6 +336,23 @@ class UserService {
 
     return {
       message: 'Estudiante inscrito con éxito'
+    }
+  }
+
+  async deleteAdmin (adminId: number): Promise<ResponseMessage> {
+    const user = await this.getUser(adminId)
+    if (user.role.role_id !== ADMIN_ROLE_ID) {
+      throw new ValidationError('El usuario con el id proporcionado no es un administrador')
+    }
+
+    await prisma.users.delete({
+      where: {
+        user_id: adminId
+      }
+    })
+
+    return {
+      message: 'Cuenta de administrador eliminada permanentemente'
     }
   }
 }
