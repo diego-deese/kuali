@@ -94,19 +94,21 @@ export default function useUsersManagement() {
     const token = await authService.getToken()
     if (!token) return console.log('Token expirado o sin acceso')
 
-    const response = await userService.deactiveProfile(selectedUser.user_id)
-    if ('success' in response && !response.success) {
+    const result = await userService.deactiveProfile(selectedUser.user_id)
+
+    if (!result.success && 'error' in result) {
       Toast.show({
         type: 'error',
-        text1: response.message,
-        text2: response.error,
+        text1: result.message,
+        text2: result.error,
       })
-    } else {
-      Toast.show({
-        type: 'success',
-        text1: 'Usuario desactivado con éxito',
-      })
+      return
     }
+
+    Toast.show({
+      type: 'success',
+      text1: 'Usuario desactivado con éxito',
+    })
 
     setSelectedUser(null)
     setShowConfirmationModal(false)

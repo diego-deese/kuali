@@ -244,28 +244,22 @@ class UserController {
     }
   }
 
-  toggleStudentState = async (req: Request, res: Response): Promise<void> => {
+  async deactivateUser (req: Request, res: Response): Promise<void> {
     try {
-      const { id } = req.params
+      const userId = parseId(req.params.id, 'El id del usuario no fue proporcionado o su formato es inválido')
 
-      if (!isNumber(id)) {
-        res.status(400).json({
-          message: 'Error al obtener el usuario',
-          error: 'El id proporcionado es inválido'
-        })
-      } else {
-        const response = await userService.toggleStudentState(Number(id))
-        res.status(200).json(response)
-      }
+      await userService.deactivateUser(userId)
+
+      res.status(200).json({ message: 'El usuario fue desactivado con éxito' })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
-          message: 'Error al actualizar la inscripción del usuario',
+          message: 'Error al desactivar al usuario',
           error: error.message
         })
       } else {
         res.status(500).json({
-          message: 'Error al actualizar la inscripción del usuario',
+          message: 'Error al desactivar al usuario',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }

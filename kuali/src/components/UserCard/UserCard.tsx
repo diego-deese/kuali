@@ -7,8 +7,6 @@ import {
   InfoIcon,
   EditIcon,
 } from '../shared/Icons/Icons'
-import userService from '../../services/user.service'
-import authService from '../../services/auth.service'
 
 export default function UserCard({
   user_id,
