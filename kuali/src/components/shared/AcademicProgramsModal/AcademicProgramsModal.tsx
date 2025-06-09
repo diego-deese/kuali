@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import {
   Modal,
   View,
@@ -9,8 +9,7 @@ import {
 import styles from './AcademicProgramsModal.styles'
 import SelectInput from '../SelectInput'
 import Button from '../Button/Button'
-import academicProgramService from '../../../services/academicProgram.service'
-import { AcademicProgram } from '../../../types/AcademicProgram'
+import { useAcademicPrograms } from '../../../hooks/UsersManagement/useAcademicPrograms'
 
 export default function AcademicProgramsModal({
   available,
@@ -23,41 +22,34 @@ export default function AcademicProgramsModal({
   onConfirm: (programId: number) => void
   onCancel: () => void
 }) {
-  const [programOptions, setProgramOptions] = useState<
-    { id: number; label: string }[]
-  >([])
   const [selectedProgramId, setSelectedProgramId] = useState<number | null>(
     null,
   )
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  const {
+    academicPrograms,
+    getAcademicPrograms,
+    updateAcademicProgram,
+    deleteAcademicProgram,
+    createAcademicProgram,
+    loading,
+  } = useAcademicPrograms()
 
   useEffect(() => {
-    const fetchPrograms = async () => {
-      setLoading(true)
-      setError(null)
-      const response =
-        await academicProgramService.getAcademicPrograms(available)
-      if (response.success) {
-        const formattedOptions = response.activities.map(
-          (program: AcademicProgram) => ({
-            id: program.program_id,
-            label: program.name,
-          }),
-        )
-        setProgramOptions(formattedOptions)
-      } else {
-        setError('Ocurrió un error al obtener los programas académicos.')
-        console.error(response.error)
-      }
-      setLoading(false)
-    }
-
     if (visible) {
       setSelectedProgramId(null)
-      fetchPrograms()
+      getAcademicPrograms(available)
     }
   }, [visible])
+
+  const programOptions = useMemo(() => {
+    return (
+      academicPrograms?.map((program) => ({
+        id: program.program_id,
+        label: program.name,
+      })) || []
+    )
+  }, [academicPrograms])
 
   return (
     <Modal transparent visible={visible} animationType='fade'>
@@ -67,8 +59,6 @@ export default function AcademicProgramsModal({
 
           {loading ? (
             <ActivityIndicator size='large' color='#000' />
-          ) : error ? (
-            <Text>{error}</Text>
           ) : programOptions.length === 0 ? (
             <Text style={styles.infoText}>
               No hay programas académicos disponibles.
@@ -78,7 +68,12 @@ export default function AcademicProgramsModal({
               <SelectInput
                 label='Programa académico a inscribir:'
                 options={programOptions}
+                headerInputPlaceholder='Nuevo programa académico'
+                editable
                 onSelect={(value) => setSelectedProgramId(value.id as number)}
+                onEditOption={updateAcademicProgram}
+                onDeleteOption={deleteAcademicProgram}
+                onAddOption={createAcademicProgram}
               />
               <Button
                 buttonText='Confirmar'
