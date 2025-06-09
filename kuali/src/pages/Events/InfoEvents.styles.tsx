@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
     includeFontPadding: false,
     fontSize: 24,
     color: colors.fontBlack,
-    width: '90%',
+    width: '80%',
   },
   eventInfoText: {
     fontFamily: 'monserratRegular',
@@ -47,7 +47,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     marginBottom: 16,
     marginTop: 8,
   },
@@ -124,6 +125,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.fontBlack,
   },
+  registrationClosedContainer: {
+    backgroundColor: '#FFE6E6',
+    borderLeftWidth: 4,
+    borderLeftColor: colors.warningRed,
+    padding: 16,
+    borderRadius: 8,
+    marginVertical: 16,
+  },
+  registrationClosedText: {
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
+    fontSize: 16,
+    color: colors.warningRed,
+    textAlign: 'center',
+  },
   noRequirementsText: {
     textAlign: 'center',
     marginVertical: 20,
@@ -139,6 +155,43 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottomWidth: 1,
     borderBottomColor: colors.standardGray,
+  },
+
+  unsuscribedButton: {
+    backgroundColor: colors.warningRed,
+    marginTop: 30,
+    alignSelf: 'flex-start',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    minWidth: 'auto',
+    borderRadius: 6,
+  },
+  posterCard: {
+    backgroundColor: colors.solidWhite,
+    borderRadius: 12,
+    padding: 16,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  posterCardTitle: {
+    fontSize: 16,
+    fontFamily: 'monserratBold',
+    color: colors.fontBlack,
+  },
+  viewPosterButton: {
+    backgroundColor: colors.highlightCyan,
+    padding: 8,
+    borderRadius: 8,
   },
 })
 

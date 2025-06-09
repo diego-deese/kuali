@@ -4,6 +4,9 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  ScrollView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native'
 import React, { useRef } from 'react'
 import styles from './login.styles'
@@ -43,34 +46,39 @@ export default function LogIn() {
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.formContainer}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+        style={{ flex: 1 }}
       >
-        <View style={{ marginVertical: 24 }}>
-          <Logo height={200} />
-        </View>
-        <Text style={styles.title}>Ingresa con tus credenciales</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <ScrollView contentContainerStyle={styles.formContainer}>
+            <Logo height={200} />
+            <Text style={styles.title}>Ingresa con tus credenciales</Text>
 
-        <Input
-          label='Correo electrónico'
-          placeholder='ejemplo@dominio.com'
-          returnKeyType='next'
-          onSubmitEditing={() => passwordRef.current?.focus()}
-          value={email.email}
-          onChangeText={email.setEmail}
-          inputMode='email'
-        />
+            <Input
+              label='Correo electrónico'
+              placeholder='ejemplo@dominio.com'
+              returnKeyType='next'
+              onSubmitEditing={() => passwordRef.current?.focus()}
+              value={email.email}
+              onChangeText={email.setEmail}
+              inputMode='email'
+            />
 
-        <Input
-          label='Contraseña'
-          placeholder='• • • • • •'
-          returnKeyType='done'
-          value={password.password}
-          onChangeText={password.setPassword}
-          secureTextEntry
-          inputRef={passwordRef}
-        />
+            <Input
+              label='Contraseña'
+              placeholder='• • • • • •'
+              returnKeyType='done'
+              value={password.password}
+              onChangeText={password.setPassword}
+              secureTextEntry
+              inputRef={passwordRef}
+            />
 
-        <Button buttonText='Iniciar sesión' onPress={handleLogin} />
+            <View>
+              <Button buttonText='Iniciar sesión' onPress={handleLogin} />
+            </View>
+          </ScrollView>
+        </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
     </SafeAreaView>
   )

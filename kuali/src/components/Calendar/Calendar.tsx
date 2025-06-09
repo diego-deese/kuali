@@ -69,8 +69,6 @@ export default function CalendarComponent() {
           />
         )}
       />
-      {/* Modal de carga */}
-      <LoadingModal visible={navigation.isNavigating} />
     </View>
   )
 }

@@ -2,7 +2,12 @@ import React from 'react'
 import InputText from '../shared/InputText/InputText'
 import SelectInput from '../shared/SelectInput'
 import { useUserFormContext } from '../../context/UserFormContext/UserFormContext'
-import { Text } from 'react-native'
+import { Image, View } from 'react-native'
+import ActivityDatePicker from '../CreateActivity/DatePicker/ActivityDatePicker/ActivityDatePicker'
+import Button from '../shared/Button/Button'
+import { ImagePlusIcon } from '../shared/Icons/Icons'
+import colors from '../../constants/colors'
+import styles from './CreateUserForm.styles'
 
 interface CreateUserFormProps {
   onEditing: boolean
@@ -10,6 +15,10 @@ interface CreateUserFormProps {
 
 const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
   const {
+    profile_photo,
+    selectProfilePhoto,
+    profilePhotoUri,
+    setProfilePhotoUri,
     name,
     secondName,
     paternalLastName,
@@ -23,12 +32,14 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     employeeNumber,
     categoriaProfr,
     sniDistinction,
+    ediLevel,
     namingNumber,
     namingType,
     cvuNumber,
     researchLine,
     socialSecurityNumber,
     placementType,
+    validity,
     onNameChange,
     onSecondNameChange,
     onPaternalLastNameChange,
@@ -42,12 +53,14 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     onEmployeeNumberChange,
     onCategoriaProfrChange,
     onSniDistinctionChange,
+    onEdiChange,
     onNamingNumberChange,
     onNamingTypeChange,
     onCvuNumberChange,
     onResearchLineChange,
     onSocialSecurityNumberChange,
     onPlacementTypeChange,
+    onValidityDateChange,
     errors,
   } = useUserFormContext()
 
@@ -84,8 +97,50 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
     { id: 4, label: 'Otro' },
   ]
 
+  const ediLevelOptions = [
+    { id: 1, label: '1' },
+    { id: 2, label: '2' },
+    { id: 3, label: '3' },
+    { id: 4, label: '4' },
+    { id: 5, label: '5' },
+    { id: 6, label: '6' },
+    { id: 7, label: '7' },
+    { id: 8, label: '8' },
+    { id: 9, label: '9' },
+    { id: 10, label: '10' },
+  ]
+
   return (
     <>
+      <View style={styles.imgSection}>
+        <View
+          style={[
+            styles.imgContainer,
+            {
+              width: 150,
+              height: 150,
+              borderRadius: 300 / 2,
+              overflow: 'hidden',
+            },
+          ]}
+        >
+          {profilePhotoUri && (
+            <Image
+              source={{ uri: profilePhotoUri }}
+              style={{ width: 150, height: 150, borderRadius: 75 }}
+              resizeMode='cover'
+            />
+          )}
+        </View>
+      </View>
+      <View style={styles.uploadBtnContainer}>
+        <Button
+          buttonText='Añadir foto de perfil'
+          icon={<ImagePlusIcon color={colors.solidWhite} />}
+          onPress={selectProfilePhoto}
+          showLabel={profile_photo !== null}
+        />
+      </View>
       {!onEditing && (
         <SelectInput
           label='Tipo'
@@ -129,16 +184,16 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         onChangeText={onInstitutionalEmailChange}
         inputMode='email'
         value={institutionalEmail}
-        error={errors.email.error}
-        errorMessage={errors.email.errorMessage}
+        error={errors.institutionalEmail.error}
+        errorMessage={errors.institutionalEmail.errorMessage}
       />
       <InputText
         label='Correo personal'
         onChangeText={onPersonalEmailChange}
         inputMode='email'
         value={personalEmail}
-        error={errors.email.error}
-        errorMessage={errors.email.errorMessage}
+        error={errors.personalEmail.error}
+        errorMessage={errors.personalEmail.errorMessage}
       />
       {!onEditing && (
         <InputText
@@ -185,6 +240,12 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             value={sniDistinction}
             onSelect={onSniDistinctionChange}
           />
+          <SelectInput
+            label='Nivel de EDI'
+            options={ediLevelOptions}
+            value={ediLevel}
+            onSelect={onEdiChange}
+          />
           <InputText
             label='Número de nombramiento'
             onChangeText={onNamingNumberChange}
@@ -205,6 +266,29 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             error={errors.cvuNumber.error}
             errorMessage={errors.cvuNumber.errorMessage}
           />
+          <InputText
+            label='Línea de investigación'
+            value={researchLine}
+            onChangeText={onResearchLineChange}
+          />
+          <InputText
+            label='Número de seguro social'
+            value={socialSecurityNumber}
+            onChangeText={onSocialSecurityNumberChange}
+          />
+          <SelectInput
+            label='Tipo de plaza'
+            options={placementTypeOptions}
+            value={placementType}
+            onSelect={onPlacementTypeChange}
+          />
+          <View>
+            <ActivityDatePicker
+              date={validity}
+              onDateChange={onValidityDateChange}
+              title='Fecha de vigencia'
+            />
+          </View>
         </>
       )}
     </>

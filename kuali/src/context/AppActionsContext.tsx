@@ -6,6 +6,7 @@ interface AppActionsProps {
     isNavigating: boolean
     navigate: (path: string) => void
     goBack: () => void
+    replace: (path: string) => void
   }
 }
 
@@ -30,11 +31,20 @@ export const AppActionsProvider = ({ children }) => {
     }, 1000)
   }
 
+  const replace = (path: string): void => {
+    setIsNavigating(true)
+    router.replace(path)
+    setTimeout(() => {
+      setIsNavigating(false)
+    }, 1000)
+  }
+
   const value = {
     navigation: {
       isNavigating,
       navigate,
       goBack,
+      replace,
     },
   }
 

@@ -1,4 +1,4 @@
-import { View, Text, ScrollView, Pressable } from 'react-native'
+import { View, Text, ScrollView, Pressable, RefreshControl } from 'react-native'
 import { useLocalSearchParams, router } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import DocumentCard from '../../components/DocumentCard/DocumentCard'
@@ -16,7 +16,10 @@ import documentService from '../../services/document.service'
 import { DropDownIcon, DropUpIcon } from '../../components/shared/Icons/Icons'
 import Toast from 'react-native-toast-message'
 import TemplateCard from '../../components/TemplateCard/TemplateCard'
-//import * as WebBrowser from 'expo-web-browser'
+import WithRole from '../../components/WithRole/WithRole'
+import { Roles } from '../../constants/roles'
+import { useAuth } from '../../context/AuthContext'
+import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
 
 /*
    Pantalla que muestra información detallada de un evento específico,
@@ -24,9 +27,9 @@ import TemplateCard from '../../components/TemplateCard/TemplateCard'
   gestionar su participación.
  */
 const InfoEvent: React.FC = () => {
+  const { user } = useAuth()
   const params = useLocalSearchParams()
   const activity_id = params.activity_id ? Number(params.activity_id) : 0
-
   const [eventDetails, setEventDetails] = useState<Activity | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -36,7 +39,9 @@ const InfoEvent: React.FC = () => {
   const [plantillasExpanded, setPlantillasExpanded] = useState(true)
   const [activeModal, setActiveModal] = useState<
     'none' | 'apply' | 'exit' | 'delete'
-  >('none') // Un solo state para los modales
+  >('none')
+  const [showLoadingModal, setShowLoadingModal] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchEventDetails = async () => {
     try {
@@ -48,7 +53,6 @@ const InfoEvent: React.FC = () => {
         return
       }
 
-      // Llamada al servicio para obtener detalles de la actividad
       const result = await activityService.getActivityById(activity_id)
 
       if (!result.success && 'error' in result) {
@@ -58,7 +62,7 @@ const InfoEvent: React.FC = () => {
       }
 
       setEventDetails(result.data)
-      // Verificar si el usuario ya está registrado en esta actividad
+      // Verificar si el usuario ya está registrado en la actividad
       setHasApplied(result.data.isRegistered || false)
       setLoading(false)
     } catch (err) {
@@ -71,14 +75,19 @@ const InfoEvent: React.FC = () => {
     fetchEventDetails()
   }, [activity_id])
 
+  const onRefresh = async () => {
+    setRefreshing(true)
+    await fetchEventDetails()
+    setRefreshing(false)
+  }
+
   const handleUpload = async (docId: number, fileUri?: string) => {
-    // Implementación de la llamada al servicio para subir documento
     try {
       if (!fileUri) {
         console.error('No se proporcionó URI del archivo')
         return
       }
-
+      setShowLoadingModal(true)
       setLoading(true)
       const result = await documentService.uploadDocument(
         activity_id,
@@ -94,8 +103,7 @@ const InfoEvent: React.FC = () => {
           position: 'top',
         })
       } else {
-        // Actualizar la interfaz después de subir el documento
-        fetchEventDetails()
+        fetchEventDetails() //si jalo
         Toast.show({
           type: 'success',
           text1: 'Archivo subido',
@@ -109,11 +117,11 @@ const InfoEvent: React.FC = () => {
       setError('Error al subir el documento')
     } finally {
       setLoading(false)
+      setShowLoadingModal(false)
     }
   }
 
   const handleDelete = async (docId: number) => {
-    // Implementación de la llamada al servicio para eliminar documento
     if (!docId) {
       console.error('ID de documento inválido')
       return
@@ -128,7 +136,7 @@ const InfoEvent: React.FC = () => {
         console.error('ID de documento inválido')
         return
       }
-
+      setShowLoadingModal(true)
       setLoading(true)
       console.log('Eliminando documento:', documentToDelete)
       const result = await documentService.deleteDocument(documentToDelete)
@@ -151,7 +159,6 @@ const InfoEvent: React.FC = () => {
           position: 'top',
           visibilityTime: 3000,
         })
-        // Refrescar los datos para actualizar la UI
         fetchEventDetails()
       }
     } catch (error) {
@@ -165,6 +172,7 @@ const InfoEvent: React.FC = () => {
         position: 'top',
       })
     } finally {
+      setShowLoadingModal(false)
       setLoading(false)
       setDocumentToDelete(null)
     }
@@ -210,31 +218,77 @@ const InfoEvent: React.FC = () => {
   }
 
   const handleTemplateDownload = async (templateId: number) => {
-    // try {
-    //   // Mostrar indicador de carga
-    //   Toast.show({
-    //     type: 'info',
-    //     text1: 'Preparando documento...',
-    //     position: 'top',
-    //     autoHide: true,
-    //     visibilityTime: 2000,
-    //   })
-    //   // Obtener la URL de forma asíncrona
-    //   const downloadUrl =
-    //     await documentService.getTemplateDownloadUrl(templateId)
-    //   // Abrir el navegador con la URL
-    //   await WebBrowser.openBrowserAsync(downloadUrl)
-    // } catch (error) {
-    //   console.error('Error al obtener URL de descarga:', error)
-    //   Toast.show({
-    //     type: 'error',
-    //     text1: 'Error',
-    //     text2: 'No se pudo descargar la plantilla',
-    //     position: 'top',
-    //   })
-    // }
+    try {
+      const template = eventDetails?.requirements?.find(
+        (req) => req.requirement_id === templateId && req.template,
+      )
 
-    console.log('DESCARGANDO DOCUMENTO')
+      if (!template) {
+        Toast.show({
+          type: 'error',
+          text1: 'Error',
+          text2: 'No se encontró la plantilla',
+          position: 'top',
+        })
+        return
+      }
+
+      Toast.show({
+        type: 'info',
+        text1: 'Descargando documento...',
+        position: 'top',
+        autoHide: false,
+      })
+
+      // Descargar
+      const result = await documentService.downloadTemplate(
+        template.template.requirement_template_id,
+        template.name,
+      )
+
+      Toast.hide()
+
+      if (result.success && result.localUri) {
+        Toast.show({
+          type: 'success',
+          text1: 'Descarga completada',
+          text2: 'Documento descargado',
+          position: 'top',
+          visibilityTime: 3000,
+        })
+
+        try {
+          await documentService.shareFile(result.localUri)
+        } catch (shareError) {
+          console.warn(
+            'No se pudo compartir el archivo automáticamente:',
+            shareError,
+          )
+          Toast.show({
+            type: 'info',
+            text1: 'Archivo guardado',
+            position: 'top',
+            visibilityTime: 4000,
+          })
+        }
+      } else {
+        throw new Error(result.error || 'No se pudo descargar la plantilla')
+      }
+    } catch (error) {
+      Toast.hide()
+
+      console.error('Error al descargar plantilla:', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error de descarga',
+        text2:
+          error instanceof Error
+            ? error.message
+            : 'No se pudo descargar la plantilla',
+        position: 'top',
+        visibilityTime: 4000,
+      })
+    }
   }
   const confirmApply = async () => {
     try {
@@ -277,6 +331,14 @@ const InfoEvent: React.FC = () => {
   const togglePlantillas = () => {
     setPlantillasExpanded(!plantillasExpanded)
   }
+  const isRegistrationClosed = (): boolean => {
+    if (!eventDetails?.register_date_limit) return false
+
+    const now = new Date()
+    const limitDate = new Date(eventDetails.register_date_limit)
+
+    return now > limitDate
+  }
 
   if (loading) {
     return (
@@ -303,7 +365,11 @@ const InfoEvent: React.FC = () => {
   }
 
   return (
-    <ScrollView>
+    <ScrollView
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.content}>
         <EventDetailsHeader // Info del evento
           activity_id={activity_id}
@@ -313,107 +379,138 @@ const InfoEvent: React.FC = () => {
             setHasApplied(data.isRegistered || false)
           }}
         />
+        {/* Panel Administrativo solo visible para ADMIN y cuando category_id === 1 */}
+        <WithRole role={Roles.ADMIN}>
+          {eventDetails.category.category_id === 1 && (
+            <>
+              <Text style={styles.sectionTitle}>Panel Administrativo</Text>
+              <Button
+                buttonText='Revisar por documento'
+                onPress={() =>
+                  router.push({
+                    pathname: '/review/student/student',
+                    params: { activity_id: activity_id.toString() },
+                  })
+                }
+                style={{ marginBottom: 12 }}
+              />
+              <Button
+                buttonText='Revisar por usuario'
+                onPress={() => {
+                  router.push({
+                    pathname: '/review/doc/doc',
+                    params: {
+                      activity_id: activity_id.toString(),
+                    },
+                  })
+                }}
+              />
+            </>
+          )}
+        </WithRole>
+        {user?.role.role_id !== Roles.ADMIN &&
+          (!hasApplied && !isRegistrationClosed() ? (
+            <Button buttonText='Aplicar' onPress={handleApply} />
+          ) : !hasApplied && isRegistrationClosed() ? (
+            <View style={styles.registrationClosedContainer}>
+              <Text style={styles.registrationClosedText}>
+                El período de registro para este evento ha finalizado
+              </Text>
+            </View>
+          ) : (
+            <>
+              {/* Sección de Plantillas */}
+              {eventDetails.requirements &&
+                eventDetails.requirements.some((req) => req.template) && (
+                  <>
+                    <Pressable
+                      style={styles.sectionHeader}
+                      onPress={togglePlantillas}
+                    >
+                      <Text style={styles.sectionTitle}>Plantillas</Text>
+                      {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
+                    </Pressable>
 
-        {/* Mostrar el botón de Aplicar cuando NO ha aplicado */}
-        {!hasApplied ? (
-          <Button buttonText='Aplicar' onPress={handleApply} />
-        ) : (
-          <>
-            {/* Sección de Plantillas */}
-            {eventDetails.requirements &&
-              eventDetails.requirements.some((req) => req.template) && (
-                <>
-                  <Pressable
-                    style={styles.sectionHeader}
-                    onPress={togglePlantillas}
-                  >
-                    <Text style={styles.sectionTitle}>Plantillas</Text>
-                    {plantillasExpanded ? <DropUpIcon /> : <DropDownIcon />}
-                  </Pressable>
+                    {plantillasExpanded && (
+                      <View>
+                        {eventDetails.requirements
+                          .filter((req) => req.template)
+                          .map((req) => (
+                            <TemplateCard
+                              key={`template-${req.requirement_id}`}
+                              template={{
+                                id: req.requirement_id,
+                                name: req.name,
+                                description: req.description,
+                              }}
+                              onDownload={handleTemplateDownload}
+                            />
+                          ))}
+                      </View>
+                    )}
+                  </>
+                )}
 
-                  {plantillasExpanded && (
-                    <View>
-                      {eventDetails.requirements
-                        .filter((req) => req.template)
-                        .map((req) => (
-                          <TemplateCard
-                            key={`template-${req.requirement_id}`}
-                            template={{
-                              id: req.requirement_id,
-                              name: req.name,
-                              description: req.description,
-                            }}
-                            onDownload={handleTemplateDownload}
-                          />
-                        ))}
-                    </View>
+              {/* Sección de Requisitos */}
+              <Pressable
+                style={styles.sectionHeader}
+                onPress={toggleRequirements}
+              >
+                <Text style={styles.sectionTitle}>Requisitos</Text>
+                {requirementsExpanded ? <DropUpIcon /> : <DropDownIcon />}
+              </Pressable>
+
+              {requirementsExpanded && (
+                <View>
+                  {eventDetails.requirements &&
+                  eventDetails.requirements.length > 0 ? (
+                    // Si hay requisitos, mapearlos
+                    eventDetails.requirements.map((req) => {
+                      const userDocument =
+                        req.userDocuments && req.userDocuments.length > 0
+                          ? req.userDocuments[0]
+                          : undefined
+
+                      const documentStatus = userDocument?.status?.name
+                        ? getDocumentStatusFromString(userDocument.status.name)
+                        : DocumentStatus.Pendiente
+
+                      return (
+                        <DocumentCard
+                          key={req.requirement_id}
+                          document={{
+                            id: req.requirement_id,
+                            title: req.name,
+                            description: req.description,
+                            status: documentStatus,
+                            userDocumentId: userDocument?.user_document_id,
+                          }}
+                          onUpload={(docId, fileUri) =>
+                            handleUpload(docId, fileUri)
+                          }
+                          onDelete={() =>
+                            handleDelete(userDocument?.user_document_id || 0)
+                          }
+                        />
+                      )
+                    })
+                  ) : (
+                    // Si NO hay requisitos, mostrar este mensaje
+                    <Text style={styles.noRequirementsText}>
+                      Esta actividad no tiene requisitos.
+                    </Text>
                   )}
-                </>
+                </View>
               )}
 
-            {/* Sección de Requisitos */}
-            <Pressable
-              style={styles.sectionHeader}
-              onPress={toggleRequirements}
-            >
-              <Text style={styles.sectionTitle}>Requisitos</Text>
-              {requirementsExpanded ? <DropUpIcon /> : <DropDownIcon />}
-            </Pressable>
-
-            {requirementsExpanded && (
-              <View>
-                {eventDetails.requirements &&
-                eventDetails.requirements.length > 0 ? (
-                  // Si hay requisitos, mapearlos
-                  eventDetails.requirements.map((req) => {
-                    const userDocument =
-                      req.userDocuments && req.userDocuments.length > 0
-                        ? req.userDocuments[0]
-                        : undefined
-
-                    const documentStatus = userDocument?.status?.name
-                      ? getDocumentStatusFromString(userDocument.status.name)
-                      : DocumentStatus.Pendiente
-
-                    return (
-                      <DocumentCard
-                        key={req.requirement_id}
-                        document={{
-                          id: req.requirement_id,
-                          title: req.name,
-                          description: req.description,
-                          status: documentStatus,
-                          userDocumentId: userDocument?.user_document_id,
-                        }}
-                        onUpload={(docId, fileUri) =>
-                          handleUpload(docId, fileUri)
-                        }
-                        onDelete={() =>
-                          handleDelete(userDocument?.user_document_id || 0)
-                        }
-                      />
-                    )
-                  })
-                ) : (
-                  // Si NO hay requisitos, mostrar este mensaje
-                  <Text style={styles.noRequirementsText}>
-                    Esta actividad no tiene requisitos.
-                  </Text>
-                )}
-              </View>
-            )}
-
-            {/* Botón para darse de baja*/}
-            <Pressable
-              style={styles.exitButton}
-              onPress={() => setActiveModal('exit')}
-            >
-              <Text style={styles.exitButtonText}>
-                Darte de baja del evento
-              </Text>
-            </Pressable>
-          </>
-        )}
+              {/* Botón para darse de baja*/}
+              <Button
+                buttonText='Darte de baja del evento'
+                onPress={() => setActiveModal('exit')}
+                style={styles.unsuscribedButton}
+              />
+            </>
+          ))}
 
         {/* Modal de confirmación para aplicar */}
         <ConfirmationModal
@@ -456,6 +553,8 @@ const InfoEvent: React.FC = () => {
             setActiveModal('none')
           }}
         />
+        {/* Modal de carga */}
+        <LoadingModal visible={showLoadingModal} />
       </View>
     </ScrollView>
   )

@@ -1,10 +1,12 @@
 import prisma from '../lib/prisma'
-import { STUDENT_ROLE_ID } from '../constants/roles'
+import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import { AcademicProgramWithStudents } from '../types/AcademicProgram'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
 import { NewUser, SafeUser, UserProfilePhoto } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
+import inscriptionService from './inscription.service'
+import academicProgramService from './academic-program.service'
 
 class UserService {
   async getAllUsers (): Promise<SafeUser[]> {
@@ -73,16 +75,18 @@ class UserService {
   }
 
   async createUser (userData: NewUser): Promise<SafeUser> {
+    console.log(userData)
     const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
           { institutional_email: userData.institutional_email },
-          { personal_email: userData.personal_email }
+          userData.personal_email !== null ? { personal_email: userData.personal_email } : {}
         ]
       }
     })
 
     if (existingUser !== null) {
+      console.log(existingUser)
       throw new ConflictError('Ya existe un usuario con este correo institucional o personal')
     }
 
@@ -256,6 +260,7 @@ class UserService {
           select: {
             students: {
               select: {
+                user_id: true,
                 name: true,
                 second_name: true,
                 paternal_lastname: true,
@@ -277,31 +282,39 @@ class UserService {
     return studentsWithPrograms
   }
 
-  async toggleStudentState (userId: number): Promise<ResponseMessage> {
-    const existing = await prisma.inscriptions.findMany({
+  async deactivateStudent (userId: number): Promise<void> {
+    await inscriptionService.deactivateStudentInscriptions(userId)
+
+    await prisma.users.update({
       where: {
-        student_id: userId
-      }
-    })
-
-    if (existing.length === 0) {
-      return { message: 'Student not found or has no inscriptions' }
-    }
-
-    const currentState = existing[0].active
-    const newState = !currentState
-
-    await prisma.inscriptions.updateMany({
-      where: {
-        student_id: userId
+        user_id: userId
       },
       data: {
-        active: newState
+        active: false
       }
     })
+  }
 
-    return {
-      message: 'Estudiante desactivado con éxito'
+  async deactivateResearcher (userId: number): Promise<void> {
+    await academicProgramService.unassignResearcherFromAllPrograms(userId)
+  }
+
+  async deactivateUser (userId: number): Promise<void> {
+    const user = await this.getUser(userId)
+
+    if (user.role.role_id === STUDENT_ROLE_ID) {
+      await this.deactivateStudent(userId)
+    } else if (user.role.role_id === RESEARCHER_ROLE_ID) {
+      await this.deactivateResearcher(userId)
+    } else {
+      await prisma.users.update({
+        where: {
+          user_id: userId
+        },
+        data: {
+          active: false
+        }
+      })
     }
   }
 

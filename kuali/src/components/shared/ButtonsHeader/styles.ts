@@ -10,6 +10,7 @@ export const styles = StyleSheet.create({
     flex: 4,
     fontSize: 24,
     fontFamily: 'monserratBold',
+    includeFontPadding: false,
   },
   iconsContainer: {
     flex: 1,

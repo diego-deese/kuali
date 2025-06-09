@@ -10,6 +10,7 @@ import Toast from 'react-native-toast-message'
 import { useErrors } from '../../hooks/ActivityForm/useErrors'
 import { mapToOption } from '../../utils/mappers'
 import { ActivityRequirement, EditRequirement } from '../../types/Requirements'
+import { useAppActions } from '../AppActionsContext'
 
 export const useActivityForm = (
   mode: 'create' | 'edit',
@@ -27,7 +28,9 @@ export const useActivityForm = (
   const [loading, setLoading] = useState(false)
   const [loadingAction, setLoadingAction] = useState(false)
 
-  const [posterImg, setPosterImg] = useState<string | null>(null)
+  const [posterImg, setPosterImg] = useState<string | null>(
+    mode === 'create' ? null : activityService.getActivityPosterUrl(activityId),
+  )
 
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
@@ -38,6 +41,8 @@ export const useActivityForm = (
     requirements_to_edit: [],
     requirements_to_delete: [],
   })
+
+  const { navigation } = useAppActions()
 
   const loadActivityData = useCallback(
     async (activityId: number): Promise<void> => {
@@ -119,6 +124,7 @@ export const useActivityForm = (
     setVisibleResearchers(true)
     setMandatory(false)
     requirementsManagement.restartRequirements()
+    locationManagement.onLocationChange(null)
   }
 
   const onTitleChange = (title: string) => {
@@ -152,13 +158,11 @@ export const useActivityForm = (
   }
 
   const selectPosterImg = async () => {
-    setPosterImg(null)
-
     const options: ImagePicker.ImagePickerOptions = {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [9, 16],
-      quality: 0.7,
+      quality: 0.5,
     }
 
     const result = await ImagePicker.launchImageLibraryAsync(options)
@@ -176,6 +180,7 @@ export const useActivityForm = (
     }
 
     if (mode !== 'edit') {
+      setPosterImg(null)
       errorManagement.updateErrors({
         posterImage: errorManagement.validatePosterImage(null),
       })
@@ -247,8 +252,12 @@ export const useActivityForm = (
   }
 
   const onActivityDateChange = (activityDate: Date) => {
+    // Convertir a UTC
+    const utcDate = new Date(
+      activityDate.getTime() - activityDate.getTimezoneOffset() * 60000,
+    )
     dateManagement.onActivityDateChange(activityDate)
-    editedActivityDataRef.current.event_date = activityDate
+    editedActivityDataRef.current.event_date = utcDate
   }
 
   const onLimitDateChange = (limitDate: Date) => {
@@ -364,8 +373,6 @@ export const useActivityForm = (
         return
       }
 
-      // console.log(editedActivityDataRef.current)
-
       const result = await activityService.updateActivity(
         editedActivityDataRef.current,
       )
@@ -383,6 +390,12 @@ export const useActivityForm = (
         text1: 'Actividad actualizada',
         text2: 'Los datos de la actividad se han actualizado',
       })
+
+      // setLoadingAction(false)
+
+      setTimeout(() => {
+        navigation.goBack()
+      }, 100)
     } catch (error) {
       console.error(error)
       Toast.show({

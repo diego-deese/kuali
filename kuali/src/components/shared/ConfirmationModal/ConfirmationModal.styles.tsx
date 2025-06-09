@@ -19,14 +19,22 @@ export default StyleSheet.create({
   title: {
     fontSize: 18,
     fontFamily: 'monserratBold',
+    includeFontPadding: false,
     textAlign: 'left',
     marginBottom: 8,
   },
   description: {
     fontSize: 14,
     fontFamily: 'monserratRegular',
+    includeFontPadding: false,
     color: colors.fontBlack,
     textAlign: 'left',
+    marginBottom: 16,
+  },
+  warningText: {
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
+    color: colors.warningRed,
     marginBottom: 16,
   },
   buttons: {

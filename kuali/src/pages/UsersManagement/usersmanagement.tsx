@@ -29,12 +29,19 @@ export default function UsersManagement() {
     handleOnEdit,
     handleGetInfo,
     openConfirmationModal,
+    openConfirmationModalResearcher,
     handleConfirmDeactivate,
     handleConfirmAssign,
+    handleConfirmAssignResearcher,
+    handleConfirmDeactivateResearcher,
     showConfirmationModal,
     setShowConfirmationModal,
+    showConfirmationModalResearcher,
+    setShowConfirmationModalResearcher,
     showProgramModal,
     setShowProgramModal,
+    showProgramModalForResearchers,
+    setShowProgramModalForResearchers,
     refreshing,
     setRefreshing,
     handleRefresh,
@@ -118,7 +125,9 @@ export default function UsersManagement() {
                     state={user.hasAcademicPrograms}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={() => openConfirmationModal(user)}
+                    onDeactivatePress={() =>
+                      openConfirmationModalResearcher(user)
+                    }
                   />
                 ))}
               </ScrollView>
@@ -154,18 +163,37 @@ export default function UsersManagement() {
         )}
         <ConfirmationModal
           visible={showConfirmationModal}
-          title='Desactivar usuario'
-          description='¿Estás seguro de que deseas desactivar este usuario?'
+          variant='delete'
+          title='Desactivar estudiante'
+          description='¿Estás seguro de que deseas realizar esta acción? Se desvinculara al estudiante de su programa académico.'
           confirmButtonText='Desactivar'
           confirmButtonColor={colors.warningRed}
           onConfirm={handleConfirmDeactivate}
           onCancel={() => setShowConfirmationModal(false)}
         />
 
+        <ConfirmationModal
+          visible={showConfirmationModalResearcher}
+          variant='delete'
+          title='Desactivar investigador'
+          description='¿Estás seguro de que deseas realizar esta acción? Se desvinculara al investigador de su programa académico.'
+          confirmButtonText='Desactivar'
+          confirmButtonColor={colors.warningRed}
+          onConfirm={handleConfirmDeactivateResearcher}
+          onCancel={() => setShowConfirmationModalResearcher(false)}
+        />
+
         <AcademicProgramsModal
+          available={true}
           visible={showProgramModal}
           onConfirm={handleConfirmAssign}
           onCancel={() => setShowProgramModal(false)}
+        />
+        <AcademicProgramsModal
+          available={false}
+          visible={showProgramModalForResearchers}
+          onConfirm={handleConfirmAssignResearcher}
+          onCancel={() => setShowProgramModalForResearchers(false)}
         />
       </SafeAreaView>
     </SafeAreaProvider>

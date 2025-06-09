@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios'
 import authService from './auth.service'
-import { ResponseError, Message, ApiResponse } from '../types/Request'
+import { ResponseError, Message, ApiResponse, Response } from '../types/Request'
 import axios from 'axios'
 import { NewUser } from '../types/User'
 import { InscriptionData } from '../types/AcademicProgram'
@@ -74,25 +74,35 @@ class UserService {
     return `${process.env.EXPO_PUBLIC_API_URL}/users/${userId}/profilePhoto`
   }
 
-  async deactiveProfile(userId: number): Promise<Message | ResponseError> {
+  async deactiveProfile(
+    userId: number,
+  ): Promise<Response<Message> | ResponseError> {
     try {
-      const response = await this.api.put(`/users/students/${userId}`)
+      const response = await this.api.patch(`/users/${userId}/deactivate`)
 
       if (response.status === 200) {
-        return response.data as Message
+        return {
+          success: true,
+          data: response.data,
+        }
       }
 
       return {
         success: false,
-        message: 'Error al desactivar la cuenta del usuario',
-        error: 'Respuesta inesperada del servidor',
+        message:
+          response.data.message || 'Error al desactivar la cuenta del usuario',
+        error:
+          response.data.error || 'No se pudo desactivar la cuenta del usuario',
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        console.error(error.response)
         const errorResponse = error.response?.data as ResponseError
         return {
           success: false,
-          message: errorResponse?.message || 'Error al desactivar la cuenta',
+          message:
+            errorResponse?.message ||
+            'Error al desactivar la cuenta del usuario',
           error:
             errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
         }
@@ -201,6 +211,36 @@ class UserService {
         return {
           success: false,
           message: errorResponse?.message || 'Error al reactivar la cuenta',
+          error:
+            errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
+        }
+      }
+      return {
+        success: false,
+        message: 'Error al conectar con el servidor',
+        error: 'Por favor, verifica tu conexión o intenta más tarde',
+      }
+    }
+  }
+  async getResearcherStudents(): Promise<
+    { name: string; students: any[] }[] | ResponseError
+  > {
+    try {
+      const response = await this.api.get('/users/researcher/students')
+      if (response.status === 200 && response.data?.studentsByAcademicProgram) {
+        return response.data.studentsByAcademicProgram
+      }
+      return {
+        success: false,
+        message: 'Error al obtener los estudiantes asignados',
+        error: 'Respuesta inesperada del servidor',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message: errorResponse?.message || 'Error al obtener estudiantes',
           error:
             errorResponse?.error || 'Por favor, intenta de nuevo más tarde',
         }

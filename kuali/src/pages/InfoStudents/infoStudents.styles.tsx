@@ -8,6 +8,13 @@ const styles = StyleSheet.create({
     paddingTop: 40,
     paddingLeft: 25,
   },
+  profileImage: {
+    width: 140,
+    height: 140,
+    borderRadius: 70,
+    marginTop: 24,
+    marginBottom: 24,
+  },
   imagePlaceholder: {
     width: 140,
     height: 140,
@@ -19,7 +26,8 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 30,
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     marginBottom: 8,
     color: colors.fontBlack,
   },
@@ -31,17 +39,21 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   idText: {
+    fontFamily: 'monserrat',
+    includeFontPadding: false,
     fontSize: 18,
     color: colors.solidWhite,
-    //fontWeight: 'bold',
   },
   role: {
     fontSize: 17,
-    fontWeight: 'bold',
+    fontFamily: 'monserratBold',
+    includeFontPadding: false,
     marginBottom: 8,
     color: colors.fontBlack,
   },
   info: {
+    fontFamily: 'monserrat',
+    includeFontPadding: false,
     fontSize: 17,
     marginBottom: 4,
     color: colors.fontBlack,

@@ -3,9 +3,16 @@ import { useUserForm } from './useUserForm'
 import { UserFormErrors } from '../../types/Error'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { User } from '../../types/User'
+import { DateType } from 'react-native-ui-datepicker'
 
 interface UserFormContextProps {
   mode: 'create' | 'edit'
+
+  profile_photo: string
+  selectProfilePhoto?: () => void
+
+  profilePhotoUri: string
+  setProfilePhotoUri: (value: string) => void
 
   name: string
   setName: (value: string) => void
@@ -59,6 +66,10 @@ interface UserFormContextProps {
   setSniDistinction: (value: Option | null) => void
   onSniDistinctionChange: (value: Option | null) => void
 
+  ediLevel: Option | null
+  setEdiLevel: (value: Option | null) => void
+  onEdiChange: (value: Option | null) => void
+
   namingNumber: string
   setNamingNumber: (value: string) => void
   onNamingNumberChange: (value: string) => void
@@ -83,6 +94,9 @@ interface UserFormContextProps {
   setPlacementType: (value: Option | null) => void
   onPlacementTypeChange: (value: Option | null) => void
 
+  validity: DateType
+  onValidityDateChange: (validity: DateType) => void
+
   errors: UserFormErrors
   updateErrors: (newErrors: Partial<UserFormErrors>) => void
   validateAllFields: (
@@ -91,10 +105,14 @@ interface UserFormContextProps {
     paternalLastName: string,
     maternalLastName: string,
     institutionalEmail: string,
+    personalEmail: string,
     password: string,
     identifier: string,
     curp: string,
-    role: Option | null,
+    role: { id: number; label: string } | null,
+    employeeNumber?: string,
+    namingNumber?: string,
+    cvuNumber?: string,
   ) => boolean
 
   loading: boolean

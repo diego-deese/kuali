@@ -1,6 +1,11 @@
 import axios, { AxiosInstance } from 'axios'
 import authService from './auth.service'
-import { ArrayResponse, ResponseError, Response } from '../types/Request'
+import {
+  ArrayResponse,
+  ResponseError,
+  Response,
+  Message,
+} from '../types/Request'
 import {
   Activity,
   NewActivityData,
@@ -133,6 +138,43 @@ class ActivityService {
     }
   }
 
+  async getActivitiesToReview(): Promise<
+    ArrayResponse<Activity> | ResponseError
+  > {
+    try {
+      const response = await this.api.get('activities/to-review')
+
+      if (response.status === 200) {
+        return { success: true, data: response.data.activities as Activity[] }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al obtener las actividades a revisar',
+        error:
+          response.data.error ||
+          'No se pudieron obtener las actividades a revisar',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        } as ResponseError
+      }
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      } as ResponseError
+    }
+  }
+
   async createActivity(
     newActivityData: NewActivityData,
   ): Promise<Response<Activity> | ResponseError> {
@@ -213,6 +255,7 @@ class ActivityService {
     } catch (error) {
       console.error(error)
       if (axios.isAxiosError(error)) {
+        console.log(error.response.data)
         const errorResponse = error.response?.data as ResponseError
         return {
           success: false,
@@ -303,7 +346,7 @@ class ActivityService {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.log(error.response?.data)
+        console.error(error)
         const errorResponse = error.response?.data as ResponseError
         return {
           success: false,
@@ -404,6 +447,45 @@ class ActivityService {
       const response = await this.api.delete(
         `/registrations/activity/${activityId}`,
       )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        }
+      }
+
+      return {
+        success: false,
+        message:
+          response.data.message || 'Error al darse de baja de la actividad',
+        error: response.data.error || 'No se pudo completar la baja',
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
+    }
+  }
+
+  async deleteActivity(
+    activityId: number,
+  ): Promise<Response<Message> | ResponseError> {
+    try {
+      const response = await this.api.delete(`/activities/${activityId}`)
 
       if (response.status === 200) {
         return {

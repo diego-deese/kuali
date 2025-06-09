@@ -23,12 +23,15 @@ export type User = {
   employeeNumber?: string
   categoriaProfr?: string
   sniDistinction?: string
+  ediLevel?: string
   namingNumber?: string
   namingType?: string
   cvuNumber?: string
   researchLine?: string
   socialSecurityNumber?: string
   placementType?: string
+  validity?: string
+  profile_photo?: string
 }
 
 export type NewUser = {
@@ -50,4 +53,5 @@ export type NewUser = {
   researchLine?: string
   socialSecurityNumber?: string
   placementType?: string
+  profile_photo?: string
 }

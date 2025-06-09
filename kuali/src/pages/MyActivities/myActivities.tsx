@@ -9,6 +9,7 @@ import ActivitiesList from '../../components/MyActivities/ActivitiesList/Activit
 import colors from '../../constants/colors'
 import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
 import { useAppActions } from '../../context/AppActionsContext'
+import EmptyActivityCard from '../../components/shared/EmptyActivityCard/EmptyActivityCard'
 
 export default function MyActivities() {
   const {
@@ -47,6 +48,11 @@ export default function MyActivities() {
           />
         )}
 
+        {(activities.activitiesToDisplay === null ||
+          activities.activitiesToDisplay.length === 0) && (
+          <EmptyActivityCard mode={activeTab.activeTab} />
+        )}
+
         <View style={styles.container}>
           {activeTab.activeTab === 'upcoming' &&
           viewMode.viewMode === 'card' ? (
@@ -68,8 +74,6 @@ export default function MyActivities() {
           )}
         </View>
       </ScrollView>
-
-      <LoadingModal visible={navigation.isNavigating} />
     </View>
   )
 }

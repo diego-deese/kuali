@@ -106,12 +106,13 @@ class AcademicProgramService {
     return academicProgram
   }
 
-  async unassignResearcher (academicProgramId: number): Promise<AcademicPrograms> {
+  async unassignResearcher (academicProgramId: number, userId: number): Promise<AcademicPrograms> {
     await this.getAcademicProgram(academicProgramId)
 
     const updatedAcademicProgram = await prisma.academicPrograms.update({
       where: {
-        program_id: academicProgramId
+        program_id: academicProgramId,
+        researcher_id: userId
       },
       data: {
         researcher_id: null
@@ -119,6 +120,17 @@ class AcademicProgramService {
     })
 
     return updatedAcademicProgram
+  }
+
+  async unassignResearcherFromAllPrograms (userId: number): Promise<void> {
+    await prisma.academicPrograms.updateMany({
+      where: {
+        researcher_id: userId
+      },
+      data: {
+        researcher_id: null
+      }
+    })
   }
 }
 

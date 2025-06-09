@@ -50,7 +50,7 @@ const EditActivity = () => {
         />
         <IconButton
           icon={
-            <SaveIcon fill={false} size={32} color={colors.selectionBlue} />
+            <SaveIcon fill={false} size={30} color={colors.selectionBlue} />
           }
           onPress={updateActivity}
         />

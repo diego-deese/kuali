@@ -308,3 +308,36 @@ export const SaveIcon = ({ fill = true, ...props }) => {
     />
   )
 }
+
+export const CalendarPlusIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='calendar-plus'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}
+
+export const CircleNotificationIcon = (props) => {
+  return (
+    <MaterialIcons
+      name='circle-notifications'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}
+
+export const NotificationClearAllIcon = (props) => {
+  return (
+    <MaterialCommunityIcons
+      name='notification-clear-all'
+      size={24}
+      color='black'
+      {...props}
+    />
+  )
+}
