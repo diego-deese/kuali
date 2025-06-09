@@ -25,7 +25,10 @@ export default function StudentCard({
     setStudents(students) // Stores full list of students in global state (used later in InfoStudents)
     router.replace({
       pathname: '/students/[id]',
-      params: buildStudentParams(student, index),
+      params: {
+        user_id: student.user_id.toString(),
+        index: index.toString(),
+      },
     })
   }
 

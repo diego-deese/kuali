@@ -4,9 +4,9 @@ import colors from '../../../constants/colors'
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.solidWhite,
-    borderRadius: 10,
+    borderRadius: 25,
     padding: 15,
-    marginBottom: 12,
+    marginBottom: 10,
     elevation: 3,
   },
   name: {

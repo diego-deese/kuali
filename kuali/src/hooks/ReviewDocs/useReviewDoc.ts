@@ -7,6 +7,7 @@ export const useGroupedUserDocuments = (
   groupBy: 'requirement' | 'user' = 'requirement',
 ) => {
   const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
   const [documents, setDocuments] = useState<any[]>([])
 
   const fetchGroupedDocuments = async () => {
@@ -38,13 +39,19 @@ export const useGroupedUserDocuments = (
       setLoading(false)
     }
   }
-
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchGroupedDocuments()
+    setRefreshing(false)
+  }
   useEffect(() => {
     if (activityId) fetchGroupedDocuments()
   }, [activityId, groupBy])
 
   return {
     loading,
+    refreshing,
+    handleRefresh,
     documentsByRequirement: groupBy === 'requirement' ? documents : [],
     documentsByUser: groupBy === 'user' ? documents : [],
     refetch: fetchGroupedDocuments,

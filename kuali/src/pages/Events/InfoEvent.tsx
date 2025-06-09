@@ -20,7 +20,7 @@ import WithRole from '../../components/WithRole/WithRole'
 import { Roles } from '../../constants/roles'
 import { useAuth } from '../../context/AuthContext'
 import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
-
+import { useAppActions } from '../../context/AppActionsContext'
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
@@ -42,6 +42,7 @@ const InfoEvent: React.FC = () => {
   >('none')
   const [showLoadingModal, setShowLoadingModal] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { navigation } = useAppActions()
 
   const fetchEventDetails = async () => {
     try {
@@ -385,12 +386,12 @@ const InfoEvent: React.FC = () => {
             <>
               <Button
                 buttonText='Revisión de documentos'
-                onPress={() =>
-                  router.push({
-                    pathname: '/review/student/student',
-                    params: { activity_id: activity_id.toString() },
-                  })
-                }
+                disabled={navigation.isNavigating}
+                onPress={() => {
+                  navigation.navigate(
+                    `/review/student/student?activity_id=${activity_id}`,
+                  )
+                }}
                 style={{ marginBottom: 12 }}
               />
             </>
