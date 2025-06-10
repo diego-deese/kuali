@@ -12,7 +12,7 @@ export const useNotifications = () => {
 
   const REFRESH_INTERVAL = 30000
 
-  const { user } = useAuth()
+  const { user, authenticated } = useAuth()
 
   const { requests } = useAppActions()
 
@@ -49,9 +49,10 @@ export const useNotifications = () => {
   }
 
   useEffect(() => {
-    if (requests.isSendingRequest) return
+    if (requests.isSendingRequest || !authenticated) return
 
     if (user?.role.role_id !== Roles.ADMIN) {
+      setNotifications([])
       getUserNotifications()
   
       const interval = setInterval(() => {
@@ -60,7 +61,7 @@ export const useNotifications = () => {
   
       return () => clearInterval(interval)
     }
-  }, [])
+  }, [authenticated, requests.isSendingRequest])
 
   return {
     notifications: notifications ?? [],
