@@ -16,39 +16,39 @@ model Roles {
 }
 
 model Users {
-  user_id                         Int                @id @default(autoincrement())
-  active                          Boolean            @default(false)
-  name                            String             @db.VarChar(255)
-  second_name                     String?            @db.VarChar(255)
-  paternal_lastname               String             @db.VarChar(255)
-  maternal_lastname               String             @db.VarChar(255)
-  institutional_email             String             @unique @db.VarChar(255)
-  personal_email                  String?            @unique @db.VarChar(255)
-  curp                            String?            @db.VarChar(18)
-  profile_photo                   Bytes?             @db.MediumBlob
-  photo_mime_type                 String?            @db.VarChar(50)
-  identifier                      String             @db.VarChar(255)
-  password                        String             @db.VarChar(255)
-  creation_date                   DateTime           @default(now())
+  user_id                         Int                    @id @default(autoincrement())
+  active                          Boolean                @default(false)
+  name                            String                 @db.VarChar(255)
+  second_name                     String?                @db.VarChar(255)
+  paternal_lastname               String                 @db.VarChar(255)
+  maternal_lastname               String                 @db.VarChar(255)
+  institutional_email             String                 @unique @db.VarChar(255)
+  personal_email                  String?                @unique @db.VarChar(255)
+  curp                            String?                @db.VarChar(18)
+  profile_photo                   Bytes?                 @db.MediumBlob
+  photo_mime_type                 String?                @db.VarChar(50)
+  identifier                      String                 @db.VarChar(255)
+  password                        String                 @db.VarChar(255)
+  creation_date                   DateTime               @default(now())
   role_id                         Int
-  employeeNumber                  String?            @unique @db.VarChar(8)
-  categoriaProfr                  String?            @db.VarChar(20)
-  sniDistinction                  String?            @db.VarChar(20)
+  employeeNumber                  String?                @unique @db.VarChar(8)
+  categoriaProfr                  String?                @db.VarChar(20)
+  sniDistinction                  String?                @db.VarChar(20)
   ediLevel                        Int?
-  namingNumber                    String?            @db.VarChar(13)
-  namingType                      String?            @db.VarChar(20)
-  cvuNumber                       String?            @db.VarChar(8)
-  researchLine                    String?            @db.VarChar(255)
-  socialSecurityNumber            String?            @unique @db.VarChar(255)
-  placementType                   String?            @db.VarChar(50)
+  namingNumber                    String?                @db.VarChar(13)
+  namingType                      String?                @db.VarChar(20)
+  cvuNumber                       String?                @db.VarChar(8)
+  researchLine                    String?                @db.VarChar(255)
+  socialSecurityNumber            String?                @unique @db.VarChar(255)
+  placementType                   String?                @db.VarChar(50)
   validity                        DateTime?
   academic_programs_as_researcher AcademicPrograms[]
   created_activities              Activities[]
   academic_programs_as_student    Inscriptions[]
   refresh_tokens                  RefreshToken[]
   activities                      Registrations[]
-  role                            Roles              @relation(fields: [role_id], references: [role_id])
-  Notification                    Notification[]
+  role                            Roles                  @relation(fields: [role_id], references: [role_id])
+  notifications                   NotificationReciever[]
 
   @@index([role_id], map: "Users_role_id_fkey")
 }
@@ -207,22 +207,32 @@ model NotificationType {
 }
 
 model Notification {
-  notification_id      Int              @id @default(autoincrement())
-  title                String           @db.VarChar(255)
-  message              String           @db.Text
-  read_status          Boolean          @default(false)
-  creation_date        DateTime         @default(now())
-  read_date            DateTime?
-  visible_students     Boolean          @default(true)
-  visible_researchers  Boolean          @default(true)
+  notification_id      Int                    @id @default(autoincrement())
+  title                String                 @db.VarChar(255)
+  message              String                 @db.Text
+  creation_date        DateTime               @default(now())
+  remind_date          DateTime?
+  visible_students     Boolean                @default(true)
+  visible_researchers  Boolean                @default(true)
   activity_id          Int?
   user_document_id     Int?
-  reciever_id          Int?
+  notify_all           Boolean                @default(false)
   notification_type_id Int
-  reciever             Users?            @relation(fields: [reciever_id], references: [user_id], onDelete: Cascade)
-  notification_type    NotificationType @relation(fields: [notification_type_id], references: [notification_type_id])
-  activity             Activities?      @relation(fields: [activity_id], references: [activity_id])
-  user_document        UserDocuments?   @relation(fields: [user_document_id], references: [user_document_id])
+  notification_type    NotificationType       @relation(fields: [notification_type_id], references: [notification_type_id])
+  activity             Activities?            @relation(fields: [activity_id], references: [activity_id])
+  user_document        UserDocuments?         @relation(fields: [user_document_id], references: [user_document_id])
+  recievers            NotificationReciever[]
 
   @@map("Notifications")
+}
+
+model NotificationReciever {
+  user_id         Int          @map("user_id")
+  notification_id Int          @map("notification_id")
+  user            Users        @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+  notification    Notification @relation(fields: [notification_id], references: [notification_id], onDelete: Cascade)
+  creation_date   DateTime     @default(now())
+
+  @@id([user_id, notification_id])
+  @@map("NotificationRecievers")
 }

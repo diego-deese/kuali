@@ -10,19 +10,24 @@ interface NotificationProps {
 }
 
 const Notification: React.FC<NotificationProps> = ({ notificationInfo }) => {
+  const isPastDate = new Date(notificationInfo.remind_date) < new Date()
+  const notificationColor = isPastDate ? colors.borderGray : colors.highlightCyan
+
   return (
     <View style={styles.container}>
-      <CircleNotificationIcon color={colors.highlightCyan} />
+      <CircleNotificationIcon color={notificationColor} />
       <View style={styles.infoContainer}>
         <View style={styles.dateContainer}>
           <FormattedDate
-            style={styles.date}
+            style={isPastDate ? styles.pastDate : styles.date}
             showWeekday={false}
             showTime={false}
-            date={new Date(notificationInfo.creation_date)}
+            date={new Date(notificationInfo.remind_date)}
           />
         </View>
-        <Text style={styles.message}>{notificationInfo.message}</Text>
+        <Text style={[styles.message, isPastDate && styles.pastMessage]}>
+          {notificationInfo.message}
+        </Text>
       </View>
     </View>
   )
@@ -35,9 +40,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     padding: 8,
+    flex: 1,
   },
   infoContainer: {
     gap: 4,
+    flex: 1,
   },
   dateContainer: {
     flexDirection: 'row',
@@ -51,6 +58,13 @@ const styles = StyleSheet.create({
     color: colors.highlightCyan,
     marginTop: 2,
   },
+  pastDate: {
+    fontFamily: 'monserratItalic',
+    includeFontPadding: false,
+    fontSize: 16,
+    color: colors.inactiveGray,
+    marginTop: 2,
+  },
   title: {
     fontFamily: 'monserratBold',
     includeFontPadding: false,
@@ -60,5 +74,10 @@ const styles = StyleSheet.create({
     fontFamily: 'monserratRegular',
     includeFontPadding: false,
     fontSize: 14,
+    flexShrink: 1,
   },
+  pastMessage: {
+    fontFamily: 'monserratItalic',
+    color: colors.inactiveGray,
+  }
 })

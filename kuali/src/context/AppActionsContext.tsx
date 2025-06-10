@@ -1,5 +1,5 @@
 import { router } from 'expo-router'
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useRef, useState } from 'react'
 
 interface AppActionsProps {
   navigation?: {
@@ -7,6 +7,10 @@ interface AppActionsProps {
     navigate: (path: string) => void
     goBack: () => void
     replace: (path: string) => void
+  },
+  requests?: {
+    isSendingRequest: boolean
+    toggleIsSendingRequest: (value: boolean) => void
   }
 }
 
@@ -14,6 +18,8 @@ const AppActionsContext = createContext<AppActionsProps>({})
 
 export const AppActionsProvider = ({ children }) => {
   const [isNavigating, setIsNavigating] = useState(false)
+
+  const isSendingRequest = useRef(false)
 
   const navigate = (path: string): void => {
     setIsNavigating(true)
@@ -39,6 +45,10 @@ export const AppActionsProvider = ({ children }) => {
     }, 1000)
   }
 
+  const toggleIsSendingRequest = (value: boolean): void => {
+    isSendingRequest.current = value
+  }
+
   const value = {
     navigation: {
       isNavigating,
@@ -46,6 +56,10 @@ export const AppActionsProvider = ({ children }) => {
       goBack,
       replace,
     },
+    requests: {
+      isSendingRequest: isSendingRequest.current,
+      toggleIsSendingRequest
+    }
   }
 
   return (

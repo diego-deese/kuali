@@ -13,6 +13,7 @@ import ConfirmationModal from '../../components/shared/ConfirmationModal/Confirm
 import { CheckIcon, CloseIcon } from '../../components/shared/Icons/Icons'
 
 import { useActivityFormContext } from '../../context/ActivityFormContext/ActivityFormContext'
+import { useAppActions } from '../../context/AppActionsContext'
 
 const CreateActivity = () => {
   const {
@@ -29,8 +30,16 @@ const CreateActivity = () => {
 
   const [showModal, setShowModal] = useState(false)
 
+  const { requests } = useAppActions()
+
   if (loading) {
     return <LoadingScreen message='Cargando la información...' />
+  }
+  const onCreateActivity = async () => {
+    if (requests.isSendingRequest) {
+      return
+    }
+    await createActivity()
   }
 
   const renderContent = () => (
@@ -49,7 +58,7 @@ const CreateActivity = () => {
         />
         <IconButton
           icon={<CheckIcon size={32} color={colors.selectionBlue} />}
-          onPress={createActivity}
+          onPress={onCreateActivity}
         />
       </ButtonsHeader>
 
