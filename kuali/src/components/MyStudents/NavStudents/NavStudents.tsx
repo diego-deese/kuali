@@ -2,6 +2,7 @@ import React from 'react'
 import { router } from 'expo-router'
 import NavButtons from '../../shared/NavButtons/NavButtons'
 import { User } from '../../../types/User'
+import { buildStudentParams } from '../../../utils/navigation'
 /**
  * NavigationButtons allows switching between students using index-based navigation.
  * It wraps the shared NavButtons component and handles routing to the corresponding student detail.
@@ -16,17 +17,10 @@ export default function NavigationButtons({
   // Navigate to a new student based on index
   const navigateTo = (newIndex: number) => {
     const nextStudent = students[newIndex]
-    // Push new route with the selected student's data
-    router.push({
+    // Replace new route with the selected student's data
+    router.replace({
       pathname: '/students/[id]',
-      params: {
-        user_id: nextStudent?.user_id?.toString() ?? '',
-        name: nextStudent?.name ?? '',
-        paternal_lastname: nextStudent?.paternal_lastname ?? '',
-        identifier: nextStudent?.identifier ?? '',
-        institutional_email: nextStudent?.institutional_email ?? '',
-        index: newIndex.toString(),
-      },
+      params: buildStudentParams(nextStudent, newIndex),
     })
   }
 

@@ -7,6 +7,7 @@ export const useGroupedUserDocuments = (activityId: number) => {
     [],
   )
   const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchDocuments = async () => {
     setLoading(true)
@@ -36,7 +37,11 @@ export const useGroupedUserDocuments = (activityId: number) => {
       setLoading(false)
     }
   }
-
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchDocuments()
+    setRefreshing(false)
+  }
   useEffect(() => {
     if (activityId) fetchDocuments()
   }, [activityId])
@@ -44,6 +49,8 @@ export const useGroupedUserDocuments = (activityId: number) => {
   return {
     documentsByRequirement,
     loading,
+    refreshing,
+    handleRefresh,
     refetch: fetchDocuments,
   }
 }

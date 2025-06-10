@@ -20,7 +20,7 @@ import WithRole from '../../components/WithRole/WithRole'
 import { Roles } from '../../constants/roles'
 import { useAuth } from '../../context/AuthContext'
 import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
-
+import { useAppActions } from '../../context/AppActionsContext'
 /*
    Pantalla que muestra información detallada de un evento específico,
   incluyendo sus requisitos documentales y permitiendo al usuario
@@ -42,6 +42,7 @@ const InfoEvent: React.FC = () => {
   )
   const [showLoadingModal, setShowLoadingModal] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const { navigation } = useAppActions()
 
   const fetchEventDetails = async () => {
     try {
@@ -348,27 +349,15 @@ const InfoEvent: React.FC = () => {
         <WithRole role={Roles.ADMIN}>
           {eventDetails.category.category_id === 1 && (
             <>
-              <Text style={styles.sectionTitle}>Panel Administrativo</Text>
               <Button
-                buttonText='Revisar por documento'
-                onPress={() =>
-                  router.push({
-                    pathname: '/review/student/student',
-                    params: { activity_id: activity_id.toString() },
-                  })
-                }
-                style={{ marginBottom: 12 }}
-              />
-              <Button
-                buttonText='Revisar por usuario'
+                buttonText='Revisión de documentos'
+                disabled={navigation.isNavigating}
                 onPress={() => {
-                  router.push({
-                    pathname: '/review/doc/doc',
-                    params: {
-                      activity_id: activity_id.toString(),
-                    },
-                  })
+                  navigation.navigate(
+                    `/review/student/student?activity_id=${activity_id}`,
+                  )
                 }}
+                style={{ marginBottom: 12 }}
               />
             </>
           )}

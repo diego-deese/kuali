@@ -1,63 +1,83 @@
-import { View, Text, Image } from 'react-native'
-import { useLocalSearchParams, router } from 'expo-router'
+import { View, Text, Image, ScrollView, RefreshControl } from 'react-native'
+import { useLocalSearchParams } from 'expo-router'
 import styles from './infoStudents.styles'
 import NavStudents from '../../components/MyStudents/NavStudents/NavStudents'
-import { getStudents } from '../../context/StudentsStored'
 import colors from '../../constants/colors'
-import userService from '../../services/user.service'
+import { useProfilePhotoCheck } from '../../hooks/MyStudents/useProfilePhoto'
+import { useAssignedStudents } from '../../hooks/MyStudents/useAssignedStudents'
 /**
  * InfoStudents screen displays detailed information about a selected student,
  * including profile photo, name, ID, email, and navigation between students.
  */
 export default function InfoStudents() {
-  // Extract parameters passed through the route
-  const {
-    user_id,
-    name,
-    paternal_lastname,
-    identifier,
-    institutional_email,
-    index,
-  } = useLocalSearchParams()
+  const { user_id, index } = useLocalSearchParams()
+  // Build the profile image URL from the user service
+  const userIdNumber = Number(user_id)
   // Convert the index to a number
   const parsedIndex = parseInt(index as string)
-  // Get the full list of stored students (used for navigation)
-  const parsedStudents = getStudents()
-  // Build the profile image URL from the user service
-  const profilePhotoUrl = userService.getProfilePhotoUrl(Number(user_id))
+  const { students, refreshing, handleRefresh, loading } = useAssignedStudents()
+  const student = students.find((s) => s.user_id === userIdNumber)
+  const { profilePhotoUrl, showPlaceholder } =
+    useProfilePhotoCheck(userIdNumber)
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.info}>Cargando estudiante...</Text>
+      </View>
+    )
+  }
+  if (!student) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.info}>No se encontró el estudiante</Text>
+      </View>
+    )
+  }
 
   return (
     <View style={{ flex: 1, backgroundColor: colors.solidWhite }}>
-      <View style={styles.container}>
-        {/* Display profile photo if available, otherwise show a placeholder */}
-        {profilePhotoUrl ? (
+      {/* Scrollable and refresh */}
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.selectionBlue}
+            colors={[colors.selectionBlue]}
+          />
+        }
+      >
+        {/* Student Info */}
+        {showPlaceholder || !profilePhotoUrl ? (
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.imagetext}>Sin foto</Text>
+          </View>
+        ) : (
           <Image
             source={{ uri: profilePhotoUrl }}
             style={styles.profileImage}
             resizeMode='cover'
           />
-        ) : (
-          <View style={styles.imagePlaceholder} />
         )}
 
-        {/* Nombre completo */}
         <Text style={styles.name}>
-          {name} {paternal_lastname}
+          {student.name} {student.second_name} {student.paternal_lastname}{' '}
+          {student.maternal_lastname}
         </Text>
 
-        {/* ID */}
         <View style={styles.idContainer}>
-          <Text style={styles.idText}>{identifier}</Text>
+          <Text style={styles.idText}>{student.identifier}</Text>
         </View>
 
-        {/* Rol fijo */}
         <Text style={styles.role}>Estudiante</Text>
+        <Text style={styles.info}>{student.institutional_email}</Text>
+      </ScrollView>
 
-        {/* Correo institucional */}
-        <Text style={styles.info}>{institutional_email}</Text>
-      </View>
-      <View style={{ marginBottom: 100 }}>
-        <NavStudents students={parsedStudents} index={parsedIndex} />
+      {/* Nav */}
+      <View style={{ marginBottom: '20%' }}>
+        <NavStudents students={students} index={parsedIndex} />
       </View>
     </View>
   )

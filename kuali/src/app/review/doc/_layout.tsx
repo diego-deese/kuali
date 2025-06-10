@@ -6,8 +6,6 @@ import LogoHorizontal from '../../../components/shared/Logos/LogoHorizontal'
 import IconButton from '../../../components/shared/IconButton/IconButton'
 
 export default function EventLayout() {
-  const { activity_id } = useLocalSearchParams()
-
   const goBack = () => {
     router.back()
   }

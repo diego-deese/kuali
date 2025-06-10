@@ -6,6 +6,7 @@ import { ResponseError } from '../../types/Request'
 export const useAssignedStudents = () => {
   const [students, setStudents] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const fetchStudents = async () => {
     setLoading(true)
@@ -37,7 +38,11 @@ export const useAssignedStudents = () => {
       setLoading(false)
     }
   }
-
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await fetchStudents()
+    setRefreshing(false)
+  }
   useEffect(() => {
     fetchStudents()
   }, [])
@@ -45,6 +50,8 @@ export const useAssignedStudents = () => {
   return {
     students,
     loading,
+    refreshing,
+    handleRefresh,
     refetch: fetchStudents,
   }
 }

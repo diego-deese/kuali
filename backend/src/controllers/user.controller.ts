@@ -189,6 +189,10 @@ class UserController {
           res.setHeader('Content-Length', imageBuffer.length)
 
           res.end(imageBuffer)
+        } else {
+          res.status(404).json({
+            message: 'El usuario no tiene foto de perfil'
+          })
         }
       }
     } catch (error) {
