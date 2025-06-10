@@ -1,5 +1,4 @@
 import { CALLS_CATEGORY_ID, EVENTS_CATEGORY_ID } from '../constants/activity-categories'
-import { NotificationTypes } from '../constants/notification-types'
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
 import { ActivityInfo, ActivityPoster, CreatedActivity, NewActivity, UpdateActivity, UserAccesibleActivity } from '../types/Activities'
@@ -255,16 +254,7 @@ class ActivityService {
       await registrationService.registerUsersToActivity(rolesToSubscribe, newActivity.activity_id)
     }
 
-    await notificationService.createNotification({
-      title: 'Nueva actividad',
-      message: newActivity.category.category_id === EVENTS_CATEGORY_ID ? `Nuevo evento '${newActivity.title.trim()}' creado` : `Nueva convocatoria '${newActivity.title.trim()} creada'`,
-      activity_id: newActivity.activity_id,
-      visible_researchers: newActivity.visible_researchers,
-      visible_students: newActivity.visible_students,
-      user_document_id: null,
-      reciever_id: null,
-      notification_type_id: NotificationTypes.ACTIVITY_CREATED_ID
-    })
+    await notificationService.createNewActivityNotifications(newActivity)
 
     return newActivity
   }

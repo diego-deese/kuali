@@ -19,7 +19,7 @@ const Notification: React.FC<NotificationProps> = ({ notificationInfo }) => {
             style={styles.date}
             showWeekday={false}
             showTime={false}
-            date={new Date(notificationInfo.creation_date)}
+            date={new Date(notificationInfo.remind_date)}
           />
         </View>
         <Text style={styles.message}>{notificationInfo.message}</Text>

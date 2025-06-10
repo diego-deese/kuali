@@ -2,16 +2,26 @@ import { useEffect, useState } from 'react'
 import { Notification } from '../../types/Notification'
 import notificationService from '../../services/notification.service'
 import Toast from 'react-native-toast-message'
+import { useAuth } from '../AuthContext'
+import { Roles } from '../../constants/roles'
+import { useAppActions } from '../AppActionsContext'
 
 export const useNotifications = () => {
   const [showDrawer, setShowDrawer] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
+
+  const REFRESH_INTERVAL = 30000
+
+  const { user } = useAuth()
+
+  const { requests } = useAppActions()
 
   const toggleShowDrawer = (): void => {
     setShowDrawer(!showDrawer)
   }
 
   const getUserNotifications = async (): Promise<void> => {
+    requests.toggleIsSendingRequest(true)
     try {
       const result = await notificationService.getUserNotifications()
 
@@ -33,11 +43,23 @@ export const useNotifications = () => {
         text2: 'Por favor intenta de nuevo más tarde',
       })
       setNotifications([])
+    } finally {
+      requests.toggleIsSendingRequest(false)
     }
   }
 
   useEffect(() => {
-    getUserNotifications()
+    if (requests.isSendingRequest) return
+
+    if (user?.role.role_id !== Roles.ADMIN) {
+      getUserNotifications()
+  
+      const interval = setInterval(() => {
+        getUserNotifications()
+      }, REFRESH_INTERVAL)
+  
+      return () => clearInterval(interval)
+    }
   }, [])
 
   return {
