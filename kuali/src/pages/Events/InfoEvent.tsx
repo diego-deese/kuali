@@ -88,7 +88,7 @@ const InfoEvent: React.FC = () => {
         return
       }
       setShowLoadingModal(true)
-      setLoading(true)
+      //setLoading(true)
       const result = await documentService.uploadDocument(
         activity_id,
         docId,
@@ -116,7 +116,7 @@ const InfoEvent: React.FC = () => {
       console.error('Error al subir documento:', error)
       setError('Error al subir el documento')
     } finally {
-      setLoading(false)
+      //setLoading(false)
       setShowLoadingModal(false)
     }
   }
@@ -491,6 +491,7 @@ const InfoEvent: React.FC = () => {
                           onDelete={() =>
                             handleDelete(userDocument?.user_document_id || 0)
                           }
+                          showButtons={!isRegistrationClosed()}
                         />
                       )
                     })
@@ -504,11 +505,13 @@ const InfoEvent: React.FC = () => {
               )}
 
               {/* Botón para darse de baja*/}
-              <Button
-                buttonText='Darte de baja del evento'
-                onPress={() => setActiveModal('exit')}
-                style={styles.unsuscribedButton}
-              />
+              {!isRegistrationClosed() && (
+                <Button
+                  buttonText='Darte de baja del evento'
+                  onPress={() => setActiveModal('exit')}
+                  style={styles.unsuscribedButton}
+                />
+              )}
             </>
           ))}
 

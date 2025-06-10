@@ -30,14 +30,18 @@ export default function UsersManagement() {
     handleGetInfo,
     openConfirmationModal,
     openConfirmationModalResearcher,
+    openConfirmationModalAdmin,
     handleConfirmDeactivate,
     handleConfirmAssign,
     handleConfirmAssignResearcher,
     handleConfirmDeactivateResearcher,
+    handleDeleteAdmin,
     showConfirmationModal,
     setShowConfirmationModal,
     showConfirmationModalResearcher,
     setShowConfirmationModalResearcher,
+    showConfirmationModalAdmin,
+    setShowConfirmationModalAdmin,
     showProgramModal,
     setShowProgramModal,
     showProgramModalForResearchers,
@@ -96,9 +100,11 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={user.hasAcademicPrograms}
+                    isAdmin={false}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={() => openConfirmationModal(user)}
+                    onAddProgramPress={() => openConfirmationModal(user, true)}
+                    onDeactivatePress={() => openConfirmationModal(user, false)}
                   />
                 ))}
               </ScrollView>
@@ -123,10 +129,14 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={user.hasAcademicPrograms}
+                    isAdmin={false}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
+                    onAddProgramPress={() =>
+                      openConfirmationModalResearcher(user, true)
+                    }
                     onDeactivatePress={() =>
-                      openConfirmationModalResearcher(user)
+                      openConfirmationModalResearcher(user, false)
                     }
                   />
                 ))}
@@ -152,9 +162,10 @@ export default function UsersManagement() {
                     paternal_lastname={user.paternal_lastname}
                     maternal_lastname={user.maternal_lastname}
                     state={true}
+                    isAdmin={true}
                     onGetInfoPress={() => handleGetInfo(user.user_id)}
                     onEditPress={() => handleOnEdit(user.user_id)}
-                    onDeactivatePress={openConfirmationModal}
+                    onDeactivatePress={() => openConfirmationModalAdmin(user)}
                   />
                 ))}
               </ScrollView>
@@ -181,6 +192,17 @@ export default function UsersManagement() {
           confirmButtonColor={colors.warningRed}
           onConfirm={handleConfirmDeactivateResearcher}
           onCancel={() => setShowConfirmationModalResearcher(false)}
+        />
+
+        <ConfirmationModal
+          visible={showConfirmationModalAdmin}
+          variant='delete'
+          title='Eliminar administrador'
+          description='¿Estás seguro de que deseas realizar esta acción? Se eliminará permanentemente la cuenta del administrador.'
+          confirmButtonText='Eliminar'
+          confirmButtonColor={colors.warningRed}
+          onConfirm={handleDeleteAdmin}
+          onCancel={() => setShowConfirmationModalAdmin(false)}
         />
 
         <AcademicProgramsModal

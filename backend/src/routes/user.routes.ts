@@ -13,7 +13,9 @@ router.post('/students', isAuthenticated, userController.assignStudent)
 
 router.get('/:id', isAuthenticated, userController.getUser)
 router.put('/:id', isAuthenticated, isAdmin, userController.updateUser)
+
 router.delete('/:id', isAuthenticated, isAdmin, userController.deleteUser)
+router.delete('/Admin/:id', isAuthenticated, isAdmin, userController.deleteAdmin)
 
 router.patch('/:id/deactivate', isAuthenticated, userController.deactivateUser)
 
