@@ -15,13 +15,11 @@ export default function InfoStudents() {
   const userIdNumber = Number(user_id)
   // Convert the index to a number
   const parsedIndex = parseInt(index as string)
-
   const { students, refreshing, handleRefresh, loading } = useAssignedStudents()
-
   const student = students.find((s) => s.user_id === userIdNumber)
-
   const { profilePhotoUrl, showPlaceholder } =
     useProfilePhotoCheck(userIdNumber)
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -53,7 +51,9 @@ export default function InfoStudents() {
       >
         {/* Student Info */}
         {showPlaceholder || !profilePhotoUrl ? (
-          <View style={styles.imagePlaceholder} />
+          <View style={styles.imagePlaceholder}>
+            <Text style={styles.imagetext}>Sin foto</Text>
+          </View>
         ) : (
           <Image
             source={{ uri: profilePhotoUrl }}

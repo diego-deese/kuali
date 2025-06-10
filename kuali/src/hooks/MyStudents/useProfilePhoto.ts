@@ -5,6 +5,7 @@ export const useProfilePhotoCheck = (userId: number) => {
   const [profilePhotoUrl, setProfilePhotoUrl] = useState('')
   const [photoExists, setPhotoExists] = useState(true)
   const [loading, setLoading] = useState(false)
+  const [refreshing, setRefreshing] = useState(false)
 
   const checkPhoto = async () => {
     setLoading(true)
@@ -21,6 +22,7 @@ export const useProfilePhotoCheck = (userId: number) => {
       const res = await fetch(url, { method: 'HEAD' })
       if (!res.ok || res.status === 404) {
         setPhotoExists(false)
+        setProfilePhotoUrl('')
       } else {
         setPhotoExists(true)
       }
@@ -30,7 +32,11 @@ export const useProfilePhotoCheck = (userId: number) => {
       setLoading(false)
     }
   }
-
+  const handleRefresh = async () => {
+    setRefreshing(true)
+    await checkPhoto()
+    setRefreshing(false)
+  }
   useEffect(() => {
     if (userId) {
       checkPhoto()
@@ -41,6 +47,8 @@ export const useProfilePhotoCheck = (userId: number) => {
     profilePhotoUrl,
     showPlaceholder: !photoExists,
     loading,
+    refreshing,
+    handleRefresh,
     refetch: checkPhoto,
   }
 }
