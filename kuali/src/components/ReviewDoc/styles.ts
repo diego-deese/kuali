@@ -23,7 +23,7 @@ export default StyleSheet.create({
     fontSize: 15,
     flexShrink: 1,
     flexWrap: 'wrap',
-    paddingRight: 40,
+    paddingRight: 70,
   },
   actions: {
     flexDirection: 'column',
