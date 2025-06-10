@@ -22,12 +22,14 @@ interface DocumentCardProps {
   document: Document
   onUpload?: (docId: number, fileUri?: string) => void
   onDelete?: (docId: number) => void
+  showButtons?: boolean
 }
 
 export default function DocumentCard({
   document,
   onUpload,
   onDelete,
+  showButtons = true,
 }: DocumentCardProps) {
   const { id, title, description, status } = document
 
@@ -82,22 +84,15 @@ export default function DocumentCard({
 
   // Función para renderizar los botones según el status
   const renderButtons = () => {
+    // Si showButtons es false, no mostrar botones
+    if (!showButtons) {
+      return null
+    }
+
     // Si el documento está aprobado, no mostramos botones
     if (status === DocumentStatus.Aprobado) {
       return null
     }
-    // if (status === DocumentStatus.Rechazado) {
-    //   return (
-    //     <View style={styles.buttonContainer}>
-    //       <Button
-    //         buttonText='Subir documento'
-    //         onPress={pickDocument}
-    //         disabled={false}
-    //         size='small'
-    //       />
-    //     </View>
-    //   )
-    // }
     // Si esta pendiente, se muestran ambos
     return (
       <View style={styles.buttonContainer}>

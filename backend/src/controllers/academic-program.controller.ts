@@ -39,7 +39,7 @@ class AcademicProgramController {
 
       const newAcademicProgram = await academicProgramService.createAcademicProgram(newAcademicProgramData)
 
-      res.status(201).json({ academitc_programs: newAcademicProgram })
+      res.status(201).json({ academic_program: newAcademicProgram })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
@@ -100,7 +100,7 @@ class AcademicProgramController {
 
       const renamedAcademicProgram = await academicProgramService.renameAcademicProgram(academicProgramId, newName)
 
-      res.status(200).json({ academid_program: renamedAcademicProgram })
+      res.status(200).json({ academic_program: renamedAcademicProgram })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
