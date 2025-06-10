@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Pressable, View, Text, ScrollView } from 'react-native'
+import { Pressable, View, Text, ScrollView, RefreshControl } from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import styles from './styles'
 import { router } from 'expo-router'
@@ -8,7 +8,7 @@ import DocReviewCard from '../../components/ReviewDoc/DocReviewCard'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useReviewDoc'
 import NavButtons from '../../components/shared/NavButtons/NavButtons'
 import SelectInput from '../../components/shared/SelectInput'
-
+import colors from '../../constants/colors'
 /**
  * ReviewDoc screen allows reviewing all documents submitted by users
  * (grouped by user) for a specific activity. Users can navigate between
@@ -19,10 +19,8 @@ export default function ReviewDoc() {
   const { activity_id } = useLocalSearchParams()
   const actId = Number(activity_id)
   // Fetch user documents grouped by user, along with loading and refetch status
-  const { documentsByUser, loading, refetch } = useGroupedUserDocuments(
-    actId,
-    'user',
-  )
+  const { documentsByUser, loading, refreshing, handleRefresh, refetch } =
+    useGroupedUserDocuments(actId, 'user')
   // Track the currently selected user index for navigation
   const [currentIndex, setCurrentIndex] = useState(0)
   // SelectInput logic
@@ -91,7 +89,17 @@ export default function ReviewDoc() {
         </Pressable>
       </View>
       {/* List of document cards for the selected student */}
-      <ScrollView contentContainerStyle={styles.list}>
+      <ScrollView
+        contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.selectionBlue}
+            colors={[colors.selectionBlue]}
+          />
+        }
+      >
         {student?.userDocuments?.length ? (
           student.userDocuments.map((req) => (
             <DocReviewCard

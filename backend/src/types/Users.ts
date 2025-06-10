@@ -13,6 +13,7 @@ export type UserProfilePhoto = Pick<Users, 'profile_photo' | 'photo_mime_type'>
 
 const studentInProgram = Prisma.validator<Prisma.UsersDefaultArgs>()({
   select: {
+    user_id: true,
     name: true,
     second_name: true,
     paternal_lastname: true,

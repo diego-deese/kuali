@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Pressable, View, Text, ScrollView } from 'react-native'
+import { Pressable, View, Text, ScrollView, RefreshControl } from 'react-native'
 import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard'
 import styles from './styles'
 import { router } from 'expo-router'
@@ -8,6 +8,7 @@ import { useLocalSearchParams } from 'expo-router'
 import { useGroupedUserDocuments } from '../../hooks/ReviewDocs/useUserDocument'
 import NavButtons from '../../components/shared/NavButtons/NavButtons'
 import SelectInput from '../../components/shared/SelectInput'
+import colors from '../../constants/colors'
 
 /**
  * ReviewStudentDoc displays documents grouped by required document type.
@@ -18,9 +19,13 @@ export default function ReviewStudentDoc() {
   const { activity_id } = useLocalSearchParams()
   const activityId = Number(activity_id)
   // Fetch documents grouped by requirement (per document type)
-  const { documentsByRequirement, loading, refetch } = useGroupedUserDocuments(
-    Number(activity_id),
-  )
+  const {
+    documentsByRequirement,
+    loading,
+    refreshing,
+    handleRefresh,
+    refetch,
+  } = useGroupedUserDocuments(activityId)
   // Track the currently selected requirement index for navigation
   const [currentIndex, setCurrentIndex] = useState(0)
   const viewOptions = [
@@ -84,7 +89,17 @@ export default function ReviewStudentDoc() {
         </Pressable>
       </View>
       {/* Scrollable list of student review cards for this document requirement */}
-      <ScrollView contentContainerStyle={styles.list}>
+      <ScrollView
+        contentContainerStyle={styles.list}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={colors.selectionBlue}
+            colors={[colors.selectionBlue]}
+          />
+        }
+      >
         {group.userDocuments?.length ? (
           group.userDocuments.map((doc, index) => {
             const user = doc.user

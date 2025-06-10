@@ -23,6 +23,15 @@ const styles = StyleSheet.create({
     borderColor: colors.highlightCyan,
     marginTop: 24,
     marginBottom: 24,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imagetext: {
+    fontFamily: 'monserrat',
+    includeFontPadding: false,
+    fontSize: 17,
+    color: colors.fontBlack,
+    textAlign: 'center',
   },
   name: {
     fontSize: 30,
