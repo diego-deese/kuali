@@ -37,9 +37,9 @@ const InfoEvent: React.FC = () => {
   const [documentToDelete, setDocumentToDelete] = useState<number | null>(null)
   const [requirementsExpanded, setRequirementsExpanded] = useState(true)
   const [plantillasExpanded, setPlantillasExpanded] = useState(true)
-  const [activeModal, setActiveModal] = useState<
-    'none' | 'apply' | 'exit' | 'delete'
-  >('none')
+  const [activeModal, setActiveModal] = useState<'none' | 'apply' | 'delete'>(
+    'none',
+  )
   const [showLoadingModal, setShowLoadingModal] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
 
@@ -175,41 +175,6 @@ const InfoEvent: React.FC = () => {
       setShowLoadingModal(false)
       setLoading(false)
       setDocumentToDelete(null)
-    }
-  }
-
-  const handleExit = async () => {
-    try {
-      setLoading(true)
-      const result = await activityService.unregisterFromActivity(activity_id)
-
-      if (result.success) {
-        setHasApplied(false)
-        Toast.show({
-          type: 'success',
-          text1: 'Baja procesada',
-          text2: 'Te has dado de baja de la actividad correctamente',
-          position: 'top',
-          visibilityTime: 3000,
-        })
-        router.back()
-      } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Error',
-          position: 'top',
-        })
-      }
-    } catch (error) {
-      console.error('Error al darse de baja del evento:', error)
-      Toast.show({
-        type: 'error',
-        text1: 'Error',
-        text2: 'Ocurrió un error al procesar tu solicitud',
-        position: 'top',
-      })
-    } finally {
-      setLoading(false)
     }
   }
 
@@ -503,15 +468,6 @@ const InfoEvent: React.FC = () => {
                   )}
                 </View>
               )}
-
-              {/* Botón para darse de baja*/}
-              {!isRegistrationClosed() && (
-                <Button
-                  buttonText='Darte de baja del evento'
-                  onPress={() => setActiveModal('exit')}
-                  style={styles.unsuscribedButton}
-                />
-              )}
             </>
           ))}
 
@@ -528,18 +484,7 @@ const InfoEvent: React.FC = () => {
             setActiveModal('none')
           }}
         />
-        {/* Modal de confirmación para desuscribirse */}
-        <ConfirmationModal
-          visible={activeModal === 'exit'}
-          title='Confirmación'
-          description='¿Estás seguro que deseas ya no aplicar a esta convocatoria? Ya no volverás a recibir notificaciones ni alertas sobre ésta.'
-          confirmButtonColor={colors.warningRed}
-          onCancel={() => setActiveModal('none')}
-          onConfirm={() => {
-            handleExit()
-            setActiveModal('none')
-          }}
-        />
+
         {/* Modal de confirmación para eliminar documento */}
         <ConfirmationModal
           visible={activeModal === 'delete'}
