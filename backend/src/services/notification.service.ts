@@ -1,12 +1,12 @@
 import { CALLS_CATEGORY_ID, EVENTS_CATEGORY_ID } from '../constants/activity-categories'
 import { NotificationTypes } from '../constants/notification-types'
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
-import { Notification } from '../generated/client'
+import { Notification, UserDocuments } from '../generated/client'
 import prisma from '../lib/prisma'
 import { CreatedActivity } from '../types/Activities'
 import { NewNotification } from '../types/Notification'
 import userService from './user.service'
-import { startOfDay, endOfDay, subDays } from 'date-fns'
+import { startOfDay, endOfDay, subDays, addMinutes } from 'date-fns'
 
 class NotificationService {
   async getUserNotifications (userId: number): Promise<Notification[]> {
@@ -17,40 +17,31 @@ class NotificationService {
 
     const notifications = await prisma.notification.findMany({
       where: {
+        AND: [
+          { remind_date: { gte: threeDaysAgo } },
+          {
+            remind_date: {
+              gte: today,
+              lte: endOfDay(today)
+            }
+          }
+        ],
         OR: [
           {
             AND: [
               { notify_all: true },
-              { remind_date: { gte: threeDaysAgo } },
-              {
-                remind_date: {
-                  gte: today,
-                  lte: endOfDay(today)
-                }
-              }
+              (user.role.role_id === STUDENT_ROLE_ID ? { visible_students: true } : {}),
+              (user.role.role_id === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {})
             ]
           },
           {
-            AND: [
-              {
-                recievers: {
-                  some: {
-                    user_id: userId
-                  }
-                }
-              },
-              { remind_date: { gte: threeDaysAgo } },
-              {
-                remind_date: {
-                  gte: today,
-                  lte: endOfDay(today)
-                }
+            recievers: {
+              some: {
+                user_id: userId
               }
-            ]
+            }
           }
-        ],
-        ...(user.role.role_id === STUDENT_ROLE_ID ? { visible_students: true } : {}),
-        ...(user.role.role_id === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {})
+        ]
       },
       orderBy: [
         {
@@ -75,8 +66,8 @@ class NotificationService {
     await this.createNotification({
       title: newActivity.category.category_id === EVENTS_CATEGORY_ID ? 'Nuevo evento creado' : 'Nueva convocatoria creada',
       message: newActivity.category.category_id === EVENTS_CATEGORY_ID
-        ? `Nuevo evento '${newActivity.title.trim()}' creado.`
-        : `Nueva convocatoria '${newActivity.title.trim()}' creada.`,
+        ? `Nuevo evento "${newActivity.title.trim()}" creado.`
+        : `Nueva convocatoria "${newActivity.title.trim()}" creada.`,
       activity_id: newActivity.activity_id,
       visible_researchers: newActivity.visible_researchers,
       visible_students: newActivity.visible_students,
@@ -111,7 +102,7 @@ class NotificationService {
       visible_students: newActivity.visible_students,
       user_document_id: null,
       notification_type_id: NotificationTypes.ACTIVITY_REMINDER,
-      remind_date: endOfDay(subDays(newActivity.event_date, 3)),
+      remind_date: subDays(addMinutes(newActivity.event_date, 1), 3),
       notify_all: false
     })
 
@@ -124,9 +115,66 @@ class NotificationService {
       visible_students: newActivity.visible_students,
       user_document_id: null,
       notification_type_id: NotificationTypes.ACTIVITY_REMINDER,
-      remind_date: endOfDay(subDays(newActivity.event_date, 1)),
+      remind_date: subDays(addMinutes(newActivity.event_date, 1), 1),
       notify_all: false
     })
+  }
+
+  async createApprovedDocumentNotification (userDocuemntInfo: UserDocuments): Promise<void> {
+    const activity = await prisma.activities.findFirst({
+      where: {
+        requirements: {
+          some: {
+            userDocuments: {
+              some: {
+                user_document_id: userDocuemntInfo.user_document_id
+              }
+            }
+          }
+        }
+      },
+      select: {
+        title: true,
+        requirements: {
+          select: {
+            name: true,
+            userDocuments: {
+              select: {
+                registration: {
+                  select: {
+                    user_id: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const newNotification = await this.createNotification({
+      title: 'Documento de usuario aprovado',
+      message: `Tu documento "${activity?.requirements?.[0]?.name ?? ''}" para la convocatoria "${activity?.title ?? ''}" ha sido revisado y aprobado. Ya puedes continuar con el proceso de inscripción.`,
+      visible_researchers: true,
+      visible_students: true,
+      activity_id: null,
+      user_document_id: userDocuemntInfo.user_document_id,
+      notification_type_id: NotificationTypes.DOCUMENT_REVIEW,
+      remind_date: new Date(),
+      notify_all: false
+    })
+
+    const userId = activity?.requirements[0]?.userDocuments[0]?.registration.user_id
+    if (typeof userId === 'number') {
+      await prisma.notificationReciever.create({
+        data: {
+          notification_id: newNotification.notification_id,
+          user_id: userId
+        }
+      })
+    } else {
+      throw new Error('No se pudo encontrar el user_id para la notificación de documento aprobado.')
+    }
   }
 }
 
