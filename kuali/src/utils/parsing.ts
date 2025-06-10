@@ -31,3 +31,9 @@ export const getFileInfo = (uri: string) => {
     mimeType: mimeTypes[extension] || 'application/octet-stream',
   }
 }
+
+export const getDateWithoutTime = (date: Date): Date => {
+  const newDate = new Date(date)
+  newDate.setHours(0, 0, 0, 0)
+  return newDate
+}

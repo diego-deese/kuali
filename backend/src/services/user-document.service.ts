@@ -1,9 +1,10 @@
-import { PENDING_ID } from '../constants/revision-status'
+import { APPROVED_ID, PENDING_ID, REJECTED_ID } from '../constants/revision-status'
 import { UserDocuments } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError, ValidationError } from '../types/Error'
 import { NewUserDocument, RequirementDocumentInfo, RequirementUserDocuments, UpdateUserDocument, UserDocumentInfo, UserUserDocuments } from '../types/UserDocuments'
 import activityService from './activity.service'
+import notificationService from './notification.service'
 import registrationService from './registration.service'
 
 class UserDocumentService {
@@ -38,7 +39,6 @@ class UserDocumentService {
       }
     })
 
-    // Crear un objeto con los requisitos como claves y los documentos como valores
     const groupedUserDocuments = requirements.map<RequirementUserDocuments>((req) => {
       return {
         requirement: {
@@ -69,7 +69,6 @@ class UserDocumentService {
   async getUserDocumentsByUser (activityId: number): Promise<UserUserDocuments[]> {
     await activityService.getActivity(activityId)
 
-    // Obtener todas las inscripciones a la actividad
     const registrations = await prisma.registrations.findMany({
       where: {
         activity_id: activityId
@@ -95,7 +94,6 @@ class UserDocumentService {
       }
     })
 
-    // Crear un objeto con los estudiantes como claves y sus documentos como valores
     const groupedUserDocuments = registrations.map<UserUserDocuments>((reg) => {
       return {
         user: {
@@ -151,7 +149,7 @@ class UserDocumentService {
 
       await this.getUserDocument(userDocumentId)
 
-      await prisma.userDocuments.update({
+      const userDocument = await prisma.userDocuments.update({
         where: {
           user_document_id: userDocumentId
         },
@@ -160,6 +158,12 @@ class UserDocumentService {
           last_reviewed: new Date()
         }
       })
+
+      if (revisionStatusId === APPROVED_ID) {
+        await notificationService.createApprovedDocumentNotification(userDocument)
+      } else if (revisionStatusId === REJECTED_ID) {
+        await notificationService.createRejectedDocumentNotification(userDocument)
+      }
 
       return true
     } catch (error) {
