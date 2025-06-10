@@ -267,6 +267,18 @@ class ActivityService {
     }
 
     await prisma.$transaction([
+      prisma.notificationReciever.deleteMany({
+        where: {
+          notification: {
+            activity_id: activityId
+          }
+        }
+      }),
+      prisma.notification.deleteMany({
+        where: {
+          activity_id: activityId
+        }
+      }),
       prisma.userDocuments.deleteMany({
         where: {
           registration: {

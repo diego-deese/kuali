@@ -52,6 +52,7 @@ export const useNotifications = () => {
     if (requests.isSendingRequest) return
 
     if (user?.role.role_id !== Roles.ADMIN) {
+      setNotifications([])
       getUserNotifications()
   
       const interval = setInterval(() => {

@@ -1,3 +1,4 @@
+import { NotificationTypes } from '../constants/notification-types'
 import { Registrations } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError, ValidationError } from '../types/Error'
@@ -50,6 +51,22 @@ class RegistrationService {
         activity_id: activityId
       }
     })
+
+    const remindNotifications = await prisma.notification.findMany({
+      where: {
+        activity_id: activityId,
+        notification_type_id: NotificationTypes.ACTIVITY_REMINDER
+      }
+    })
+
+    for (const notification of remindNotifications) {
+      await prisma.notificationReciever.create({
+        data: {
+          user_id: userId,
+          notification_id: notification.notification_id
+        }
+      })
+    }
 
     return registration
   }

@@ -6,11 +6,11 @@ const newNotification = Prisma.validator<Prisma.NotificationDefaultArgs>()({
     message: true,
     activity_id: true,
     user_document_id: true,
-    reciever_id: true,
     remind_date: true,
     notification_type_id: true,
     visible_researchers: true,
-    visible_students: true
+    visible_students: true,
+    notify_all: true
   }
 })
 

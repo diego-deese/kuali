@@ -15,36 +15,48 @@ class NotificationService {
     const today = startOfDay(new Date())
     const threeDaysAgo = subDays(today, 3)
 
-    console.log(today)
-
     const notifications = await prisma.notification.findMany({
       where: {
         OR: [
           {
             AND: [
-              { reciever_id: userId },
-              { remind_date: { gte: threeDaysAgo } }
+              { notify_all: true },
+              { remind_date: { gte: threeDaysAgo } },
+              {
+                remind_date: {
+                  gte: today,
+                  lte: endOfDay(today)
+                }
+              }
             ]
           },
           {
             AND: [
-              { reciever_id: null },
-              { remind_date: { gte: threeDaysAgo } }
+              {
+                recievers: {
+                  some: {
+                    user_id: userId
+                  }
+                }
+              },
+              { remind_date: { gte: threeDaysAgo } },
+              {
+                remind_date: {
+                  gte: today,
+                  lte: endOfDay(today)
+                }
+              }
             ]
-          },
-          {
-            remind_date: {
-              gte: today,
-              lt: endOfDay(today)
-            }
           }
         ],
         ...(user.role.role_id === STUDENT_ROLE_ID ? { visible_students: true } : {}),
         ...(user.role.role_id === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {})
       },
-      orderBy: {
-        remind_date: 'desc'
-      }
+      orderBy: [
+        {
+          remind_date: 'desc'
+        }
+      ]
     })
 
     return notifications
@@ -69,9 +81,9 @@ class NotificationService {
       visible_researchers: newActivity.visible_researchers,
       visible_students: newActivity.visible_students,
       user_document_id: null,
-      reciever_id: null,
       notification_type_id: NotificationTypes.ACTIVITY_CREATED_ID,
-      remind_date: new Date()
+      remind_date: new Date(),
+      notify_all: true
     })
 
     if (newActivity.category.category_id === CALLS_CATEGORY_ID) {
@@ -83,11 +95,38 @@ class NotificationService {
         visible_researchers: newActivity.visible_researchers,
         visible_students: newActivity.visible_students,
         user_document_id: null,
-        reciever_id: null,
         notification_type_id: NotificationTypes.ACTIVITY_REMINDER,
-        remind_date: subDays(newActivity.register_date_limit, 3)
+        remind_date: endOfDay(subDays(newActivity.register_date_limit, 3)),
+        notify_all: false
       })
+      return
     }
+
+    // Activity reminder (3 days before)
+    await this.createNotification({
+      title: 'Recordatorio de fecha de evento',
+      message: `La fecha del evento '${newActivity.title.trim()}' se acerca ¡No olvides asistir!`,
+      activity_id: newActivity.activity_id,
+      visible_researchers: newActivity.visible_researchers,
+      visible_students: newActivity.visible_students,
+      user_document_id: null,
+      notification_type_id: NotificationTypes.ACTIVITY_REMINDER,
+      remind_date: endOfDay(subDays(newActivity.event_date, 3)),
+      notify_all: false
+    })
+
+    // Activity reminder (1 day before)
+    await this.createNotification({
+      title: 'Recordatorio de fecha de evento',
+      message: `La fecha del evento '${newActivity.title.trim()}' es mañana ¡No olvides asistir!`,
+      activity_id: newActivity.activity_id,
+      visible_researchers: newActivity.visible_researchers,
+      visible_students: newActivity.visible_students,
+      user_document_id: null,
+      notification_type_id: NotificationTypes.ACTIVITY_REMINDER,
+      remind_date: endOfDay(subDays(newActivity.event_date, 1)),
+      notify_all: false
+    })
   }
 }
 

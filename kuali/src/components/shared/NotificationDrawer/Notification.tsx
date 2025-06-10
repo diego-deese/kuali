@@ -35,9 +35,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 8,
     padding: 8,
+    flex: 1,
   },
   infoContainer: {
     gap: 4,
+    flex: 1,
   },
   dateContainer: {
     flexDirection: 'row',
@@ -60,5 +62,6 @@ const styles = StyleSheet.create({
     fontFamily: 'monserratRegular',
     includeFontPadding: false,
     fontSize: 14,
+    flexShrink: 1,
   },
 })
