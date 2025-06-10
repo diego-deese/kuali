@@ -1,4 +1,4 @@
-import { PENDING_ID } from '../constants/revision-status'
+import { APPROVED_ID, PENDING_ID, REJECTED_ID } from '../constants/revision-status'
 import { UserDocuments } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError, ValidationError } from '../types/Error'
@@ -159,7 +159,11 @@ class UserDocumentService {
         }
       })
 
-      await notificationService.createApprovedDocumentNotification(userDocument)
+      if (revisionStatusId === APPROVED_ID) {
+        await notificationService.createApprovedDocumentNotification(userDocument)
+      } else if (revisionStatusId === REJECTED_ID) {
+        await notificationService.createRejectedDocumentNotification(userDocument)
+      }
 
       return true
     } catch (error) {

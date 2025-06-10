@@ -120,14 +120,14 @@ class NotificationService {
     })
   }
 
-  async createApprovedDocumentNotification (userDocuemntInfo: UserDocuments): Promise<void> {
+  async createApprovedDocumentNotification (userDocumentInfo: UserDocuments): Promise<void> {
     const activity = await prisma.activities.findFirst({
       where: {
         requirements: {
           some: {
             userDocuments: {
               some: {
-                user_document_id: userDocuemntInfo.user_document_id
+                user_document_id: userDocumentInfo.user_document_id
               }
             }
           }
@@ -154,11 +154,68 @@ class NotificationService {
 
     const newNotification = await this.createNotification({
       title: 'Documento de usuario aprovado',
-      message: `Tu documento "${activity?.requirements?.[0]?.name ?? ''}" para la convocatoria "${activity?.title ?? ''}" ha sido revisado y aprobado. Ya puedes continuar con el proceso de inscripción.`,
+      message: `Tu documento "${activity?.requirements?.[0]?.name ?? ''}" para la convocatoria "${activity?.title ?? ''}" ha sido revisado y aprobado.`,
       visible_researchers: true,
       visible_students: true,
       activity_id: null,
-      user_document_id: userDocuemntInfo.user_document_id,
+      user_document_id: userDocumentInfo.user_document_id,
+      notification_type_id: NotificationTypes.DOCUMENT_REVIEW,
+      remind_date: new Date(),
+      notify_all: false
+    })
+
+    const userId = activity?.requirements[0]?.userDocuments[0]?.registration.user_id
+    if (typeof userId === 'number') {
+      await prisma.notificationReciever.create({
+        data: {
+          notification_id: newNotification.notification_id,
+          user_id: userId
+        }
+      })
+    } else {
+      throw new Error('No se pudo encontrar el user_id para la notificación de documento aprobado.')
+    }
+  }
+
+  async createRejectedDocumentNotification (userDocumentInfo: UserDocuments): Promise<void> {
+    const activity = await prisma.activities.findFirst({
+      where: {
+        requirements: {
+          some: {
+            userDocuments: {
+              some: {
+                user_document_id: userDocumentInfo.user_document_id
+              }
+            }
+          }
+        }
+      },
+      select: {
+        title: true,
+        requirements: {
+          select: {
+            name: true,
+            userDocuments: {
+              select: {
+                registration: {
+                  select: {
+                    user_id: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    })
+
+    const newNotification = await this.createNotification({
+      title: 'Documento de usuario aprovado',
+      message: `Tu documento "${activity?.requirements?.[0]?.name ?? ''}" para la convocatoria "${activity?.title ?? ''}" ha sido revisado y fue rechazado. Puedes volver a subirlo antes de la fecha límite de registro de la convocatoria.`,
+      visible_researchers: true,
+      visible_students: true,
+      activity_id: null,
+      user_document_id: userDocumentInfo.user_document_id,
       notification_type_id: NotificationTypes.DOCUMENT_REVIEW,
       remind_date: new Date(),
       notify_all: false
