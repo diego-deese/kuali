@@ -4,13 +4,16 @@ import { Notification as NotificationType } from '../../../types/Notification'
 import { FormattedDate } from '../FormattedDate/FormattedDate'
 import colors from '../../../constants/colors'
 import { CircleNotificationIcon } from '../Icons/Icons'
+import { getDateWithoutTime } from '../../../utils/parsing'
 
 interface NotificationProps {
   notificationInfo: NotificationType
 }
 
 const Notification: React.FC<NotificationProps> = ({ notificationInfo }) => {
-  const isPastDate = new Date(notificationInfo.remind_date) < new Date()
+  const isPastDate =
+    getDateWithoutTime(new Date(notificationInfo.remind_date)) <
+    getDateWithoutTime(new Date())
   const notificationColor = isPastDate
     ? colors.borderGray
     : colors.highlightCyan
