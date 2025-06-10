@@ -11,7 +11,9 @@ interface NotificationProps {
 
 const Notification: React.FC<NotificationProps> = ({ notificationInfo }) => {
   const isPastDate = new Date(notificationInfo.remind_date) < new Date()
-  const notificationColor = isPastDate ? colors.borderGray : colors.highlightCyan
+  const notificationColor = isPastDate
+    ? colors.borderGray
+    : colors.highlightCyan
 
   return (
     <View style={styles.container}>
@@ -79,5 +81,5 @@ const styles = StyleSheet.create({
   pastMessage: {
     fontFamily: 'monserratItalic',
     color: colors.inactiveGray,
-  }
+  },
 })
