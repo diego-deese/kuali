@@ -6,11 +6,12 @@ import {
   TouchableWithoutFeedback,
   View,
   Animated,
+  ActivityIndicator,
 } from 'react-native'
 import React, { useEffect, useRef } from 'react'
 import { useNotificationsContext } from '../../../context/NotificationsContext/NotificationsContext'
 import Notification from './Notification'
-import { NotificationClearAllIcon } from '../Icons/Icons'
+import { ReloadIcon } from '../Icons/Icons'
 import colors from '../../../constants/colors'
 import IconButton from '../IconButton/IconButton'
 
@@ -64,24 +65,23 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
           <View style={styles.header}>
             <Text style={styles.headerTitle}>Notificaciones</Text>
             <IconButton
-              icon={
-                <NotificationClearAllIcon
-                  size={28}
-                  color={colors.highlightCyan}
-                />
-              }
-              onPress={() => console.log('clear')}
+              icon={<ReloadIcon size={28} color={colors.highlightCyan} />}
+              onPress={() => notificationsDrawer.getUserNotifications()}
             />
           </View>
 
           <View style={styles.notificationsContainer}>
-            <FlatList
-              data={notifications}
-              keyExtractor={(item) => item.notification_id.toString()}
-              renderItem={({ item }) => (
-                <Notification notificationInfo={item} />
-              )}
-            />
+            {notificationsDrawer.loadingNotifications ? (
+              <ActivityIndicator size='large' color={colors.selectionBlue} />
+            ) : (
+              <FlatList
+                data={notifications}
+                keyExtractor={(item) => item.notification_id.toString()}
+                renderItem={({ item }) => (
+                  <Notification notificationInfo={item} />
+                )}
+              />
+            )}
           </View>
         </Animated.View>
       </View>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Notification } from '../../types/Notification'
 import notificationService from '../../services/notification.service'
 import Toast from 'react-native-toast-message'
@@ -10,18 +10,21 @@ export const useNotifications = () => {
   const [showDrawer, setShowDrawer] = useState(false)
   const [notifications, setNotifications] = useState<Notification[]>([])
 
-  const REFRESH_INTERVAL = 30000
+  const REFRESH_INTERVAL = 900000
 
   const { user, authenticated } = useAuth()
 
   const { requests } = useAppActions()
 
+  const [loadingNotifications, setLoadingNotifications] = useState(false)
+
   const toggleShowDrawer = (): void => {
     setShowDrawer(!showDrawer)
   }
 
-  const getUserNotifications = async (): Promise<void> => {
+  const getUserNotifications = useCallback(async (): Promise<void> => {
     requests.toggleIsSendingRequest(true)
+    setLoadingNotifications(true)
     try {
       const result = await notificationService.getUserNotifications()
 
@@ -45,8 +48,9 @@ export const useNotifications = () => {
       setNotifications([])
     } finally {
       requests.toggleIsSendingRequest(false)
+      setLoadingNotifications(false)
     }
-  }
+  }, [requests])
 
   useEffect(() => {
     if (requests.isSendingRequest || !authenticated) return
@@ -54,20 +58,22 @@ export const useNotifications = () => {
     if (user?.role.role_id !== Roles.ADMIN) {
       setNotifications([])
       getUserNotifications()
-  
+
       const interval = setInterval(() => {
         getUserNotifications()
       }, REFRESH_INTERVAL)
-  
+
       return () => clearInterval(interval)
     }
-  }, [authenticated, requests.isSendingRequest])
+  }, [authenticated, requests, user])
 
   return {
     notifications: notifications ?? [],
     notificationsDrawer: {
       showDrawer,
       toggleShowDrawer,
+      getUserNotifications,
+      loadingNotifications,
     },
   }
 }

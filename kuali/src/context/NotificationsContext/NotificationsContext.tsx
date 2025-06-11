@@ -7,6 +7,8 @@ interface NotificationsContextProps {
   notificationsDrawer: {
     showDrawer: boolean
     toggleShowDrawer: () => void
+    getUserNotifications: () => Promise<void>
+    loadingNotifications: boolean
   }
 }
 
@@ -15,6 +17,8 @@ const NotificationsContext = createContext<NotificationsContextProps>({
   notificationsDrawer: {
     showDrawer: false,
     toggleShowDrawer: () => {},
+    getUserNotifications: async () => {},
+    loadingNotifications: false,
   },
 })
 
