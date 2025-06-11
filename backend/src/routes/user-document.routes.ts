@@ -6,7 +6,11 @@ import { uploadMemory } from '../middlewares/upload-files.middleware'
 
 const router = Router()
 
-router.get('/download/:userDocumentId', isAuthenticated, userDocumentController.downloadUserDocument)
+router.get('/download/:userDocumentId', isAuthenticated, isAdmin, userDocumentController.downloadUserDocument)
+
+router.get('/requirement/:requirementId/download', isAuthenticated, isAdmin, userDocumentController.downloadUserDocumentsByRequirement)
+
+router.get('/user/:userId/activity/:activityId/download', isAuthenticated, isAdmin, userDocumentController.downloadUserDocumentsByUser)
 
 router.post('/upload', isAuthenticated, uploadMemory.single('file'), userDocumentController.uploadUserDocument)
 

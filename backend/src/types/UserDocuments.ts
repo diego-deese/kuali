@@ -60,3 +60,20 @@ const updateUserDocument = Prisma.validator<Prisma.UserDocumentsDefaultArgs>()({
 })
 
 export type UpdateUserDocument = Prisma.UserDocumentsGetPayload<typeof updateUserDocument>
+
+const userDocumentForDownload = Prisma.validator<Prisma.UserDocumentsDefaultArgs>()({
+  include: {
+    registration: {
+      select: {
+        user: true
+      }
+    },
+    requirement: {
+      select: {
+        name: true
+      }
+    }
+  }
+})
+
+export type UserDocumentForDownload = Prisma.UserDocumentsGetPayload<typeof userDocumentForDownload>

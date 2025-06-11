@@ -1,11 +1,12 @@
 import { Request, Response } from 'express'
-import { parseId } from '../utils/parsing/shared'
+import { parseId, toCamelCase } from '../utils/parsing/shared'
 import userDocumentService from '../services/user-document.service'
 import { AppError } from '../types/Error'
 import { APPROVED_ID, REJECTED_ID } from '../constants/revision-status'
 import { toNewUserDocument, toUpdateUserDocument } from '../utils/parsing/UserDocument'
 import { NewUserDocument, RequirementUserDocuments, UserUserDocuments } from '../types/UserDocuments'
 import { AuthRequest } from '../types/Request'
+import JSZip from 'jszip'
 
 class UserDocumentController {
   getActivityUserDocuments = async (req: Request, res: Response): Promise<void> => {
@@ -231,6 +232,77 @@ class UserDocumentController {
       } else {
         res.status(500).json({
           message: 'Error al eliminar el documento',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
+
+  downloadUserDocumentsByRequirement = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const requirementId = parseId(req.params.requirementId, 'El id del requisito no fue proporcionado o su formato es inválido')
+
+      const documents = await userDocumentService.downloadUserDocumentsByRequirement(requirementId)
+
+      const zip = new JSZip()
+
+      documents.forEach((doc) => {
+        const fileName = doc.file_name
+        zip.file(fileName, doc.file_content)
+      })
+
+      const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+      const zipName = toCamelCase(documents[0].requirement.name)
+
+      res.setHeader('Content-Type', 'application/zip')
+      res.setHeader('Content-Disposition', `attachment; filename=${zipName}.zip`)
+      res.send(zipContent)
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al descargar los documentos',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al descargar los documentos',
+          error: error instanceof Error ? error.message : 'Error desconocido'
+        })
+      }
+    }
+  }
+
+  downloadUserDocumentsByUser = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = parseId(req.params.userId, 'El id del usuario no fue proporcionado o su formato es inválido')
+      const activityId = parseId(req.params.activityId, 'El id de la actividad no fue proporcionado o su formato es inválido')
+
+      const documents = await userDocumentService.downloadUserDocumentsByUser(userId, activityId)
+
+      const zip = new JSZip()
+
+      documents.forEach((doc) => {
+        const fileName = doc.file_name
+        zip.file(fileName, doc.file_content)
+      })
+
+      const zipContent = await zip.generateAsync({ type: 'nodebuffer' })
+
+      const zipName = `${documents[0].registration.user.name}${documents[0].registration.user.paternal_lastname}${documents[0].registration.user.maternal_lastname}`
+
+      res.setHeader('Content-Type', 'application/zip')
+      res.setHeader('Content-Disposition', `attachment; filename=${zipName}.zip`)
+      res.send(zipContent)
+    } catch (error) {
+      if (error instanceof AppError) {
+        res.status(error.statusCode).json({
+          message: 'Error al descargar los documentos',
+          error: error.message
+        })
+      } else {
+        res.status(500).json({
+          message: 'Error al descargar los documentos',
           error: error instanceof Error ? error.message : 'Error desconocido'
         })
       }

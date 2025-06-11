@@ -2,10 +2,13 @@ import { APPROVED_ID, PENDING_ID, REJECTED_ID } from '../constants/revision-stat
 import { UserDocuments } from '../generated/client'
 import prisma from '../lib/prisma'
 import { NotFoundError, ValidationError } from '../types/Error'
-import { NewUserDocument, RequirementDocumentInfo, RequirementUserDocuments, UpdateUserDocument, UserDocumentInfo, UserUserDocuments } from '../types/UserDocuments'
+import { NewUserDocument, RequirementDocumentInfo, RequirementUserDocuments, UpdateUserDocument, UserDocumentForDownload, UserDocumentInfo, UserUserDocuments } from '../types/UserDocuments'
+import { toCamelCase } from '../utils/parsing/shared'
 import activityService from './activity.service'
 import notificationService from './notification.service'
 import registrationService from './registration.service'
+import requirementService from './requirement.service'
+import userService from './user.service'
 
 class UserDocumentService {
   async getUserDocumentsByRequirement (activityId: number): Promise<RequirementUserDocuments[]> {
@@ -179,12 +182,25 @@ class UserDocumentService {
       throw new NotFoundError('El usuario no está inscrito a esa actividad')
     }
 
+    const requirement = await requirementService.getRequirement(newUserDocumentData.requirement_id)
+
+    const user = await userService.getUser(userId)
+
+    const requirementFileName = toCamelCase(requirement.name)
+
+    const fileExtension: string = newUserDocumentData.file_name.split('.').pop() ?? 'pdf'
+
+    const userDocumentData = {
+      ...newUserDocumentData,
+      file_name: `${user.name}${user.paternal_lastname}${user.maternal_lastname}_${requirementFileName}.${fileExtension !== 'pdf' ? 'docx' : fileExtension}`,
+      registration_id: registration.registration_id,
+      revision_status_id: PENDING_ID
+    }
+
+    console.log(userDocumentData)
+
     const newUserDocument = await prisma.userDocuments.create({
-      data: {
-        ...newUserDocumentData,
-        registration_id: registration.registration_id,
-        revision_status_id: PENDING_ID
-      }
+      data: userDocumentData
     })
 
     return newUserDocument
@@ -226,6 +242,62 @@ class UserDocumentService {
       console.error(error)
       return false
     }
+  }
+
+  async downloadUserDocumentsByRequirement (requirementId: number): Promise<UserDocumentForDownload[]> {
+    await requirementService.getRequirement(requirementId)
+
+    const userDocuments = await prisma.userDocuments.findMany({
+      where: {
+        requirement_id: requirementId
+      },
+      include: {
+        registration: {
+          select: {
+            user: true
+          }
+        },
+        requirement: {
+          select: {
+            name: true
+          }
+        }
+      }
+    })
+
+    if (userDocuments.length === 0) {
+      throw new NotFoundError('No se ecnontraron documentos para descargar')
+    }
+
+    return userDocuments
+  }
+
+  async downloadUserDocumentsByUser (userId: number, activityId: number): Promise<UserDocumentForDownload[]> {
+    const registration = await registrationService.getRegistration(userId, activityId)
+
+    const userDocuments = await prisma.userDocuments.findMany({
+      where: {
+        registration_id: registration.registration_id
+      },
+      include: {
+        registration: {
+          select: {
+            user: true
+          }
+        },
+        requirement: {
+          select: {
+            name: true
+          }
+        }
+      }
+    })
+
+    if (userDocuments.length === 0) {
+      throw new NotFoundError('No se ecnontraron documentos para descargar')
+    }
+
+    return userDocuments
   }
 }
 
