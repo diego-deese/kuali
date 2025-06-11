@@ -80,11 +80,12 @@ const ActivityRequirementCard: React.FC<ActivityRequirementCardProps> = ({
 
       <ConfirmationModal
         title='Eliminar requisito'
-        description='¿Estás seguro de que quieres eliminar este requisito del nuevo evento o convocatoria?'
+        description='¿Estás seguro de que quieres eliminar este requisito de la actividad?'
         confirmButtonColor={colors.warningRed}
         visible={showConfirmationModal}
         onCancel={handleConfirmationModalCancel}
         onConfirm={() => onDeletePress(requirementInfo.requirement_id)}
+        variant='delete'
       />
     </View>
   )

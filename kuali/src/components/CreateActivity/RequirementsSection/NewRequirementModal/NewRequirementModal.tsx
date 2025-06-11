@@ -78,11 +78,13 @@ const NewRequirementModal = ({
           </View>
           {requirement.withTemplate && (
             <>
-              <Button
-                buttonText='Subir documento'
-                icon={<UploadIcon color={colors.solidWhite} />}
-                onPress={pickDocument}
-              />
+              <View>
+                <Button
+                  buttonText='Subir documento'
+                  icon={<UploadIcon color={colors.solidWhite} />}
+                  onPress={pickDocument}
+                />
+              </View>
               <View style={styles.uploadButtonLabelsContainer}>
                 <Text
                   style={[
@@ -163,9 +165,10 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
     paddingStart: 8,
-    marginBottom: 16,
+    marginBottom: 4,
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -183,6 +186,7 @@ const styles = StyleSheet.create({
   },
   switchLabel: {
     fontFamily: 'monserratRegular',
+    includeFontPadding: false,
     fontSize: 16,
   },
   cancelButton: {
