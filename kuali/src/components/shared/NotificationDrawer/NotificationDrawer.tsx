@@ -75,6 +75,7 @@ const NotificationDrawer: React.FC<NotificationDrawerProps> = ({
               <ActivityIndicator size='large' color={colors.selectionBlue} />
             ) : (
               <FlatList
+                contentContainerStyle={{ paddingBottom: 16 }}
                 data={notifications}
                 keyExtractor={(item) => item.notification_id.toString()}
                 renderItem={({ item }) => (
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   notificationsContainer: {
-    paddingBottom: 8,
+    flex: 1,
     borderBottomWidth: 1,
     borderColor: colors.borderGray,
   },
