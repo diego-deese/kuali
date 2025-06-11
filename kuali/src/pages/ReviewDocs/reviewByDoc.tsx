@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Pressable, View, Text, ScrollView, RefreshControl } from 'react-native'
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native'
 import StudentReviewCard from '../../components/ReviewDoc/StudentReviewCard'
 import styles from './styles'
 import { router } from 'expo-router'
@@ -25,6 +31,7 @@ export default function ReviewStudentDoc() {
     refreshing,
     handleRefresh,
     refetch,
+    downloadAllDocumentsByRequirement,
   } = useGroupedUserDocuments(activityId)
   // Track the currently selected requirement index for navigation
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -44,7 +51,9 @@ export default function ReviewStudentDoc() {
     }
   }, [selectedView])
   // Placeholder for a download handler (e.g., download all documents for this requirement)
-  const handleDownload = () => {}
+  const handleDownload = () => {
+    downloadAllDocumentsByRequirement(group.requirement.requirement_id)
+  }
   // Get the currently selected requirement group
   const group = documentsByRequirement[currentIndex]
   // Display loading screen or fallback if group data is unavailable
@@ -80,14 +89,10 @@ export default function ReviewStudentDoc() {
       <Text style={styles.docText}>
         Documento requerido: {group.requirement.name}
       </Text>
-      <View style={styles.row}>
-        <Pressable onPress={handleDownload}>
-          <DownloadIcon name='download' color='#2C4A90' />
-        </Pressable>
-        <Pressable onPress={handleDownload}>
-          <Text style={styles.dowload}> Descargar todos </Text>
-        </Pressable>
-      </View>
+      <TouchableOpacity onPress={handleDownload} style={styles.row}>
+        <DownloadIcon name='download' color='#2C4A90' />
+        <Text style={styles.dowload}> Descargar todos </Text>
+      </TouchableOpacity>
       {/* Scrollable list of student review cards for this document requirement */}
       <ScrollView
         contentContainerStyle={styles.list}

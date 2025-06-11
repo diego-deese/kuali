@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Pressable, View, Text, ScrollView, RefreshControl } from 'react-native'
+import {
+  Pressable,
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+} from 'react-native'
 import { useLocalSearchParams } from 'expo-router'
 import styles from './styles'
 import { router } from 'expo-router'
@@ -87,14 +94,11 @@ export default function ReviewDoc() {
           : 'Sin usuarios'}
       </Text>
       {/* Download all documents section (icon + text button) */}
-      <View style={styles.row}>
-        <Pressable onPress={handleDownload}>
-          <DownloadIcon name='download' color='#2C4A90' />
-        </Pressable>
-        <Pressable onPress={handleDownload}>
-          <Text style={styles.dowload}> Descargar todos </Text>
-        </Pressable>
-      </View>
+      <TouchableOpacity onPress={handleDownload} style={styles.row}>
+        <DownloadIcon name='download' color='#2C4A90' />
+        <Text style={styles.dowload}> Descargar todos </Text>
+      </TouchableOpacity>
+
       {/* List of document cards for the selected student */}
       <ScrollView
         contentContainerStyle={styles.list}

@@ -103,7 +103,7 @@ class UserDocumentService {
   async downloadAllDocumentsByUser(
     userId: number,
     activityId: number,
-  ): Promise<Response<ArrayBuffer> | ResponseError> {
+  ): Promise<Response<{ data: ArrayBuffer; headers: any }> | ResponseError> {
     try {
       const response = await this.api.get(
         `/user-documents/user/${userId}/activity/${activityId}/download`,
@@ -113,7 +113,55 @@ class UserDocumentService {
       if (response.status === 200) {
         return {
           success: true,
-          data: response.data,
+          data: {
+            data: response.data,
+            headers: response.headers,
+          },
+        }
+      }
+
+      return {
+        success: false,
+        message: response.data.message,
+        error: response.data.error,
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        console.log(error.response)
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
+    }
+  }
+
+  async downloadAllDocumentsByRequirement(
+    requirementId: number,
+  ): Promise<Response<{ data: ArrayBuffer; headers: any }> | ResponseError> {
+    try {
+      const response = await this.api.get(
+        `/user-documents/requirement/${requirementId}/download`,
+        { responseType: 'arraybuffer' },
+      )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: {
+            data: response.data,
+            headers: response.headers,
+          },
         }
       }
 

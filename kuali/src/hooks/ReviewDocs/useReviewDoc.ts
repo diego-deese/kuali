@@ -4,6 +4,7 @@ import Toast from 'react-native-toast-message'
 import * as FileSystem from 'expo-file-system'
 import * as Sharing from 'expo-sharing'
 import { Alert } from 'react-native'
+import { Buffer } from 'buffer'
 
 export const useGroupedUserDocuments = (
   activityId: number,
@@ -60,29 +61,44 @@ export const useGroupedUserDocuments = (
         return
       }
 
-      // 2. Convertir ArrayBuffer a base64 usando Buffer
-      const arrayBuffer = result.data
+      let fileName = 'documentos.zip' // Default file name
+
+      const contentDisposition = result.data.headers['content-disposition']
+
+      if (contentDisposition) {
+        // Search for filename= or filename*=
+        const filenameMatch = contentDisposition.match(
+          /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/,
+        )
+        if (filenameMatch && filenameMatch[1]) {
+          fileName = filenameMatch[1].replace(/['"]/g, '')
+          // Decode
+          if (fileName.includes('UTF-8')) {
+            fileName = decodeURIComponent(fileName.split("''")[1])
+          }
+        }
+      }
+
+      console.log('Nombre del archivo extraído:', fileName)
+
+      // 1. Convert from base64 to ArrayBuffer using Buffer
+      const arrayBuffer = result.data.data
       const base64String = Buffer.from(arrayBuffer).toString('base64')
 
-      // 3. Crear nombre de archivo
-      const fileName = `documentos_usuario_${userId}.zip`
-
-      // 4. Crear archivo temporal con Expo FileSystem
+      // 2. Create temp file
       const fileUri = `${FileSystem.cacheDirectory}${fileName}`
 
       await FileSystem.writeAsStringAsync(fileUri, base64String, {
         encoding: FileSystem.EncodingType.Base64,
       })
 
-      // 5. Verificar que el archivo se creó
+      // 3. Verify file is created
       const fileInfo = await FileSystem.getInfoAsync(fileUri)
       if (!fileInfo.exists) {
         throw new Error('Error al crear el archivo')
       }
 
-      console.log(`Archivo creado: ${fileInfo.size} bytes`)
-
-      // 6. Compartir el archivo (permite al usuario elegir dónde guardarlo)
+      // 4. "Share the file" (allows the user choose where to save it)
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync(fileUri, {
           mimeType: 'application/zip',
@@ -93,12 +109,12 @@ export const useGroupedUserDocuments = (
         Alert.alert('Error', 'La función de compartir no está disponible')
       }
 
-      // 7. Limpiar archivo temporal después de un tiempo
+      // 5. Delete temp file after some time
       setTimeout(() => {
         FileSystem.deleteAsync(fileUri, { idempotent: true }).catch((err) =>
           console.log('Error al limpiar archivo:', err),
         )
-      }, 120000) // 2 minutos
+      }, 120000)
     } catch (error: any) {
       Toast.show({
         type: 'error',
