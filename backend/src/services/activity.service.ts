@@ -424,6 +424,8 @@ class ActivityService {
       await registrationService.registerUsersToActivity(rolesToSubscribe, updatedActivity.activity_id)
     }
 
+    await notificationService.createActivityUpdatedNotification(updatedActivity)
+
     return updatedActivity
   }
 

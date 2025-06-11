@@ -120,6 +120,20 @@ class NotificationService {
     })
   }
 
+  async createActivityUpdatedNotification (activityInfo: CreatedActivity): Promise<void> {
+    await this.createNotification({
+      title: 'Datos de actividad actualizada',
+      message: `Los datos de la ${activityInfo.category.category_id === EVENTS_CATEGORY_ID ? 'evento' : 'convocatoria'} "${activityInfo.title.trim()}" han sido actualizados. Asegúrate de revisar los nuevos detalles${activityInfo.mandatory ? ', recuerda que su registro es obligatorio.' : '.'}`,
+      activity_id: activityInfo.activity_id,
+      visible_researchers: activityInfo.visible_researchers,
+      visible_students: activityInfo.visible_students,
+      user_document_id: null,
+      notification_type_id: NotificationTypes.ACTIVITY_UPDATED,
+      remind_date: new Date(),
+      notify_all: true
+    })
+  }
+
   async createApprovedDocumentNotification (userDocumentInfo: UserDocuments): Promise<void> {
     const activity = await prisma.activities.findFirst({
       where: {
