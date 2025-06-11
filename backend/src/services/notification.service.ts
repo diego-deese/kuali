@@ -66,8 +66,8 @@ class NotificationService {
     await this.createNotification({
       title: newActivity.category.category_id === EVENTS_CATEGORY_ID ? 'Nuevo evento creado' : 'Nueva convocatoria creada',
       message: newActivity.category.category_id === EVENTS_CATEGORY_ID
-        ? `Nuevo evento "${newActivity.title.trim()}" creado.`
-        : `Nueva convocatoria "${newActivity.title.trim()}" creada.`,
+        ? `Nuevo evento "${newActivity.title.trim()}" creado.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`
+        : `Nueva convocatoria "${newActivity.title.trim()}" creada.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`,
       activity_id: newActivity.activity_id,
       visible_researchers: newActivity.visible_researchers,
       visible_students: newActivity.visible_students,
