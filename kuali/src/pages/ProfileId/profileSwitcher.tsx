@@ -38,21 +38,44 @@ const ProfileSwitcher = () => {
         <ProfileId
           frontFields={[
             { label: 'Categoría', value: getProgramName() },
-            { label: 'SNI Distinción', value: 'SNI Distincion' },
+            {
+              label: 'SNI Distinción',
+              value: userProfile?.sniDistinction || 'No disponible',
+            },
             {
               label: 'Correo institucional',
               value: userProfile?.institutional_email,
             },
           ]}
           extraFields={[
-            { label: 'No. nombramiento', value: fullName },
-            { label: 'Categoría', value: getProgramName() },
+            { label: 'Nombre completo', value: fullName },
+            {
+              label: 'No. empleado',
+              value: userProfile?.employeeNumber || 'No disponible',
+            },
+            {
+              label: 'Categoría',
+              value: userProfile?.categoriaProfr || 'No disponible',
+            },
             {
               label: 'Línea de investigación',
-              value: userProfile?.institutional_email,
+              value: userProfile?.researchLine || 'No disponible',
             },
-            { label: 'No. seguro social', value: userProfile?.personal_email },
-            { label: 'Vigencia', value: userProfile?.curp },
+            {
+              label: 'No. seguro social',
+              value: userProfile?.socialSecurityNumber || 'No disponible',
+            },
+            {
+              label: 'Vigencia',
+              value: userProfile?.validity
+                ? new Date(userProfile.validity).toLocaleDateString()
+                : 'No disponible',
+            },
+            { label: 'CVU', value: userProfile?.cvuNumber || 'No disponible' },
+            {
+              label: 'Tipo de nombramiento',
+              value: userProfile?.namingType || 'No disponible',
+            },
           ]}
         />
       </WithRole>
