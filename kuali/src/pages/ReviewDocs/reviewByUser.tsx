@@ -19,8 +19,14 @@ export default function ReviewDoc() {
   const { activity_id } = useLocalSearchParams()
   const actId = Number(activity_id)
   // Fetch user documents grouped by user, along with loading and refetch status
-  const { documentsByUser, loading, refreshing, handleRefresh, refetch } =
-    useGroupedUserDocuments(actId, 'user')
+  const {
+    documentsByUser,
+    loading,
+    refreshing,
+    handleRefresh,
+    refetch,
+    downloadAllDocumentsByUser,
+  } = useGroupedUserDocuments(actId, 'user')
   // Track the currently selected user index for navigation
   const [currentIndex, setCurrentIndex] = useState(0)
   // SelectInput logic
@@ -50,6 +56,7 @@ export default function ReviewDoc() {
   // Handler for downloading all documents of a student (not yet implemented)
   const handleDownload = () => {
     console.log(`Descargando documentos de ${student.user.name}`)
+    downloadAllDocumentsByUser(student.user.user_id)
     // Lógica de descarga (pendiente)
   }
   return (

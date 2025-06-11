@@ -1,6 +1,6 @@
 import { AxiosInstance } from 'axios'
 import authService from './auth.service'
-import { ResponseError } from '../types/Request'
+import { Response, ResponseError } from '../types/Request'
 import axios from 'axios'
 
 class UserDocumentService {
@@ -97,6 +97,49 @@ class UserDocumentService {
     } catch (error) {
       console.error('Error al descargar el documento:', error)
       return null
+    }
+  }
+
+  async downloadAllDocumentsByUser(
+    userId: number,
+    activityId: number,
+  ): Promise<Response<ArrayBuffer> | ResponseError> {
+    try {
+      const response = await this.api.get(
+        `/user-documents/user/${userId}/activity/${activityId}/download`,
+        { responseType: 'arraybuffer' },
+      )
+
+      if (response.status === 200) {
+        return {
+          success: true,
+          data: response.data,
+        }
+      }
+
+      return {
+        success: false,
+        message: response.data.message,
+        error: response.data.error,
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        const errorResponse = error.response?.data as ResponseError
+        console.log(error.response)
+        return {
+          success: false,
+          message:
+            errorResponse?.message || 'Error al conectar con el servidor',
+          error:
+            errorResponse?.error || 'Verifica tu conexión e intenta de nuevo',
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Error desconocido',
+        error: error.message,
+      }
     }
   }
 }
