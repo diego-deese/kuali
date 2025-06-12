@@ -118,6 +118,7 @@ export default function ReviewStudentDoc() {
                   name: user.name,
                   second_name: user.second_name,
                   paternal_lastname: user.paternal_lastname,
+                  maternal_lastname: user.maternal_lastname,
                   documentStatus: { name: doc.status?.name || null },
                   requirement: { name: group.requirement.name },
                   index,
