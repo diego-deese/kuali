@@ -63,8 +63,14 @@ export default function InfoStudents() {
         )}
 
         <Text style={styles.name}>
-          {student.name} {student.second_name} {student.paternal_lastname}{' '}
-          {student.maternal_lastname}
+          {[
+            student.name,
+            student.second_name,
+            student.paternal_lastname,
+            student.maternal_lastname,
+          ]
+            .filter(Boolean)
+            .join(' ')}
         </Text>
 
         <View style={styles.idContainer}>

@@ -119,6 +119,7 @@ export default function ReviewStudentDoc() {
                   second_name: user.second_name,
                   paternal_lastname: user.paternal_lastname,
                   documentStatus: { name: doc.status?.name || null },
+                  requirement: { name: group.requirement.name },
                   index,
                 }}
                 onActionComplete={refetch}

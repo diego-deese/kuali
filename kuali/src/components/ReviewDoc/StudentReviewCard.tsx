@@ -7,9 +7,18 @@ import BaseReviewCard from './BaseReviewCard'
 export default function StudentReviewCard({ student, onActionComplete }) {
   return (
     <BaseReviewCard
-      title={`${student.name} ${student.second_name} ${student.paternal_lastname}`}
+      title={[student.name, student.second_name, student.paternal_lastname]
+        .filter(Boolean)
+        .join(' ')}
       user_document_id={student.user_document_id}
       initialStatus={student.documentStatus?.name}
+      fileName={`${[
+        student.name,
+        student.second_name,
+        student.paternal_lastname,
+      ]
+        .filter(Boolean)
+        .join('_')}_${student.requirement?.name ?? 'Documento'}`}
       onActionComplete={onActionComplete}
     />
   )
