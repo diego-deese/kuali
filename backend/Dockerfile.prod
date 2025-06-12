@@ -28,25 +28,18 @@ WORKDIR /app
 COPY --from=builder /app/package*.json ./
 
 # Copiar código compilado
-COPY --from=builder /app/build ./build
-# O si no usas TypeScript, copia el código fuente:
-# COPY --from=builder /app/src ./src
+COPY --from=builder /app/build ./
 
 # Copiar otros archivos necesarios
-COPY --from=builder /app/src/generated ./build/src/generated
+COPY --from=builder /app/src/generated ./src/generated
+
+COPY --from=builder /app/.env.prod ./.env
+
+COPY --from=builder /app/prisma ./prisma
 
 # Instalar dependencias
 RUN npm ci --only=production && npm cache clean --force
 
-# # Crear usuario no-root
-# RUN addgroup -g 1001 -S nodejs
-# RUN adduser -S nodejs -u 1001
-
-# # Cambiar ownership de archivos
-# RUN chown -R nodejs:nodejs /app
-# USER nodejs
-
 EXPOSE 3000
 
 CMD ["npm", "start"]
-# CMD ["tail", "-f", "/dev/null"]
