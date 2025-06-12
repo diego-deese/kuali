@@ -50,6 +50,8 @@ const SelectInput = ({
             styles.selectedOption,
             state.selectedOption ? { color: colors.fontBlack } : {},
           ]}
+          numberOfLines={1}
+          ellipsizeMode='tail'
         >
           {state.selectedOption ? state.selectedOption.label : placeholder}
         </Text>

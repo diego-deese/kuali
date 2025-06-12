@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     includeFontPadding: false,
     color: colors.standardGray,
+    maxWidth: '90%',
   },
   emptyText: {
     fontFamily: 'monserratRegular',

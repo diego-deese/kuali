@@ -19,4 +19,11 @@ export const styles = StyleSheet.create({
     padding: 2,
     backgroundColor: colors.solidWhite,
   },
+  backdrop: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
 })

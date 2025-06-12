@@ -48,6 +48,9 @@ const OptionsModal: React.FC<OptionsModalProps> = ({
         keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         style={styles.optionsOverlay}
       >
+        <TouchableWithoutFeedback onPress={onRequestClose}>
+          <View style={styles.backdrop} />
+        </TouchableWithoutFeedback>
         <View style={styles.optionsContainer}>
           {editable && (
             <AddNewHeader

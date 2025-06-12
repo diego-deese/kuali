@@ -4,11 +4,7 @@ import { useActivityFormContext } from '../../context/ActivityFormContext/Activi
 import LoadingScreen from '../LoadingScreen/LoadingScreen'
 import ButtonsHeader from '../../components/shared/ButtonsHeader/ButtonsHeader'
 import IconButton from '../../components/shared/IconButton/IconButton'
-import {
-  CheckIcon,
-  CloseIcon,
-  SaveIcon,
-} from '../../components/shared/Icons/Icons'
+import { CloseIcon, SaveIcon } from '../../components/shared/Icons/Icons'
 import colors from '../../constants/colors'
 import CreateActivityForm from '../../components/CreateActivity/CreateActivityForm/CreateActivityForm'
 import ConfirmationModal from '../../components/shared/ConfirmationModal/ConfirmationModal'

@@ -5,17 +5,20 @@ export const styles = StyleSheet.create({
   optionContainer: {
     flexDirection: 'row',
     gap: 4,
-    height: 45,
+    minHeight: 45,
     justifyContent: 'space-between',
     alignItems: 'center',
     backgroundColor: colors.solidWhite,
     paddingVertical: 8,
     paddingEnd: 8,
+    borderBottomColor: colors.borderGray,
+    borderBottomWidth: 1,
   },
   labelContainer: {
     flex: 1,
     width: '100%',
     textAlignVertical: 'center',
+    padding: 8,
   },
   iconsContainer: {
     flexDirection: 'row',
