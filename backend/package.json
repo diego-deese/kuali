@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node build/index.js",
+    "start": "node build/src/index.js",
     "dev": "ts-node-dev --respawn --poll --watch swagger src/index.ts",
-    "tsc": "tsc",
+    "build": "tsc",
     "docker:start": "docker-compose up -d",
     "docker:build": "docker-compose up -d --build",
     "docker:stop": "docker-compose down",
@@ -31,7 +31,6 @@
     "@types/multer": "^1.4.12",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
-    "jsonwebtoken": "^9.0.2",
     "prisma": "^6.5.0",
     "ts-node-dev": "^2.0.0",
     "ts-standard": "^12.0.2",
@@ -50,7 +49,8 @@
     "node-cron": "^4.1.0",
     "path": "^0.12.7",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^5.0.1",
+    "jsonwebtoken": "^9.0.2"
   },
   "eslintConfig": {
     "parserOptions": {
