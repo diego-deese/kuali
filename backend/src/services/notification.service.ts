@@ -66,8 +66,8 @@ class NotificationService {
     await this.createNotification({
       title: newActivity.category.category_id === EVENTS_CATEGORY_ID ? 'Nuevo evento creado' : 'Nueva convocatoria creada',
       message: newActivity.category.category_id === EVENTS_CATEGORY_ID
-        ? `Nuevo evento "${newActivity.title.trim()}" creado.`
-        : `Nueva convocatoria "${newActivity.title.trim()}" creada.`,
+        ? `Nuevo evento "${newActivity.title.trim()}" creado.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`
+        : `Nueva convocatoria "${newActivity.title.trim()}" creada.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`,
       activity_id: newActivity.activity_id,
       visible_researchers: newActivity.visible_researchers,
       visible_students: newActivity.visible_students,
@@ -117,6 +117,20 @@ class NotificationService {
       notification_type_id: NotificationTypes.ACTIVITY_REMINDER,
       remind_date: subDays(addMinutes(newActivity.event_date, 1), 1),
       notify_all: false
+    })
+  }
+
+  async createActivityUpdatedNotification (activityInfo: CreatedActivity): Promise<void> {
+    await this.createNotification({
+      title: 'Datos de actividad actualizada',
+      message: `Los datos de la ${activityInfo.category.category_id === EVENTS_CATEGORY_ID ? 'evento' : 'convocatoria'} "${activityInfo.title.trim()}" han sido actualizados. Asegúrate de revisar los nuevos detalles${activityInfo.mandatory ? ', recuerda que su registro es obligatorio.' : '.'}`,
+      activity_id: activityInfo.activity_id,
+      visible_researchers: activityInfo.visible_researchers,
+      visible_students: activityInfo.visible_students,
+      user_document_id: null,
+      notification_type_id: NotificationTypes.ACTIVITY_UPDATED,
+      remind_date: new Date(),
+      notify_all: true
     })
   }
 

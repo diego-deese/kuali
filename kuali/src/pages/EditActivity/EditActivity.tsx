@@ -68,7 +68,7 @@ const EditActivity = () => {
 
       <ConfirmationModal
         title='Volver a la pantalla de inicio'
-        description='¿Estás seguro de que quieres salir de la pantalla de creación de actividad? Todos los datos que ya llenaste se perderán.'
+        description={`¿Estás seguro de que quieres salir de la pantalla de ${mode === 'create' ? 'creación' : 'edición'} de actividad? Todos los datos que ya llenaste se perderán.`}
         confirmButtonColor={colors.warningRed}
         visible={showModal}
         onCancel={() => {
@@ -77,6 +77,7 @@ const EditActivity = () => {
         onConfirm={() => {
           router.back()
         }}
+        variant='delete'
       />
     </View>
   )

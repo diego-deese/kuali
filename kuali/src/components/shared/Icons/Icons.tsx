@@ -352,3 +352,9 @@ export const AddAcademicPrograms = (props) => {
     />
   )
 }
+
+export const ReloadIcon = (props) => {
+  return (
+    <MaterialCommunityIcons name='reload' size={24} color='black' {...props} />
+  )
+}
