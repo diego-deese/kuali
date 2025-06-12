@@ -10,6 +10,14 @@ export default function DocReviewCard({ req, onActionComplete }) {
       title={req.requirement?.name}
       user_document_id={req.user_document_id}
       initialStatus={req.status?.name}
+      fileName={`${[
+        req.user?.name,
+        req.user?.second_name,
+        req.user?.paternal_lastname,
+        req.user?.maternal_lastname,
+      ]
+        .filter(Boolean)
+        .join('_')}_${req.requirement?.name ?? 'Documento'}`}
       onActionComplete={onActionComplete}
     />
   )

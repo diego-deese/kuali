@@ -43,7 +43,7 @@ export default function BaseReviewCard({
   }
 
   const handleDownload = () => {
-    const finalFileName = fileName || `${title}_${user_document_id}.pdf`
+    const finalFileName = fileName || `${title}_${user_document_id}`
     downloadDocument(user_document_id, finalFileName)
   }
   // Confirm the selected action (approve or reject)

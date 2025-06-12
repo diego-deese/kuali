@@ -90,7 +90,14 @@ export default function ReviewDoc() {
       <Text style={styles.docText}>
         Usuario:{' '}
         {student?.user
-          ? `${student.user.name} ${student.user.second_name} ${student.user.paternal_lastname}`
+          ? [
+              student.user.name,
+              student.user.second_name,
+              student.user.paternal_lastname,
+              student.user.maternal_lastname,
+            ]
+              .filter(Boolean)
+              .join(' ')
           : 'Sin usuarios'}
       </Text>
       {/* Download all documents section (icon + text button) */}
@@ -115,7 +122,10 @@ export default function ReviewDoc() {
           student.userDocuments.map((req) => (
             <DocReviewCard
               key={req.user_document_id}
-              req={req}
+              req={{
+                ...req,
+                user: student.user,
+              }}
               onActionComplete={refetch}
             />
           ))

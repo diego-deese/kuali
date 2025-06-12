@@ -36,8 +36,14 @@ export default function StudentCard({
     <Pressable onPress={handlePress}>
       <View style={styles.card}>
         <Text style={styles.name}>
-          {student.name} {student.second_name} {student.paternal_lastname}
-          {''} {student.maternal_lastname}
+          {[
+            student.name,
+            student.second_name,
+            student.paternal_lastname,
+            student.maternal_lastname,
+          ]
+            .filter(Boolean)
+            .join(' ')}
         </Text>
       </View>
     </Pressable>
