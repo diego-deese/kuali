@@ -23,6 +23,9 @@ class ActivityService {
       include: {
         category: true,
         location: true
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 
@@ -49,6 +52,9 @@ class ActivityService {
           roleId === STUDENT_ROLE_ID ? { visible_students: true } : {},
           roleId === RESEARCHER_ROLE_ID ? { visible_researchers: true } : {}
         ]
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 
