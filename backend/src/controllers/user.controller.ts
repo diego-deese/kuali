@@ -4,7 +4,7 @@ import { isNumber } from '../utils/validations'
 import { AppError } from '../types/Error'
 import { AuthRequest } from '../types/Request'
 import { parseId } from '../utils/parsing/shared'
-// import { AuthRequest } from '../types/Request'
+import { toNewUser, toUpdateUser } from '../utils/parsing/User'
 
 class UserController {
   getUsers = async (_req: Request, res: Response): Promise<undefined> => {
@@ -57,14 +57,27 @@ class UserController {
     }
   }
 
-  createUser = async (req: Request, res: Response): Promise<undefined> => {
+  createUser = async (req: AuthRequest, res: Response): Promise<undefined> => {
     try {
-      const user = req.body
-      console.log(user)
+      const profilePhoto = req.file
 
-      const createdUser = await userService.createUser(user)
+      let newUserDataRaw
+      try {
+        newUserDataRaw = JSON.parse(req.body.userData)
+      } catch (jsonErr) {
+        console.error('[ERROR] Fallo al hacer JSON.parse:', jsonErr)
+      }
+      console.log(newUserDataRaw)
 
-      res.status(200).json({ user: createdUser })
+      const mergedData = {
+        ...newUserDataRaw,
+        profile_photo: profilePhoto?.buffer,
+        photo_mime_type: profilePhoto?.mimetype
+      }
+
+      const newUserData = toNewUser(mergedData)
+      const createdUser = await userService.createUser(newUserData)
+      res.status(201).json({ user: createdUser })
     } catch (error) {
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
@@ -83,18 +96,48 @@ class UserController {
   updateUser = async (req: Request, res: Response): Promise<undefined> => {
     try {
       const { id } = req.params
-      const userData = req.body
+      const profilePhoto = req.file
 
-      if (!isNumber(id)) {
+      console.log(req.body)
+
+      if (!isNumber(Number(id))) {
         res.status(400).json({
           message: 'Error al actualizar el usuario',
-          errror: 'El id proporcionado es inválido'
+          error: 'El id proporcionado es inválido'
         })
-      } else {
-        const updatedUser = await userService.updateUser(Number(id), userData)
-        res.status(200).json({ user: updatedUser })
       }
+
+      let updatedUserDataRaw
+      try {
+        updatedUserDataRaw = JSON.parse(req.body.userData)
+      } catch (jsonErr) {
+        console.error('[ERROR] Fallo al hacer JSON.parse:', jsonErr)
+      }
+
+      const mergedData = {
+        ...updatedUserDataRaw,
+        profile_photo: profilePhoto?.buffer,
+        photo_mime_type: profilePhoto?.mimetype
+      }
+
+      const updatedUserData = toUpdateUser(mergedData)
+
+      console.log(updatedUserDataRaw)
+
+      let updateUserData = toUpdateUser(updatedUserData)
+
+      if (req.file !== undefined) {
+        updateUserData = {
+          ...updateUserData,
+          profile_photo: req.file.buffer,
+          photo_mime_type: req.file.mimetype
+        }
+      }
+
+      const updatedUser = await userService.updateUser(Number(id), updateUserData)
+      res.status(200).json({ user: updatedUser })
     } catch (error) {
+      console.log(error)
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
           message: 'Error al actualizar el usuario',

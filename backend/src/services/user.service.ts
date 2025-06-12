@@ -3,7 +3,7 @@ import { STUDENT_ROLE_ID, ADMIN_ROLE_ID, RESEARCHER_ROLE_ID } from '../constants
 import { AcademicProgramWithStudents } from '../types/AcademicProgram'
 import { ConflictError, ForbiddenError, NotFoundError, ValidationError } from '../types/Error'
 import { ResponseMessage } from '../types/Message'
-import { NewUser, SafeUser, UserProfilePhoto } from '../types/Users'
+import { NewUser, SafeUser, UserProfilePhoto, UpdatedUser } from '../types/Users'
 import { comparePassword, hashPassword } from '../utils/encryption'
 import inscriptionService from './inscription.service'
 import academicProgramService from './academic-program.service'
@@ -75,7 +75,6 @@ class UserService {
   }
 
   async createUser (userData: NewUser): Promise<SafeUser> {
-    console.log(userData)
     const existingUser = await prisma.users.findFirst({
       where: {
         OR: [
@@ -86,7 +85,6 @@ class UserService {
     })
 
     if (existingUser !== null) {
-      console.log(existingUser)
       throw new ConflictError('Ya existe un usuario con este correo institucional o personal')
     }
 
@@ -106,6 +104,10 @@ class UserService {
           }
         }
       },
+      omit: {
+        profile_photo: true,
+        photo_mime_type: true
+      },
       include: {
         role: true
       }
@@ -113,7 +115,7 @@ class UserService {
     return newUser
   }
 
-  async updateUser (userId: number, userData: NewUser): Promise<SafeUser> {
+  async updateUser (userId: number, userData: Partial<UpdatedUser>): Promise<SafeUser> {
     const existingUser = await prisma.users.findFirst({
       where: {
         user_id: userId
@@ -139,10 +141,6 @@ class UserService {
 
     const dataToUpdate = { ...userData }
 
-    if (userData.password !== undefined) {
-      dataToUpdate.password = await hashPassword(userData.password)
-    }
-
     const updatedUser = await prisma.users.update({
       where: {
         user_id: userId
@@ -153,7 +151,9 @@ class UserService {
       },
       omit: {
         password: true,
-        role_id: true
+        role_id: true,
+        profile_photo: true,
+        photo_mime_type: true
       }
     })
 

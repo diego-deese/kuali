@@ -14,7 +14,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const validityManagement = useDate()
 
   const [profilePhoto, setProfilePhoto] = useState<string | null>(null)
-  const [profilePhotoUri, setProfilePhotoUri] = useState<string | null>(null)
   const [name, setName] = useState('')
   const [secondName, setSecondName] = useState('')
   const [paternalLastName, setPaternalLastName] = useState('')
@@ -57,8 +56,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       const userData = response as User
 
       const responsePhoto = await userService.getProfilePhotoUrl(userId)
-      setProfilePhotoUri(responsePhoto || '')
-      setProfilePhoto(null)
+      setProfilePhoto(responsePhoto || '')
       setName(userData.name || '')
       setSecondName(userData.second_name || '')
       setPaternalLastName(userData.paternal_lastname || '')
@@ -164,14 +162,13 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       mediaTypes: ['images'],
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 0.7,
-      base64: true,
+      quality: 0.5,
     })
 
     if (!result.canceled) {
       const asset = result.assets[0]
-      setProfilePhoto(asset.base64 || null)
-      setProfilePhotoUri(`data:image/jpeg;base64,${asset.base64}`)
+      const uri = asset.uri
+      setProfilePhoto(uri)
     }
   }
 
@@ -365,6 +362,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         validity: validityManagement.validityDate as Date,
       }
       const result = await userService.createProfile(newUser)
+
       if (!result.success) {
         Toast.show({
           type: 'error',
@@ -449,7 +447,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         placementType: placementType?.label || '',
         validity: validityManagement.validityDate as Date,
       }
-      console.log(name)
       const response = await userService.updateProfile(
         Number(userId),
         updatedUser,
@@ -485,7 +482,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     error,
     user,
     shouldShowRoleSpecificFields,
-    profilePhotoUri,
     profilePhoto,
     name,
     secondName,
@@ -510,7 +506,6 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
     validity: validityManagement.validityDate,
 
     setProfilePhoto,
-    setProfilePhotoUri,
     setName,
     setSecondName,
     setPaternalLastName,

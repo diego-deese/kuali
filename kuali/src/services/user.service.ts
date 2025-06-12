@@ -4,6 +4,7 @@ import { ResponseError, Message, ApiResponse, Response } from '../types/Request'
 import axios from 'axios'
 import { NewUser } from '../types/User'
 import { InscriptionData } from '../types/AcademicProgram'
+import { getFileInfo } from '../utils/parsing'
 
 interface UserProfile {
   user_id?: number
@@ -119,19 +120,44 @@ class UserService {
     newUser: NewUser,
   ): Promise<ApiResponse<{ user: UserProfile }> | ResponseError> {
     try {
-      const response = await this.api.post(`/users`, newUser)
+      const formData = new FormData()
 
-      if (response.status === 200) {
+      const localUri = newUser.profile_photo
+      const profilePhotoInfo = getFileInfo(localUri)
+
+      formData.append('profile_photo', {
+        uri: localUri,
+        name: profilePhotoInfo.fileName,
+        type: profilePhotoInfo.mimeType,
+      } as any)
+
+      let userData = newUser
+
+      formData.append(
+        'userData',
+        JSON.stringify({
+          ...userData,
+          profile_photo: undefined,
+        }),
+      )
+
+      const response = await this.api.post('/users', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
+
+      console.log('[client] Server response:', response.data)
+
+      if (response.status === 201) {
         return {
           success: true,
-          data: response.data as { user: UserProfile },
+          data: { user: response.data.user },
         }
       }
 
       return {
         success: false,
-        message: 'Error al crear al nuevo usuario',
-        error: 'Respuesta inesperada del servidor',
+        message: response.data.message || 'Error al crear al usuario',
+        error: response.data.error || 'No se pudo crear al nuevo usuario',
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
@@ -154,10 +180,32 @@ class UserService {
 
   async updateProfile(
     userId: number,
-    updatedUser: NewUser,
+    userData: NewUser,
   ): Promise<ApiResponse<{ user: UserProfile }> | ResponseError> {
     try {
-      const response = await this.api.put(`/users/${userId}`, updatedUser)
+      const formData = new FormData()
+      const { profile_photo, ...updatedUserData } = userData
+      if (profile_photo !== undefined && profile_photo !== null) {
+        const profilePhotoInfo = getFileInfo(profile_photo)
+
+        formData.append('profile_photo', {
+          uri: profile_photo,
+          name: profilePhotoInfo.fileName,
+          type: profilePhotoInfo.mimeType,
+        } as any)
+      }
+
+      formData.append(
+        'userData',
+        JSON.stringify({
+          ...updatedUserData,
+          profile_photo: undefined,
+        }),
+      )
+
+      const response = await this.api.put(`/users/${userId}`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      })
 
       if (response.status === 200) {
         return {

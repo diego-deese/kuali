@@ -15,10 +15,8 @@ interface CreateUserFormProps {
 
 const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
   const {
-    profile_photo,
+    profilePhoto,
     selectProfilePhoto,
-    profilePhotoUri,
-    setProfilePhotoUri,
     name,
     secondName,
     paternalLastName,
@@ -71,8 +69,9 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
   ]
 
   const categoriaOptions = [
-    { id: 1, label: 'Profesor titular' },
-    { id: 2, label: 'ES' },
+    { id: 1, label: 'Profesor titular A' },
+    { id: 2, label: 'Profesor titular B' },
+    { id: 3, label: 'Profesor titular C ' },
   ]
 
   const sniDistinctioOptions = [
@@ -124,9 +123,9 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
             },
           ]}
         >
-          {profilePhotoUri && (
+          {profilePhoto && (
             <Image
-              source={{ uri: profilePhotoUri }}
+              source={{ uri: profilePhoto }}
               style={{ width: 150, height: 150, borderRadius: 75 }}
               resizeMode='cover'
             />
@@ -138,7 +137,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
           buttonText='Añadir foto de perfil'
           icon={<ImagePlusIcon color={colors.solidWhite} />}
           onPress={selectProfilePhoto}
-          showLabel={profile_photo !== null}
+          showLabel={profilePhoto !== null}
         />
       </View>
       {!onEditing && (
@@ -206,7 +205,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         />
       )}
       <InputText
-        label='Identificador'
+        label='Boleta'
         onChangeText={onIdentifierChange}
         value={identifier}
         error={errors.identifier.error}
