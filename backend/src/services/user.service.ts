@@ -347,6 +347,15 @@ class UserService {
       }
     })
 
+    await prisma.users.update({
+      where: {
+        user_id: studentId
+      },
+      data: {
+        active: true
+      }
+    })
+
     return {
       message: 'Estudiante inscrito con éxito'
     }

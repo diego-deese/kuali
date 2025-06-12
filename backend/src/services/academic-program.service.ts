@@ -103,6 +103,15 @@ class AcademicProgramService {
       }
     })
 
+    await prisma.users.update({
+      where: {
+        user_id: researcherId
+      },
+      data: {
+        active: true
+      }
+    })
+
     return academicProgram
   }
 

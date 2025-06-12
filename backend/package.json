@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "npx prisma migrate deploy && node prisma/seed.prod.js && node src/index.js",
+    "start": "npx prisma migrate deploy && node src/index.js",
     "dev": "ts-node-dev --respawn --poll --watch swagger src/index.ts",
     "build": "tsc",
     "docker:start": "docker-compose up -d",

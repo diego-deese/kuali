@@ -18,6 +18,10 @@ export class AuthService {
 
     if (user === null) throw new NotFoundError('No existe un usuario con ese correo institucional')
 
+    if (!user.active) {
+      throw new UnauthorizedError('La cuenta de este usuario está desactivada')
+    }
+
     const isPasswordValid = await comparePassword(password, user.password)
     if (isPasswordValid !== true) throw new UnauthorizedError('La contraseña introducida es incorrecta')
 
