@@ -56,7 +56,7 @@ export default function UsersManagement() {
       <SafeAreaView style={styles.container}>
         <View style={styles.headerContainer}>
           <Text style={styles.title}> Gestión de usuarios </Text>
-          <IconButton icon={<PlusIcon />} onPress={handleAddUser} />
+          <IconButton icon={<PlusIcon size={26} />} onPress={handleAddUser} />
         </View>
 
         <View style={styles.tabs}>

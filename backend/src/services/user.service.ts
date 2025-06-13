@@ -32,6 +32,9 @@ class UserService {
             researcher_id: true
           }
         }
+      },
+      orderBy: {
+        active: 'desc'
       }
     })
 

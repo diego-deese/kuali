@@ -10,7 +10,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     height: '10%',
     padding: 20,
-    gap: 50,
+    justifyContent: 'space-between',
+    paddingEnd: 30,
   },
   title: {
     fontFamily: 'monserratBold',
@@ -21,6 +22,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignContent: 'center',
     justifyContent: 'center',
+    gap: 8,
+    marginBottom: 8,
   },
   inactiveTab: {
     fontFamily: 'monserratRegular',
