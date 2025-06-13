@@ -9,7 +9,8 @@ import colors from '../../constants/colors'
 import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
 
 export default function MyEvents() {
-  const { upcomingActivities, refresh, loading } = useGetActivities()
+  const { upcomingActivities, refresh, loading, activities } =
+    useGetActivities()
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container}>
@@ -25,7 +26,7 @@ export default function MyEvents() {
           }
         >
           <View style={styles.calendarContainer}>
-            <CalendarComponent />
+            <CalendarComponent activities={activities} />
           </View>
           <NextEventsComponents activities={upcomingActivities} />
           <LoadingModal visible={loading} />

@@ -4,37 +4,18 @@ import { Calendar } from 'react-native-big-calendar'
 import dayjs from 'dayjs'
 import calendarTheme, { styles } from './Calendar.styles'
 import EventCalendarCard from '../EventCalendarCard/EventCalendarCard'
-import { useGetActivities } from '../../hooks/CalendarActivities/useGetActivities'
 import { useAppActions } from '../../context/AppActionsContext'
 import 'dayjs/locale/es'
+import { Activity } from '../../types/Activity'
 dayjs.locale('es')
 
-function getLimitedEvents(events: any[], limitPerDay: number) {
-  const grouped: { [key: string]: any[] } = {}
-
-  events.forEach((event) => {
-    const dayKey = dayjs(event.start).format('YYYY-MM-DD')
-    if (!grouped[dayKey]) grouped[dayKey] = []
-    if (grouped[dayKey].length < limitPerDay) {
-      grouped[dayKey].push(event)
-    }
-  })
-
-  return Object.values(grouped).flat()
+interface CalendarComponentProps {
+  activities: Activity[]
 }
 
-const countEventsByDay = (events: any[]) => {
-  const eventCounts: { [key: string]: number } = {}
-
-  events.forEach((event) => {
-    const dayKey = dayjs(event.start).format('YYYY-MM-DD')
-    eventCounts[dayKey] = (eventCounts[dayKey] || 0) + 1
-  })
-
-  return eventCounts
-}
-
-export default function CalendarComponent() {
+const CalendarComponent: React.FC<CalendarComponentProps> = ({
+  activities = [],
+}) => {
   const formatMonth = (monthName: string) => {
     return monthName.charAt(0).toUpperCase() + monthName.slice(1)
   }
@@ -45,13 +26,12 @@ export default function CalendarComponent() {
   const [monthNumber, setMonthNumber] = useState(dayjs().format('MM'))
   const [year, setYear] = useState(dayjs().format('YYYY')) // Añadimos el estado para el año
   const { navigation } = useAppActions()
-  const { activities } = useGetActivities()
 
   const calendarEvents = activities.map((activity) => ({
     id: activity.activity_id,
     title: activity.title,
     start: dayjs(activity.event_date).toDate(),
-    end: dayjs(activity.event_date).add(30, 'minute').toDate(),
+    end: dayjs(activity.event_date).endOf('day').toDate(),
   }))
 
   const updateDisplayedMonth = (date: Date) => {
@@ -59,7 +39,7 @@ export default function CalendarComponent() {
     const month = newDate.format('MMMM')
     setMonthName(formatMonth(month))
     setMonthNumber(newDate.format('MM'))
-    setYear(newDate.format('YYYY')) // Actualizamos el año
+    setYear(newDate.format('YYYY'))
   }
 
   const handleEventPress = (event: any) => {
@@ -82,7 +62,7 @@ export default function CalendarComponent() {
           locale='es'
           events={calendarEvents}
           maxVisibleEventCount={2}
-          moreLabel={`+${countEventsByDay(calendarEvents)[dayjs().format('YYYY-MM-DD')] - 2} más`}
+          moreLabel={'+'}
           mode='month'
           theme={calendarTheme}
           onChangeDate={([start]) => updateDisplayedMonth(start)}
@@ -101,3 +81,5 @@ export default function CalendarComponent() {
     </View>
   )
 }
+
+export default CalendarComponent
