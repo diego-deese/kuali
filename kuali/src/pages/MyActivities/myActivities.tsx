@@ -7,8 +7,6 @@ import ViewModeSelector from '../../components/MyActivities/ViewModeSelector/Vie
 import TabSelector from '../../components/MyActivities/TabSelector/TabSelector'
 import ActivitiesList from '../../components/MyActivities/ActivitiesList/ActivitiesList'
 import colors from '../../constants/colors'
-import LoadingModal from '../../components/shared/LoadingModal/LoadingModal'
-import { useAppActions } from '../../context/AppActionsContext'
 import EmptyActivityCard from '../../components/shared/EmptyActivityCard/EmptyActivityCard'
 
 export default function MyActivities() {
@@ -20,8 +18,6 @@ export default function MyActivities() {
     refreshing,
     handleRefresh,
   } = useMyActivities()
-
-  const { navigation } = useAppActions()
 
   return (
     <View style={styles.container}>

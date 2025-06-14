@@ -646,6 +646,9 @@ class ActivityService {
         category_id: true,
         poster_image: true,
         poster_mimetype: true
+      },
+      orderBy: {
+        event_date: 'asc'
       }
     })
 

@@ -128,7 +128,25 @@ export const useMyActivities = () => {
         return
       }
 
-      setUpcomingActivities(result.data as Activity[])
+      const activities: Activity[] = result.data
+
+      let upcoming: Activity[] = []
+      let past: Activity[] = []
+
+      activities.forEach((activity) => {
+        const today = new Date()
+        const eventDate = new Date(activity.event_date)
+
+        if (eventDate < today) {
+          past.push(activity)
+        } else {
+          upcoming.push(activity)
+        }
+      })
+
+      setUpcomingActivities(upcoming)
+
+      setPastActivities(past.reverse())
     } catch (error) {
       console.error('Error al obtener actividades a revisar:', error)
       Toast.show({
