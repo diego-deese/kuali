@@ -45,9 +45,8 @@ export const useMyActivities = () => {
       if (upcomingActivities === null) getActivitiesToReview()
     } else {
       if (upcomingActivities === null) getUpcomingActivities()
+      if (pastActivities === null) getPastActivities()
     }
-
-    if (pastActivities === null) getPastActivities()
   }, [upcomingActivities, pastActivities, user])
 
   const handleRefresh = () => {
