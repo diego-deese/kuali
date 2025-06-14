@@ -23,7 +23,9 @@ const TabSelector = ({ activeTab, onTabChange }) => {
         <Text
           style={activeTab === 'past' ? styles.activeTab : styles.inactiveTab}
         >
-          Historial
+          {user.role.role_id === Roles.ADMIN
+            ? 'Todas las actividades'
+            : 'Historial'}
         </Text>
       </TouchableOpacity>
     </View>

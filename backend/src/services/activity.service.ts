@@ -25,7 +25,7 @@ class ActivityService {
         location: true
       },
       orderBy: {
-        event_date: 'asc'
+        event_date: 'desc'
       }
     })
 

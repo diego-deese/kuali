@@ -43,6 +43,7 @@ export const useMyActivities = () => {
     // When user is admin get activities to review
     if (user.role.role_id === Roles.ADMIN) {
       if (upcomingActivities === null) getActivitiesToReview()
+      if (pastActivities === null) getAllActivities()
     } else {
       if (upcomingActivities === null) getUpcomingActivities()
       if (pastActivities === null) getPastActivities()
@@ -130,22 +131,17 @@ export const useMyActivities = () => {
       const activities: Activity[] = result.data
 
       let upcoming: Activity[] = []
-      let past: Activity[] = []
 
       activities.forEach((activity) => {
         const today = new Date()
         const eventDate = new Date(activity.event_date)
 
-        if (eventDate < today) {
-          past.push(activity)
-        } else {
+        if (eventDate > today) {
           upcoming.push(activity)
         }
       })
 
       setUpcomingActivities(upcoming)
-
-      setPastActivities(past.reverse())
     } catch (error) {
       console.error('Error al obtener actividades a revisar:', error)
       Toast.show({
@@ -154,6 +150,36 @@ export const useMyActivities = () => {
         text2: 'Por favor intenta de nuevo más tarde',
       })
       setUpcomingActivities([])
+    } finally {
+      setLoadingActivities(false)
+    }
+  }
+
+  const getAllActivities = async () => {
+    try {
+      setLoadingActivities(true)
+
+      const result = await activityService.getAllActivities()
+
+      if (!result.success && 'error' in result) {
+        Toast.show({
+          type: 'error',
+          text1: result.message,
+          text2: result.error,
+        })
+        setPastActivities([])
+        return
+      }
+
+      setPastActivities(result.activities)
+    } catch (error) {
+      console.error('Error al obtener todas las actividades: ', error)
+      Toast.show({
+        type: 'error',
+        text1: 'Error al cargar todas las actividades',
+        text2: 'Por favor intenta de nuevo más tarde',
+      })
+      setPastActivities([])
     } finally {
       setLoadingActivities(false)
     }

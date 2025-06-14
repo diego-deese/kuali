@@ -9,6 +9,8 @@ import {
 import colors from '../../../constants/colors'
 import Button from '../Button/Button'
 import { router } from 'expo-router'
+import { useAuth } from '../../../context/AuthContext'
+import { Roles } from '../../../constants/roles'
 
 interface EmptyActivityCardProps {
   mode?: 'upcoming' | 'past'
@@ -18,6 +20,8 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
   mode = 'upcoming',
 }) => {
   const rotateAnim = useRef(new Animated.Value(0)).current
+  const { user } = useAuth()
+  const isAdmin = user?.role.role_id === Roles.ADMIN
 
   useEffect(() => {
     rotateAnim.setValue(0)
@@ -55,39 +59,61 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
 
       <View style={styles.textContainer}>
         <Text style={styles.header}>
-          {mode === 'upcoming'
-            ? 'No hay eventos próximos'
-            : 'No hay eventos pasados'}
+          {isAdmin
+            ? mode === 'upcoming'
+              ? 'No hay convocatorias a revisar'
+              : 'No hay actividades pasadas'
+            : mode === 'upcoming'
+              ? 'No hay eventos próximos'
+              : 'No hay eventos pasados'}
         </Text>
         <Text style={styles.text}>
-          {mode === 'upcoming'
-            ? 'Aún no te has inscrito a ningún evento o convocatoria'
-            : 'Tu historial de eventos está vacío'}
+          {isAdmin
+            ? mode === 'upcoming'
+              ? 'Ningún usuario ha subido sus documentos'
+              : 'Ninguna actividad ha pasado aún'
+            : mode === 'upcoming'
+              ? 'Aún no te has inscrito a ningún evento o convocatoria'
+              : 'Tu historial de eventos está vacío'}
         </Text>
         <Text style={styles.text}>
-          {mode === 'upcoming'
-            ? '¡Inscríbete a un evento para comenzar!'
-            : '¡Aquí encontrarás los eventos a los que te inscribiste!'}
+          {isAdmin
+            ? mode === 'upcoming'
+              ? '¡Crea nuevas convocatorias para comenzar!'
+              : '¡Aquí verás el historial de actividades!'
+            : mode === 'upcoming'
+              ? '¡Inscríbete a un evento para comenzar!'
+              : '¡Aquí encontrarás los eventos a los que te inscribiste!'}
         </Text>
       </View>
 
       <Button
         style={{ marginBottom: 24 }}
-        buttonText='Ver los eventos próximos'
+        buttonText={
+          isAdmin ? 'Crear nuevas actividades' : 'Ver los eventos próximos'
+        }
         icon={<CalendarClockIcon color={colors.solidWhite} size={28} />}
         onPress={() => {
-          router.navigate('/calendar')
+          router.navigate(isAdmin ? '/activity/create' : '/calendar')
         }}
       />
 
       <View style={styles.tipsContainer}>
         <CalendarPlusIcon color={colors.placeholderGray} />
-        <Text style={styles.tipText}>Añade los eventos de tu interés</Text>
+        <Text style={styles.tipText}>
+          {isAdmin
+            ? 'Gestiona los eventos y convocatorias'
+            : 'Añade los eventos de tu interés'}
+        </Text>
       </View>
 
       <View style={styles.tipsContainer}>
         <BookmarkIcon color={colors.placeholderGray} />
-        <Text style={styles.tipText}>Mantente al día con las actividades</Text>
+        <Text style={styles.tipText}>
+          {isAdmin
+            ? 'Supervisa las actividades del centro'
+            : 'Mantente al día con las actividades'}
+        </Text>
       </View>
     </View>
   )
