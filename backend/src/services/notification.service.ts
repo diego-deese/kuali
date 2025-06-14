@@ -61,22 +61,7 @@ class NotificationService {
     return newNotification
   }
 
-  async createNewActivityNotifications (newActivity: CreatedActivity): Promise<void> {
-    // New activity notification
-    await this.createNotification({
-      title: newActivity.category.category_id === EVENTS_CATEGORY_ID ? 'Nuevo evento creado' : 'Nueva convocatoria creada',
-      message: newActivity.category.category_id === EVENTS_CATEGORY_ID
-        ? `Nuevo evento "${newActivity.title.trim()}" creado.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`
-        : `Nueva convocatoria "${newActivity.title.trim()}" creada.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`,
-      activity_id: newActivity.activity_id,
-      visible_researchers: newActivity.visible_researchers,
-      visible_students: newActivity.visible_students,
-      user_document_id: null,
-      notification_type_id: NotificationTypes.ACTIVITY_CREATED_ID,
-      remind_date: new Date(),
-      notify_all: true
-    })
-
+  async createActivityReminderNotifications (newActivity: CreatedActivity): Promise<void> {
     if (newActivity.category.category_id === CALLS_CATEGORY_ID) {
       // Activity reminder
       await this.createNotification({
@@ -120,7 +105,35 @@ class NotificationService {
     })
   }
 
+  async createNewActivityNotifications (newActivity: CreatedActivity): Promise<void> {
+    // New activity notification
+    await this.createNotification({
+      title: newActivity.category.category_id === EVENTS_CATEGORY_ID ? 'Nuevo evento creado' : 'Nueva convocatoria creada',
+      message: newActivity.category.category_id === EVENTS_CATEGORY_ID
+        ? `Nuevo evento "${newActivity.title.trim()}" creado.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`
+        : `Nueva convocatoria "${newActivity.title.trim()}" creada.${newActivity.mandatory ? ' Su registro es obligatorio.' : ''}`,
+      activity_id: newActivity.activity_id,
+      visible_researchers: newActivity.visible_researchers,
+      visible_students: newActivity.visible_students,
+      user_document_id: null,
+      notification_type_id: NotificationTypes.ACTIVITY_CREATED_ID,
+      remind_date: new Date(),
+      notify_all: true
+    })
+
+    await this.createActivityReminderNotifications(newActivity)
+  }
+
   async createActivityUpdatedNotification (activityInfo: CreatedActivity): Promise<void> {
+    await prisma.notification.deleteMany({
+      where: {
+        activity_id: activityInfo.activity_id,
+        notification_type_id: NotificationTypes.ACTIVITY_REMINDER
+      }
+    })
+
+    await this.createActivityReminderNotifications(activityInfo)
+
     await this.createNotification({
       title: 'Datos de actividad actualizada',
       message: `Los datos de la ${activityInfo.category.category_id === EVENTS_CATEGORY_ID ? 'evento' : 'convocatoria'} "${activityInfo.title.trim()}" han sido actualizados. Asegúrate de revisar los nuevos detalles${activityInfo.mandatory ? ', recuerda que su registro es obligatorio.' : '.'}`,
