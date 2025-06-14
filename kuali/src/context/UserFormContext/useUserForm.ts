@@ -7,7 +7,6 @@ import { User } from '../../types/User'
 import { Option } from '../../components/shared/SelectInput/interfaces'
 import { useDate } from '../../hooks/UsersManagement/useDate'
 import * as ImagePicker from 'expo-image-picker'
-import * as FileSystem from 'expo-file-system'
 
 export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
   const errorsManagement = useErrors(mode)

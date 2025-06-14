@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Option, UseSelectInputProps } from './interfaces'
 import { useEffect } from 'react'
+import { Keyboard } from 'react-native'
 
 export const useSelectInput = ({
   value = null,
@@ -49,6 +50,13 @@ export const useSelectInput = ({
     }
   }
 
+  const onSetIsOpen = (value: boolean) => {
+    Keyboard.dismiss()
+    setTimeout(() => {
+      setIsOpen(value)
+    }, 50)
+  }
+
   useEffect(() => {
     setSelectedOption(value || null)
   }, [value])
@@ -61,7 +69,7 @@ export const useSelectInput = ({
       isModalVisible,
     },
     actions: {
-      setIsOpen,
+      setIsOpen: onSetIsOpen,
       setIsModalVisible,
       handleOptionSelect,
       handleDeleteOption,
