@@ -2,7 +2,7 @@ services:
   db:
     container_name: kuali-db-prod
     ports:
-      - "3306:3306"
+      - "3308:3306"
     image: mysql
     volumes:
       - ./backend/prisma/init.sh:/docker-entrypoint-initdb.d/init.sh
@@ -29,7 +29,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile.prod
     ports:
-      - "3001:3000"
+      - "3002:3000"
     env_file:
       - ./backend/.env.prod
     environment:
