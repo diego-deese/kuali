@@ -1,3 +1,4 @@
+import { endOfDay, startOfDay } from 'date-fns'
 import { CALLS_CATEGORY_ID, EVENTS_CATEGORY_ID } from '../constants/activity-categories'
 import { RESEARCHER_ROLE_ID, STUDENT_ROLE_ID } from '../constants/roles'
 import prisma from '../lib/prisma'
@@ -266,11 +267,7 @@ class ActivityService {
   }
 
   async deleteActivity (activityId: number): Promise<Boolean> {
-    const activity = this.getActivity(activityId)
-
-    if (activity === null) {
-      throw new NotFoundError('No se encontró ninguna actividad con ese id')
-    }
+    await this.getActivity(activityId)
 
     await prisma.$transaction([
       prisma.notificationReciever.deleteMany({
@@ -632,6 +629,10 @@ class ActivityService {
               some: {}
             }
           }
+        },
+        event_date: {
+          gte: startOfDay(new Date()),
+          lte: endOfDay(new Date())
         }
       },
       include: {

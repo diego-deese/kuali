@@ -62,7 +62,7 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
           {isAdmin
             ? mode === 'upcoming'
               ? 'No hay convocatorias a revisar'
-              : 'No hay actividades pasadas'
+              : 'No hay actividades'
             : mode === 'upcoming'
               ? 'No hay eventos próximos'
               : 'No hay eventos pasados'}
@@ -71,7 +71,7 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
           {isAdmin
             ? mode === 'upcoming'
               ? 'Ningún usuario ha subido sus documentos'
-              : 'Ninguna actividad ha pasado aún'
+              : 'No se han creado actividades aún'
             : mode === 'upcoming'
               ? 'Aún no te has inscrito a ningún evento o convocatoria'
               : 'Tu historial de eventos está vacío'}
@@ -80,7 +80,7 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
           {isAdmin
             ? mode === 'upcoming'
               ? '¡Crea nuevas convocatorias para comenzar!'
-              : '¡Aquí verás el historial de actividades!'
+              : '¡Aquí verás todas las actividades!'
             : mode === 'upcoming'
               ? '¡Inscríbete a un evento para comenzar!'
               : '¡Aquí encontrarás los eventos a los que te inscribiste!'}
@@ -94,7 +94,7 @@ const EmptyActivityCard: React.FC<EmptyActivityCardProps> = ({
         }
         icon={<CalendarClockIcon color={colors.solidWhite} size={28} />}
         onPress={() => {
-          router.navigate(isAdmin ? '/activity/create' : '/calendar')
+          router.navigate(isAdmin ? '/event|  /create' : '/calendar')
         }}
       />
 
