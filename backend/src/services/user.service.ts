@@ -370,14 +370,17 @@ class UserService {
       throw new ValidationError('El usuario con el id proporcionado no es un administrador')
     }
 
-    await prisma.users.delete({
+    await prisma.users.update({
       where: {
         user_id: adminId
+      },
+      data: {
+        active: false
       }
     })
 
     return {
-      message: 'Cuenta de administrador eliminada permanentemente'
+      message: 'Cuenta de administrador desactivada'
     }
   }
 }
