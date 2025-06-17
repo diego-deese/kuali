@@ -15,15 +15,28 @@ async function createDummyUsers (): Promise<void> {
   await prisma.users.createMany({
     data: [
       {
-        name: 'Admin',
-        second_name: 'Admin',
-        paternal_lastname: 'Admin',
-        maternal_lastname: 'Admin',
-        institutional_email: 'admin@ipn.mx',
-        personal_email: 'admin@ipn.mx',
-        identifier: 'IPN000000',
-        password: await hashPassword('1234').catch((e) => { console.log(e); return '' }),
-        role_id: 1
+        name: 'Karla',
+        second_name: 'Catalina',
+        paternal_lastname: 'Cruz',
+        maternal_lastname: 'Torres',
+        institutional_email: 'kcruzt@ipn.mx',
+        personal_email: 'kcruzt@ipn.mx',
+        identifier: '',
+        password: await hashPassword('C1cata2025$').catch((e) => { console.log(e); return '' }),
+        role_id: 1,
+        active: true
+      },
+      {
+        name: 'Kenia',
+        second_name: 'Xitlaly',
+        paternal_lastname: 'Salazar',
+        maternal_lastname: 'Lezama',
+        institutional_email: 'ksalazarl@ipn.mx',
+        personal_email: 'ksalazarl@ipn.mx',
+        identifier: '',
+        password: await hashPassword('C1cata2025$').catch((e) => { console.log(e); return '' }),
+        role_id: 1,
+        active: true
       }
     ]
   })
@@ -63,6 +76,13 @@ async function main (): Promise<void> {
       { name: 'Pendiente' },
       { name: 'Aprobado' },
       { name: 'Rechazado' }
+    ]
+  })
+
+  await prisma.academicPrograms.createMany({
+    skipDuplicates: true,
+    data: [
+      { name: 'Semilla' }
     ]
   })
 
