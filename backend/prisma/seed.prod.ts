@@ -58,17 +58,6 @@ async function main (): Promise<void> {
     ]
   })
 
-  // Seed Locations
-  // await prisma.locations.createMany({
-  //   skipDuplicates: true,
-  //   data: [
-  //     { name: 'Auditorio Principal' },
-  //     { name: 'Sala de Conferencias' },
-  //     { name: 'Laboratorio A' },
-  //     { name: 'Aula Magna' }
-  //   ]
-  // })
-
   // Seed RevisionStatus
   await prisma.revisionStatus.createMany({
     skipDuplicates: true,
@@ -83,6 +72,31 @@ async function main (): Promise<void> {
     skipDuplicates: true,
     data: [
       { name: 'Semilla' }
+    ]
+  })
+
+  await prisma.notificationType.createMany({
+    data: [
+      {
+        name: 'activity_reminder',
+        description: 'Recordatorio de actividad próxima'
+      },
+      {
+        name: 'registration_deadline',
+        description: 'Fecha límite de registro'
+      },
+      {
+        name: 'document_review',
+        description: 'Estado de revisión de documentos'
+      },
+      {
+        name: 'activity_created',
+        description: 'Nueva actividad disponible'
+      },
+      {
+        name: 'activity_updated',
+        description: 'Datos de actividad actualizados'
+      }
     ]
   })
 
