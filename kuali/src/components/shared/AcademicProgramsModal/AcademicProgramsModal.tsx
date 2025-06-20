@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   ActivityIndicator,
+  TouchableWithoutFeedback,
 } from 'react-native'
 import styles from './AcademicProgramsModal.styles'
 import SelectInput from '../SelectInput'
@@ -54,15 +55,14 @@ export default function AcademicProgramsModal({
   return (
     <Modal transparent visible={visible} animationType='fade'>
       <View style={styles.overlay}>
+        <TouchableWithoutFeedback onPress={onCancel}>
+          <View style={styles.backdrop} />
+        </TouchableWithoutFeedback>
         <View style={styles.container}>
           <Text style={styles.title}>Selecciona el programa académico</Text>
 
           {loading ? (
             <ActivityIndicator size='large' color='#000' />
-          ) : programOptions.length === 0 ? (
-            <Text style={styles.infoText}>
-              No hay programas académicos disponibles.
-            </Text>
           ) : (
             <>
               <SelectInput
