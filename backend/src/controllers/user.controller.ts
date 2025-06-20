@@ -98,8 +98,6 @@ class UserController {
       const { id } = req.params
       const profilePhoto = req.file
 
-      console.log(req.body)
-
       if (!isNumber(Number(id))) {
         res.status(400).json({
           message: 'Error al actualizar el usuario',
@@ -107,12 +105,7 @@ class UserController {
         })
       }
 
-      let updatedUserDataRaw
-      try {
-        updatedUserDataRaw = JSON.parse(req.body.userData)
-      } catch (jsonErr) {
-        console.error('[ERROR] Fallo al hacer JSON.parse:', jsonErr)
-      }
+      const updatedUserDataRaw = JSON.parse(req.body.userData)
 
       const mergedData = {
         ...updatedUserDataRaw,
@@ -120,11 +113,7 @@ class UserController {
         photo_mime_type: profilePhoto?.mimetype
       }
 
-      const updatedUserData = toUpdateUser(mergedData)
-
-      console.log(updatedUserDataRaw)
-
-      let updateUserData = toUpdateUser(updatedUserData)
+      let updateUserData = toUpdateUser(mergedData)
 
       if (req.file !== undefined) {
         updateUserData = {

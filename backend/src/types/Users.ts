@@ -41,6 +41,7 @@ const updatedUser = Prisma.validator<Prisma.UsersDefaultArgs>()({
   select: {
     name: true,
     second_name: true,
+    password: true,
     paternal_lastname: true,
     maternal_lastname: true,
     identifier: true,
@@ -63,7 +64,7 @@ const updatedUser = Prisma.validator<Prisma.UsersDefaultArgs>()({
   }
 })
 
-export type UpdatedUser = Prisma.UsersGetPayload<typeof updatedUser>
+export type UpdatedUser = Partial<Prisma.UsersGetPayload<typeof updatedUser>>
 
 export type OptionalUpdatedUser = Partial<UpdatedUser>
 

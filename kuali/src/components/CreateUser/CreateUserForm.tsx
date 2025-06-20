@@ -283,7 +283,7 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
           />
           <View>
             <ActivityDatePicker
-              date={validity}
+              date={validity !== null ? validity : new Date()}
               onDateChange={onValidityDateChange}
               title='Fecha de vigencia'
             />

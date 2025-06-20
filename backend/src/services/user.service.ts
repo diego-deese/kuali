@@ -93,8 +93,7 @@ class UserService {
 
     const hashedPassword = await hashPassword(userData.password)
 
-    // eslint-disable-next-line @typescript-eslint/naming-convention
-    const { role_id, ...userDataWithoutRole } = userData // separa el role de los datos del usuario para poder conectarlo
+    const { role_id: roleId, ...userDataWithoutRole } = userData
 
     const newUser = await prisma.users.create({
       data: {
@@ -102,8 +101,7 @@ class UserService {
         password: hashedPassword,
         role: {
           connect: {
-            // eslint-disable-next-line object-shorthand
-            role_id: role_id
+            role_id: roleId
           }
         }
       },

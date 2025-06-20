@@ -22,13 +22,6 @@ export default function EventLayout() {
                 onPress={goBack}
               />
             }
-            // leftComponent={<LogoHorizontal />}
-            // rightComponent={
-            //   <IconButton
-            //     icon={<ArrowBack size={32} color={colors.highlightCyan} />}
-            //     onPress={goBack}
-            //   />
-            // }
           />
         ),
       }}

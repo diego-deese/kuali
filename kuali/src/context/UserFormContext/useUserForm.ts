@@ -97,7 +97,9 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       )
       setUser(userData)
       setError(null)
-      validityManagement.onValidityDateChange(new Date(userData.validity))
+      validityManagement.onValidityDateChange(
+        userData.validity !== null ? new Date(userData.validity) : null,
+      )
     } catch (err) {
       const errorMessage =
         err instanceof Error
@@ -444,7 +446,10 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
         researchLine: researchLine || null,
         socialSecurityNumber: socialSecurityNumber || null,
         placementType: placementType?.label || '',
-        validity: validityManagement.validityDate as Date,
+        validity:
+          validityManagement.validityDate !== null
+            ? (validityManagement.validityDate as Date)
+            : undefined,
       }
       const response = await userService.updateProfile(
         Number(userId),
@@ -462,6 +467,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
       Toast.show({ type: 'success', text1: 'Usuario actualizado con éxito' })
       return true
     } catch (error) {
+      console.log(error)
       Toast.show({
         type: 'error',
         text1: 'Error inesperado',

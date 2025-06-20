@@ -17,9 +17,6 @@ import { router } from 'expo-router'
 
 const AddUserContent = () => {
   const { createUser } = useUserFormContext()
-  const handleGoingBack = () => {
-    router.back()
-  }
 
   return (
     <SafeAreaProvider>
@@ -42,13 +39,8 @@ const AddUserContent = () => {
                 <View style={styles.inputsContainer}>
                   <CreateUserForm onEditing={false} />
                 </View>
-                <View style={styles.buttonsContainer}>
-                  <View>
-                    <Button buttonText='Cancelar' onPress={handleGoingBack} />
-                  </View>
-                  <View>
-                    <Button buttonText='Crear usuario' onPress={createUser} />
-                  </View>
+                <View>
+                  <Button buttonText='Crear usuario' onPress={createUser} />
                 </View>
               </View>
             </ScrollView>
