@@ -116,7 +116,7 @@ export const useErrors = (mode: string) => {
   }
 
   const validatePassword = (password: string): InputError => {
-    if (!password || password.trim() === '') {
+    if ((!password || password.trim() === '') && mode === 'create') {
       return { error: true, errorMessage: 'La contraseña es requerida' }
     }
     if (password.length < 8) {

@@ -113,7 +113,7 @@ class UserController {
         photo_mime_type: profilePhoto?.mimetype
       }
 
-      let updateUserData = toUpdateUser(mergedData)
+      let updateUserData = await toUpdateUser(mergedData)
 
       if (req.file !== undefined) {
         updateUserData = {

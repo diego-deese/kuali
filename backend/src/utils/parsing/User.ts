@@ -1,5 +1,6 @@
 import { ValidationError } from '../../types/Error'
 import { NewUser, OptionalUpdatedUser } from '../../types/Users'
+import { hashPassword } from '../encryption'
 import { isString, isDate } from '../validations'
 
 const parseMimeType = (mimetype: string): string => {
@@ -202,7 +203,7 @@ export const toNewUser = (object: any): NewUser => {
   }
 }
 
-export const toUpdateUser = (object: any): OptionalUpdatedUser => {
+export const toUpdateUser = async (object: any): Promise<OptionalUpdatedUser> => {
   const updateUser: OptionalUpdatedUser = {
     name: object.name !== undefined ? parseName(object.name) : undefined,
     second_name: object.second_name !== undefined ? parseSecondName(object.second_name) : undefined,
@@ -210,6 +211,7 @@ export const toUpdateUser = (object: any): OptionalUpdatedUser => {
     maternal_lastname: object.maternal_lastname !== undefined ? parseLastName(object.maternal_lastname) : undefined,
     institutional_email: object.institutional_email !== undefined ? parseEmail(object.institutional_email) : undefined,
     personal_email: object.personal_email !== undefined ? parseEmail(object.personal_email) : undefined,
+    password: object.password !== undefined ? await hashPassword(object.password) : undefined,
     curp: object.curp !== undefined ? parseCURP(object.curp) : undefined,
     identifier: object.identifier !== undefined ? parseIdentifier(object.identifier) : undefined,
     categoriaProfr: object.categoriaProfr !== undefined ? parseCategoriaProfr(object.categoriaProfr) : null,

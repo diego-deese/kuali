@@ -217,11 +217,9 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
 
   const onPasswordChange = (value: string) => {
     setPassword(value)
-    if (mode === 'create') {
-      errorsManagement.updateErrors({
-        password: errorsManagement.validatePassword(value),
-      })
-    }
+    errorsManagement.updateErrors({
+      password: errorsManagement.validatePassword(value),
+    })
   }
 
   const onCurpChange = (value: string) => {
@@ -450,6 +448,7 @@ export const useUserForm = (mode: 'create' | 'edit', userId?: number) => {
           validityManagement.validityDate !== null
             ? (validityManagement.validityDate as Date)
             : undefined,
+        password: password !== '' ? password : undefined,
       }
       const response = await userService.updateProfile(
         Number(userId),

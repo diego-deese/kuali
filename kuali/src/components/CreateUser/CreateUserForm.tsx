@@ -194,16 +194,16 @@ const CreateUserForm: React.FC<CreateUserFormProps> = ({ onEditing }) => {
         error={errors.personalEmail.error}
         errorMessage={errors.personalEmail.errorMessage}
       />
-      {!onEditing && (
-        <InputText
-          label='Contraseña'
-          onChangeText={onPasswordChange}
-          secureTextEntry
-          value={password}
-          error={errors.password.error}
-          errorMessage={errors.password.errorMessage}
-        />
-      )}
+
+      <InputText
+        label='Contraseña'
+        onChangeText={onPasswordChange}
+        secureTextEntry
+        value={password}
+        error={errors.password.error}
+        errorMessage={errors.password.errorMessage}
+      />
+
       <InputText
         label='Boleta'
         onChangeText={onIdentifierChange}
